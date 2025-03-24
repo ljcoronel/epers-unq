@@ -15,13 +15,31 @@ public class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
-    public Medium aumentarConexion(Medium medium) {
-        // TODO completar
-        return null;
+    public void aumentarConexion(Medium medium) {
+        this.aumentarNivelDeConexionEn(10);
+    }
+
+    private void aumentarNivelDeConexionEn(int i) {
+        int nivel = getNivelDeConexion();
+        if (nivel + i < 0) {
+            setNivelDeConexion(0);
+        } else if (nivel + i > 100) {
+            setNivelDeConexion(100);
+        } else {
+            setNivelDeConexion(i);
+        }
+    }
+
+    private void setNivelDeConexion(int i) {
+        this.nivelDeConexion = i;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTipo() {

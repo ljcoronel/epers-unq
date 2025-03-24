@@ -58,7 +58,7 @@ public class JDBCConnector {
         final var user = env.getOrDefault("DB_USER", "postgres");
         final var password = env.getOrDefault("DB_PASSWORD", "root");
         final var host = env.getOrDefault("DB_HOST", "localhost");
-        final var dataBase = env.getOrDefault("DB_NAME", "epers_ejemplo_jdbc");
+        final var dataBase = env.getOrDefault("DB_NAME", "epersgeist_sobrepersistiendo");
         final var port = env.getOrDefault("DB_PORT", "5432");
         
         createDatabaseIfNotExists(dataBase, user, password, host, port);
@@ -84,7 +84,6 @@ public class JDBCConnector {
              var resultSet = statement.executeQuery(checkDbQuery);
              if (!resultSet.next()) {
                  statement.executeUpdate("CREATE DATABASE " + databaseName);
-                 getLogger("JDBCConnector").info("Base de datos creada: " + databaseName);
              }
          } catch (SQLException e) {
              throw new RuntimeException("Error al verificar/crear la base de datos", e);
