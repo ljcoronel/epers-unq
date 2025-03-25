@@ -21,17 +21,18 @@ public class Espiritu implements Serializable {
 
     private void aumentarNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
-        if (nivel + i < 0) {
-            setNivelDeConexion(0);
-        } else if (nivel + i > 100) {
-            setNivelDeConexion(100);
-        } else {
-            setNivelDeConexion(i);
-        }
+        setNivelDeConexion(i + nivel);
     }
 
     private void setNivelDeConexion(int i) {
-        this.nivelDeConexion = i;
+        if (i < 0) {
+            this.nivelDeConexion = 0;
+        } else if (i > 100) {
+            this.nivelDeConexion = 100;
+        } else {
+            this.nivelDeConexion = i;
+        }
+
     }
 
     public Long getId() {

@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,21 +14,22 @@ import java.util.List;
 
 public record JDBCEspirituDAO() implements EspirituDAO {
 
+
+
     public Espiritu crear(Espiritu espiritu) {
+
+        String sql = "INSERT INTO espiritu (tipo, nombre, nivelDeConexion) VALUES (?,?,?)";
         JDBCConnector.getInstance().execute(conn  -> {
             try {
-                var ps = conn.prepareStatement("INSERT INTO espiritu (tipo, nombre, nivelDeConexion) VALUES (?,?,?)");
+                var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, espiritu.getTipo());
                 ps.setString(2, espiritu.getNombre());
                 ps.setInt(3, espiritu.getNivelDeConexion());
-
                 ps.execute();
+                ps.getGeneratedKeys().next();
+                long serialId = ps.getGeneratedKeys().getLong(1);
 
-                ps = conn.prepareStatement("SELECT id FROM espiritu WHERE nombre = ?");
-                ps.setString(1, espiritu.getNombre());
-                var resultSet = ps.executeQuery();
-                resultSet.next();
-                espiritu.setId(resultSet.getLong("id"));
+                espiritu.setId(serialId);
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -46,15 +48,18 @@ public record JDBCEspirituDAO() implements EspirituDAO {
                 ps.setLong(1, idDelEspiritu);
                 var resultSet = ps.executeQuery();
                 resultSet.next();
-                Espiritu espiritu = null;
 
-                espiritu = new Espiritu(
+                Espiritu espiritu = new Espiritu(
                         resultSet.getString("tipo"),
                         resultSet.getInt("nivelDeConexion"),
                         resultSet.getString("nombre")
                 );
 
+                espiritu.setId(idDelEspiritu);
+
                 return espiritu;
+
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -88,13 +93,13 @@ public record JDBCEspirituDAO() implements EspirituDAO {
     public void actualizar(Espiritu espiritu) {
         JDBCConnector.getInstance().execute( conn -> {
             try {
-                var ps = conn.prepareStatement("UPDATE espiritu SET tipo = ?, nivelDeConexion = ?, nombre = ?, WHERE id = ?");
+                var ps = conn.prepareStatement("UPDATE espiritu SET tipo = ?, nivelDeConexion = ?, nombre = ? WHERE id = ?");
                 ps.setString(1, espiritu.getTipo());
                 ps.setInt(2, espiritu.getNivelDeConexion());
                 ps.setString(3, espiritu.getNombre());
                 ps.setLong(4, espiritu.getId());
 
-                ps.executeQuery();
+                ps.execute();
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -106,7 +111,7 @@ public record JDBCEspirituDAO() implements EspirituDAO {
     public void eliminar(Long idDelEspiritu) {
         JDBCConnector.getInstance().execute (conn -> {
             try {
-                var ps = conn.prepareStatement("DELETE FROM espiritu WHERE id =  ? ");
+                var ps = conn.prepareStatement("DELETE FROM espiritu WHERE id = ? ");
                 ps.setLong(1, idDelEspiritu);
                 return ps.execute();
             } catch (SQLException e) {

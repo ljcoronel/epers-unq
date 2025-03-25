@@ -40,7 +40,8 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Medium conectar(Long espirituId, Medium medium) {
         Espiritu espiritu = recuperar(espirituId);
-        medium.conectarseAEspiritu(espiritu);
+
+        medium.conectarseAEspiritu(espiritu); //VA ACÁ O COMO FUNC APARTE?
         espiritu.aumentarConexion(medium);
 
         getEspirituDao().actualizar(espiritu); //garantiza ACID
@@ -51,7 +52,7 @@ public class EspirituServiceImpl implements EspirituService {
         return espirituDao;
     }
 
-    public void setEspirituDao(JDBCEspirituDAO espirituDao) {
+    private void setEspirituDao(JDBCEspirituDAO espirituDao) {
         this.espirituDao = espirituDao;
     }
 }
