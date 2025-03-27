@@ -11,17 +11,42 @@ public class Espiritu implements Serializable {
 
     public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
         this.tipo = tipo;
-        this.nivelDeConexion = nivelDeConexion;
+        this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
     }
 
-    public Medium aumentarConexion(Medium medium) {
-        // TODO completar
-        return null;
+    public Espiritu(String tipo, String nombre) {
+        this.tipo = tipo;
+        this.setNivelDeConexion(0); //default es 0
+        this.nombre = nombre;
+    }
+
+    public void aumentarConexion(Medium medium) {
+        this.aumentarNivelDeConexionEn(10);
+    }
+
+    private void aumentarNivelDeConexionEn(int i) {
+        int nivel = getNivelDeConexion();
+        setNivelDeConexion(i + nivel);
+    }
+
+    private void setNivelDeConexion(int i) {
+        if (i < 0) {
+            this.nivelDeConexion = 0;
+        } else if (i > 100) {
+            this.nivelDeConexion = 100;
+        } else {
+            this.nivelDeConexion = i;
+        }
+
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTipo() {
