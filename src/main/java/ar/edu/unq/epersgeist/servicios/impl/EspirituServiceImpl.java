@@ -2,43 +2,56 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
 
+    private JDBCEspirituDAO espirituDao = new JDBCEspirituDAO();
+
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        // TODO completar
-        return null;
+        return getEspirituDao().crear(espiritu);
     }
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        // TODO completar
-        return null;
+        return getEspirituDao().recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        // TODO completar
-        return null;
+        return getEspirituDao().recuperarTodos();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        // TODO completar
+        getEspirituDao().actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        // TODO completar
+        getEspirituDao().eliminar(espirituId);
     }
 
     @Override
     public Medium conectar(Long espirituId, Medium medium) {
-        // TODO completar
-        return null;
+        Espiritu espiritu = recuperar(espirituId);
+
+        medium.conectarseAEspiritu(espiritu);
+
+        getEspirituDao().actualizar(espiritu); //garantiza ACID
+        return medium;
+    }
+
+    public JDBCEspirituDAO getEspirituDao() {
+        return espirituDao;
+    }
+
+    private void setEspirituDao(JDBCEspirituDAO espirituDao) {
+        this.espirituDao = espirituDao;
     }
 }
