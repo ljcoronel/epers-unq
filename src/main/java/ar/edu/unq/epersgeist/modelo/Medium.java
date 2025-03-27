@@ -19,7 +19,7 @@ public class Medium implements Serializable {
 
     public void conectarseAEspiritu(Espiritu espiritu) {
         this.espiritus.add(espiritu);
-
+        espiritu.aumentarConexion(this);
     }
 
     public String getNombre() {

@@ -41,8 +41,7 @@ public class EspirituServiceImpl implements EspirituService {
     public Medium conectar(Long espirituId, Medium medium) {
         Espiritu espiritu = recuperar(espirituId);
 
-        medium.conectarseAEspiritu(espiritu); //VA ACÁ O COMO FUNC APARTE?
-        espiritu.aumentarConexion(medium);
+        medium.conectarseAEspiritu(espiritu);
 
         getEspirituDao().actualizar(espiritu); //garantiza ACID
         return medium;

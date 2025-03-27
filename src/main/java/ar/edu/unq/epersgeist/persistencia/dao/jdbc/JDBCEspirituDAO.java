@@ -26,8 +26,9 @@ public record JDBCEspirituDAO() implements EspirituDAO {
                 ps.setString(2, espiritu.getNombre());
                 ps.setInt(3, espiritu.getNivelDeConexion());
                 ps.execute();
+
                 ps.getGeneratedKeys().next();
-                long serialId = ps.getGeneratedKeys().getLong(1);
+                long serialId = ps.getGeneratedKeys().getLong("id");
 
                 espiritu.setId(serialId);
 
@@ -99,7 +100,7 @@ public record JDBCEspirituDAO() implements EspirituDAO {
                 ps.setString(3, espiritu.getNombre());
                 ps.setLong(4, espiritu.getId());
 
-                ps.execute();
+                ps.executeUpdate();
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);

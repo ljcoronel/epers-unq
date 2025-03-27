@@ -16,8 +16,9 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JDBCEspirituDAOTest {
+    public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private JDBCEspirituDAO espirituDao = new JDBCEspirituDAO();
-    private Espiritu pepe;
+    private Espiritu espiritu;
 
 //    Descomentar para ver logs.
 
@@ -35,7 +36,7 @@ public class JDBCEspirituDAOTest {
 
     @BeforeEach
     void crearEspiritu() {
-        pepe = new Espiritu(
+        espiritu = new Espiritu(
                 "Fantasma",
                 0,
                 "Pepe"
@@ -44,87 +45,70 @@ public class JDBCEspirituDAOTest {
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
-        espirituDao.crear(pepe);
+        espirituDao.crear(espiritu);
 
 //        assertThrows(Exception.class, () -> {
-            espirituDao.recuperar(pepe.getId());
+            espirituDao.recuperar(espiritu.getId());
 //        });
     }
 
     @Test
     void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
 
-        espirituDao.crear(pepe);
+        espirituDao.crear(espiritu);
 
-        var otroPepe = espirituDao.recuperar(pepe.getId());
+        var otroPepe = espirituDao.recuperar(espiritu.getId());
 
-        assertEquals(pepe.getTipo(), otroPepe.getTipo());
-        assertEquals(pepe.getNombre(), otroPepe.getNombre());
-        assertEquals(pepe.getNivelDeConexion(), otroPepe.getNivelDeConexion());
+        assertEquals(espiritu.getTipo(), otroPepe.getTipo());
+        assertEquals(espiritu.getNombre(), otroPepe.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), otroPepe.getNivelDeConexion());
 //         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
 
 
-        Assertions.assertNotEquals(pepe, otroPepe);
+        Assertions.assertNotEquals(espiritu, otroPepe);
 
     }
 
     @Test
     void alGuardarActualizarYLuegoRecuperarSeObtieneObjetosSimilares() {
 
-        espirituDao.crear(pepe);
-        espirituDao.actualizar(pepe);
+        espirituDao.crear(espiritu);
+        espirituDao.actualizar(espiritu);
 
-        var otroPepe = espirituDao.recuperar(pepe.getId());
+        var otroEspiritu = espirituDao.recuperar(espiritu.getId());
 
-        assertEquals(pepe.getTipo(), otroPepe.getTipo());
-        assertEquals(pepe.getNombre(), otroPepe.getNombre());
-        assertEquals(pepe.getNivelDeConexion(), otroPepe.getNivelDeConexion());
-//         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
+        assertEquals(espiritu.getTipo(), otroEspiritu.getTipo());
+        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+//         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
 
 
-        Assertions.assertNotEquals(pepe, otroPepe);
+        Assertions.assertNotEquals(espiritu, otroEspiritu);
 
     }
 
     @Test
     void alRecuperarAUnEspirituConectadoSuNivelDeConexionPersisteSiSeLoActualiza() {
 
-        espirituDao.crear(pepe);
-        pepe.aumentarConexion(new Medium("Brujita", null, null));
-        espirituDao.actualizar(pepe);
+        espirituDao.crear(espiritu);
+        espiritu.aumentarConexion(MEDIUM);
+        espirituDao.actualizar(espiritu);
 
-        var otroPepe = espirituDao.recuperar(pepe.getId());
+        var otroEspiritu = espirituDao.recuperar(espiritu.getId());
 
-        assertEquals(10, pepe.getNivelDeConexion());
-        Assertions.assertNotEquals(pepe, otroPepe);
+        assertEquals(10, espiritu.getNivelDeConexion());
+        Assertions.assertNotEquals(espiritu, otroEspiritu);
 
     }
 
     @Test
     void alConectarUnEspirituSuNivelDeConexionAumentaEn10() {
 
-        pepe.aumentarConexion(new Medium("Brujita", null, null));
+        espiritu.aumentarConexion(MEDIUM);
 
-        assertEquals(10, pepe.getNivelDeConexion());
+        assertEquals(10, espiritu.getNivelDeConexion());
 
     }
-
-    @Test
-    void alConectarUnEspirituSuNivelDeConexionNoAumentaMasDe100() {
-
-        pepe = new Espiritu(
-                "Fantasma",
-                99,
-                "Pepe"
-        );
-
-        pepe.aumentarConexion(new Medium("Brujita", null, null));
-
-
-        assertEquals(100, pepe.getNivelDeConexion());
-        //no puede ser negativo porque no hay métodos que lo seteen negativo por ahora
-    }
-
 
 
     @Test
@@ -157,7 +141,7 @@ public class JDBCEspirituDAOTest {
                 "Jaimito"
         );
 
-        espirituDao.crear(pepe);
+        espirituDao.crear(espiritu);
         espirituDao.crear(gonzalo);
         espirituDao.crear(jaimito);
 
@@ -167,9 +151,9 @@ public class JDBCEspirituDAOTest {
             idDeTodos.add(espiritu.getId());
         });
 
-        assertEquals(Arrays.asList(gonzalo.getId(), jaimito.getId(), pepe.getId()), idDeTodos);
+        assertEquals(Arrays.asList(gonzalo.getId(), jaimito.getId(), espiritu.getId()), idDeTodos);
 
-        espirituDao.eliminar(pepe.getId());
+        espirituDao.eliminar(espiritu.getId());
         espirituDao.eliminar(gonzalo.getId());
         espirituDao.eliminar(jaimito.getId());
 

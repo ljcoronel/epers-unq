@@ -11,7 +11,13 @@ public class Espiritu implements Serializable {
 
     public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
         this.tipo = tipo;
-        this.nivelDeConexion = nivelDeConexion;
+        this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
+        this.nombre = nombre;
+    }
+
+    public Espiritu(String tipo, String nombre) {
+        this.tipo = tipo;
+        this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
     }
 

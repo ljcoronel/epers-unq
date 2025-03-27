@@ -58,15 +58,15 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(espiritu);
 
-        var otroPepe = espirituService.recuperar(espiritu.getId());
+        var otroEspiritu = espirituService.recuperar(espiritu.getId());
 
-        assertEquals(espiritu.getTipo(), otroPepe.getTipo());
-        assertEquals(espiritu.getNombre(), otroPepe.getNombre());
-        assertEquals(espiritu.getNivelDeConexion(), otroPepe.getNivelDeConexion());
-//         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
+        assertEquals(espiritu.getTipo(), otroEspiritu.getTipo());
+        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+//         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
 
 
-        Assertions.assertNotEquals(espiritu, otroPepe);
+        Assertions.assertNotEquals(espiritu, otroEspiritu);
 
     }
 
@@ -76,21 +76,21 @@ public class EspirituServiceImplTest {
         espirituService.crear(espiritu);
         espirituService.actualizar(espiritu);
 
-        var otroPepe = espirituService.recuperar(espiritu.getId());
+        var otroEspiritu = espirituService.recuperar(espiritu.getId());
 
-        assertEquals(espiritu.getTipo(), otroPepe.getTipo());
-        assertEquals(espiritu.getNombre(), otroPepe.getNombre());
-        assertEquals(espiritu.getNivelDeConexion(), otroPepe.getNivelDeConexion());
+        assertEquals(espiritu.getTipo(), otroEspiritu.getTipo());
+        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
 //         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
 
 
-        Assertions.assertNotEquals(espiritu, otroPepe);
+        Assertions.assertNotEquals(espiritu, otroEspiritu);
 
     }
 
 
     @Test
-    void alConectarUnEspirituSuNivelDeConexionAumentaEn10YSePersiste() {
+    void alConectarUnEspirituSuNivelDeConexionAumentaYSePersiste() {
         espirituService.crear(espiritu);
 
         espirituService.conectar(espiritu.getId(), MEDIUM);
@@ -147,9 +147,6 @@ public class EspirituServiceImplTest {
 
         assertEquals(Arrays.asList(gonzalo.getId(), jaimito.getId(), espiritu.getId()), idDeTodos);
 
-        espirituService.eliminar(espiritu.getId());
-        espirituService.eliminar(gonzalo.getId());
-        espirituService.eliminar(jaimito.getId());
 
 
     }
