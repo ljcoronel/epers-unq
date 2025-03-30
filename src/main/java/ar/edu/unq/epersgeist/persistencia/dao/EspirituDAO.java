@@ -10,4 +10,5 @@ public interface EspirituDAO {
     List<Espiritu> recuperarTodos();
     void actualizar(Espiritu espiritu);
     void eliminar(Long idDelEspiritu);
+//    List<Espiritu> espiritusDemoniacos(); o List<Espiritu> espiritusDeTipo(TipoEspiritu tipo); ??
 }
