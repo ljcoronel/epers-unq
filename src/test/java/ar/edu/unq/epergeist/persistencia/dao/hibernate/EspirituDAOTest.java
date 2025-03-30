@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.persistencia.dao.jdbc;
+package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JDBCEspirituDAOTest {
+public class EspirituDAOTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private JDBCEspirituDAO espirituDao = new JDBCEspirituDAO();
     private Espiritu espiritu;
