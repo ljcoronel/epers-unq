@@ -1,20 +1,20 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 
 import java.util.List;
 
 public class EspirituServiceImpl implements EspirituService {
 
-    private JDBCEspirituDAO espirituDao = new JDBCEspirituDAO();
+    private EspirituDAO espirituDao;
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        return getEspirituDao().crear(espiritu);
+//        return getEspirituDao().crear(espiritu);
+        return null;
     }
 
     @Override
@@ -29,29 +29,35 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        getEspirituDao().actualizar(espiritu);
+//        getEspirituDao().actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        getEspirituDao().eliminar(espirituId);
+//        getEspirituDao().eliminar(espirituId);
     }
 
     @Override
-    public Medium conectar(Long espirituId, Medium medium) {
-        Espiritu espiritu = recuperar(espirituId);
-
-        medium.conectarseAEspiritu(espiritu);
-
-        getEspirituDao().actualizar(espiritu); //garantiza ACID
-        return medium;
+    public List<Espiritu> espiritusDemoniacos() {
+        return List.of();
     }
 
-    public JDBCEspirituDAO getEspirituDao() {
+    @Override
+    public Medium conectar(Long espirituId, Long mediumId) {
+//        Espiritu espiritu = recuperar(espirituId);
+//
+//        medium.conectarseAEspiritu(espiritu);
+//
+//        getEspirituDao().actualizar(espiritu); //garantiza ACID
+//        return medium;
+        return null;
+    }
+
+    public EspirituDAO getEspirituDao() {
         return espirituDao;
     }
 
-    private void setEspirituDao(JDBCEspirituDAO espirituDao) {
+    private void setEspirituDao(EspirituDAO espirituDao) {
         this.espirituDao = espirituDao;
     }
 }

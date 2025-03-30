@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;

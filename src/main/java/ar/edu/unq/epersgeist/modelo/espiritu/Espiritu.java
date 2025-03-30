@@ -1,22 +1,37 @@
-package ar.edu.unq.epersgeist.modelo;
+package ar.edu.unq.epersgeist.modelo.espiritu;
+
+import ar.edu.unq.epersgeist.modelo.Medium;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
+@Getter @Setter @NoArgsConstructor @ToString
+
+
+@Entity
 public class Espiritu implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
-    private Integer nivelDeConexion;
+    @Column(nullable = false)
+    private Integer nivelDeConexion; // between?
+    @Column(nullable = false, unique = true)
     private String nombre;
 
-    public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
-        this.tipo = tipo;
+
+    public Espiritu( Integer nivelDeConexion, String nombre) {
+
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
     }
 
-    public Espiritu(String tipo, String nombre) {
-        this.tipo = tipo;
+    public Espiritu(String nombre) {
+
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
     }
@@ -41,23 +56,4 @@ public class Espiritu implements Serializable {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Integer getNivelDeConexion() {
-        return nivelDeConexion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
 }

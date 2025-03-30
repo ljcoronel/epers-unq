@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS espiritu (
-  id SERIAL PRIMARY KEY,
-  tipo VARCHAR(255) NOT NULL,
-  nombre VARCHAR(255) NOT NULL,
-  nivelDeConexion int NOT NULL CHECK (nivelDeConexion BETWEEN 0 AND 100) DEFAULT 0
-);
