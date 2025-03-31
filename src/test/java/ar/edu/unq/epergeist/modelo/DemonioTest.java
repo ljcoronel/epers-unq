@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class DemonioTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
-    private Espiritu espiritu;
+    private Espiritu demonio;
 
 //    Descomentar para ver logs.
 
@@ -30,10 +32,31 @@ public class DemonioTest {
 
     @BeforeEach
     void crearEspiritu() {
-        espiritu = new Demonio(
-                "Pepardo",
-                10
+        demonio = new Demonio(
+                10,
+                "Pepardo"
+
         );
+    }
+
+    @Test
+    void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
+        demonio = new Demonio(
+                250,
+                "Pepe"
+        );
+
+        assertEquals(100, demonio.getNivelDeConexion());
+    }
+
+    @Test
+    void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
+        demonio = new Angel(
+                -50,
+                "Pepe"
+        );
+
+        assertEquals(0, demonio.getNivelDeConexion());
     }
 
 //    @Test
@@ -44,16 +67,7 @@ public class DemonioTest {
 //        assertEquals(10, espiritu.getNivelDeConexion());
 //    }
 //
-//    @Test
-//    void alCrearEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                250,
-//                "Pepe"
-//        );
-//
-//        assertEquals(100, espiritu.getNivelDeConexion());
-//    }
+
 //
 //    @Test
 //    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
@@ -69,16 +83,7 @@ public class DemonioTest {
 //        assertEquals(100, espiritu.getNivelDeConexion());
 //    }
 //
-//    @Test
-//    void alCrearEspirituNoPuedeTenerMenosDe0DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                -50,
-//                "Pepe"
-//        );
-//
-//        assertEquals(0, espiritu.getNivelDeConexion());
-//    }
+
 //
 //
 //

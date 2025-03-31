@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 
 @Entity
-public class Espiritu implements Serializable {
+public abstract class Espiritu implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +23,7 @@ public class Espiritu implements Serializable {
     @Column(nullable = false, unique = true)
     private String nombre;
 
-
-    public Espiritu( Integer nivelDeConexion, String nombre) {
+    public Espiritu(Integer nivelDeConexion, String nombre) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;

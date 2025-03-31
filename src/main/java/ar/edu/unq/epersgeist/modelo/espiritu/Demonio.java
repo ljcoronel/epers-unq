@@ -7,7 +7,7 @@ public class Demonio extends Espiritu {
     public Demonio(String nombre) {
         super(nombre);
     }
-    public Demonio(String nombre, Integer nivelDeConexion) {
+    public Demonio(Integer nivelDeConexion, String nombre ) {
         super(nivelDeConexion, nombre);
     }
 

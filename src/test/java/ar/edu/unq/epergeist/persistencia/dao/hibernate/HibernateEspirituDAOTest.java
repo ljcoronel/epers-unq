@@ -5,12 +5,17 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import jakarta.persistence.OptimisticLockException;
+import org.hibernate.Session;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EspirituDAOTest {
+public class HibernateEspirituDAOTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private EspirituDAO espirituDao = new HibernateEspirituDAO();
     private Espiritu espiritu;
@@ -32,36 +37,104 @@ public class EspirituDAOTest {
     @BeforeEach
     void crearEspiritu() {
         espiritu = new Angel(
-                "Pepe",
-                10
+                10,
+                "Pepe"
+
         );
     }
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
-        espirituDao.guardar(espiritu);
-
-        assertThrows(Exception.class, () -> {
-            espirituDao.recuperar(espiritu.getId());
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
         });
+
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.eliminar(espiritu);
+            return null;
+        });
+
+        assertNull(HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(espiritu.getId())));
+
     }
-//
-//    @Test
-//    void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
-//
-//        espirituDao.crear(espiritu);
-//
-//        var otroPepe = espirituDao.recuperar(espiritu.getId());
-//
-//        assertEquals(espiritu.getTipo(), otroPepe.getTipo());
-//        assertEquals(espiritu.getNombre(), otroPepe.getNombre());
-//        assertEquals(espiritu.getNivelDeConexion(), otroPepe.getNivelDeConexion());
-////         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
-//
-//
-//        Assertions.assertNotEquals(espiritu, otroPepe);
-//
-//    }
+
+    @Test
+    void alEliminarUnEspirituQueNoFueGuardadoNoHaceNada() { // está de más testear esto?
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
+        });
+
+        assertDoesNotThrow( () -> {
+                    HibernateTransactionRunner.runTrx(() -> {
+                        espirituDao.eliminar(espiritu);
+                        return null;
+                    });
+                }
+        );
+
+
+    }
+
+    @Test
+    void alEliminarUnEspirituQueFueEliminadoLanzaError() {
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
+        });
+
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.eliminar(espiritu);
+            return null;
+        });
+
+        assertThrows(OptimisticLockException.class, () -> { // optimisticLock es una excepción cuando ya se borró algo
+                HibernateTransactionRunner.runTrx(() -> {
+                    espirituDao.eliminar(espiritu);
+                    return null;
+                });
+        }
+                );
+
+
+
+    }
+
+
+
+    @Test
+    void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
+
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
+        });
+
+        var otroEspiritu = HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(espiritu.getId()));
+
+        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+//         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
+
+
+        Assertions.assertNotEquals(espiritu, otroEspiritu);
+
+    }
+
+    @Test
+    void alGuardarAlEspirituEsteRecibeUnId() {
+
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
+        });
+
+        assertNotNull(espiritu.getId());
+
+    }
+
+
 //
 //    @Test
 //    void alGuardarActualizarYLuegoRecuperarSeObtieneObjetosSimilares() {
@@ -80,7 +153,7 @@ public class EspirituDAOTest {
 //        Assertions.assertNotEquals(espiritu, otroEspiritu);
 //
 //    }
-//
+
 //    @Test
 //    void alRecuperarAUnEspirituConectadoSuNivelDeConexionPersisteSiSeLoActualiza() {
 //
@@ -94,24 +167,14 @@ public class EspirituDAOTest {
 //        Assertions.assertNotEquals(espiritu, otroEspiritu);
 //
 //    }
-//
+
+
 //    @Test
-//    void alConectarUnEspirituSuNivelDeConexionAumentaEn10() {
+//    void alRecuperarUnEspirituQueNoExisteDevuelveNull() {
 //
-//        espiritu.aumentarConexion(MEDIUM);
-//
-//        assertEquals(10, espiritu.getNivelDeConexion());
-//
+//        assertNull(HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(-1L)));
 //    }
-//
-//
-//    @Test
-//    void alRecuperarUnEspirituQueNoExisteLanzaError() {
-//
-//        assertThrows(Exception.class, () -> {
-//            espirituDao.recuperar(-1L);
-//        });
-//    }
+
 //
 //    @Test
 //    void alRecuperarTodosEspíritusPeroNoHayNingunoDevuelveListaVacía() {
@@ -153,23 +216,16 @@ public class EspirituDAOTest {
 //
 //
 //    }
-//
-//
-//
-//
-//
-//    @AfterEach
-//    void emilinarModelo() {
-//        JDBCConnector.getInstance().execute(conn -> {
-//            try {
-//                var ps = conn.prepareStatement("DELETE from espiritu");
-//                ps.execute();
-//
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            return null;
-//        });
-//    }
+
+
+
+
+    @AfterEach
+    void emilinarModelo() {
+        HibernateTransactionRunner.runTrx(() -> {
+            Session session = HibernateTransactionRunner.getCurrentSession();
+            session.createQuery("delete from " + "Espiritu").executeUpdate();
+            return null;
+        });
+    }
 }

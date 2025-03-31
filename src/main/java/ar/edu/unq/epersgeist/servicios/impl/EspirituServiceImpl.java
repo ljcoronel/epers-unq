@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
 
@@ -11,10 +12,16 @@ public class EspirituServiceImpl implements EspirituService {
 
     private EspirituDAO espirituDao;
 
+    public EspirituServiceImpl(EspirituDAO espirituDao) {
+        setEspirituDao(espirituDao);
+    }
+
     @Override
-    public Espiritu crear(Espiritu espiritu) {
-//        return getEspirituDao().crear(espiritu);
-        return null;
+    public void crear(Espiritu espiritu) {
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().guardar(espiritu);
+            return null;
+        });
     }
 
     @Override
@@ -33,8 +40,11 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public void eliminar(Long espirituId) {
-//        getEspirituDao().eliminar(espirituId);
+    public void eliminar(Espiritu espiritu) { // se podría redefinir la interface para que acepte espiritus en vez de espirituId?
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().eliminar(espiritu);
+            return null;
+        });
     }
 
     @Override

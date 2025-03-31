@@ -1,23 +1,16 @@
 package ar.edu.unq.epergeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
-import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AngelTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
-    private Espiritu espiritu;
+    private Espiritu angel;
 
 //    Descomentar para ver logs.
 
@@ -35,35 +28,35 @@ public class AngelTest {
 
     @BeforeEach
     void crearEspiritu() {
-        espiritu = new Angel(
-                "Pepe",
-                0
+        angel = new Angel(
+                0,
+                "pepe"
+
         );
     }
 
 
+
+
+
     @Test
-    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
-        Demonio demonio = new Demonio(
-                "jorgito",
-                0
+    void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
+        angel = new Angel(
+                250,
+                "Pepe"
         );
 
-        HibernateEspirituDAO espirituDao = new HibernateEspirituDAO();
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(demonio);
-            return null;
-        });
+        assertEquals(100, angel.getNivelDeConexion());
+    }
 
-        // empíeza en 0
-        espiritu.aumentarConexion(MEDIUM);
+    @Test
+    void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
+        angel = new Angel(
+                -50,
+                "Pepe"
+        );
 
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
-                return null;
-        });
-//        new HibernateEspirituDAO().guardar(espiritu);
-        assertEquals(10, espiritu.getNivelDeConexion());
+        assertEquals(0, angel.getNivelDeConexion());
     }
 
 //    @Test
@@ -74,16 +67,6 @@ public class AngelTest {
 //        assertEquals(10, espiritu.getNivelDeConexion());
 //    }
 
-//    @Test
-//    void alCrearEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                250,
-//                "Pepe"
-//        );
-//
-//        assertEquals(100, espiritu.getNivelDeConexion());
-//    }
 //
 //    @Test
 //    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
@@ -99,31 +82,10 @@ public class AngelTest {
 //        assertEquals(100, espiritu.getNivelDeConexion());
 //    }
 //
-//    @Test
-//    void alCrearEspirituNoPuedeTenerMenosDe0DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                -50,
-//                "Pepe"
-//        );
-//
-//        assertEquals(0, espiritu.getNivelDeConexion());
-//    }
+
+
 //
 //
 //
-//    @AfterEach
-//    void emilinarModelo() {
-//        JDBCConnector.getInstance().execute(conn -> {
-//            try {
-//                var ps = conn.prepareStatement("DELETE from espiritu");
-//                ps.execute();
-//
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            return null;
-//        });
-//    }
+
 }

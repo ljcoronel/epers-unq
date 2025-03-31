@@ -7,7 +7,7 @@ public class Angel extends Espiritu {
     public Angel(String nombre) {
         super(nombre);
     }
-    public Angel( String nombre, Integer nivelDeConexion) {
+    public Angel( Integer nivelDeConexion, String nombre) {
         super(nivelDeConexion, nombre);
     }
 

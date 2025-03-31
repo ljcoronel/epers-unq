@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-//    private final Espiritu espiritu = new Espiritu("Juan alberto el zorro", 79, "Poltergeist");
-//    Medium medium;
+//    private final Espiritu espiritu = new Espiritu("Juan alberto el zorro", 79);
+    Medium medium;
 
 //    Descomentar para ver logs.
-
+//
 //    @BeforeAll
 //    static void setupLogging() {
 //        try {
@@ -25,19 +25,19 @@ public class MediumTest {
 //        }
 //    }
 
-//    @BeforeEach
-//    void crearMedium() {
-//        medium = new Medium("Francisco", 50, 30);
-//    }
-//
-//    @Test
-//    void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
+    @BeforeEach
+    void crearMedium() {
+        medium = new Medium("Francisco", 50, 30);
+    }
+
+    @Test
+    void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
 //        medium.conectarseAEspiritu(espiritu);
 //
 //        assertEquals(1, medium.getEspiritus().size());
 //        assertTrue(medium.getEspiritus().contains(espiritu));
-//
-//    }
+
+    }
 
 
 
