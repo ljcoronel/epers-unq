@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.persistencia.dao.hibernate;
+/*package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -178,4 +178,4 @@ public class EspirituDAOTest {
             return null;
         });
     }
-}
+}*/

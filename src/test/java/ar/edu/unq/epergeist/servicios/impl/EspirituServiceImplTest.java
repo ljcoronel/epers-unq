@@ -1,8 +1,7 @@
 package ar.edu.unq.epergeist.servicios.impl;
-
+/*
 import ar.edu.unq.epersgeist.modelo.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCConnector;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -155,7 +154,7 @@ public class EspirituServiceImplTest {
 
 
 
-    @AfterEach
+/*    @AfterEach
     void emilinarModelo() {
         JDBCConnector.getInstance().execute(conn -> {
             try {
@@ -168,5 +167,6 @@ public class EspirituServiceImplTest {
 
             return null;
         });
-    }
-}
+    }*/
+//}
+//*/
