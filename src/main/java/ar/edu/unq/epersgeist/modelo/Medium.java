@@ -1,13 +1,28 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter @Setter @NoArgsConstructor @ToString
+
+@Entity
 public class Medium implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
     private Integer manaMax;
+    @Column(nullable = false)
     private Integer mana;
     private Set<Espiritu> espiritus = new HashSet<>();
 
@@ -22,19 +37,5 @@ public class Medium implements Serializable {
         espiritu.aumentarConexion(this);
     }
 
-    public String getNombre() {
-        return nombre;
-    }
 
-    public Integer getManaMax() {
-        return manaMax;
-    }
-
-    public Integer getMana() {
-        return mana;
-    }
-
-    public Set<Espiritu> getEspiritus() {
-        return espiritus;
-    }
 }
