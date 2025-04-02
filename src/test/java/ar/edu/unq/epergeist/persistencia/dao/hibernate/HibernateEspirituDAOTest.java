@@ -104,7 +104,7 @@ public class HibernateEspirituDAOTest {
 
 
     @Test
-    void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
+    void alGuardarYLuegoRecuperarSeObtienenObjetosSimilares() {
 
         HibernateTransactionRunner.runTrx(() -> {
             espirituDao.guardar(espiritu);
@@ -133,6 +133,8 @@ public class HibernateEspirituDAOTest {
         assertNotNull(espiritu.getId());
 
     }
+
+    // test para actualizar un espíritu pero que tire error porque no existe todavía
 
 
 //
@@ -210,9 +212,6 @@ public class HibernateEspirituDAOTest {
 //
 //        assertEquals(Arrays.asList(gonzalo.getId(), jaimito.getId(), espiritu.getId()), idDeTodos);
 //
-//        espirituDao.eliminar(espiritu.getId());
-//        espirituDao.eliminar(gonzalo.getId());
-//        espirituDao.eliminar(jaimito.getId());
 //
 //
 //    }

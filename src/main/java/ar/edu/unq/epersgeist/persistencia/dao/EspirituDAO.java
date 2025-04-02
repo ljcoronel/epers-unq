@@ -9,5 +9,5 @@ public interface EspirituDAO {
     Espiritu recuperar(Long idDelEspiritu);
     List<Espiritu> recuperarTodos();
     void eliminar(Espiritu espiritu);
-//    List<Espiritu> espiritusDemoniacos(); o List<Espiritu> espiritusDeTipo(TipoEspiritu tipo); ??
+//    List<Espiritu> espiritusDeTipo(String tipo);
 }
