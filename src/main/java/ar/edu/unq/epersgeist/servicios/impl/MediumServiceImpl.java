@@ -17,8 +17,8 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public Medium crear(Medium medium) {
-        return null;
+    public void crear(Medium medium) {
+        
     }
 
     @Override
@@ -28,7 +28,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public List<Medium> recuperarTodos() {
-
+        return HibernateTransactionRunner.runTrx(() -> this.getMediumDao().recuperarTodos());
     }
 
     @Override
@@ -38,7 +38,10 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void eliminar(Medium medium) {
-
+        HibernateTransactionRunner.runTrx(() -> {
+            getMediumDao().eliminar(medium);
+            return null;
+        });
     }
 
     @Override

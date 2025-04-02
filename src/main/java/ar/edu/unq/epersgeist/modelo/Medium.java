@@ -1,16 +1,14 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @EqualsAndHashCode
+@ToString
 
 @Entity
 public class Medium implements Serializable {
