@@ -18,30 +18,32 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HibernateEspirituDAOTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private EspirituDAO espirituDao = new HibernateEspirituDAO();
-    private Espiritu espiritu;
+    private Espiritu espiritu=  new Angel(10,"Angelito");
 
-//    Descomentar para ver logs.
-
-//    @BeforeAll
-//    static void setupLogging() {
-//        try {
-//            // Cargamos la configuración de logging
-//            getLogManager().readConfiguration(
-//                JDBCPersonajeDAOTest.class.getClassLoader().getResourceAsStream("logging.properties")
-//            );
-//        } catch (Exception e) {
-//            System.err.println("No se pudo cargar la configuración de logging: " + e.getMessage());
-//        }
-//    }
 
     @BeforeEach
-    void crearEspiritu() {
-        espiritu = new Angel(
-                10,
-                "Pepe"
+    void crearEntidades() {
 
-        );
+        HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu);
+            return null;
+        });
     }
+
+    @Test
+    void alGuardarYLuegoRecuperarSeObtienenObjetosSimilares() {
+
+        var espirituRecuperado = HibernateTransactionRunner.runTrx(()->{
+            return espirituDao.recuperar(espiritu.getId());
+        });
+        assertEquals(espiritu.getNombre(), espirituRecuperado.getNombre());
+        assertEquals(espiritu.getNivelDeConexion(), espirituRecuperado.getNivelDeConexion());
+
+        Assertions.assertNotEquals(espiritu, espirituRecuperado);
+
+    }
+
+
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
@@ -97,30 +99,11 @@ public class HibernateEspirituDAOTest {
         }
                 );
 
-
-
     }
 
 
 
-    @Test
-    void alGuardarYLuegoRecuperarSeObtienenObjetosSimilares() {
 
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
-            return null;
-        });
-
-        var otroEspiritu = HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(espiritu.getId()));
-
-        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
-        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
-//         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
-
-
-        Assertions.assertNotEquals(espiritu, otroEspiritu);
-
-    }
 
     @Test
     void alGuardarAlEspirituEsteRecibeUnId() {

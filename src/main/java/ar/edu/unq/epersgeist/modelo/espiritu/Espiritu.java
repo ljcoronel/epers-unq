@@ -36,6 +36,7 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void aumentarConexion(Medium medium) {
+
         this.aumentarNivelDeConexionEn(10);
     }
 

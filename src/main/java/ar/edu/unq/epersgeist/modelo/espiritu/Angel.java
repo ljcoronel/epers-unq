@@ -7,9 +7,18 @@ public class Angel extends Espiritu {
     public Angel(String nombre) {
         super(nombre);
     }
-    public Angel( Integer nivelDeConexion, String nombre) {
-        super(nivelDeConexion, nombre);
+
+    public Angel(Integer nivelDeConexion, String nombre) {
+        super(nivelDeConexion,nombre);
     }
+
+    public Angel() {
+
+    }
+
+//    public Angel( Integer nivelDeConexion, String nombre) {
+//        super(nivelDeConexion, nombre);
+//    }
 
     public void atacar(Demonio demonio) {
         //hacer algo

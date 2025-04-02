@@ -31,6 +31,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Espiritu> recuperarTodos() {
+
         return getEspirituDao().recuperarTodos();
     }
 
