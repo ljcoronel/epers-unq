@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,10 +64,12 @@ public class HibernateEspirituDAOTest {
             return  espirituDao.recuperarTodos();
         });
 
+        List<Long> ids = new ArrayList<>();
+        espiritus.forEach(espiritu -> {ids.add(espiritu.getId());});
+
         assertEquals(2, espiritus.size());
-        assertTrue(espiritus.contains(espiritu1));
-        //        assertTrue(espiritus.contains(espiritu1));
-        //        assertTrue(espiritus.contains(espiritu2));
+        assertTrue(ids.contains(espiritu1.getId()));
+        assertTrue(ids.contains(espiritu2.getId()));
     }
 
 
@@ -93,8 +97,6 @@ public class HibernateEspirituDAOTest {
                     });
                 }
         );
-
-
     }
 
     @Test

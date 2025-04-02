@@ -31,7 +31,13 @@ public class HibernateDAO<T> {
 
     public List<T> recuperarTodos() {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        return session.createQuery("from "+ entityType.getSimpleName(), entityType).list();
+        return session.createQuery("from " + entityType.getSimpleName(), entityType).list();
+
+    }
+
+    public void actualizar() {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        session.persist(entityType);
 
     }
 }
