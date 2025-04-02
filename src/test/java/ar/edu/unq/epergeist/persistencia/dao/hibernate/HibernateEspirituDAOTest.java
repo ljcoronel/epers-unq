@@ -13,64 +13,82 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HibernateEspirituDAOTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private EspirituDAO espirituDao = new HibernateEspirituDAO();
-    private Espiritu espiritu=  new Angel(10,"Angelito");
+    private Espiritu espiritu1 =  new Angel(10,"Angelito1");
+    private Espiritu espiritu2=  new Angel(20,"Angelito2");
 
 
     @BeforeEach
     void crearEntidades() {
 
         HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
+            espirituDao.guardar(espiritu1);
+            espirituDao.guardar(espiritu2);
             return null;
         });
     }
 
     @Test
-    void alGuardarYLuegoRecuperarSeObtienenObjetosSimilares() {
+    void SePuedeRecuperarElEspirituCreadoConLaMismaInformacion() {
 
-        var espirituRecuperado = HibernateTransactionRunner.runTrx(()->{
-            return espirituDao.recuperar(espiritu.getId());
+        Espiritu espirituRecuperado = HibernateTransactionRunner.runTrx(()->{
+            return espirituDao.recuperar(espiritu1.getId());
         });
-        assertEquals(espiritu.getNombre(), espirituRecuperado.getNombre());
-        assertEquals(espiritu.getNivelDeConexion(), espirituRecuperado.getNivelDeConexion());
 
-        Assertions.assertNotEquals(espiritu, espirituRecuperado);
+        assertEquals(espiritu1.getNombre(), espirituRecuperado.getNombre());
+        assertEquals(espiritu1.getNivelDeConexion(), espirituRecuperado.getNivelDeConexion());
+        Assertions.assertNotEquals(espiritu1, espirituRecuperado);
 
+    }
+
+    @Test
+    void AlRecuperarUnEspituQueNoExisteQuedaVacio(){
+        Long id_inventado = 9999L;
+        var espirituInexistente = HibernateTransactionRunner.runTrx(()->{
+            return espirituDao.recuperar(id_inventado);
+        });
+        assertNull(espirituInexistente);
+    }
+
+    @Test
+    void sePuedeRecuperarMuchosEspiritus(){
+        List<Espiritu> espiritus = HibernateTransactionRunner.runTrx(() -> {
+            return  espirituDao.recuperarTodos();
+        });
+
+        assertEquals(2, espiritus.size());
+        assertTrue(espiritus.contains(espiritu1));
+        //        assertTrue(espiritus.contains(espiritu1));
+        //        assertTrue(espiritus.contains(espiritu2));
     }
 
 
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
+
         HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
+            espirituDao.eliminar(espiritu1);
             return null;
         });
 
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.eliminar(espiritu);
-            return null;
-        });
-
-        assertNull(HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(espiritu.getId())));
+        assertNull(HibernateTransactionRunner.runTrx(() -> espirituDao.recuperar(espiritu1.getId())));
 
     }
 
     @Test
     void alEliminarUnEspirituQueNoFueGuardadoNoHaceNada() { // está de más testear esto?
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
-            return null;
-        });
+        Espiritu nuevo_espiritu =  new Angel(10,"Angel2");
 
         assertDoesNotThrow( () -> {
                     HibernateTransactionRunner.runTrx(() -> {
-                        espirituDao.eliminar(espiritu);
+                        espirituDao.eliminar(nuevo_espiritu);
                         return null;
                     });
                 }
@@ -81,40 +99,24 @@ public class HibernateEspirituDAOTest {
 
     @Test
     void alEliminarUnEspirituQueFueEliminadoLanzaError() {
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
-            return null;
-        });
 
         HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.eliminar(espiritu);
+            espirituDao.eliminar(espiritu1);
             return null;
         });
 
         assertThrows(OptimisticLockException.class, () -> { // optimisticLock es una excepción cuando ya se borró algo
                 HibernateTransactionRunner.runTrx(() -> {
-                    espirituDao.eliminar(espiritu);
+                    espirituDao.eliminar(espiritu1);
                     return null;
                 });
-        }
-                );
+        });
 
     }
 
-
-
-
-
     @Test
     void alGuardarAlEspirituEsteRecibeUnId() {
-
-        HibernateTransactionRunner.runTrx(() -> {
-            espirituDao.guardar(espiritu);
-            return null;
-        });
-
-        assertNotNull(espiritu.getId());
-
+        assertNotNull(espiritu1.getId());
     }
 
     // test para actualizar un espíritu pero que tire error porque no existe todavía
@@ -198,8 +200,6 @@ public class HibernateEspirituDAOTest {
 //
 //
 //    }
-
-
 
 
     @AfterEach

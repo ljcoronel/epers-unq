@@ -14,10 +14,10 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         super(Espiritu.class);
     }
 
-    @Override
-    public List<Espiritu> recuperarTodos() {
-        return List.of();
-    }
+//    @Override
+//    public List<Espiritu> recuperarTodos() {
+//        return List.of();
+//    }
 
 //    @Override
 //    public List<Espiritu> espiritusDeTipo(String tipo) {
