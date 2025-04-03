@@ -59,6 +59,20 @@ public class HibernateEspirituDAOTest {
     }
 
     @Test
+    void sePuedenActualizarLosEspiritus(){
+        espiritu1.setNombre("Nuevo Nombre");
+        HibernateTransactionRunner.runTrx(()->{
+            espirituDao.actualizar(espiritu1);
+            return null;
+        });
+
+        var Espiritu_recuperado = HibernateTransactionRunner.runTrx(()->{
+            return espirituDao.recuperar(espiritu1.getId());
+        });
+        assertEquals(Espiritu_recuperado.getNombre(), "Nuevo Nombre");
+    }
+
+    @Test
     void sePuedeRecuperarMuchosEspiritus(){
         List<Espiritu> espiritus = HibernateTransactionRunner.runTrx(() -> {
             return  espirituDao.recuperarTodos();

@@ -13,9 +13,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EspirituServiceImplTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
-    private Espiritu espiritu;
+    private Espiritu espiritu1;
+    private Espiritu espiritu2;
+    private Espiritu espiritu3;
 
 //    Descomentar para ver logs.
 
@@ -41,29 +42,36 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearEspiritu() {
-        espiritu = new Angel(
-                10,
-                "Pepe"
+        espiritu1 = new Angel(10,"Angel1");
+        espiritu2 = new Angel(10,"Angel2");
+        espiritu3 = new Angel(10,"Angel3");
+    }
 
-        );
+    @Test
+    void sePuedenRecuperarTodosLosEspiritusCreados(){
+        espirituService.crear(espiritu1);
+        espirituService.crear(espiritu2);
+        espirituService.crear(espiritu3);
+        List<Espiritu> espiritus_recuperados = espirituService.recuperarTodos();
+        assertEquals(3, espiritus_recuperados.size());
+
     }
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
-        espirituService.crear(espiritu);
-        espirituService.eliminar(espiritu);
-
-       assertNull(espirituService.recuperar(espiritu.getId()));
+        espirituService.crear(espiritu1);
+        espirituService.eliminar(espiritu1);
+        assertNull(espirituService.recuperar(espiritu1.getId()));
     }
 
     @Test
     void alEliminarUnEspirituQueFueEliminadoLanzaError() {
-        espirituService.crear(espiritu);
+        espirituService.crear(espiritu1);
 
-        espirituService.eliminar(espiritu);
+        espirituService.eliminar(espiritu1);
 
         assertThrows(OptimisticLockException.class, () -> { // optimisticLock es una excepción cuando ya se borró algo
-            espirituService.eliminar(espiritu);
+            espirituService.eliminar(espiritu1);
                 }
         );
 
@@ -71,38 +79,46 @@ public class EspirituServiceImplTest {
 
     @Test
     void alEliminarUnEspirituQueNoFueGuardadoNoHaceNada() { // está de más testear esto?
-        espirituService.crear(espiritu);
+        espirituService.crear(espiritu1);
 
         assertDoesNotThrow( () -> {
-            espirituService.eliminar(espiritu);
+            espirituService.eliminar(espiritu1);
                 }
         );
+    }
+    @Test
+    void alActualizarUnEspirituSecambiaCorrectamente() {
+        espirituService.crear(espiritu1);
+        espiritu1.setNombre("Nuevo Nombre");
+        espirituService.actualizar(espiritu1);
 
+        var espiritu_recuperado = espirituService.recuperar(espiritu1.getId());
+        assertTrue(espiritu_recuperado.getNombre().equals("Nuevo Nombre"));
 
     }
 
     @Test
     void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
 
-        espirituService.crear(espiritu);
+        espirituService.crear(espiritu1);
 
-        var otroEspiritu = espirituService.recuperar(espiritu.getId());
+        var otroEspiritu = espirituService.recuperar(espiritu1.getId());
 
-        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
-        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+        assertEquals(espiritu1.getNombre(), otroEspiritu.getNombre());
+        assertEquals(espiritu1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
 //         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
 
 
-        Assertions.assertNotEquals(espiritu, otroEspiritu);
+        Assertions.assertNotEquals(espiritu1, otroEspiritu);
 
     }
 
     @Test
     void alGuardarAlEspirituEsteRecibeUnId() {
 
-        espirituService.crear(espiritu);
-
-        assertNotNull(espiritu.getId());
+        assertNull(espiritu1.getId());
+        espirituService.crear(espiritu1);
+        assertNotNull(espiritu1.getId());
 
     }
 //

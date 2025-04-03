@@ -26,18 +26,24 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        return getEspirituDao().recuperar(espirituId);
+        return HibernateTransactionRunner.runTrx(() -> {
+            return this.espirituDao.recuperar(espirituId);
+        });
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-
-        return getEspirituDao().recuperarTodos();
+        return HibernateTransactionRunner.runTrx(() -> {
+            return espirituDao.recuperarTodos();
+        });
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-//        getEspirituDao().actualizar(espiritu);
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().actualizar(espiritu);
+            return null;
+        });
     }
 
     @Override

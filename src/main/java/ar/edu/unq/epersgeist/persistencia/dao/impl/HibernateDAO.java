@@ -35,9 +35,9 @@ public class HibernateDAO<T> {
 
     }
 
-    public void actualizar() {
+    public void actualizar(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        session.persist(entityType);
-
+//        session.persist(entity);
+        session.merge(entity);
     }
 }
