@@ -48,6 +48,16 @@ public class EspirituServiceImplTest {
     }
 
     @Test
+    void alRecuperarUnIdInexistenteNoTraeUnNull(){
+        Long id_Inexistente = 50L;
+        Long id_Inexistente2 = -50L;
+        espirituService.recuperar(id_Inexistente);
+        assertNull(espirituService.recuperar(id_Inexistente));
+        assertNull(espirituService.recuperar(id_Inexistente2));
+    }
+
+
+    @Test
     void sePuedenRecuperarTodosLosEspiritusCreados(){
         espirituService.crear(espiritu1);
         espirituService.crear(espiritu2);
@@ -63,6 +73,7 @@ public class EspirituServiceImplTest {
         espirituService.eliminar(espiritu1);
         assertNull(espirituService.recuperar(espiritu1.getId()));
     }
+
 
     @Test
     void alEliminarUnEspirituQueFueEliminadoLanzaError() {
