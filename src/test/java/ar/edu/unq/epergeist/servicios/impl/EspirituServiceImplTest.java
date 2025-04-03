@@ -67,7 +67,6 @@ public class EspirituServiceImplTest {
     @Test
     void alEliminarUnEspirituQueFueEliminadoLanzaError() {
         espirituService.crear(espiritu1);
-
         espirituService.eliminar(espiritu1);
 
         assertThrows(OptimisticLockException.class, () -> { // optimisticLock es una excepción cuando ya se borró algo
@@ -80,12 +79,12 @@ public class EspirituServiceImplTest {
     @Test
     void alEliminarUnEspirituQueNoFueGuardadoNoHaceNada() { // está de más testear esto?
         espirituService.crear(espiritu1);
-
         assertDoesNotThrow( () -> {
             espirituService.eliminar(espiritu1);
                 }
         );
     }
+
     @Test
     void alActualizarUnEspirituSecambiaCorrectamente() {
         espirituService.crear(espiritu1);
@@ -101,25 +100,18 @@ public class EspirituServiceImplTest {
     void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
 
         espirituService.crear(espiritu1);
-
         var otroEspiritu = espirituService.recuperar(espiritu1.getId());
-
         assertEquals(espiritu1.getNombre(), otroEspiritu.getNombre());
         assertEquals(espiritu1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
-//         no puedo comparar ID porque otroEspiritu no tiene ID setteado todavía
-
-
         Assertions.assertNotEquals(espiritu1, otroEspiritu);
 
     }
 
     @Test
-    void alGuardarAlEspirituEsteRecibeUnId() {
-
+    void seAgregaElIdAlEspirituAlGuardarlo() {
         assertNull(espiritu1.getId());
         espirituService.crear(espiritu1);
         assertNotNull(espiritu1.getId());
-
     }
 //
 //    @Test
