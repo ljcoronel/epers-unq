@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 
@@ -19,7 +20,8 @@ public abstract class Espiritu implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private Integer nivelDeConexion; // between?
+    @Check(name = "valoresValidosDeConexion", constraints = "nivelDeConexion BETWEEN 0 AND 100")
+    private Integer nivelDeConexion;
     @Column(nullable = false, unique = true)
     private String nombre;
 

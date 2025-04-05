@@ -26,16 +26,13 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu recuperar(Long espirituId) {
-        return HibernateTransactionRunner.runTrx(() -> {
-            return this.espirituDao.recuperar(espirituId);
-        });
+        // VIENE COMO OPTIONAL
+        return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> {
-            return espirituDao.recuperarTodos();
-        });
+        return HibernateTransactionRunner.runTrx(() -> espirituDao.recuperarTodos());
     }
 
     @Override
@@ -48,16 +45,11 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void eliminar(Espiritu espiritu) { // se podría redefinir la interface para que acepte espiritus en vez de espirituId?
-        HibernateTransactionRunner.runTrx(() -> { // hacer un try catch para decir "no se puede eliminar si no existe?"
+        HibernateTransactionRunner.runTrx(() -> {
             getEspirituDao().eliminar(espiritu);
             return null;
         });
     }
-
-//    @Override
-//    public List<Espiritu> espiritusDemoniacos() {
-//        return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo("Demonio"));
-//    }
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {

@@ -92,6 +92,7 @@ public class HibernateEspirituDAOTest {
     void alEliminarUnEspirituDejaDeEstarPersistido() {
 
         HibernateTransactionRunner.runTrx(() -> {
+            espirituDao.guardar(espiritu1);
             espirituDao.eliminar(espiritu1);
             return null;
         });

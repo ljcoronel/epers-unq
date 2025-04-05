@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HibernateDAO<T> {
 
@@ -14,18 +15,20 @@ public class HibernateDAO<T> {
         this.entityType = entityType;
     }
 
-    public void guardar(T entity) {
+    public void crear(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.persist(entity);
     }
 
-    public T recuperar(Long id) {
+    public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        return session.get(entityType, id);
+        // OPTIONAL
+        return Optional.of(session.get(entityType, id));
     }
 
     public void eliminar(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
+        // NO TIRAR ERROR
         session.remove(entity);
     }
 
@@ -37,7 +40,6 @@ public class HibernateDAO<T> {
 
     public void actualizar(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-//        session.persist(entity);
         session.merge(entity);
     }
 }

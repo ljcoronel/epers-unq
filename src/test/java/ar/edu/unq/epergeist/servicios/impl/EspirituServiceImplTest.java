@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EspirituServiceImplTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+    private TestService testService  = new TestService();
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Espiritu espiritu3;
@@ -209,11 +210,7 @@ public class EspirituServiceImplTest {
 //
 //
     @AfterEach
-    void emilinarModelo() {
-        HibernateTransactionRunner.runTrx(() -> {
-            Session session = HibernateTransactionRunner.getCurrentSession();
-            session.createQuery("delete from " + "Espiritu").executeUpdate();
-            return null;
-        });
+    void eliminarModelo() {
+        testService.eliminarModelo(Espiritu.class);
     }
 }
