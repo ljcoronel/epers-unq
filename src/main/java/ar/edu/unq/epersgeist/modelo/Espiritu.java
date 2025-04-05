@@ -1,13 +1,30 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@Entity
 public class Espiritu implements Serializable {
 
+    @Id
     private Long id;
     private String tipo;
     private Integer nivelDeConexion;
     private String nombre;
+
+    @ManyToOne
+    private Ubicacion ubicacion;
 
     public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
         this.tipo = tipo;
