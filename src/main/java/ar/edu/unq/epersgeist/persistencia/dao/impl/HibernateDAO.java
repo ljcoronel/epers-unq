@@ -22,14 +22,15 @@ public class HibernateDAO<T> {
 
     public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        // OPTIONAL
-        return Optional.of(session.get(entityType, id));
+        T objetoRecuperado = session.get(entityType, id);
+        return objetoRecuperado == null ? Optional.empty() : Optional.of(objetoRecuperado);
     }
 
-    public void eliminar(T entity) {
+    public void eliminar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        // NO TIRAR ERROR
-        session.remove(entity);
+        T objetoRecuperado = session.get(entityType, id); // consigo el objeto para poder eliminarlo (ya que entra por id)
+        if (objetoRecuperado == null) return; // si no existe, no hago nada
+        session.remove(objetoRecuperado); // si existe, lo elimino
     }
 
     public List<T> recuperarTodos() {

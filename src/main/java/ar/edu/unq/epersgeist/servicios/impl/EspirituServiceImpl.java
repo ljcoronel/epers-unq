@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EspirituServiceImpl implements EspirituService {
 
@@ -19,14 +20,13 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void crear(Espiritu espiritu) {
         HibernateTransactionRunner.runTrx(() -> {
-            getEspirituDao().guardar(espiritu);
+            getEspirituDao().crear(espiritu);
             return null;
         });
     }
 
     @Override
-    public Espiritu recuperar(Long espirituId) {
-        // VIENE COMO OPTIONAL
+    public Optional<Espiritu> recuperar(Long espirituId) {
         return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
     }
 
@@ -44,9 +44,9 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public void eliminar(Espiritu espiritu) { // se podría redefinir la interface para que acepte espiritus en vez de espirituId?
+    public void eliminar(Long espirituId) {
         HibernateTransactionRunner.runTrx(() -> {
-            getEspirituDao().eliminar(espiritu);
+            getEspirituDao().eliminar(espirituId);
             return null;
         });
     }

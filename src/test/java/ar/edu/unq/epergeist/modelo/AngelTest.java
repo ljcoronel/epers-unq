@@ -1,6 +1,7 @@
 package ar.edu.unq.epergeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,10 +36,6 @@ public class AngelTest {
         );
     }
 
-
-
-
-
     @Test
     void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
         angel = new Angel(
@@ -59,33 +56,26 @@ public class AngelTest {
         assertEquals(0, angel.getNivelDeConexion());
     }
 
-//    @Test
-//    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
-//        // empíeza en 0
-//        espiritu.aumentarConexion(MEDIUM);
-//
-//        assertEquals(10, espiritu.getNivelDeConexion());
-//    }
+    @Test
+    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
+        // empíeza en 0
+        angel.aumentarConexion(MEDIUM);
 
-//
-//    @Test
-//    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                100,
-//                "Pepe"
-//        );
-//        espiritu.aumentarConexion(MEDIUM);
-//
-//
-//
-//        assertEquals(100, espiritu.getNivelDeConexion());
-//    }
-//
+        assertEquals(10, angel.getNivelDeConexion());
+    }
 
 
-//
-//
-//
+    //
+    @Test
+    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
+        angel = new Demonio(
+                100,
+                "Pepe"
+        );
+        angel.aumentarConexion(MEDIUM);
+
+        assertEquals(100, angel.getNivelDeConexion());
+    }
+
 
 }

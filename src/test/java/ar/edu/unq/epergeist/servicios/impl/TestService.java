@@ -5,7 +5,7 @@ import org.hibernate.Session;
 
 public class TestService {
 
-    void eliminarModelo(Class clase) {
+    public void eliminarModelo(Class clase) {
         HibernateTransactionRunner.runTrx(() -> {
             Session session = HibernateTransactionRunner.getCurrentSession();
             session.createQuery("delete from " + clase.getSimpleName()).executeUpdate();

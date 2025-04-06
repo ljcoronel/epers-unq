@@ -33,7 +33,7 @@ public class DemonioTest {
     @BeforeEach
     void crearEspiritu() {
         demonio = new Demonio(
-                10,
+                0,
                 "Pepardo"
 
         );
@@ -51,7 +51,7 @@ public class DemonioTest {
 
     @Test
     void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
-        demonio = new Angel(
+        demonio = new Demonio(
                 -50,
                 "Pepe"
         );
@@ -59,46 +59,24 @@ public class DemonioTest {
         assertEquals(0, demonio.getNivelDeConexion());
     }
 
-//    @Test
-//    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
-//        // empíeza en 0
-//        espiritu.aumentarConexion(MEDIUM);
-//
-//        assertEquals(10, espiritu.getNivelDeConexion());
-//    }
-//
+    @Test
+    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
+        // empíeza en 0
+        demonio.aumentarConexion(MEDIUM);
+
+        assertEquals(10, demonio.getNivelDeConexion());
+    }
+
 
 //
-//    @Test
-//    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
-//        espiritu = new Espiritu(
-//                "Fantasma",
-//                100,
-//                "Pepe"
-//        );
-//        espiritu.aumentarConexion(MEDIUM);
-//
-//
-//
-//        assertEquals(100, espiritu.getNivelDeConexion());
-//    }
-//
+    @Test
+    void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
+        demonio = new Demonio(
+                100,
+                "Pepe"
+        );
+        demonio.aumentarConexion(MEDIUM);
 
-//
-//
-//
-//    @AfterEach
-//    void emilinarModelo() {
-//        JDBCConnector.getInstance().execute(conn -> {
-//            try {
-//                var ps = conn.prepareStatement("DELETE from espiritu");
-//                ps.execute();
-//
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            return null;
-//        });
-//    }
+        assertEquals(100, demonio.getNivelDeConexion());
+    }
 }

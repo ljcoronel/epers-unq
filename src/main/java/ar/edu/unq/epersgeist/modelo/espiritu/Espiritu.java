@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 
 @Entity
+// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura
 public abstract class Espiritu implements Serializable {
 
     @Id
@@ -22,7 +23,7 @@ public abstract class Espiritu implements Serializable {
     @Column(nullable = false)
     @Check(name = "valoresValidosDeConexion", constraints = "nivelDeConexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String nombre;
 
     public Espiritu(Integer nivelDeConexion, String nombre) {

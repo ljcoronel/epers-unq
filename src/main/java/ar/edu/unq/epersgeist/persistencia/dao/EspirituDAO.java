@@ -9,7 +9,7 @@ public interface EspirituDAO {
     void crear(Espiritu espiritu);
     Optional<Espiritu> recuperar(Long idDelEspiritu);
     List<Espiritu> recuperarTodos();
-    void eliminar(Espiritu espiritu);
+    void eliminar(Long idDelEspiritu);
     void actualizar(Espiritu espiritu);
 //    List<Espiritu> espiritusDeTipo(String tipo);
 }

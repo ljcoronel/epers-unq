@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,12 +50,12 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void alRecuperarUnIdInexistenteNoTraeUnNull(){
+    void alRecuperarUnIdInexistenteNoTraeNada(){
         Long id_Inexistente = 50L;
         Long id_Inexistente2 = -50L;
         espirituService.recuperar(id_Inexistente);
-        assertNull(espirituService.recuperar(id_Inexistente));
-        assertNull(espirituService.recuperar(id_Inexistente2));
+        assertFalse(espirituService.recuperar(id_Inexistente).isPresent());
+        assertFalse(espirituService.recuperar(id_Inexistente2).isPresent());
     }
 
 
@@ -71,56 +72,45 @@ public class EspirituServiceImplTest {
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
         espirituService.crear(espiritu1);
-        espirituService.eliminar(espiritu1);
-        assertNull(espirituService.recuperar(espiritu1.getId()));
-    }
-
-
-    @Test
-    void alEliminarUnEspirituQueFueEliminadoLanzaError() {
-        espirituService.crear(espiritu1);
-        espirituService.eliminar(espiritu1);
-
-        assertThrows(OptimisticLockException.class, () -> { // optimisticLock es una excepción cuando ya se borró algo
-            espirituService.eliminar(espiritu1);
-                }
-        );
-
+        espirituService.eliminar(espiritu1.getId());
+        Optional<Espiritu> espirituInexistente = espirituService.recuperar(espiritu1.getId());
+        assertFalse(espirituInexistente.isPresent());
     }
 
     @Test
-    void alEliminarUnEspirituQueNoFueGuardadoNoHaceNada() { // está de más testear esto?
+    void alEliminarUnEspirituQueNoFueCreadoNoHaceNada() { // está de más testear esto?
         espirituService.crear(espiritu1);
         assertDoesNotThrow( () -> {
-            espirituService.eliminar(espiritu1);
+            espirituService.eliminar(espiritu1.getId());
                 }
         );
     }
 
     @Test
-    void alActualizarUnEspirituSecambiaCorrectamente() {
+    void alActualizarUnEspirituSeCambiaCorrectamente() {
         espirituService.crear(espiritu1);
         espiritu1.setNombre("Nuevo Nombre");
         espirituService.actualizar(espiritu1);
 
-        var espiritu_recuperado = espirituService.recuperar(espiritu1.getId());
-        assertTrue(espiritu_recuperado.getNombre().equals("Nuevo Nombre"));
+        var espiritu_recuperado = espirituService.recuperar(espiritu1.getId()).get();
+        assertEquals("Nuevo Nombre", espiritu_recuperado.getNombre());
 
     }
 
     @Test
-    void alGuardarYLuegoRecuperarSeObtieneObjetosSimilares() {
+    void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
 
         espirituService.crear(espiritu1);
-        var otroEspiritu = espirituService.recuperar(espiritu1.getId());
+        var otroEspiritu = espirituService.recuperar(espiritu1.getId()).get();
         assertEquals(espiritu1.getNombre(), otroEspiritu.getNombre());
         assertEquals(espiritu1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+        assertEquals(espiritu1.getId(), otroEspiritu.getId());
         Assertions.assertNotEquals(espiritu1, otroEspiritu);
 
     }
 
     @Test
-    void seAgregaElIdAlEspirituAlGuardarlo() {
+    void seAgregaElIdAlEspirituAlCrearlo() {
         assertNull(espiritu1.getId());
         espirituService.crear(espiritu1);
         assertNotNull(espiritu1.getId());
@@ -161,11 +151,6 @@ public class EspirituServiceImplTest {
 //
 //
 //
-//    @Test
-//    void alRecuperarUnEspirituQueNoExisteDevuelveNull() {
-//
-//        assertNull(espirituService.recuperar(-1L));
-//    }
 //
 //    @Test
 //    void alRecuperarTodosEspíritusPeroNoHayNingunoDevuelveListaVacía() {
@@ -174,41 +159,7 @@ public class EspirituServiceImplTest {
 //    }
 //
 //
-//    @Test
-//    void recuperarATodosLosEspiritusVaEnOrdenAscendente() {
-//
-//        Espiritu gonzalo = new Espiritu(
-//                "Fantasma",
-//                0,
-//                "Gonzalo"
-//        );
-//
-//        Espiritu jaimito = new Espiritu(
-//                "Fantasma",
-//                0,
-//                "Jaimito"
-//        );
-//
-//        espirituService.crear(espiritu);
-//        espirituService.crear(gonzalo);
-//        espirituService.crear(jaimito);
-//
-//        ArrayList<Long> idDeTodos = new ArrayList<Long>();
-//
-//        espirituService.recuperarTodos().forEach( (espiritu) -> {
-//            idDeTodos.add(espiritu.getId());
-//        });
-//
-//        assertEquals(Arrays.asList(gonzalo.getId(), jaimito.getId(), espiritu.getId()), idDeTodos);
-//
-//
-//
-//    }
-//
-//
-//
-//
-//
+
     @AfterEach
     void eliminarModelo() {
         testService.eliminarModelo(Espiritu.class);

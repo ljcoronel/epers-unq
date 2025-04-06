@@ -1,6 +1,12 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
 public class Angel extends Espiritu {
@@ -12,16 +18,12 @@ public class Angel extends Espiritu {
         super(nivelDeConexion,nombre);
     }
 
-    public Angel() {
-
-    }
-
 //    public Angel( Integer nivelDeConexion, String nombre) {
 //        super(nivelDeConexion, nombre);
 //    }
 
-    public void atacar(Demonio demonio) {
-        //hacer algo
-        demonio.defender(this);
-    }
+//    public void atacar(Demonio demonio) {
+//        //hacer algo
+//        demonio.defender(this);
+//    }
 }

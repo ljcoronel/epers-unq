@@ -14,13 +14,4 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         super(Espiritu.class);
     }
 
-//    @Override
-//    public List<Espiritu> espiritusDeTipo(String tipo) {
-//        Session session = HibernateTransactionRunner.getCurrentSession();
-//        String hql = "from Espiritu * where dtype == :tipo";
-//        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
-//        query.setParameter("tipo", tipo);
-//        return query.getResultList();
-//    }
-
 }
