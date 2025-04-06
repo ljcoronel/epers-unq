@@ -48,7 +48,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seIntentaRecuperarUnaUbicacionNoPersistida_entoncesLanzaUnaExcepcion() {
+    void seIntentaRecuperarUnaUbicacionNoPersistidaYNoDevuelveNada() {
         this.ubicacionUno.setId(1L);
 
         assertFalse(this.service.recuperar(this.ubicacionUno.getId()).isPresent());
