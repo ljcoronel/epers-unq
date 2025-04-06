@@ -66,7 +66,6 @@ public class EspirituServiceImplTest {
         espirituService.crear(espiritu3);
         List<Espiritu> espiritus_recuperados = espirituService.recuperarTodos();
         assertEquals(3, espiritus_recuperados.size());
-
     }
 
     @Test

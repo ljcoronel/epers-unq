@@ -188,8 +188,8 @@ public class HibernateEspirituDAOTest {
 //    }
 
 
-//    @AfterEach
-//    void emilinarModelo() {
-//        testService.eliminarModelo(Espiritu.class);
-//    }
+    @AfterEach
+    void emilinarModelo() {
+        testService.eliminarModelo(Espiritu.class);
+    }
 }
