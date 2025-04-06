@@ -3,7 +3,6 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +15,8 @@ public class UbicacionServiceImpl {
         this.ubicacionDAO = ubicacionDAO;
     }
 
-    public void crear(Ubicacion ubicacion) {
-        HibernateTransactionRunner.runTrx(() -> {
-            this.ubicacionDAO.crear(ubicacion);
-            return null;
-        });
+    public Ubicacion crear(Ubicacion ubicacion) {
+        return HibernateTransactionRunner.runTrx(() -> this.ubicacionDAO.crear(ubicacion));
     }
 
     public Optional<Ubicacion> recuperar(Long id) {
@@ -34,14 +30,14 @@ public class UbicacionServiceImpl {
         });
     }
 
-    public void eliminar(Ubicacion ubicacionUno) {
+    public void eliminar(Long id) {
         HibernateTransactionRunner.runTrx(() -> {
-            this.ubicacionDAO.eliminar(ubicacionUno);
+            this.ubicacionDAO.eliminar(id);
             return null;
         });
     }
 
     public List<Ubicacion> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> this.ubicacionDAO.recuperarTodos());
+        return HibernateTransactionRunner.runTrx(this.ubicacionDAO::recuperarTodos);
     }
 }

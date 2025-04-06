@@ -16,10 +16,10 @@ public class Ubicacion {
     @Column(unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Espiritu> espiritus;
 
-    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Medium> mediums;
 
     public Ubicacion(@NonNull String nombre) {

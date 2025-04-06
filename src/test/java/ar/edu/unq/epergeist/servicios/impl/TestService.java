@@ -3,7 +3,7 @@ package ar.edu.unq.epergeist.servicios.impl;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 
-public class Service {
+public class TestService {
 
     void eliminarModelo(Class clase) {
         HibernateTransactionRunner.runTrx(() -> {

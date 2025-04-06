@@ -14,9 +14,10 @@ public class HibernateDAO<T> {
         this.entityType = entityType;
     }
 
-    public void crear(T entity) {
+    public T crear(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.persist(entity);
+        return entity;
     }
 
     public Optional<T> recuperar(Long id) {
@@ -28,9 +29,11 @@ public class HibernateDAO<T> {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.merge(entity);
     }
-    public void eliminar(T entity) {
+
+    public void eliminar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        session.remove(entity);
+        T entidad = session.get(entityType, id);
+        if (entidad != null) session.remove(entidad);
     }
 
     public List<T> recuperarTodos() {

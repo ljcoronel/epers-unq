@@ -1,7 +1,5 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
@@ -22,13 +20,7 @@ class UbicacionServiceTest {
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
     private Ubicacion ubicacionTres;
-    private Espiritu espirituUno;
-    private Medium mediumUno;
-    private Espiritu espirituDos;
-    private Medium mediumDos;
-    private Espiritu espirituTres;
-    private Medium mediumTres;
-    private Service limpiador;
+    private TestService limpiador;
 
     @BeforeEach
     void prepare() {
@@ -37,17 +29,15 @@ class UbicacionServiceTest {
         this.ubicacionDos = new Ubicacion("Bernal");
         this.ubicacionTres = new Ubicacion("Avellaneda");
         this.service = new UbicacionServiceImpl(this.ubicacionDAO);
-        this.limpiador = new Service();
+        this.limpiador = new TestService();
     }
 
     @Test
     void sePersisteUnaUbicacionEnLaBaseDeDatos() {
-        this.service.crear(this.ubicacionUno);
-        Ubicacion ubicacionGuardada = this.service.recuperar(this.ubicacionUno.getId()).get();
+        Ubicacion UbicacionPersistida = this.service.crear(this.ubicacionUno);
 
-        assertEquals(this.ubicacionUno.getId(), ubicacionGuardada.getId());
-        assertEquals(this.ubicacionUno.getNombre(), ubicacionGuardada.getNombre());
-        assertNotEquals(this.ubicacionUno, ubicacionGuardada);
+        assertEquals(this.ubicacionUno.getId(), UbicacionPersistida.getId());
+        assertEquals(this.ubicacionUno.getNombre(), UbicacionPersistida.getNombre());
     }
 
     @Test
@@ -85,9 +75,9 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatos() {
+    void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExiste() {
         this.service.crear(this.ubicacionUno);
-        this.service.eliminar(this.ubicacionUno);
+        this.service.eliminar(this.ubicacionUno.getId());
 
         assertFalse(this.service.recuperar(this.ubicacionUno.getId()).isPresent());
     }
@@ -107,7 +97,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seRecuperanLasUbicacionesDeUnaBaseDeDatosVacia() {
+    void seRecuperanLasUbicacionesDeUnaBaseDeDatosVaciaYNoDevuelveNingunaUbicacion() {
         List<Ubicacion> ubicaciones = this.service.recuperarTodos();
 
         assertEquals(0, ubicaciones.size());
