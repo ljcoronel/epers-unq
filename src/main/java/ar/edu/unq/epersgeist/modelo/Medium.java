@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -19,9 +20,12 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
+    @Check(constraints = "manaMax > 0")
     private Integer manaMax;
     @Column(nullable = false)
+    @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritus = new HashSet<>();
 
     public Medium(String nombre, Integer manaMax, Integer mana) {

@@ -3,6 +3,7 @@ package ar.edu.unq.epergeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.TestService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MediumServiceImplTest {
 
     private MediumServiceImpl mediumService;
+    private TestService testService= new TestService();
 
     private Medium medium;
     private Medium medium2;
@@ -39,21 +41,30 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seEliminaUnMediumGuardadoYDejaDeEstarPersistiendo(){
-        mediumService.crear(medium);
+    void alRecuperarTodosLosMediumsEstandoLaBaseDeDatosVaciaRetornaListaVacia(){
 
+        var mediums = mediumService.recuperarTodos();
+
+        assertTrue(mediums.isEmpty());
+    }
+
+    @Test
+    void seEliminaUnMediumDejaDeEstarPersistiendo(){
+        mediumService.crear(medium);
 
         mediumService.eliminar(medium);
 
         assertNull(mediumService.recuperar(medium.getId()));
     }
 
+    @Test
+    void alEliminarUnMediumNoGuardadoNoHaceNada() {
+
+        assertDoesNotThrow(() -> mediumService.eliminar(medium));
+    }
+
     @AfterEach
-    void emilinarModelo() {
-        HibernateTransactionRunner.runTrx(() -> {
-            Session session = HibernateTransactionRunner.getCurrentSession();
-            session.createQuery("delete from " + "Medium").executeUpdate();
-            return null;
-        });
+    void eliminarModelo() {
+        testService.eliminarModelo(Medium.class);
     }
 }
