@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
 
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import jakarta.persistence.PersistenceException;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -20,9 +19,9 @@ public class HibernateDAO<T> {
         session.persist(entity);
     }
 
-    public T recuperar(Long id) {
+    public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        return Optional.ofNullable(session.get(entityType, id)).orElseThrow(PersistenceException::new);
+        return Optional.ofNullable(session.get(entityType, id));
     }
 
     public void actualizar(T entity) {

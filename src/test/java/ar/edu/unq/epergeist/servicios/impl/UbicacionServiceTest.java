@@ -41,9 +41,9 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void sePersisteUnaUbicacion() {
+    void sePersisteUnaUbicacionEnLaBaseDeDatos() {
         this.service.crear(this.ubicacionUno);
-        Ubicacion ubicacionGuardada = this.service.recuperar(this.ubicacionUno.getId());
+        Ubicacion ubicacionGuardada = this.service.recuperar(this.ubicacionUno.getId()).get();
 
         assertEquals(this.ubicacionUno.getId(), ubicacionGuardada.getId());
         assertEquals(this.ubicacionUno.getNombre(), ubicacionGuardada.getNombre());
@@ -59,7 +59,9 @@ class UbicacionServiceTest {
 
     @Test
     void seIntentaRecuperarUnaUbicacionNoPersistida_entoncesLanzaUnaExcepcion() {
-        assertThrows(PersistenceException.class, () -> this.service.recuperar(this.ubicacionUno.getId()));
+        this.ubicacionUno.setId(1L);
+
+        assertFalse(this.service.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
@@ -67,7 +69,7 @@ class UbicacionServiceTest {
         this.service.crear(this.ubicacionUno);
         this.ubicacionUno.setNombre("Quilmes");
         this.service.actualizar(this.ubicacionUno);
-        Ubicacion ubicacionGuardada = this.service.recuperar(this.ubicacionUno.getId());
+        Ubicacion ubicacionGuardada = this.service.recuperar(this.ubicacionUno.getId()).get();
 
         assertEquals(this.ubicacionUno.getNombre(), ubicacionGuardada.getNombre());
         assertEquals(this.ubicacionUno.getId(), ubicacionGuardada.getId());
@@ -87,7 +89,7 @@ class UbicacionServiceTest {
         this.service.crear(this.ubicacionUno);
         this.service.eliminar(this.ubicacionUno);
 
-        assertThrows(PersistenceException.class, () -> this.service.recuperar(this.ubicacionUno.getId()));
+        assertFalse(this.service.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test

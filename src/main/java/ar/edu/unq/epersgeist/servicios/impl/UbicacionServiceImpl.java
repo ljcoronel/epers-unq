@@ -3,8 +3,10 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import jakarta.persistence.PersistenceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UbicacionServiceImpl {
 
@@ -21,7 +23,7 @@ public class UbicacionServiceImpl {
         });
     }
 
-    public Ubicacion recuperar(Long id) {
+    public Optional<Ubicacion> recuperar(Long id) {
         return HibernateTransactionRunner.runTrx(() -> this.ubicacionDAO.recuperar(id));
     }
 
