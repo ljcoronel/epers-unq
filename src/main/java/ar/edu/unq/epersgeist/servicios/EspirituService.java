@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EspirituService {
-    void crear(Espiritu espiritu);
+    Espiritu crear(Espiritu espiritu);
     Optional<Espiritu> recuperar(Long espirituId);
     List<Espiritu> recuperarTodos();
     void actualizar(Espiritu espiritu);

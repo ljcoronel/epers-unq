@@ -15,15 +15,16 @@ public class HibernateDAO<T> {
         this.entityType = entityType;
     }
 
-    public void crear(T entity) {
+    public T crear(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.persist(entity);
+        return entity;
     }
 
     public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         T objetoRecuperado = session.get(entityType, id);
-        return objetoRecuperado == null ? Optional.empty() : Optional.of(objetoRecuperado);
+        return Optional.ofNullable(objetoRecuperado);
     }
 
     public void eliminar(Long id) {

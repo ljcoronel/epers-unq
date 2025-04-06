@@ -18,8 +18,8 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public void crear(Espiritu espiritu) {
-        HibernateTransactionRunner.runTrx(() -> {
+    public Espiritu crear(Espiritu espiritu) {
+        return HibernateTransactionRunner.runTrx(() -> {
             getEspirituDao().crear(espiritu);
             return null;
         });
