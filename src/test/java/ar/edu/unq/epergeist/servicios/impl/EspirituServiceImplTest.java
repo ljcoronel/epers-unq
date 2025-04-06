@@ -106,35 +106,20 @@ public class EspirituServiceImplTest {
         assertEquals(espiritu1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
         assertEquals(espiritu1.getId(), otroEspiritu.getId());
         Assertions.assertNotEquals(espiritu1, otroEspiritu);
-
     }
 
     @Test
-    void seAgregaElIdAlEspirituAlCrearlo() {
+    void seAgregaElIdAlEspirituAlCrearUnEspiritu() {
         assertNull(espiritu1.getId());
         espirituService.crear(espiritu1);
         assertNotNull(espiritu1.getId());
     }
-//
-//    @Test
-//    void alGuardarActualizarYLuegoRecuperarSeObtieneObjetosSimilares() {
-//
-//        espirituService.crear(espiritu);
-//        espirituService.actualizar(espiritu);
-//
-//        var otroEspiritu = espirituService.recuperar(espiritu.getId());
-//
-//        assertEquals(espiritu.getTipo(), otroEspiritu.getTipo());
-//        assertEquals(espiritu.getNombre(), otroEspiritu.getNombre());
-//        assertEquals(espiritu.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
-////         no puedo comparar ID porque otroPepe no tiene ID setteado todavía
-//
-//
-//        Assertions.assertNotEquals(espiritu, otroEspiritu);
-//
-//    }
-//
-//
+
+    @Test
+    void alRecuperarTodosEspíritusPeroNoHayNingunoDevuelveListaVacía() {
+        assertTrue(espirituService.recuperarTodos().isEmpty());
+    }
+
 //    @Test
 //    void alConectarUnEspirituSuNivelDeConexionAumentaYSePersiste() {
 //        espirituService.crear(espiritu);
@@ -146,19 +131,6 @@ public class EspirituServiceImplTest {
 //        assertEquals(10, espirituRecuperado.getNivelDeConexion());
 //
 //    }
-//
-//
-//
-//
-//
-//
-//    @Test
-//    void alRecuperarTodosEspíritusPeroNoHayNingunoDevuelveListaVacía() {
-//
-//        assertTrue(espirituService.recuperarTodos().isEmpty());
-//    }
-//
-//
 
     @AfterEach
     void eliminarModelo() {

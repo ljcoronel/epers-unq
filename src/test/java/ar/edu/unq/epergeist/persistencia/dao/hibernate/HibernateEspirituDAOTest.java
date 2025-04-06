@@ -115,6 +115,11 @@ public class HibernateEspirituDAOTest {
                     });
                 }
         );
+        List<Espiritu> espiritus = HibernateTransactionRunner.runTrx(() -> {
+            return  espirituDao.recuperarTodos();
+        });
+
+        assertEquals(2, espiritus.size());
     }
 
     @Test
@@ -123,6 +128,17 @@ public class HibernateEspirituDAOTest {
     }
 
     // test para actualizar un espíritu pero que tire error porque no existe todavía
+    @Test
+    void AlActualizarUnEspirituInexistenteNoActualizaNada() {
+        Espiritu espiritu_inexistente =  new Angel(10,"NoExiste");
+
+        HibernateTransactionRunner.runTrx(()->{
+            espirituDao.actualizar(espiritu_inexistente);
+            return null;
+        });
+        assertNull(espiritu_inexistente.getId());
+
+    }
 
 //
 //    @Test
@@ -172,8 +188,8 @@ public class HibernateEspirituDAOTest {
 //    }
 
 
-    @AfterEach
-    void emilinarModelo() {
-        testService.eliminarModelo(Espiritu.class);
-    }
+//    @AfterEach
+//    void emilinarModelo() {
+//        testService.eliminarModelo(Espiritu.class);
+//    }
 }

@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 @Entity
 // singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Espiritu implements Serializable {
 
     @Id
