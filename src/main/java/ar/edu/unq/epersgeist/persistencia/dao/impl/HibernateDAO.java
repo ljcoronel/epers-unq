@@ -1,8 +1,10 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
 
-
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
+
+import java.util.List;
+import java.util.Optional;
 
 public class HibernateDAO<T> {
 
@@ -12,18 +14,30 @@ public class HibernateDAO<T> {
         this.entityType = entityType;
     }
 
-    public void guardar(T entity) {
+    public T crear(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         session.persist(entity);
+        return entity;
     }
 
-    public T recuperar(Long id) {
+    public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        return session.get(entityType, id);
+        return Optional.ofNullable(session.get(entityType, id));
     }
 
-    public void eliminar(T entity) {
+    public void actualizar(T entity) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        session.remove(entity);
+        session.merge(entity);
+    }
+
+    public void eliminar(long id) {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        T entidad = session.get(entityType, id);
+        if (entidad != null) session.remove(entidad);
+    }
+
+    public List<T> recuperarTodos() {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        return session.createQuery("from " + entityType.getSimpleName(), entityType).list();
     }
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    private final Espiritu espiritu = new Espiritu("Juan alberto el zorro", 79, "Poltergeist");
+    private final Espiritu espiritu = new Espiritu("el lobo",79, "Poltergeist");
     Medium medium;
 
 //    Descomentar para ver logs.

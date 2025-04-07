@@ -52,7 +52,7 @@ public class MediumServiceImplTest {
     void seEliminaUnMediumDejaDeEstarPersistiendo(){
         mediumService.crear(medium);
 
-        mediumService.eliminar(medium);
+        mediumService.eliminar(medium.getId());
 
         assertNull(mediumService.recuperar(medium.getId()));
     }
@@ -60,7 +60,7 @@ public class MediumServiceImplTest {
     @Test
     void alEliminarUnMediumNoGuardadoNoHaceNada() {
 
-        assertDoesNotThrow(() -> mediumService.eliminar(medium));
+        assertDoesNotThrow(() -> mediumService.eliminar(medium.getId()));
     }
 
     @AfterEach
