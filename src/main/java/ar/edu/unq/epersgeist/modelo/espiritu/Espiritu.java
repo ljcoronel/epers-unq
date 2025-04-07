@@ -1,44 +1,49 @@
-package ar.edu.unq.epersgeist.modelo;
+package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+
+import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
+@Getter @Setter @NoArgsConstructor @ToString
+
+
 @Entity
-public class Espiritu implements Serializable {
+// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Espiritu implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
+    @Column(nullable = false)
+    @Check(name = "valoresValidosDeConexion", constraints = "nivelDeConexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
+    @Column(nullable = false, unique = true, length = 50)
     private String nombre;
 
-    @ManyToOne
-    private Ubicacion ubicacion;
 
-    public Espiritu(String tipo, Integer nivelDeConexion, String nombre) {
-        this.tipo = tipo;
+    public Espiritu(Integer nivelDeConexion, String nombre) {
+
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
     }
 
-    public Espiritu(String tipo, String nombre) {
-        this.tipo = tipo;
+    public Espiritu(String nombre) {
+
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
     }
 
     public void aumentarConexion(Medium medium) {
+
         this.aumentarNivelDeConexionEn(10);
     }
 
@@ -58,23 +63,4 @@ public class Espiritu implements Serializable {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Integer getNivelDeConexion() {
-        return nivelDeConexion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
 }

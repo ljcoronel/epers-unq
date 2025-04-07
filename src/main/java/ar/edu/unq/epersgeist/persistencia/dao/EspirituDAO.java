@@ -1,14 +1,15 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EspirituDAO {
     Espiritu crear(Espiritu espiritu);
-    Espiritu recuperar(Long idDelEspiritu);
+    Optional<Espiritu> recuperar(Long idDelEspiritu);
     List<Espiritu> recuperarTodos();
-    void actualizar(Espiritu espiritu);
     void eliminar(Long idDelEspiritu);
-//    List<Espiritu> espiritusDemoniacos(); o List<Espiritu> espiritusDeTipo(TipoEspiritu tipo); ??
+    void actualizar(Espiritu espiritu);
+//    List<Espiritu> espiritusDeTipo(String tipo);
 }

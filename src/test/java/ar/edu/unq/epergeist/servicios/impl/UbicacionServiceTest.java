@@ -34,10 +34,10 @@ class UbicacionServiceTest {
 
     @Test
     void sePersisteUnaUbicacionEnLaBaseDeDatos() {
-        Ubicacion UbicacionPersistida = this.service.crear(this.ubicacionUno);
+        Ubicacion ubicacionPersistida =this.service.crear(ubicacionUno);
 
-        assertEquals(this.ubicacionUno.getId(), UbicacionPersistida.getId());
-        assertEquals(this.ubicacionUno.getNombre(), UbicacionPersistida.getNombre());
+        assertEquals(this.ubicacionUno.getId(), ubicacionPersistida.getId());
+        assertEquals(this.ubicacionUno.getNombre(), ubicacionPersistida.getNombre());
     }
 
     @Test

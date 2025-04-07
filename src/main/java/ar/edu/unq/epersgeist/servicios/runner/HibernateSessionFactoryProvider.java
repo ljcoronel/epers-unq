@@ -1,4 +1,4 @@
-package ar.edu.unq.unidad3.service.runner;
+package ar.edu.unq.epersgeist.servicios.runner;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.*;
+
 
 
 public class HibernateSessionFactoryProvider {
@@ -19,7 +21,7 @@ public class HibernateSessionFactoryProvider {
     private HibernateSessionFactoryProvider() {
         String user = "postgres";
         String password = "root";
-        String dataBase = "epers_ejemplo_hibernate";
+        String dataBase = "epersgeist_sobrepersistiendo";
         String host = "localhost";
         String port = "5432";
 

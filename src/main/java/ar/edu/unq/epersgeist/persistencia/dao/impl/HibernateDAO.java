@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
 
+
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 
@@ -22,7 +23,8 @@ public class HibernateDAO<T> {
 
     public Optional<T> recuperar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
-        return Optional.ofNullable(session.get(entityType, id));
+        T objetoRecuperado = session.get(entityType, id);
+        return Optional.ofNullable(objetoRecuperado);
     }
 
     public void actualizar(T entity) {

@@ -1,57 +1,72 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jdbc.JDBCEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EspirituServiceImpl implements EspirituService {
 
-    private JDBCEspirituDAO espirituDao = new JDBCEspirituDAO();
+    private EspirituDAO espirituDao;
 
-    @Override
-    public Espiritu crear(Espiritu espiritu) {
-        return getEspirituDao().crear(espiritu);
+    public EspirituServiceImpl(EspirituDAO espirituDao) {
+        setEspirituDao(espirituDao);
     }
 
     @Override
-    public Espiritu recuperar(Long espirituId) {
-        return getEspirituDao().recuperar(espirituId);
+    public Espiritu crear(Espiritu espiritu) {
+        return HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().crear(espiritu);
+            return null;
+        });
+    }
+
+    @Override
+    public Optional<Espiritu> recuperar(Long espirituId) {
+        return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return getEspirituDao().recuperarTodos();
+        return HibernateTransactionRunner.runTrx(() -> espirituDao.recuperarTodos());
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        getEspirituDao().actualizar(espiritu);
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().actualizar(espiritu);
+            return null;
+        });
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        getEspirituDao().eliminar(espirituId);
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().eliminar(espirituId);
+            return null;
+        });
     }
 
     @Override
-    public Medium conectar(Long espirituId, Medium medium) {
-        Espiritu espiritu = recuperar(espirituId);
-
-        medium.conectarseAEspiritu(espiritu);
-
-        getEspirituDao().actualizar(espiritu); //garantiza ACID
-        return medium;
+    public Medium conectar(Long espirituId, Long mediumId) {
+//        Espiritu espiritu = recuperar(espirituId);
+//
+//        medium.conectarseAEspiritu(espiritu);
+//
+//        getEspirituDao().actualizar(espiritu); //garantiza ACID
+//        return medium;
+        return null;
     }
 
-    public JDBCEspirituDAO getEspirituDao() {
+    public EspirituDAO getEspirituDao() {
         return espirituDao;
     }
 
-    private void setEspirituDao(JDBCEspirituDAO espirituDao) {
+    private void setEspirituDao(EspirituDAO espirituDao) {
         this.espirituDao = espirituDao;
     }
 }
