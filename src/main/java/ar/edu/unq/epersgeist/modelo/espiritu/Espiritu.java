@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -62,5 +63,8 @@ public abstract class Espiritu implements Serializable {
         }
 
     }
+    // Agregado
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Ubicacion ubicacion;
 
 }
