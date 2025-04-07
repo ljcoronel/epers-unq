@@ -17,11 +17,11 @@
 
 		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 
-		<mapping class="ar.edu.unq.epersgeist.modelo.Ubicacion" />
-		<mapping class="ar.edu.unq.epersgeist.modelo.Medium" />
 		<mapping class="ar.edu.unq.epersgeist.modelo.espiritu.Espiritu" />
 		<mapping class="ar.edu.unq.epersgeist.modelo.espiritu.Angel" />
 		<mapping class="ar.edu.unq.epersgeist.modelo.espiritu.Demonio" />
+		<mapping class="ar.edu.unq.epersgeist.modelo.Ubicacion" />
+		<mapping class="ar.edu.unq.epersgeist.modelo.Medium" />
 
 
 	</session-factory>
