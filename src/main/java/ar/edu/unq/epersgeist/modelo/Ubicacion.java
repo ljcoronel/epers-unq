@@ -17,15 +17,7 @@ public class Ubicacion {
     @Column(unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Espiritu> espiritus;
-
-    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Medium> mediums;
-
     public Ubicacion(@NonNull String nombre) {
         this.nombre = nombre;
-        this.espiritus = new ArrayList<Espiritu>();
-        this.mediums = new ArrayList<Medium>();
     }
 }
