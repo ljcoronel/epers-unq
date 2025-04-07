@@ -11,5 +11,5 @@ public interface EspirituDAO {
     List<Espiritu> recuperarTodos();
     void eliminar(Long idDelEspiritu);
     void actualizar(Espiritu espiritu);
-//    List<Espiritu> espiritusDeTipo(String tipo);
+    <T extends Espiritu> List<T> espiritusDeTipo(Class<T> tipo);
 }

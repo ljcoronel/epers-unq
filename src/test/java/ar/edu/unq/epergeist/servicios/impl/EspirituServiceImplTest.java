@@ -1,19 +1,17 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import jakarta.persistence.OptimisticLockException;
-import org.hibernate.Session;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +22,11 @@ public class EspirituServiceImplTest {
     public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
     private TestService testService  = new TestService();
-    private Espiritu espiritu1;
-    private Espiritu espiritu2;
-    private Espiritu espiritu3;
+    private Espiritu angel1;
+    private Espiritu angel2;
+    private Espiritu angel3;
+    private Demonio demonio1;
+    private Demonio demonio2;
 
 //    Descomentar para ver logs.
 
@@ -44,9 +44,19 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearEspiritu() {
-        espiritu1 = new Angel(10,"Angel1");
-        espiritu2 = new Angel(10,"Angel2");
-        espiritu3 = new Angel(10,"Angel3");
+        angel1 = new Angel(10,"Angel1");
+        angel2 = new Angel(10,"Angel2");
+        angel3 = new Angel(10,"Angel3");
+        demonio1 = new Demonio(
+                5,
+                "Pepito"
+
+        );
+        demonio2 = new Demonio(
+                90,
+                "Diavolo"
+
+        );
     }
 
     @Test
@@ -61,57 +71,58 @@ public class EspirituServiceImplTest {
 
     @Test
     void sePuedenRecuperarTodosLosEspiritusCreados(){
-        espirituService.crear(espiritu1);
-        espirituService.crear(espiritu2);
-        espirituService.crear(espiritu3);
+        espirituService.crear(angel1);
+        espirituService.crear(angel2);
+        espirituService.crear(angel3);
         List<Espiritu> espiritus_recuperados = espirituService.recuperarTodos();
         assertEquals(3, espiritus_recuperados.size());
     }
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
-        espirituService.crear(espiritu1);
-        espirituService.eliminar(espiritu1.getId());
-        Optional<Espiritu> espirituInexistente = espirituService.recuperar(espiritu1.getId());
+        espirituService.crear(angel1);
+        espirituService.eliminar(angel1.getId());
+        Optional<Espiritu> espirituInexistente = espirituService.recuperar(angel1.getId());
         assertFalse(espirituInexistente.isPresent());
     }
 
     @Test
     void alEliminarUnEspirituQueNoFueCreadoNoHaceNada() { // está de más testear esto?
-        espirituService.crear(espiritu1);
+        espirituService.crear(angel1);
         assertDoesNotThrow( () -> {
-            espirituService.eliminar(espiritu1.getId());
+            espirituService.eliminar(angel1.getId());
                 }
         );
     }
 
     @Test
     void alActualizarUnEspirituSeCambiaCorrectamente() {
-        espirituService.crear(espiritu1);
-        espiritu1.setNombre("Nuevo Nombre");
-        espirituService.actualizar(espiritu1);
+        espirituService.crear(angel1);
+        angel1.setNombre("Nuevo Nombre");
+        espirituService.actualizar(angel1);
 
-        var espiritu_recuperado = espirituService.recuperar(espiritu1.getId()).get();
+        var espiritu_recuperado = espirituService.recuperar(angel1.getId()).get();
         assertEquals("Nuevo Nombre", espiritu_recuperado.getNombre());
 
     }
 
+
     @Test
     void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
 
-        espirituService.crear(espiritu1);
-        var otroEspiritu = espirituService.recuperar(espiritu1.getId()).get();
-        assertEquals(espiritu1.getNombre(), otroEspiritu.getNombre());
-        assertEquals(espiritu1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
-        assertEquals(espiritu1.getId(), otroEspiritu.getId());
-        Assertions.assertNotEquals(espiritu1, otroEspiritu);
+        espirituService.crear(angel1);
+        var otroEspiritu = espirituService.recuperar(angel1.getId()).get();
+        assertEquals(angel1.getNombre(), otroEspiritu.getNombre());
+        assertEquals(angel1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+        assertEquals(angel1.getId(), otroEspiritu.getId());
+        Assertions.assertNotEquals(angel1, otroEspiritu);
     }
 
     @Test
     void seAgregaElIdAlEspirituAlCrearUnEspiritu() {
-        assertNull(espiritu1.getId());
-        espirituService.crear(espiritu1);
-        assertNotNull(espiritu1.getId());
+        assertNull(angel1.getId());
+        espirituService.crear(angel1);
+        assertNotNull(angel1.getId());
     }
 
     @Test
@@ -119,17 +130,55 @@ public class EspirituServiceImplTest {
         assertTrue(espirituService.recuperarTodos().isEmpty());
     }
 
-//    @Test
-//    void alConectarUnEspirituSuNivelDeConexionAumentaYSePersiste() {
-//        espirituService.crear(espiritu);
-//
-//        espirituService.conectar(espiritu.getId(), MEDIUM);
-//
-//        Espiritu espirituRecuperado = espirituService.recuperar(espiritu.getId());
-//
-//        assertEquals(10, espirituRecuperado.getNivelDeConexion());
-//
-//    }
+    @Test
+    void alRecuperarTodosLosEspiritusDemoniosNoDebenHaberDeOtroTipo() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(angel1); //es un angel
+
+
+        // hay 3 en total, 2 son ángeles y 1 es demonio
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos();
+
+        assertEquals(2, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosPeroNoHaberDevuelveListaVacía() {
+
+        espirituService.crear(angel1);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos();// agarro sólo los demonios
+
+        assertTrue(demonios.isEmpty());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
+        Demonio demonio3 = new Demonio(
+                10,
+                "Sebastián"
+
+        );
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+
+        List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
+        //  2 3 1
+
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos().stream().map(Espiritu::getId).toList();
+
+
+        assertEquals(expected, demoniosIds);
+
+
+    }
+
 
     @AfterEach
     void eliminarModelo() {
