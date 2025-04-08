@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,9 +31,9 @@ public class Medium implements Serializable {
     @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Espiritu> angeles = new ArrayList<>();
+    private List<Angel> angeles = new ArrayList<>();
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Espiritu> demonios = new ArrayList<>();
+    private List<Demonio> demonios = new ArrayList<>();
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
@@ -40,8 +41,8 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
-    public void conectarseAEspiritu(Espiritu espiritu) {
-        this.angeles.add(espiritu);
+    public void conectarseAEspiritu(Angel espiritu) {
+        angeles.add(espiritu);
         espiritu.aumentarConexion(this);
     }
 
@@ -51,7 +52,7 @@ public class Medium implements Serializable {
         this.recuperarConexion(demonios);
     }
 
-    private void recuperarConexion(List<Espiritu> espiritus){
+    private void recuperarConexion(List<? extends Espiritu> espiritus){
         for(Espiritu espiritu : espiritus){
             espiritu.aumentarNivelDeConexionEn(5);
         }

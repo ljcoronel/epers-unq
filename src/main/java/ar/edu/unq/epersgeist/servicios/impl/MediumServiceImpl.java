@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,10 +55,13 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void descansar(Long mediumId) {
-        Medium medium = this.recuperar(mediumId).orElseThrow(() -> new RuntimeException("No se encontro el medium con ID " + mediumId));
+        HibernateTransactionRunner.runTrx(() -> {
+            Medium medium = mediumDao.recuperar(mediumId).get();;// agregar una exepcion cuando no encuentre al medium
 
-        medium.descansar();
-
+            medium.descansar();
+            this.actualizar(medium);
+            return null;
+        });
     }
 
     @Override

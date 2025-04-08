@@ -2,6 +2,7 @@ package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
@@ -36,9 +37,9 @@ public class MediumServiceImplTest {
         medium2 = new Medium("Pepe",100,0);
 
         angel1 = new Angel(10,"gabriel");
-        espirituService.crear(angel1);
 
-        medium.agregarAngel(angel1);
+
+
     }
     @Test
     void seRecuperanTodosLosMediumsGuardados(){
@@ -130,17 +131,29 @@ public class MediumServiceImplTest {
 
     @Test
     void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituConexion(){
+
         mediumService.crear(medium);
+        espirituService.crear(angel1);
+
+        medium.agregarAngel(angel1);//
+        angel1.setMedium(medium);//estas 3 lineas se reemplazan con el conectar
+        espirituService.actualizar(angel1);//
+        //podria agregarse un espiritu mas para probar
+
 
         mediumService.descansar(medium.getId());
 
-        //assertEquals(60,medium.getMana());
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+        Espiritu recuperado1 = espirituService.recuperar(angel1.getId()).get();
 
-        //assertEquals(15, angel1.getNivelDeConexion());
+        assertEquals(65,recuperado.getMana());
+
+        assertEquals(15, recuperado1.getNivelDeConexion());
     }
 
     @AfterEach
     void eliminarModelo() {
+        testService.eliminarModelo(Espiritu.class);
         testService.eliminarModelo(Medium.class);
     }
 

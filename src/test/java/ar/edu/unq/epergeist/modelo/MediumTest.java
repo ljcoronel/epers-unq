@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    private final Espiritu espiritu = new Angel(79, "Poltergeist");
+    private final Angel espiritu = new Angel(79, "Poltergeist");
     private final Angel espiritu1 = new Angel(60, "Fantasma");
     Medium medium;
 
