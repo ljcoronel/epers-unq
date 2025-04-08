@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Direccion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -53,8 +54,8 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public List<Demonio> espiritusDemoniacos() {
-        return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(Demonio.class));
+    public List<Demonio> espiritusDemoniacos(Direccion direccion, int pagina, int cantidadPorPagina) {
+        return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class));
     }
 
     @Override

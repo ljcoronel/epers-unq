@@ -1,5 +1,6 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Direccion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -15,11 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceImplTest {
-    public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
     private TestService testService  = new TestService();
     private Espiritu angel1;
@@ -139,7 +138,7 @@ public class EspirituServiceImplTest {
 
         // hay 3 en total, 2 son ángeles y 1 es demonio
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos();
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 2);
 
         assertEquals(2, demonios.size());
 
@@ -150,7 +149,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(angel1);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos();// agarro sólo los demonios
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 2);// agarro sólo los demonios
 
         assertTrue(demonios.isEmpty());
 
@@ -171,7 +170,7 @@ public class EspirituServiceImplTest {
         List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
         //  2 3 1
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos().stream().map(Espiritu::getId).toList();
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 3).stream().map(Espiritu::getId).toList();
 
 
         assertEquals(expected, demoniosIds);
