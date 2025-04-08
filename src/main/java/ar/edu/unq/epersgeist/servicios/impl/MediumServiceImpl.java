@@ -37,6 +37,10 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void actualizar(Medium medium) {
+        HibernateTransactionRunner.runTrx(()-> {
+            getMediumDao().actualizar(medium);
+            return null;
+        } );
 
     }
 

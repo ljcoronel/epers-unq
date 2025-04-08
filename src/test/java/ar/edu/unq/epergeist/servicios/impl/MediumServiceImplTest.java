@@ -86,6 +86,37 @@ public class MediumServiceImplTest {
 
         assertNotNull(medium.getId());
     }
+    
+    
+    //feature actualizar
+
+    @Test
+    void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
+        mediumService.crear(medium);
+        medium.setNombre("nombreModificado");
+
+        mediumService.actualizar(medium);
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals("nombreModificado", recuperado.getNombre());
+    }
+
+    @Test
+    void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
+
+        assertDoesNotThrow(() -> mediumService.actualizar(medium));
+    }
+
+    //Test feature recuperar
+
+
+    @Test
+    void alRecuperarUnMediumQueNoEstaGuardadoSeRetornaEmpty() {
+        Long idInexistente = 333L;
+
+        assertTrue(mediumService.recuperar(idInexistente).isEmpty());
+
+    }
 
     @AfterEach
     void eliminarModelo() {

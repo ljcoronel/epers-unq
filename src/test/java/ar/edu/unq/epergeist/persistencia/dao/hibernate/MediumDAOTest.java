@@ -7,7 +7,10 @@ import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MediumDAOTest {
 
@@ -33,5 +36,33 @@ public class MediumDAOTest {
         assertEquals(unMedium.getMana(),mediumRecuperado.getMana());
         assertEquals(unMedium.getManaMax(), mediumRecuperado.getManaMax());
         assertEquals(unMedium.getNombre(), mediumRecuperado.getNombre());
+    }
+
+    @Test
+    void alRecuperarUnMediumQueNoEstaGuardadoDevuelveEmpty() {
+
+        Long idInventado = 115L;
+        Optional<Medium> recuperado = HibernateTransactionRunner.runTrx(()->mediumDAO.recuperar(idInventado));
+
+        assertTrue(recuperado.isEmpty());
+    }
+
+    @Test
+    void alActualizarUnMediumYLuegoRecuperarloLosCambiosSeVenReflejados() {
+        unMedium.setNombre("nombreModificado");
+        unMedium.setMana(60);
+        unMedium.setManaMax(800);
+
+        HibernateTransactionRunner.runTrx(()->{
+            mediumDAO.actualizar(unMedium);
+            return null;
+        });
+
+        var mediumActualizado = HibernateTransactionRunner.runTrx(()->mediumDAO.recuperar(unMedium.getId()).get());
+
+        assertEquals("nombreModificado",mediumActualizado.getNombre());
+        assertEquals(60,mediumActualizado.getMana());
+        assertEquals(800,mediumActualizado.getManaMax());
+
     }
 }
