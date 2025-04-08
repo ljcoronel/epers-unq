@@ -5,9 +5,9 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import org.hibernate.Hibernate;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class MediumServiceImpl implements MediumService {
@@ -56,7 +56,11 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void descansar(Long mediumId) {
         HibernateTransactionRunner.runTrx(() -> {
-            Medium medium = mediumDao.recuperar(mediumId).get();;// agregar una exepcion cuando no encuentre al medium
+            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
+            if (!optionalMedium.isPresent()) {
+                throw new NoSuchElementException("No se encontró el Medium con ID: " + mediumId);
+            }
+            Medium medium = optionalMedium.get();
 
             medium.descansar();
             this.actualizar(medium);

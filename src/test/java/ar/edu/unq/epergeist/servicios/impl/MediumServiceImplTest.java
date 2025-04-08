@@ -14,6 +14,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumServiceImplTest {
@@ -130,7 +132,7 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituConexion(){
+    void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
 
         mediumService.crear(medium);
         espirituService.crear(angel1);
@@ -149,6 +151,13 @@ public class MediumServiceImplTest {
         assertEquals(65,recuperado.getMana());
 
         assertEquals(15, recuperado1.getNivelDeConexion());
+    }
+
+    @Test
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExepcion(){
+        assertThrows(NoSuchElementException.class, () -> {
+            mediumService.descansar(-1L);
+        });
     }
 
     @AfterEach
