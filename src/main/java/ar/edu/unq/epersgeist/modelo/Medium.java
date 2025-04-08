@@ -6,7 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
@@ -26,8 +28,10 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
-    //@OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Espiritu> espiritus = new HashSet<>();
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Espiritu> angeles = new ArrayList<>();
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Espiritu> demonios = new ArrayList<>();
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
@@ -36,7 +40,7 @@ public class Medium implements Serializable {
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
-        this.espiritus.add(espiritu);
+        this.angeles.add(espiritu);
         espiritu.aumentarConexion(this);
     }
 

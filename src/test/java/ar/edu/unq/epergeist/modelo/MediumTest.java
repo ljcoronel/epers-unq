@@ -21,8 +21,8 @@ public class MediumTest {
     void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
         medium.conectarseAEspiritu(espiritu);
 
-        assertEquals(1, medium.getEspiritus().size());
-        assertTrue(medium.getEspiritus().contains(espiritu));
+        assertEquals(1, medium.getAngeles().size());
+        assertTrue(medium.getAngeles().contains(espiritu));
 
     }
 

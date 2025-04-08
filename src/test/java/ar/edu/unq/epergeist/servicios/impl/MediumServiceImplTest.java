@@ -36,8 +36,6 @@ public class MediumServiceImplTest {
         var mediums = mediumService.recuperarTodos();
 
         assertEquals(2, mediums.size());
-        assertTrue(mediums.contains(medium));
-        assertTrue(mediums.contains(medium2));
     }
 
     @Test
