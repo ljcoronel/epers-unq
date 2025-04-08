@@ -1,6 +1,7 @@
 package ar.edu.unq.epergeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    private final Espiritu espiritu = new Espiritu("el lobo",79, "Poltergeist");
+    private final Espiritu espiritu = new Angel(79, "Poltergeist");
     Medium medium;
 
     @BeforeEach
