@@ -66,6 +66,7 @@ public abstract class Espiritu implements Serializable {
         }
 
     }
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
 

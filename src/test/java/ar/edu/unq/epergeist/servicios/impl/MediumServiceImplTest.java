@@ -1,7 +1,10 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.TestService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
@@ -16,17 +19,26 @@ public class MediumServiceImplTest {
 
     private MediumServiceImpl mediumService;
     private TestService testService= new TestService();
+    private EspirituServiceImpl espirituService;
 
     private Medium medium;
     private Medium medium2;
+
+    private Angel angel1;
 
     @BeforeEach
     void crearMedium(){
 
         mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
 
         medium = new Medium("Max",100,50);
         medium2 = new Medium("Pepe",100,0);
+
+        angel1 = new Angel(10,"gabriel");
+        espirituService.crear(angel1);
+
+        medium.agregarAngel(angel1);
     }
     @Test
     void seRecuperanTodosLosMediumsGuardados(){
@@ -114,6 +126,17 @@ public class MediumServiceImplTest {
 
         assertTrue(mediumService.recuperar(idInexistente).isEmpty());
 
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituConexion(){
+        mediumService.crear(medium);
+
+        mediumService.descansar(medium.getId());
+
+        //assertEquals(60,medium.getMana());
+
+        //assertEquals(15, angel1.getNivelDeConexion());
     }
 
     @AfterEach

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +43,37 @@ public class Medium implements Serializable {
     public void conectarseAEspiritu(Espiritu espiritu) {
         this.angeles.add(espiritu);
         espiritu.aumentarConexion(this);
+    }
+
+    public void descansar(){
+        this.aumentarMana(15);
+        this.recuperarConexion(angeles);
+        this.recuperarConexion(demonios);
+    }
+
+    private void recuperarConexion(List<Espiritu> espiritus){
+        for(Espiritu espiritu : espiritus){
+            espiritu.aumentarNivelDeConexionEn(5);
+        }
+    }
+
+    private void aumentarMana(int i) {
+        int manaActual = getMana();
+        setMana(i + manaActual);
+    }
+
+    public void setMana(int i) {
+        if (i < 0) {
+            this.mana = 0;
+        } else if (i > manaMax) {
+            this.mana = manaMax;
+        } else {
+            this.mana = i;
+        }
+
+    }
+    public void agregarAngel(Angel angel){
+        angeles.add(angel);
     }
 
 

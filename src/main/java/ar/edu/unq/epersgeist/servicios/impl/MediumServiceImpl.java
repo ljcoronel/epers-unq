@@ -54,6 +54,9 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void descansar(Long mediumId) {
+        Medium medium = this.recuperar(mediumId).orElseThrow(() -> new RuntimeException("No se encontro el medium con ID " + mediumId));
+
+        medium.descansar();
 
     }
 
