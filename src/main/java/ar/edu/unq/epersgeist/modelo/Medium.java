@@ -1,37 +1,33 @@
 package ar.edu.unq.epersgeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString
+
 @Entity
 public class Medium implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
+    @Check(constraints = "manaMax > 0")
     private Integer manaMax;
+    @Column(nullable = false)
+    @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
-
-    @OneToMany
+    //@OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Espiritu> espiritus = new HashSet<>();
-
-    @ManyToOne
-    private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
@@ -44,19 +40,5 @@ public class Medium implements Serializable {
         espiritu.aumentarConexion(this);
     }
 
-    public String getNombre() {
-        return nombre;
-    }
 
-    public Integer getManaMax() {
-        return manaMax;
-    }
-
-    public Integer getMana() {
-        return mana;
-    }
-
-    public Set<Espiritu> getEspiritus() {
-        return espiritus;
-    }
 }
