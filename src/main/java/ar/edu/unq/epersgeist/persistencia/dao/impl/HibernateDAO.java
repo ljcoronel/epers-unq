@@ -30,7 +30,7 @@ public class HibernateDAO<T> {
         session.merge(entity);
     }
 
-    public void eliminar(long id) {
+    public void eliminar(Long id) {
         Session session = HibernateTransactionRunner.getCurrentSession();
         T entidad = session.get(entityType, id);
         if (entidad != null) session.remove(entidad);

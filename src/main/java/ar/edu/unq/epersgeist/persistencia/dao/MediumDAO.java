@@ -10,6 +10,6 @@ public interface MediumDAO {
     Optional<Medium> recuperar(Long mediumId);
     List<Medium> recuperarTodos();
     void actualizar(Medium medium);
-    void eliminar(long idDelMedium);
+    void eliminar(Long idDelMedium);
 
 }

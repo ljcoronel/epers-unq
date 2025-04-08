@@ -54,17 +54,43 @@ public class MediumServiceImplTest {
 
         mediumService.eliminar(medium.getId());
 
-        assertNull(mediumService.recuperar(medium.getId()));
+        assertTrue(mediumService.recuperar(medium.getId()).isEmpty());
     }
 
     @Test
     void alEliminarUnMediumNoGuardadoNoHaceNada() {
 
-        assertDoesNotThrow(() -> mediumService.eliminar(medium.getId()));
+        assertDoesNotThrow(() -> mediumService.eliminar(15L));
+    }
+
+
+    //feature crear
+    @Test
+    void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
+        mediumService.crear(medium);
+
+        Medium mediumRecuperado =  mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(medium.getId(), mediumRecuperado.getId());
+        assertEquals(medium.getMana(),mediumRecuperado.getMana());
+        assertEquals(medium.getManaMax(), mediumRecuperado.getManaMax());
+        assertEquals(medium.getNombre(), mediumRecuperado.getNombre());
+    }
+
+    @Test
+    void alCrearUnMediumSeLeAgregaUnId() {
+
+        assertNull(medium.getId());
+
+        mediumService.crear(medium);
+
+        assertNotNull(medium.getId());
     }
 
     @AfterEach
     void eliminarModelo() {
         testService.eliminarModelo(Medium.class);
     }
+
+
 }

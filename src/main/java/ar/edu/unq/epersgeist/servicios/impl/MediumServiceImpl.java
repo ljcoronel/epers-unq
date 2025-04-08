@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MediumServiceImpl implements MediumService {
 
@@ -25,8 +26,8 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public Medium recuperar(Long mediumId) {
-        return null;
+    public Optional<Medium> recuperar(Long mediumId) {
+        return HibernateTransactionRunner.runTrx(() -> getMediumDao().recuperar(mediumId));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public void eliminar(long idDelMedium) {
+    public void eliminar(Long idDelMedium) {
         HibernateTransactionRunner.runTrx(() -> {
             getMediumDao().eliminar(idDelMedium);
             return null;
