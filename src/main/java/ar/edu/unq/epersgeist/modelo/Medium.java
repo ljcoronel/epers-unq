@@ -73,6 +73,26 @@ public class Medium implements Serializable {
         }
 
     }
+    public void exorcizarA(Medium medium){
+
+        for (Angel angel : angeles){
+
+            List<Demonio> otrosDemonios = medium.getDemonios();
+
+            if(medium.poseido()){
+
+                //angel.atacar(otrosDemonios.get(0));
+
+            }else{
+                break;
+            }
+        }
+    }
+
+    private boolean poseido(){
+        return (!demonios.isEmpty());
+    }
+
     public void agregarAngel(Angel angel){
         angeles.add(angel);
     }

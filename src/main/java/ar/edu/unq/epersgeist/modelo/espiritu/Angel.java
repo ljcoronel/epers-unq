@@ -22,8 +22,8 @@ public class Angel extends Espiritu {
 //        super(nivelDeConexion, nombre);
 //    }
 
-//    public void atacar(Demonio demonio) {
+    public void atacar(Demonio demonio) {
 //        //hacer algo
-//        demonio.defender(this);
-//    }
+        demonio.defender(this);
+    }
 }

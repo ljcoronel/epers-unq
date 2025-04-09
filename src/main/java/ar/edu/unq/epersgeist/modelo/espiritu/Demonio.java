@@ -18,7 +18,7 @@ public class Demonio extends Espiritu {
         super(nivelDeConexion, nombre);
     }
 
-//    public void defender(Angel angel) {
+    public void defender(Angel angel) {
 //        //hacer algo
-//    }
+    }
 }
