@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ public class EspirituServiceImplTest {
     private Espiritu angel3;
     private Demonio demonio1;
     private Demonio demonio2;
+    private Demonio demonio3;
 
 //    Descomentar para ver logs.
 
@@ -42,7 +44,7 @@ public class EspirituServiceImplTest {
 //    }
 
     @BeforeEach
-    void crearEspiritu() {
+    void crearInstancias() {
         angel1 = new Angel(10,"Angel1");
         angel2 = new Angel(10,"Angel2");
         angel3 = new Angel(10,"Angel3");
@@ -54,6 +56,11 @@ public class EspirituServiceImplTest {
         demonio2 = new Demonio(
                 90,
                 "Diavolo"
+
+        );
+        demonio3 = new Demonio(
+                50,
+                "Sebastián"
 
         );
     }
@@ -156,25 +163,184 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void alRecuperarTodosLosDemoniosDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
-        Demonio demonio3 = new Demonio(
-                10,
-                "Sebastián"
+    void alRecuperarTodosLosDemoniosEspecificandoOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
+        //  2 3 1
+
+        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 3)
+        ).stream().map(Espiritu::getId).toList();
+
+
+        assertEquals(expected, demoniosIds);
+
+
+
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendente() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
+        //  1 3 2
+
+        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 0, 3)
+        ).stream().map(Espiritu::getId).toList();
+
+        assertEquals(expected, demoniosIds);
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, -1, 3));
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 0, -1));
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 0, 0));
+
+    }
+
+    @Test
+    void alRecuperarMenosDemoniosDeLosTotalesDebeTraerLaCantidadEspecificada() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 0, 2)
+        );
+
+        assertEquals(2, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeHayDemoniosDebeTraerLosDeEsaPáginaSolamente() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 1, 2)
+        );
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 1
+
+        assertEquals(1, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeNoHayDemoniosNoTraeNada() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 1, 5)
+        );
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 0
+        // no hay más
+
+        assertTrue(demonios.isEmpty());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaDondeNoHayMismaCantidadDeDemoniosQueLaCantidadPorPáginaTraeTodosLosQueHayaEnEsaPágina() {
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 1, 2)
+        );
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 1
+        // no hay más
+
+        assertEquals(1, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendenteEntreTodosLosDemonios() {
+        Demonio demonio4 = new Demonio(
+                99,
+                "Enrique"
 
         );
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
 
+        // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
-        //  2 3 1
+        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 3)
+        ).stream().map((Demonio::getId)).toList();
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Direccion.DESCENDENTE, 0, 3).stream().map(Espiritu::getId).toList();
+        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
 
+        // 4 2 3
 
-        assertEquals(expected, demoniosIds);
+        assertEquals(demoniosIdsEsperados, demoniosIds);
 
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosDeUnTipoEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendenteEntreTodosLosDemonios() {
+        Demonio demonio4 = new Demonio(
+                2,
+                "Enrique"
+
+        );
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
+
+        // el orden por inserción es: 1, 2, 3, 4
+
+        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
+                espirituService.espiritusDemoniacos(Direccion.ASCENDENTE, 0, 3)
+        ).stream().map((Demonio::getId)).toList();
+
+        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());
+
+        // 4 1 3
+
+        assertEquals(demoniosIdsEsperados, demoniosIds);
 
     }
 
