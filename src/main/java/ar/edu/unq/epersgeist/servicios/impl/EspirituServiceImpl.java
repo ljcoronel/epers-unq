@@ -1,44 +1,72 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Espiritu;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EspirituServiceImpl implements EspirituService {
 
-    @Override
-    public Espiritu crear(Espiritu espiritu) {
-        // TODO completar
-        return null;
+    private EspirituDAO espirituDao;
+
+    public EspirituServiceImpl(EspirituDAO espirituDao) {
+        setEspirituDao(espirituDao);
     }
 
     @Override
-    public Espiritu recuperar(Long espirituId) {
-        // TODO completar
-        return null;
+    public Espiritu crear(Espiritu espiritu) {
+        return HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().crear(espiritu);
+            return null;
+        });
+    }
+
+    @Override
+    public Optional<Espiritu> recuperar(Long espirituId) {
+        return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        // TODO completar
-        return null;
+        return HibernateTransactionRunner.runTrx(() -> espirituDao.recuperarTodos());
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        // TODO completar
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().actualizar(espiritu);
+            return null;
+        });
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        // TODO completar
+        HibernateTransactionRunner.runTrx(() -> {
+            getEspirituDao().eliminar(espirituId);
+            return null;
+        });
     }
 
     @Override
-    public Medium conectar(Long espirituId, Medium medium) {
-        // TODO completar
+    public Medium conectar(Long espirituId, Long mediumId) {
+//        Espiritu espiritu = recuperar(espirituId);
+//
+//        medium.conectarseAEspiritu(espiritu);
+//
+//        getEspirituDao().actualizar(espiritu); //garantiza ACID
+//        return medium;
         return null;
+    }
+
+    public EspirituDAO getEspirituDao() {
+        return espirituDao;
+    }
+
+    private void setEspirituDao(EspirituDAO espirituDao) {
+        this.espirituDao = espirituDao;
     }
 }

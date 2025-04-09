@@ -1,0 +1,170 @@
+package ar.edu.unq.epergeist.servicios.impl;
+
+import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.TestService;
+import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import org.hibernate.Session;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class MediumServiceImplTest {
+
+    private MediumServiceImpl mediumService;
+    private TestService testService= new TestService();
+    private EspirituServiceImpl espirituService;
+
+    private Medium medium;
+    private Medium medium2;
+
+    private Angel angel1;
+
+    @BeforeEach
+    void crearMedium(){
+
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+
+        medium = new Medium("Max",100,50);
+        medium2 = new Medium("Pepe",100,0);
+
+        angel1 = new Angel(10,"gabriel");
+
+
+
+    }
+    @Test
+    void seRecuperanTodosLosMediumsGuardados(){
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        var mediums = mediumService.recuperarTodos();
+
+        assertEquals(2, mediums.size());
+    }
+
+    @Test
+    void alRecuperarTodosLosMediumsEstandoLaBaseDeDatosVaciaRetornaListaVacia(){
+
+        var mediums = mediumService.recuperarTodos();
+
+        assertTrue(mediums.isEmpty());
+    }
+
+    @Test
+    void seEliminaUnMediumDejaDeEstarPersistiendo(){
+        mediumService.crear(medium);
+
+        mediumService.eliminar(medium.getId());
+
+        assertTrue(mediumService.recuperar(medium.getId()).isEmpty());
+    }
+
+    @Test
+    void alEliminarUnMediumNoGuardadoNoHaceNada() {
+
+        assertDoesNotThrow(() -> mediumService.eliminar(15L));
+    }
+
+
+    //feature crear
+    @Test
+    void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
+        mediumService.crear(medium);
+
+        Medium mediumRecuperado =  mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(medium.getId(), mediumRecuperado.getId());
+        assertEquals(medium.getMana(),mediumRecuperado.getMana());
+        assertEquals(medium.getManaMax(), mediumRecuperado.getManaMax());
+        assertEquals(medium.getNombre(), mediumRecuperado.getNombre());
+    }
+
+    @Test
+    void alCrearUnMediumSeLeAgregaUnId() {
+
+        assertNull(medium.getId());
+
+        mediumService.crear(medium);
+
+        assertNotNull(medium.getId());
+    }
+    
+    
+    //feature actualizar
+
+    @Test
+    void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
+        mediumService.crear(medium);
+        medium.setNombre("nombreModificado");
+
+        mediumService.actualizar(medium);
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals("nombreModificado", recuperado.getNombre());
+    }
+
+    @Test
+    void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
+
+        assertDoesNotThrow(() -> mediumService.actualizar(medium));
+    }
+
+    //Test feature recuperar
+
+
+    @Test
+    void alRecuperarUnMediumQueNoEstaGuardadoSeRetornaEmpty() {
+        Long idInexistente = 333L;
+
+        assertTrue(mediumService.recuperar(idInexistente).isEmpty());
+
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
+
+        mediumService.crear(medium);
+        espirituService.crear(angel1);
+
+        medium.agregarAngel(angel1);//
+        angel1.setMedium(medium);//estas 3 lineas se reemplazan con el conectar
+        espirituService.actualizar(angel1);//
+        //podria agregarse un espiritu mas para probar
+
+
+        mediumService.descansar(medium.getId());
+
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+        Espiritu recuperado1 = espirituService.recuperar(angel1.getId()).get();
+
+        assertEquals(65,recuperado.getMana());
+
+        assertEquals(15, recuperado1.getNivelDeConexion());
+    }
+
+    @Test
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExepcion(){
+        assertThrows(NoSuchElementException.class, () -> {
+            mediumService.descansar(-1L);
+        });
+    }
+
+    @AfterEach
+    void eliminarModelo() {
+        testService.eliminarModelo(Espiritu.class);
+        testService.eliminarModelo(Medium.class);
+    }
+
+
+}
