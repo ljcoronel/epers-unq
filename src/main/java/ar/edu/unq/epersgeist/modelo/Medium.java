@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,10 +30,13 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
-    @OneToMany
-    private List<Espiritu> espiritus;
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Angel> angeles = new ArrayList<>();
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Demonio> demonios = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
+
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
@@ -40,9 +45,40 @@ public class Medium implements Serializable {
         this.espiritus = new ArrayList<>();
     }
 
-    public void conectarseAEspiritu(Espiritu espiritu) {
-        this.espiritus.add(espiritu);
+    public void conectarseAEspiritu(Angel espiritu) {
+        angeles.add(espiritu);
         espiritu.aumentarConexion(this);
+    }
+
+    public void descansar(){
+        this.aumentarMana(15);
+        this.recuperarConexion(angeles);
+        this.recuperarConexion(demonios);
+    }
+
+    private void recuperarConexion(List<? extends Espiritu> espiritus){
+        for(Espiritu espiritu : espiritus){
+            espiritu.aumentarNivelDeConexionEn(5);
+        }
+    }
+
+    private void aumentarMana(int i) {
+        int manaActual = getMana();
+        setMana(i + manaActual);
+    }
+
+    public void setMana(int i) {
+        if (i < 0) {
+            this.mana = 0;
+        } else if (i > manaMax) {
+            this.mana = manaMax;
+        } else {
+            this.mana = i;
+        }
+
+    }
+    public void agregarAngel(Angel angel){
+        angeles.add(angel);
     }
 
 
