@@ -1,10 +1,14 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import jakarta.persistence.OptimisticLockException;
 import org.hibernate.Session;
@@ -21,12 +25,15 @@ import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EspirituServiceImplTest {
-    public static final Medium MEDIUM = new Medium("Brujita", null, null);
+    private  Medium medium;
+    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
     private TestService testService  = new TestService();
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Espiritu espiritu3;
+
 
 //    Descomentar para ver logs.
 
@@ -47,6 +54,8 @@ public class EspirituServiceImplTest {
         espiritu1 = new Angel(10,"Angel1");
         espiritu2 = new Angel(10,"Angel2");
         espiritu3 = new Angel(10,"Angel3");
+
+        medium = new Medium("Brujita", 100, 50);
     }
 
     @Test
@@ -119,17 +128,20 @@ public class EspirituServiceImplTest {
         assertTrue(espirituService.recuperarTodos().isEmpty());
     }
 
-//    @Test
-//    void alConectarUnEspirituSuNivelDeConexionAumentaYSePersiste() {
-//        espirituService.crear(espiritu);
-//
-//        espirituService.conectar(espiritu.getId(), MEDIUM);
-//
-//        Espiritu espirituRecuperado = espirituService.recuperar(espiritu.getId());
-//
-//        assertEquals(10, espirituRecuperado.getNivelDeConexion());
-//
-//    }
+    @Test
+    void alConectarUnEspirituSeGuardaEnSuRespectivaListaDelMediumAumentandoSuConexionYSePersiste() {
+
+        espirituService.crear(espiritu1);
+
+        espirituService.conectar(espiritu1.getId(), medium.getId());
+
+        Espiritu angelRecuperado = espirituService.recuperar(espiritu1.getId()).get();
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(20, angelRecuperado.getNivelDeConexion());
+        assertEquals(1,mediumRecuperado.getAngeles().size());
+
+    }
 
     @AfterEach
     void eliminarModelo() {

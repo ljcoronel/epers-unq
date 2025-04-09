@@ -41,8 +41,12 @@ public class Medium implements Serializable {
         this.mana = mana;
     }
 
-    public void conectarseAEspiritu(Angel espiritu) {
-        angeles.add(espiritu);
+    public void conectarseAEspiritu(Espiritu espiritu) {
+        if (espiritu instanceof Angel) {
+            angeles.add((Angel) espiritu);
+        }else{
+            demonios.add((Demonio) espiritu);
+        }
         espiritu.aumentarConexion(this);
     }
 

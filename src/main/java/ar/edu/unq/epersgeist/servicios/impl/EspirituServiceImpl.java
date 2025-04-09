@@ -53,13 +53,16 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
+        return HibernateTransactionRunner.runTrx(() -> {
+
+            return null;
+        });
 //        Espiritu espiritu = recuperar(espirituId);
 //
 //        medium.conectarseAEspiritu(espiritu);
 //
 //        getEspirituDao().actualizar(espiritu); //garantiza ACID
 //        return medium;
-        return null;
     }
 
     public EspirituDAO getEspirituDao() {
