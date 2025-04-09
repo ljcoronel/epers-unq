@@ -6,7 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
@@ -26,13 +28,16 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     @Check(constraints = "mana BETWEEN 0 AND manaMax")
     private Integer mana;
-    //@OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Espiritu> espiritus = new HashSet<>();
+    @OneToMany
+    private List<Espiritu> espiritus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
+        this.espiritus = new ArrayList<>();
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
