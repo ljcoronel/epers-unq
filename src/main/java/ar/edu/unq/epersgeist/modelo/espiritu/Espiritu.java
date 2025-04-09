@@ -29,7 +29,6 @@ public abstract class Espiritu implements Serializable {
     private Integer nivelDeConexion;
     @Column(nullable = false, unique = true, length = 50)
     private String nombre;
-    private Boolean esLibre = true;
     @ManyToOne
     private Medium medium;
 
@@ -46,10 +45,6 @@ public abstract class Espiritu implements Serializable {
         this.nombre = nombre;
     }
 
-    public void aumentarConexion(Medium medium) {
-
-        this.aumentarNivelDeConexionEn(10);
-    }
 
     public void aumentarNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
@@ -66,6 +61,12 @@ public abstract class Espiritu implements Serializable {
         }
 
     }
+    public void conectarse(){
+
+        this.aumentarNivelDeConexionEn(10);
+    }
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
 

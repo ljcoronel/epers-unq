@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
@@ -41,7 +42,7 @@ class UbicacionServiceTest {
         this.ubicacionDos = new Ubicacion("Bernal");
         this.ubicacionTres = new Ubicacion("Avellaneda");
         this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO);
-        this.espirituService = new EspirituServiceImpl(this.espirituDAO);
+        this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());//agrego mediumdao por el concetar
         this.limpiador = new TestService();
         this.angelUno = new Angel(10, "angelical");
         this.angelDos = new Angel(20, "angel");

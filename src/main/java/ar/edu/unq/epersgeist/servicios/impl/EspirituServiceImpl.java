@@ -3,18 +3,22 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class EspirituServiceImpl implements EspirituService {
 
     private EspirituDAO espirituDao;
+    private MediumDAO mediumDao;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao) {
+    public EspirituServiceImpl(EspirituDAO espirituDao,MediumDAO mediumDAO) {
         setEspirituDao(espirituDao);
+        mediumDao = mediumDAO;
     }
 
     @Override
@@ -53,16 +57,41 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
-        return HibernateTransactionRunner.runTrx(() -> {
+         return HibernateTransactionRunner.runTrx(() -> {
 
-            return null;
+            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
+            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
+
+            this.verificarExistenciaEspirituYMedium(optionalEspiritu,optionalMedium);
+
+            Medium medium = optionalMedium.get();
+            Espiritu espiritu = optionalEspiritu.get();
+
+            medium.conectarseAEspiritu(espiritu);
+
+            mediumDao.actualizar(medium);
+
+            return medium;
         });
-//        Espiritu espiritu = recuperar(espirituId);
-//
-//        medium.conectarseAEspiritu(espiritu);
-//
-//        getEspirituDao().actualizar(espiritu); //garantiza ACID
-//        return medium;
+
+    }
+
+    private void verificarSiExisteEspiritu(Optional<Espiritu> espiritu){
+        if (!espiritu.isPresent()) {
+            throw new NoSuchElementException("No se encontró el Espiritu");
+        }
+    }
+
+    private void verificarSiExisteMedium(Optional<Medium> medium){
+        if (medium.isEmpty()) {
+            throw new NoSuchElementException("No se encontró el Medium");
+        }
+    }
+
+    private void verificarExistenciaEspirituYMedium(Optional<Espiritu> espiritu,Optional<Medium> medium){
+        this.verificarSiExisteEspiritu(espiritu);
+        this.verificarSiExisteMedium(medium);
+
     }
 
     public EspirituDAO getEspirituDao() {

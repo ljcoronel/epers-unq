@@ -33,7 +33,7 @@ public class MediumServiceImplTest {
     void crearMedium(){
 
         mediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
         medium = new Medium("Max",100,50);
         medium2 = new Medium("Pepe",100,0);

@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,12 +43,21 @@ public class Medium implements Serializable {
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
+    //en caso de que solo pueda conectarse a un solo medium verificar "BOBI"
+        this.realizarConexion(espiritu);
+        espiritu.conectarse();
+    }
+
+
+    private void realizarConexion(Espiritu espiritu){
+
+        if(espiritu.getMedium() == null)return;
+
         if (espiritu instanceof Angel) {
             angeles.add((Angel) espiritu);
         }else{
             demonios.add((Demonio) espiritu);
         }
-        espiritu.aumentarConexion(this);
     }
 
     public void descansar(){

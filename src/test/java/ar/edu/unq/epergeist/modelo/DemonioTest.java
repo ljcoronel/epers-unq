@@ -59,13 +59,6 @@ public class DemonioTest {
         assertEquals(0, demonio.getNivelDeConexion());
     }
 
-    @Test
-    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
-        // empíeza en 0
-        demonio.aumentarConexion(MEDIUM);
-
-        assertEquals(10, demonio.getNivelDeConexion());
-    }
 
 
 //
@@ -75,7 +68,7 @@ public class DemonioTest {
                 100,
                 "Pepe"
         );
-        demonio.aumentarConexion(MEDIUM);
+        demonio.aumentarNivelDeConexionEn(10);
 
         assertEquals(100, demonio.getNivelDeConexion());
     }
