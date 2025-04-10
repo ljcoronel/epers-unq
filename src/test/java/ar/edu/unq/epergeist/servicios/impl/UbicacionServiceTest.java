@@ -53,13 +53,13 @@ class UbicacionServiceTest {
         this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());
         this.mediumService = new MediumServiceImpl(this.mediumDAO);
         this.limpiador = new TestService();
-        this.angelUno = new Angel(10, "angelical");
-        this.angelDos = new Angel(20, "angel");
-        this.demonioUno = new Demonio(10, "demonio");
-        this.demonioDos = new Demonio(20, "demoni");
-        this.mediumUno = new Medium("Fabian", 100, 10);
-        this.mediumDos = new Medium("Franco", 200, 50);
-        this.mediumTres = new Medium("Tobias", 300, 60);
+        this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
+        this.angelDos = new Angel(20, "angel", this.ubicacionUno);
+        this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
+        this.demonioDos = new Demonio(20, "demoni",this.ubicacionUno);
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
     }
 
     @Test
