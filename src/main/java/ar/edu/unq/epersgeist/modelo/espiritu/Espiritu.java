@@ -31,9 +31,6 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @Transient
-    private RandomGenerator randomGenerator = new RandomGenerator();
-
 
     public Espiritu(Integer nivelDeConexion, String nombre) {
 
@@ -89,12 +86,12 @@ public abstract class Espiritu implements Serializable {
     }
 
     protected int porcentajeAtaqueRandom(){
-        int procentajeDeExito = randomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
+        int procentajeDeExito = RandomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
         return procentajeDeExito;
     }
 
     protected int porcentajeDefensaRandom(){
-        int procentajeDeDefensa = randomGenerator.getRandom(1, 100);
+        int procentajeDeDefensa = RandomGenerator.getRandom(1, 100);
         return procentajeDeDefensa;
     }
 

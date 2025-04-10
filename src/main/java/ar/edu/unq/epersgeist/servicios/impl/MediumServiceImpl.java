@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class MediumServiceImpl implements MediumService {
 
     private MediumDAO mediumDao;
+
 
     public MediumServiceImpl (MediumDAO mediumDao){
         this.mediumDao = mediumDao;

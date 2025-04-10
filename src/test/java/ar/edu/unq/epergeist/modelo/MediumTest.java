@@ -4,21 +4,14 @@ import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exeption.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    RandomGenerator randomAngelesDaAltoYBajo = new RandomGenerator(12);//9 el acutal da 7 y 3
-//    RandomGenerator randomAngelesDa1 = new RandomGenerator(18);
-//
-    RandomGenerator randomDemoniosDaBajoYAlto = new RandomGenerator(6);//230 el actual da 2 y 7
-//    RandomGenerator randomDemoniosDa1 = new RandomGenerator(18);
 
-    RandomGenerator randomFijoAngeles;
-    RandomGenerator randomFijoDemonios;
 
     private Angel angel1;
     private Angel angel2;
@@ -33,14 +26,11 @@ public class MediumTest {
         medium = new Medium("Francisco", 50, 30);
         medium2 = new Medium("Rafa", 50, 15);
 
-        randomFijoAngeles = new RandomGenerator();
-        randomFijoDemonios = new RandomGenerator();
-
-        angel1 = new Angel(60, "Uriel",randomFijoAngeles);
+        angel1 = new Angel(60, "Uriel");
         angel2 = new Angel(5, "Ariel");
 
-        demonio1 = new Demonio(50, "Azazel",randomFijoDemonios);
-        demonio2 = new Demonio(3, "Dismas",randomFijoDemonios);
+        demonio1 = new Demonio(50, "Azazel");
+        demonio2 = new Demonio(3, "Dismas");
     }
 
     @Test
@@ -50,8 +40,6 @@ public class MediumTest {
         assertEquals(1, medium.getAngeles().size());
         assertTrue(medium.getAngeles().contains(angel1));
 
-        System.out.println(randomDemoniosDaBajoYAlto.getRandom(1,10));
-        System.out.println(randomDemoniosDaBajoYAlto.getRandom(1,10));
     }
     @Test
     void alDescansarAumentaSuManaEn15YElNivelDeConexionDeSusEspiritusEn5(){
@@ -98,8 +86,8 @@ public class MediumTest {
     @Test
     void alExorcizarAUnMediumElAngelGanaYDisminuyeNivelDeConexionDelDemonio(){
 
-        randomFijoAngeles.setValorFijo(10);
-        randomFijoDemonios.setValorFijo(1);
+        RandomGenerator.addValorFijo(10);
+        RandomGenerator.addValorFijo(1);
 
         medium.conectarseAEspiritu(angel1);
         medium2.conectarseAEspiritu(demonio1);
@@ -114,9 +102,8 @@ public class MediumTest {
     @Test
     void alExorcizarAUnMediumElAngelPierdeYDisminuyeNivelDeConexionDelAngel(){
 
-        randomFijoAngeles.setValorFijo(1);
-        randomFijoDemonios.setValorFijo(100);
-
+        RandomGenerator.addValorFijo(1);
+        RandomGenerator.addValorFijo(100);
 
         medium.conectarseAEspiritu(angel1);
         medium2.conectarseAEspiritu(demonio1);
@@ -132,11 +119,10 @@ public class MediumTest {
     @Test
     void alExorcizarAUnMediumElPrimerAngelVenceAlPrimerDemonioYElSegundoAngelPierdeContraElSegundoDemonio(){
 
-        angel1.setRandomGenerator(randomAngelesDaAltoYBajo);
-        angel2.setRandomGenerator(randomAngelesDaAltoYBajo);
-
-        demonio1.setRandomGenerator(randomDemoniosDaBajoYAlto);
-        demonio2.setRandomGenerator(randomDemoniosDaBajoYAlto);
+        RandomGenerator.addValorFijo(10);
+        RandomGenerator.addValorFijo(1);
+        RandomGenerator.addValorFijo(1);
+        RandomGenerator.addValorFijo(100);
 
         medium.conectarseAEspiritu(angel1);
         medium.conectarseAEspiritu(angel2);

@@ -3,17 +3,14 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exeption.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
-import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString

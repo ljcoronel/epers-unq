@@ -19,10 +19,6 @@ public class Demonio extends Espiritu {
         super(nivelDeConexion, nombre);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, RandomGenerator randomGenerator) {
-        super(nivelDeConexion,nombre);
-        this.setRandomGenerator(randomGenerator);
-    }
 
     public void defender(Angel angel,int ataque) {
 

@@ -19,10 +19,6 @@ public class Angel extends Espiritu {
         super(nivelDeConexion,nombre);
     }
 
-    public Angel(Integer nivelDeConexion, String nombre, RandomGenerator randomGenerator) {
-        super(nivelDeConexion,nombre);
-        this.setRandomGenerator(randomGenerator);
-    }
 
 
     public void atacar(Demonio demonio) {
