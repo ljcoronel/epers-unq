@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import static java.lang.Math.random;
+
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
@@ -23,7 +25,9 @@ public class Angel extends Espiritu {
 //    }
 
     public void atacar(Demonio demonio) {
-//        //hacer algo
-        demonio.defender(this);
+
+        int procentajeDeAtaque = this.porcentajeAtaqueRandom();
+
+        demonio.defender(this,procentajeDeAtaque);
     }
 }

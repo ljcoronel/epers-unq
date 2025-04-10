@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exeption.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -43,7 +44,6 @@ public class Medium implements Serializable {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
-        this.espiritus = new ArrayList<>();
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -95,13 +95,15 @@ public class Medium implements Serializable {
     }
     public void exorcizarA(Medium medium){
 
+        this.verificarSiPuedeExorcizar();
+
         for (Angel angel : angeles){
 
             List<Demonio> otrosDemonios = medium.getDemonios();
 
             if(medium.poseido()){
 
-                //angel.atacar(otrosDemonios.get(0));
+                angel.atacar(otrosDemonios.get(0));
 
             }else{
                 break;
@@ -109,13 +111,24 @@ public class Medium implements Serializable {
         }
     }
 
+    private void verificarSiPuedeExorcizar(){
+        if (this.angeles.isEmpty()){
+            throw new ExorcistaSinAngelesException(this);
+        }
+    }
+
+    public void desvincularseDeEspiritu(Espiritu espiritu){
+
+        if (espiritu instanceof Angel) {
+            angeles.remove((Angel) espiritu);
+        }else{
+            demonios.remove((Demonio) espiritu);
+        }
+    }
+
+
     private boolean poseido(){
         return (!demonios.isEmpty());
     }
-
-    public void agregarAngel(Angel angel){
-        angeles.add(angel);
-    }
-
 
 }

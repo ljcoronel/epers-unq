@@ -157,6 +157,17 @@ public class MediumServiceImplTest {
             mediumService.descansar(-1L);
         });
     }
+    @Test
+    void seExorcizaAUnMediumConUnDemonioReduciendoElNivelDeConexionDeEsteUltimo(){
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        mediumService.exorcisar(medium.getId(),medium2.getId());
+
+
+
+
+    }
 
     @AfterEach
     void eliminarModelo() {

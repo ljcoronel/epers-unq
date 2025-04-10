@@ -73,9 +73,9 @@ public class MediumServiceImpl implements MediumService {
         HibernateTransactionRunner.runTrx(() -> {
             Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
             Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumExorcista);
-            if (!this.mediumsExisten(optionalExorcista,optionalPoseido)) {
-                throw new NoSuchElementException("Medium no encontrado");
-            }
+
+            this.verificarSiExistenLosMediums(optionalExorcista,optionalPoseido);
+
             Medium exorcista = optionalExorcista.get();
             Medium exorcizado = optionalPoseido.get();
 
@@ -98,10 +98,15 @@ public class MediumServiceImpl implements MediumService {
         return null;
     }
 
-    private boolean mediumsExisten(Optional<Medium> medium,Optional<Medium> medium2){
-        if (medium.isPresent() && medium2.isPresent()) {
-            return true;
-        }else {return false;}
+    private void verificarSiExisteMedium(Optional<Medium> medium){
+        if (medium.isEmpty()) {
+            throw new NoSuchElementException("No se encontró el Medium");
+        }
+    }
+
+    private void verificarSiExistenLosMediums(Optional<Medium> medium,Optional<Medium> medium2){
+        this.verificarSiExisteMedium(medium);
+        this.verificarSiExisteMedium(medium2);
 
     }
 
