@@ -36,4 +36,11 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         return query.list();
     }
 
+    public List<Espiritu> espiritusEn(Long ubicacionId) {
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "from Espiritu e where e.ubicacion.id = :unLugarDado order by e.nombre asc";
+        Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
+        query.setParameter("unLugarDado", ubicacionId);
+        return query.getResultList();
+    }
 }
