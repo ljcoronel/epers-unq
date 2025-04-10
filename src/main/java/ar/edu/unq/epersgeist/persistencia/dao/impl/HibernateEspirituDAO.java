@@ -4,7 +4,9 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
+import org.hibernate.query.Order;
 import org.hibernate.query.Query;
+import org.hibernate.query.SortDirection;
 
 import java.util.List;
 
@@ -12,6 +14,25 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
 
     public HibernateEspirituDAO() {
         super(Espiritu.class);
+    }
+
+    @Override
+    public <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> clase) {
+        if (pagina < 0) throw new IllegalArgumentException("Página debe ser positivo.");
+        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva y mayor a 0.");
+
+        int offset = cantidadPorPagina * pagina;
+
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "from " + clase.getSimpleName();
+
+        Query<T> query = session.createQuery(hql, clase);
+        query.setOrder(Order.by(clase, "nivelDeConexion", direccion));
+        query.setFirstResult(offset);
+        query.setMaxResults(cantidadPorPagina);
+
+
+        return query.list();
     }
 
     public List<Espiritu> espiritusEn(Long ubicacionId) {

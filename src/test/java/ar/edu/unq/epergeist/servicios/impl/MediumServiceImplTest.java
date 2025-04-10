@@ -33,7 +33,7 @@ public class MediumServiceImplTest {
     void crearMedium(){
 
         mediumService = new MediumServiceImpl(new HibernateMediumDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO());
+        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
         medium = new Medium("Max",100,50);
         medium2 = new Medium("Pepe",100,0);
@@ -137,9 +137,7 @@ public class MediumServiceImplTest {
         mediumService.crear(medium);
         espirituService.crear(angel1);
 
-        medium.agregarAngel(angel1);//
-        angel1.setMedium(medium);//estas 3 lineas se reemplazan con el conectar
-        espirituService.actualizar(angel1);//
+        espirituService.conectar(angel1.getId(), medium.getId());//el nivel de conexion del angel es de 20 por la conexion
         //podria agregarse un espiritu mas para probar
 
 
@@ -150,7 +148,7 @@ public class MediumServiceImplTest {
 
         assertEquals(65,recuperado.getMana());
 
-        assertEquals(15, recuperado1.getNivelDeConexion());
+        assertEquals(25, recuperado1.getNivelDeConexion());
     }
 
     @Test
