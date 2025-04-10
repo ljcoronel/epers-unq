@@ -18,7 +18,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     public EspirituServiceImpl(EspirituDAO espirituDao,MediumDAO mediumDAO) {
         setEspirituDao(espirituDao);
-        mediumDao = mediumDAO;
+        this.mediumDao = mediumDAO;
     }
 
     @Override

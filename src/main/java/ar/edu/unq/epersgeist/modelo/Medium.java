@@ -51,7 +51,9 @@ public class Medium implements Serializable {
 
     private void realizarConexion(Espiritu espiritu){
 
-        if(espiritu.getMedium() == null)return;
+        if(espiritu.getMedium() != null)return;
+
+        espiritu.setMedium(this);
 
         if (espiritu instanceof Angel) {
             angeles.add((Angel) espiritu);
