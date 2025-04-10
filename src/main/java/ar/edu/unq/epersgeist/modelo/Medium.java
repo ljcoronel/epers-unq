@@ -94,11 +94,6 @@ public class Medium implements Serializable {
         }
 
     }
-    public void agregarAngel(Angel angel){
-        angeles.add(angel);
-    }
-
-    public void agregarDemonio(Demonio demonio){demonios.add(demonio); }
 
 
 }
