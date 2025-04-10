@@ -35,11 +35,15 @@ public class Medium implements Serializable {
     private List<Angel> angeles = new ArrayList<>();
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Demonio> demonios = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ubicacion ubicacion;
+
 
     public Medium(String nombre, Integer manaMax, Integer mana) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
+        this.espiritus = new ArrayList<>();
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {

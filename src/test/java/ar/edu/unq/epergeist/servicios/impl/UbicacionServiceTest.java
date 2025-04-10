@@ -1,5 +1,6 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -8,6 +9,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.AfterEach;
@@ -23,8 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class UbicacionServiceTest {
     private UbicacionServiceImpl ubicacionService;
     private EspirituServiceImpl espirituService;
+    private MediumServiceImpl mediumService;
     private HibernateUbicacionDAO ubicacionDAO;
     private HibernateEspirituDAO espirituDAO;
+    private HibernateMediumDAO mediumDAO;
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
     private Ubicacion ubicacionTres;
@@ -32,22 +36,30 @@ class UbicacionServiceTest {
     private Angel angelDos;
     private Demonio demonioUno;
     private Demonio demonioDos;
+    private Medium mediumUno;
+    private Medium mediumDos;
+    private Medium mediumTres;
     private TestService limpiador;
 
     @BeforeEach
     void prepare() {
         this.ubicacionDAO = new HibernateUbicacionDAO();
         this.espirituDAO = new HibernateEspirituDAO();
+        this.mediumDAO = new HibernateMediumDAO();
         this.ubicacionUno = new Ubicacion("Bernal");
         this.ubicacionDos = new Ubicacion("Bernal");
         this.ubicacionTres = new Ubicacion("Avellaneda");
-        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO);
-        this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());//agrego mediumdao por el concetar
+        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
+        this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());
+        this.mediumService = new MediumServiceImpl(this.mediumDAO);
         this.limpiador = new TestService();
         this.angelUno = new Angel(10, "angelical");
         this.angelDos = new Angel(20, "angel");
         this.demonioUno = new Demonio(10, "demonio");
         this.demonioDos = new Demonio(20, "demoni");
+        this.mediumUno = new Medium("Fabian", 100, 10);
+        this.mediumDos = new Medium("Franco", 200, 50);
+        this.mediumTres = new Medium("Tobias", 300, 60);
     }
 
     @Test
@@ -145,8 +157,26 @@ class UbicacionServiceTest {
         assertEquals(this.demonioUno.getId(), this.ubicacionService.espiritusEn(ubicacionTres.getId()).getFirst().getId());
     }
 
+    @Test
+    void seObtieneLosMediumsDeUnaUbicacionQueNoTenganEspiritusConectados() {
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.espirituService.crear(this.angelUno);
+        this.mediumService.crear(this.mediumUno);
+        this.mediumService.crear(this.mediumDos);
+        this.mediumUno.setUbicacion(this.ubicacionUno);
+        this.mediumDos.setUbicacion(this.ubicacionUno);
+        //this.angelUno.setUbicacion(this.ubicacionUno);
+        this.mediumUno.conectarseAEspiritu(this.angelUno);
+        //this.espirituService.actualizar(this.angelUno);
+        this.mediumService.actualizar(this.mediumUno);
+        this.mediumService.actualizar(this.mediumDos);
+
+        assertEquals(1, this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).size());
+    }
+
     @AfterEach
     void cleanUp() {
+        this.limpiador.eliminarModelo(Medium.class);
         this.limpiador.eliminarModelo(Espiritu.class);
         this.limpiador.eliminarModelo(Ubicacion.class);
     }
