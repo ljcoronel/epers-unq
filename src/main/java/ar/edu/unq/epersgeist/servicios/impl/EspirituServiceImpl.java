@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Direccion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -9,6 +8,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import lombok.Getter;
+import org.hibernate.query.SortDirection;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -60,7 +60,7 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public List<Demonio> espiritusDemoniacos(Direccion direccion, int pagina, int cantidadPorPagina) {
+    public List<Demonio> espiritusDemoniacos(SortDirection direccion, int pagina, int cantidadPorPagina) {
         return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class));
     }
 

@@ -1,7 +1,6 @@
 package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epergeist.servicios.impl.TestService;
-import ar.edu.unq.epersgeist.modelo.Direccion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -9,6 +8,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import org.hibernate.query.SortDirection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,7 +138,7 @@ public class HibernateEspirituDAOTest {
         // hay 3 en total, 2 son ángeles y 1 es demonio
 
         List<Angel> angeles = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.DESCENDENTE, 0, 2, Angel.class) // agarro sólo los ángeles
+                espirituDao.espiritusDeTipo(SortDirection.DESCENDING, 0, 2, Angel.class) // agarro sólo los ángeles
         );
 
         assertEquals(2, angeles.size());
@@ -150,7 +150,7 @@ public class HibernateEspirituDAOTest {
 
 
         List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.DESCENDENTE, 0, 1, Demonio.class) // agarro sólo los demonios
+                espirituDao.espiritusDeTipo(SortDirection.DESCENDING, 0, 1, Demonio.class) // agarro sólo los demonios
         );
 
         assertTrue(demonios.isEmpty());
@@ -174,7 +174,7 @@ public class HibernateEspirituDAOTest {
         //  3 2 1
 
         List<Long> angelesIds = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.DESCENDENTE, 0, 3, Angel.class)
+                espirituDao.espiritusDeTipo(SortDirection.DESCENDING, 0, 3, Angel.class)
         ).stream().map(Espiritu::getId).toList();
 
 
@@ -202,7 +202,7 @@ public class HibernateEspirituDAOTest {
         //  1 2 3
 
         List<Long> angelesIds = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 0, 3, Angel.class)
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, 3, Angel.class)
         ).stream().map(Espiritu::getId).toList();
 
         assertEquals(expected, angelesIds);
@@ -212,21 +212,21 @@ public class HibernateEspirituDAOTest {
     @Test
     void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsanValoresNegativosParaPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, -1, 3, Angel.class));
+        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, -1, 3, Angel.class));
 
     }
 
     @Test
     void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 0, -1, Angel.class));
+        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, -1, Angel.class));
 
     }
 
     @Test
     void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 0, 0, Angel.class));
+        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, 0, Angel.class));
 
     }
 
@@ -244,7 +244,7 @@ public class HibernateEspirituDAOTest {
         });
 
         List<Angel> angeles = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 0, 2, Angel.class)
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, 2, Angel.class)
         );
 
         assertEquals(2, angeles.size());
@@ -265,7 +265,7 @@ public class HibernateEspirituDAOTest {
         });
 
         List<Angel> angeles = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 1, 2, Angel.class) // segunda pag
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 1, 2, Angel.class) // segunda pag
         );
 
         //esp 1 -> pag 0
@@ -290,7 +290,7 @@ public class HibernateEspirituDAOTest {
         });
 
         List<Angel> angeles = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 1, 5, Angel.class) // segunda pag
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 1, 5, Angel.class) // segunda pag
         );
 
         //esp 1 -> pag 0
@@ -316,7 +316,7 @@ public class HibernateEspirituDAOTest {
         });
 
         List<Angel> angeles = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 1, 2, Angel.class) // segunda pag
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 1, 2, Angel.class) // segunda pag
         );
 
         //esp 1 -> pag 0
@@ -353,7 +353,7 @@ public class HibernateEspirituDAOTest {
         // el orden por inserción es: 1, 2, 3, 4
 
         List<Long> angelesIds = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.DESCENDENTE, 0, 3, Angel.class) // segunda pag
+                espirituDao.espiritusDeTipo(SortDirection.DESCENDING, 0, 3, Angel.class) // segunda pag
         ).stream().map(Angel::getId).toList();
 
         List<Long> angelesIdsEsperados = Arrays.asList(espiritu4.getId(), espiritu3.getId(), espiritu2.getId());
@@ -389,7 +389,7 @@ public class HibernateEspirituDAOTest {
         // el orden por inserción es: 1, 2, 4, 3
 
         List<Long> angelesIds = HibernateTransactionRunner.runTrx(() ->
-                espirituDao.espiritusDeTipo(Direccion.ASCENDENTE, 0, 3, Angel.class) // segunda pag
+                espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, 3, Angel.class) // segunda pag
         ).stream().map(Angel::getId).toList();
 
         List<Long> angelesIdsEsperados = Arrays.asList(espiritu4.getId(), espiritu1.getId(), espiritu2.getId());

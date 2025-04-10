@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.impl;
 
-import ar.edu.unq.epersgeist.modelo.Direccion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
@@ -18,17 +17,17 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
     }
 
     @Override
-    public <T extends Espiritu> List<T> espiritusDeTipo(Direccion direccion, int pagina, int cantidadPorPagina, Class<T> clase) {
+    public <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> clase) {
         if (pagina < 0) throw new IllegalArgumentException("Página debe ser positivo.");
         if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva y mayor a 0.");
 
         int offset = cantidadPorPagina * pagina;
 
         Session session = HibernateTransactionRunner.getCurrentSession();
-        String hql = "from " + clase.getSimpleName() + " order by nivelDeConexion " + direccion.value;
+        String hql = "from " + clase.getSimpleName();
 
         Query<T> query = session.createQuery(hql, clase);
-//        query.setOrder(Order.by(tipo, "nivelDeConexion", direccion.value));
+        query.setOrder(Order.by(clase, "nivelDeConexion", direccion));
         query.setFirstResult(offset);
         query.setMaxResults(cantidadPorPagina);
 
