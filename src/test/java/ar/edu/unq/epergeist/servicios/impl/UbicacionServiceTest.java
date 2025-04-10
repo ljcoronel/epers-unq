@@ -50,7 +50,7 @@ class UbicacionServiceTest {
         this.ubicacionDos = new Ubicacion("Bernal");
         this.ubicacionTres = new Ubicacion("Avellaneda");
         this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
-        this.espirituService = new EspirituServiceImpl(this.espirituDAO);
+        this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());
         this.mediumService = new MediumServiceImpl(this.mediumDAO);
         this.limpiador = new TestService();
         this.angelUno = new Angel(10, "angelical");

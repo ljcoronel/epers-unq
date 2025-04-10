@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,9 +46,24 @@ public class Medium implements Serializable {
         this.espiritus = new ArrayList<>();
     }
 
-    public void conectarseAEspiritu(Angel espiritu) {
-        angeles.add(espiritu);
-        espiritu.aumentarConexion(this);
+    public void conectarseAEspiritu(Espiritu espiritu) {
+
+        if(espiritu.getMedium() != null)return;
+
+        this.realizarConexion(espiritu);
+        espiritu.conectarse();
+    }
+
+
+    private void realizarConexion(Espiritu espiritu){
+
+        espiritu.setMedium(this);
+
+        if (espiritu instanceof Angel) {
+            angeles.add((Angel) espiritu);
+        }else{
+            demonios.add((Demonio) espiritu);
+        }
     }
 
     public void descansar(){
