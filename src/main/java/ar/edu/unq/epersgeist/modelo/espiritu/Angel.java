@@ -31,5 +31,9 @@ public class Angel extends Espiritu {
 
         demonio.defender(this,procentajeDeAtaque);
     }
+    @Override
+    public boolean esAngel(){
+        return true;
+    }
 
 }

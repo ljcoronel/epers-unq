@@ -37,7 +37,7 @@ public class MediumTest {
         randomFijoDemonios = new RandomGenerator();
 
         angel1 = new Angel(60, "Uriel",randomFijoAngeles);
-        angel2 = new Angel(5, "Ariel",randomFijoAngeles);
+        angel2 = new Angel(5, "Ariel");
 
         demonio1 = new Demonio(50, "Azazel",randomFijoDemonios);
         demonio2 = new Demonio(3, "Dismas",randomFijoDemonios);

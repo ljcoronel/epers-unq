@@ -20,10 +20,6 @@ public class RandomGenerator{
         this.valorFijo = valor;
     }
 
-    public void eliminarValorFijo() {
-        this.valorFijo = null;
-    }
-
     public int getRandom(int min, int max) {
         if (valorFijo != null) {
             return valorFijo;

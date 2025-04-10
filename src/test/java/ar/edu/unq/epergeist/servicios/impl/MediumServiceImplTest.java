@@ -1,7 +1,9 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
@@ -28,9 +30,22 @@ public class MediumServiceImplTest {
     private Medium medium2;
 
     private Angel angel1;
+    private Angel angelFuerte;
+
+    private Demonio demonioDebil;
+    private Demonio demonioFuerte;
+
+    RandomGenerator randomAngelesDa7YLuego3 = new RandomGenerator(12);
+    RandomGenerator randomDemoniosDa2YLuego7 = new RandomGenerator(6);
+
+    RandomGenerator randomFijoAngeles;
+    RandomGenerator randomFijoDemonios;
 
     @BeforeEach
     void crearMedium(){
+
+        randomFijoAngeles = new RandomGenerator();
+        randomFijoDemonios = new RandomGenerator();
 
         mediumService = new MediumServiceImpl(new HibernateMediumDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
@@ -39,6 +54,10 @@ public class MediumServiceImplTest {
         medium2 = new Medium("Pepe",100,0);
 
         angel1 = new Angel(10,"gabriel");
+        angelFuerte = new Angel(60,"Rafael",randomFijoAngeles);
+
+        demonioDebil = new Demonio(5,"Rufi",randomFijoDemonios);
+        demonioFuerte = new Demonio(50,"Adam",randomFijoDemonios);
 
 
 
@@ -158,14 +177,28 @@ public class MediumServiceImplTest {
         });
     }
     @Test
-    void seExorcizaAUnMediumConUnDemonioReduciendoElNivelDeConexionDeEsteUltimo(){
+    void alExorcizarAUnMediumElAngelGanaYDisminuyeNivelDeConexionDelDemonio(){
+
+        randomFijoAngeles.setValorFijo(1);
+        randomFijoDemonios.setValorFijo(100);
+
         mediumService.crear(medium);
         mediumService.crear(medium2);
 
+        espirituService.crear(angelFuerte);
+        espirituService.crear(demonioFuerte);
+
+        espirituService.conectar(angelFuerte.getId(),medium.getId());
+
+        espirituService.conectar(demonioFuerte.getId(),medium2.getId());
+
         mediumService.exorcisar(medium.getId(),medium2.getId());
 
+        Espiritu demonioRecuperado = espirituService.recuperar(demonioFuerte.getId()).get();
+        Espiritu angelRecuperado = espirituService.recuperar(angelFuerte.getId()).get();
 
-
+        assertEquals(25,demonioRecuperado.getNivelDeConexion());
+        assertEquals(70,angelRecuperado.getNivelDeConexion());
 
     }
 

@@ -37,8 +37,10 @@ public class Demonio extends Espiritu {
             angel.recibirDamage(5);
         }
     }
-
-
+    @Override
+    public boolean esAngel(){
+        return false;
+    }
 
 
 }

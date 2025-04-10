@@ -59,7 +59,7 @@ public class Medium implements Serializable {
 
         espiritu.setMedium(this);
 
-        if (espiritu instanceof Angel) {
+        if (espiritu.esAngel()) {
             angeles.add((Angel) espiritu);
         }else{
             demonios.add((Demonio) espiritu);

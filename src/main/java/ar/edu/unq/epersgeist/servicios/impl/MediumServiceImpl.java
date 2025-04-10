@@ -72,7 +72,7 @@ public class MediumServiceImpl implements MediumService {
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
         HibernateTransactionRunner.runTrx(() -> {
             Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
-            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumExorcista);
+            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
 
             this.verificarSiExistenLosMediums(optionalExorcista,optionalPoseido);
 

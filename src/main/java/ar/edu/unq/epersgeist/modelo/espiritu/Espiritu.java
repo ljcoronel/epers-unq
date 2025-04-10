@@ -31,7 +31,7 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-
+    @Transient
     private RandomGenerator randomGenerator = new RandomGenerator();
 
 
@@ -97,6 +97,8 @@ public abstract class Espiritu implements Serializable {
         int procentajeDeDefensa = randomGenerator.getRandom(1, 100);
         return procentajeDeDefensa;
     }
+
+    public abstract boolean esAngel();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
