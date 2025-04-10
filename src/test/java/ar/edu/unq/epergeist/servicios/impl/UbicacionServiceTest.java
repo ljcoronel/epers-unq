@@ -53,13 +53,13 @@ class UbicacionServiceTest {
         this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());
         this.mediumService = new MediumServiceImpl(this.mediumDAO);
         this.limpiador = new TestService();
-        this.angelUno = new Angel(10, "angelical");
-        this.angelDos = new Angel(20, "angel");
-        this.demonioUno = new Demonio(10, "demonio");
-        this.demonioDos = new Demonio(20, "demoni");
-        this.mediumUno = new Medium("Fabian", 100, 10);
-        this.mediumDos = new Medium("Franco", 200, 50);
-        this.mediumTres = new Medium("Tobias", 300, 60);
+        this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
+        this.angelDos = new Angel(20, "angel", this.ubicacionUno);
+        this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
+        this.demonioDos = new Demonio(20, "demoni",this.ubicacionUno);
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
     }
 
     @Test
@@ -160,21 +160,21 @@ class UbicacionServiceTest {
     @Test
     void seObtieneLosMediumsDeUnaUbicacionQueNoTenganEspiritusConectados() {
         this.ubicacionService.crear(this.ubicacionUno);
-        this.espirituService.crear(this.angelUno);
         this.mediumService.crear(this.mediumUno);
         this.mediumService.crear(this.mediumDos);
+        this.mediumService.crear(this.mediumTres);
         this.mediumUno.setUbicacion(this.ubicacionUno);
         this.mediumDos.setUbicacion(this.ubicacionUno);
-        this.angelUno.setUbicacion(this.ubicacionUno);
-        this.mediumService.actualizar(this.mediumUno);
-        this.mediumService.actualizar(this.mediumDos);
-        this.espirituService.actualizar(this.angelUno);
+        this.mediumTres.setUbicacion(this.ubicacionUno);
         this.mediumUno.conectarseAEspiritu(this.angelUno);
-        this.espirituService.actualizar(this.angelUno);
+        this.mediumDos.conectarseAEspiritu(this.demonioUno);
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
+        this.mediumService.actualizar(this.mediumTres);
+        List<Medium> mediumsSinEspiritus = this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId());
 
-        assertEquals(1, this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).size());
+        assertEquals(1, mediumsSinEspiritus.size());
+        assertEquals(this.mediumTres.getId(),mediumsSinEspiritus.getFirst().getId());
     }
 
     @AfterEach

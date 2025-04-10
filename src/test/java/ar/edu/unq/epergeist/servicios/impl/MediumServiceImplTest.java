@@ -1,14 +1,17 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.TestService;
+import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.junit.jupiter.api.AfterEach;
@@ -30,25 +33,41 @@ public class MediumServiceImplTest {
     private Medium medium2;
 
     private Angel angel1;
+
+    private Ubicacion ubicacion;
+    private UbicacionServiceImpl ubicacionService;
+    private MediumServiceImpl mediumServiceImpl;
+    private HibernateUbicacionDAO ubicacionDAO;
+    private HibernateEspirituDAO espirituDAO;
+    private HibernateMediumDAO mediumDAO;
+
     private Demonio demonio1;
+
 
     @BeforeEach
     void crearMedium(){
-
+        this.ubicacion = new Ubicacion("Bernal");
         mediumService = new MediumServiceImpl(new HibernateMediumDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
-        medium = new Medium("Max",100,50);
-        medium2 = new Medium("Pepe",100,0);
+        medium = new Medium("Max",100,50, this.ubicacion);
+        medium2 = new Medium("Pepe",100,0, this.ubicacion);
 
-        angel1 = new Angel(10,"gabriel");
-        demonio1 = new Demonio(5,"malote");
+        angel1 = new Angel(10,"gabriel", this.ubicacion);
+        demonio1 = new Demonio(5,"malote", this.ubicacion);
 
+        angel1 = new Angel(10,"gabriel", this.ubicacion);
+        this.ubicacionDAO = new HibernateUbicacionDAO();
+        this.espirituDAO = new HibernateEspirituDAO();
+        this.mediumDAO = new HibernateMediumDAO();
+        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
 
 
     }
     @Test
     void seRecuperanTodosLosMediumsGuardados(){
+        this.ubicacionService.crear(this.ubicacion);
+        this.
         mediumService.crear(medium);
         mediumService.crear(medium2);
 
@@ -67,6 +86,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seEliminaUnMediumDejaDeEstarPersistiendo(){
+        this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
 
         mediumService.eliminar(medium.getId());
@@ -84,6 +104,7 @@ public class MediumServiceImplTest {
     //feature crear
     @Test
     void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
+        this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
 
         Medium mediumRecuperado =  mediumService.recuperar(medium.getId()).get();
@@ -96,7 +117,7 @@ public class MediumServiceImplTest {
 
     @Test
     void alCrearUnMediumSeLeAgregaUnId() {
-
+        this.ubicacionService.crear(this.ubicacion);
         assertNull(medium.getId());
 
         mediumService.crear(medium);
@@ -109,6 +130,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
+        this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
         medium.setNombre("nombreModificado");
 
@@ -120,7 +142,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
-
+        this.ubicacionService.crear(this.ubicacion);
         assertDoesNotThrow(() -> mediumService.actualizar(medium));
     }
 
@@ -137,7 +159,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
-
+        this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
         espirituService.crear(angel1);
 
@@ -190,6 +212,7 @@ public class MediumServiceImplTest {
     void eliminarModelo() {
         testService.eliminarModelo(Espiritu.class);
         testService.eliminarModelo(Medium.class);
+        testService.eliminarModelo(Ubicacion.class);
     }
 */
 
