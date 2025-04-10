@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import lombok.ToString;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -31,6 +31,8 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
+
+    private RandomGenerator randomGenerator = new RandomGenerator();
 
 
     public Espiritu(Integer nivelDeConexion, String nombre) {
@@ -87,12 +89,12 @@ public abstract class Espiritu implements Serializable {
     }
 
     protected int porcentajeAtaqueRandom(){
-        int procentajeDeExito = (int)(Math.random() * 10) + 1 + this.getNivelDeConexion();
+        int procentajeDeExito = randomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
         return procentajeDeExito;
     }
 
     protected int porcentajeDefensaRandom(){
-        int procentajeDeDefensa = (int)(Math.random() * 100) + 1;
+        int procentajeDeDefensa = randomGenerator.getRandom(1, 100);
         return procentajeDeDefensa;
     }
 

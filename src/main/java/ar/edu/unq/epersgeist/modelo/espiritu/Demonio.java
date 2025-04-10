@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,11 @@ public class Demonio extends Espiritu {
         super(nivelDeConexion, nombre);
     }
 
+    public Demonio(Integer nivelDeConexion, String nombre, RandomGenerator randomGenerator) {
+        super(nivelDeConexion,nombre);
+        this.setRandomGenerator(randomGenerator);
+    }
+
     public void defender(Angel angel,int ataque) {
 
         int procentajeDeDefensa = this.porcentajeDefensaRandom();
@@ -31,6 +37,8 @@ public class Demonio extends Espiritu {
             angel.recibirDamage(5);
         }
     }
+
+
 
 
 }
