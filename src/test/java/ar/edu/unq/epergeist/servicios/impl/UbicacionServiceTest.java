@@ -165,9 +165,12 @@ class UbicacionServiceTest {
         this.mediumService.crear(this.mediumDos);
         this.mediumUno.setUbicacion(this.ubicacionUno);
         this.mediumDos.setUbicacion(this.ubicacionUno);
-        //this.angelUno.setUbicacion(this.ubicacionUno);
+        this.angelUno.setUbicacion(this.ubicacionUno);
+        this.mediumService.actualizar(this.mediumUno);
+        this.mediumService.actualizar(this.mediumDos);
+        this.espirituService.actualizar(this.angelUno);
         this.mediumUno.conectarseAEspiritu(this.angelUno);
-        //this.espirituService.actualizar(this.angelUno);
+        this.espirituService.actualizar(this.angelUno);
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
 
@@ -176,8 +179,8 @@ class UbicacionServiceTest {
 
     @AfterEach
     void cleanUp() {
-        this.limpiador.eliminarModelo(Medium.class);
         this.limpiador.eliminarModelo(Espiritu.class);
+        this.limpiador.eliminarModelo(Medium.class);
         this.limpiador.eliminarModelo(Ubicacion.class);
     }
 }

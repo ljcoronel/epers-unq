@@ -42,11 +42,11 @@ public class Medium implements Serializable {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
-        this.espiritus = new ArrayList<>();
     }
 
     public void conectarseAEspiritu(Angel espiritu) {
         angeles.add(espiritu);
+        espiritu.setMedium(this);
         espiritu.aumentarConexion(this);
     }
 
