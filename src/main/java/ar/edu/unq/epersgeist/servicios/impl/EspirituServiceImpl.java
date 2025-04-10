@@ -7,10 +7,12 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;
 
+@Getter
 public class EspirituServiceImpl implements EspirituService {
 
     private EspirituDAO espirituDao;
@@ -67,10 +69,6 @@ public class EspirituServiceImpl implements EspirituService {
 //        getEspirituDao().actualizar(espiritu); //garantiza ACID
 //        return medium;
         return null;
-    }
-
-    public EspirituDAO getEspirituDao() {
-        return espirituDao;
     }
 
     private void setEspirituDao(EspirituDAO espirituDao) {
