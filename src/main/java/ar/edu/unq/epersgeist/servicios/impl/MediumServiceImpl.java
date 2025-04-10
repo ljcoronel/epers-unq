@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -75,7 +76,17 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
-        return List.of();
+        return HibernateTransactionRunner.runTrx(()->{
+           Optional<Medium> medium = mediumDao.recuperar(mediumId);
+           if (medium.isEmpty()){
+               throw new NoSuchElementException("No se encontró el Medium con ID: " + mediumId);
+           }
+           Medium currentMedium = medium.get();
+           List<Espiritu> espiritus = new ArrayList<>();
+           espiritus.addAll(currentMedium.getAngeles());
+           espiritus.addAll(currentMedium.getDemonios());
+           return espiritus;
+        });
     }
 
     @Override

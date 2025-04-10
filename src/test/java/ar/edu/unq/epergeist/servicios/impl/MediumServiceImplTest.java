@@ -2,6 +2,7 @@ package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +30,7 @@ public class MediumServiceImplTest {
     private Medium medium2;
 
     private Angel angel1;
+    private Demonio demonio1;
 
     @BeforeEach
     void crearMedium(){
@@ -39,6 +42,7 @@ public class MediumServiceImplTest {
         medium2 = new Medium("Pepe",100,0);
 
         angel1 = new Angel(10,"gabriel");
+        demonio1 = new Demonio(5,"malote");
 
 
 
@@ -157,12 +161,36 @@ public class MediumServiceImplTest {
             mediumService.descansar(-1L);
         });
     }
+    
+    //TestFeature espiritus
 
+
+    @Test
+    void seRecuperanTodosLosEspiritusConLosQueEstaConectadoUnMedium() {
+        mediumService.crear(medium);
+        espirituService.crear(angel1);
+        espirituService.crear(demonio1);
+
+        medium.agregarAngel(angel1);
+        angel1.setMedium(medium);
+        medium.agregarDemonio(demonio1);
+        demonio1.setMedium(medium);
+
+        mediumService.actualizar(medium);
+        espirituService.actualizar(angel1);
+        espirituService.actualizar(demonio1);
+
+        List<Espiritu> espirituRecuperados = mediumService.espiritus(medium.getId());
+
+        assertEquals(2, espirituRecuperados.size());
+
+    }
+/*
     @AfterEach
     void eliminarModelo() {
         testService.eliminarModelo(Espiritu.class);
         testService.eliminarModelo(Medium.class);
     }
-
+*/
 
 }
