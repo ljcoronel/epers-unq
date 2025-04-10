@@ -77,5 +77,7 @@ public class Medium implements Serializable {
         angeles.add(angel);
     }
 
+    public void agregarDemonio(Demonio demonio){demonios.add(demonio); }
+
 
 }
