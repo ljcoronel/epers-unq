@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static java.lang.Thread.sleep;
@@ -135,7 +136,7 @@ public class EspirituServiceImplTest {
         mediumService.crear(medium);
 
 
-        Medium nuevoMedium = espirituService.conectar(espiritu1.getId(), medium.getId());
+        Medium nuevoMedium = espirituService.conectar(espiritu1.getId(), medium.getId());//es necesario este nuevoMedium?
 
         Espiritu angelRecuperado = espirituService.recuperar(espiritu1.getId()).get();
 
@@ -146,6 +147,45 @@ public class EspirituServiceImplTest {
 
         //assertEquals(1, espiritusRecuperados.size());//descomentar cuando se haga el metodo espiritus
 
+    }
+    @Test
+    void alIntentarConectarConUnEspirituQueYaSeConectoNoHaceNada(){
+
+        espirituService.crear(espiritu1);
+        mediumService.crear(medium);
+
+
+        Medium nuevoMedium = espirituService.conectar(espiritu1.getId(), medium.getId());//es necesario este nuevoMedium?
+
+        Espiritu angelRecuperado = espirituService.recuperar(espiritu1.getId()).get();
+
+        assertDoesNotThrow( () -> {
+                    espirituService.conectar(espiritu1.getId(), medium.getId());
+                }
+        );
+
+        assertEquals(20, angelRecuperado.getNivelDeConexion());//como no hizo nada la segunda conexion su nivel se mantuvo en 20
+
+    }
+
+    @Test
+    void alIntentarConectarConUnEspirituQueNoExisteLanzaError(){
+
+        mediumService.crear(medium);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            espirituService.conectar(-1L, medium.getId());
+        });
+    }
+
+    @Test
+    void alIntentarConectarConUnMediumQueNoExisteLanzaError(){
+
+        espirituService.crear(espiritu1);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            espirituService.conectar(espiritu1.getId(), -1L);
+        });
     }
 
     @AfterEach
