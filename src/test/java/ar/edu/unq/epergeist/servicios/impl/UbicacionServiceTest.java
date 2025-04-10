@@ -160,21 +160,21 @@ class UbicacionServiceTest {
     @Test
     void seObtieneLosMediumsDeUnaUbicacionQueNoTenganEspiritusConectados() {
         this.ubicacionService.crear(this.ubicacionUno);
-        this.espirituService.crear(this.angelUno);
         this.mediumService.crear(this.mediumUno);
         this.mediumService.crear(this.mediumDos);
+        this.mediumService.crear(this.mediumTres);
         this.mediumUno.setUbicacion(this.ubicacionUno);
         this.mediumDos.setUbicacion(this.ubicacionUno);
-        this.angelUno.setUbicacion(this.ubicacionUno);
-        this.mediumService.actualizar(this.mediumUno);
-        this.mediumService.actualizar(this.mediumDos);
-        this.espirituService.actualizar(this.angelUno);
+        this.mediumTres.setUbicacion(this.ubicacionUno);
         this.mediumUno.conectarseAEspiritu(this.angelUno);
-        this.espirituService.actualizar(this.angelUno);
+        this.mediumDos.conectarseAEspiritu(this.demonioUno);
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
+        this.mediumService.actualizar(this.mediumTres);
+        List<Medium> mediumsSinEspiritus = this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId());
 
-        assertEquals(1, this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).size());
+        assertEquals(1, mediumsSinEspiritus.size());
+        assertEquals(this.mediumTres.getId(),mediumsSinEspiritus.getFirst().getId());
     }
 
     @AfterEach
