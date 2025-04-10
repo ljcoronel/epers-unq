@@ -56,13 +56,6 @@ public class AngelTest {
         assertEquals(0, angel.getNivelDeConexion());
     }
 
-    @Test
-    void alAumentarElNivelDeConexionDeUnEspirituEstaAumentaEn10() {
-        // empíeza en 0
-        angel.aumentarConexion(MEDIUM);
-
-        assertEquals(10, angel.getNivelDeConexion());
-    }
 
 
     //
@@ -72,7 +65,7 @@ public class AngelTest {
                 100,
                 "Pepe"
         );
-        angel.aumentarConexion(MEDIUM);
+        angel.aumentarNivelDeConexionEn(10);
 
         assertEquals(100, angel.getNivelDeConexion());
     }
