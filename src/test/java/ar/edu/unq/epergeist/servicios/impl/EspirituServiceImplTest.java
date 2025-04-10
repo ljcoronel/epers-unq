@@ -34,6 +34,7 @@ public class EspirituServiceImplTest {
     private Espiritu espiritu1;
     private Espiritu espiritu2;
     private Espiritu espiritu3;
+    private Espiritu demonio1;
 
 
 //    Descomentar para ver logs.
@@ -55,6 +56,7 @@ public class EspirituServiceImplTest {
         espiritu1 = new Angel(10,"Angel1");
         espiritu2 = new Angel(10,"Angel2");
         espiritu3 = new Angel(10,"Angel3");
+        demonio1 = new Demonio(10,"Demonio1");
 
         medium = new Medium("Brujita", 100, 50);
     }
@@ -133,19 +135,23 @@ public class EspirituServiceImplTest {
     void alConectarUnEspirituSeGuardaEnSuRespectivaListaDelMediumAumentandoSuConexionYSePersiste() {
 
         espirituService.crear(espiritu1);
+        espirituService.crear(demonio1);
+
         mediumService.crear(medium);
 
+        espirituService.conectar(demonio1.getId(), medium.getId());
+        espirituService.conectar(espiritu1.getId(), medium.getId());
 
-        Medium nuevoMedium = espirituService.conectar(espiritu1.getId(), medium.getId());//es necesario este nuevoMedium?
 
         Espiritu angelRecuperado = espirituService.recuperar(espiritu1.getId()).get();
+        Espiritu demonioRecuperado = espirituService.recuperar(demonio1.getId()).get();
 
         //List<Espiritu> espiritusRecuperados = mediumService.espiritus(medium.getId());//descomentar cuando se haga el metodo espiritus
 
         assertEquals(20, angelRecuperado.getNivelDeConexion());
+        assertEquals(20, demonioRecuperado.getNivelDeConexion());
 
-
-        //assertEquals(1, espiritusRecuperados.size());//descomentar cuando se haga el metodo espiritus
+        //assertEquals(2, espiritusRecuperados.size());//descomentar cuando se haga el metodo espiritus, se supone que el metodo espiritus trae espiritus de ambas listas
 
     }
     @Test
@@ -155,7 +161,7 @@ public class EspirituServiceImplTest {
         mediumService.crear(medium);
 
 
-        Medium nuevoMedium = espirituService.conectar(espiritu1.getId(), medium.getId());//es necesario este nuevoMedium?
+        espirituService.conectar(espiritu1.getId(), medium.getId());
 
         Espiritu angelRecuperado = espirituService.recuperar(espiritu1.getId()).get();
 

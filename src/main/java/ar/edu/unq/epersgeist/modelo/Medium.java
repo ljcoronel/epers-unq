@@ -43,15 +43,15 @@ public class Medium implements Serializable {
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
-    //en caso de que solo pueda conectarse a un solo medium verificar "BOBI"
+
+        if(espiritu.getMedium() != null)return;
+
         this.realizarConexion(espiritu);
         espiritu.conectarse();
     }
 
 
     private void realizarConexion(Espiritu espiritu){
-
-        if(espiritu.getMedium() != null)return;
 
         espiritu.setMedium(this);
 
