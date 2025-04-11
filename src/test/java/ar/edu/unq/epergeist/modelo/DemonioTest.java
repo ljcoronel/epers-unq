@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DemonioTest {
     private Espiritu demonio;
@@ -62,8 +61,6 @@ public class DemonioTest {
     }
 
 
-
-//
     @Test
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
         demonio = new Demonio(
@@ -81,6 +78,18 @@ public class DemonioTest {
         this.demonio.setUbicacion(ubicacion1);
 
         assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
+
+    @Test
+    void elDemonioConoceQueEsUnDemonio() {
+
+        assertTrue(demonio.esDemonio());
+    }
+
+    @Test
+    void elDemonioConoceQueNoEsAngel() {
+
+        assertFalse(demonio.esAngel());
     }
 
 }

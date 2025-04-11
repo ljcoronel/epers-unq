@@ -17,7 +17,7 @@ import java.io.Serializable;
 
 
 @Entity
-// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura
+// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Espiritu implements Serializable {
 
@@ -69,6 +69,9 @@ public abstract class Espiritu implements Serializable {
 
     }
 
+    public boolean esAngel() { return false;};
+
+    public boolean esDemonio() { return false;};
 
     public boolean estaLibre(){
         return this.medium == null;
@@ -90,16 +93,13 @@ public abstract class Espiritu implements Serializable {
     }
 
     protected int porcentajeAtaqueRandom(){
-        int procentajeDeExito = RandomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
-        return procentajeDeExito;
+        int porcentajeDeExito = RandomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
+        return Math.min(porcentajeDeExito, 100);
     }
 
     protected int porcentajeDefensaRandom(){
-        int procentajeDeDefensa = RandomGenerator.getRandom(1, 100);
-        return procentajeDeDefensa;
+        return RandomGenerator.getRandom(1, 100);
     }
-
-    public abstract boolean esAngel();
 
     public void setUbicacion(Ubicacion ubicacion) {
         if (this.estaLibre()) this.ubicacion = ubicacion;

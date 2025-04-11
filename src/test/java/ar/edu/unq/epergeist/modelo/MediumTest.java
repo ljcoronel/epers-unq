@@ -174,4 +174,5 @@ public class MediumTest {
         assertEquals(this.angel1.getUbicacion().getNombre(), ubicacion1.getNombre());
         assertEquals(this.demonio1.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
+
 }
