@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EspirituServiceImplTest {
     private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
     private  Medium medium;
-    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO(),new HibernateEspirituDAO());
     private TestService testService  = new TestService();
     private Espiritu angel1;
     private Espiritu angel2;
