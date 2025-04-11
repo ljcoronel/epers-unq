@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
@@ -15,10 +16,12 @@ import java.util.Optional;
 public class MediumServiceImpl implements MediumService {
 
     private MediumDAO mediumDao;
+    private EspirituDAO espirituDao;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao){
+    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao) {
         this.mediumDao = mediumDao;
+        this.espirituDao = espirituDao;
     }
 
     @Override
@@ -108,8 +111,21 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-        return null;
+        return HibernateTransactionRunner.runTrx(()->{
+            Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
+            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
+
+            if (optionalMedium.isEmpty()|| optionalEspiritu.isEmpty()) return null;
+
+            Medium medium = optionalMedium.get();
+            Espiritu espiritu = optionalEspiritu.get();
+            medium.invocar(espiritu);
+            mediumDao.actualizar(medium);
+            espirituDao.actualizar(espiritu);
+            return espiritu;
+        });
     }
+
 
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {

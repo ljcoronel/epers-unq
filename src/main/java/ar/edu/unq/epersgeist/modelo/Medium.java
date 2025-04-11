@@ -126,10 +126,25 @@ public class Medium implements Serializable {
         }
     }
 
-
     private boolean poseido(){
         return (!demonios.isEmpty());
     }
+
+    public void invocar(Espiritu espiritu) {
+
+        verificarSiEstaLibre(espiritu);
+        if (this.mana >= 10) {
+            espiritu.setUbicacion(this.ubicacion);
+            this.mana -= 10;
+        }
+    }
+
+    private void verificarSiEstaLibre(Espiritu espiritu) {
+        if(!espiritu.estaLibre()){
+            throw new RuntimeException("El espiritu no esta libre");
+        }
+    }
+
 
     public void setUbicacion(Ubicacion unaUbicacion) {
         this.ubicacion = unaUbicacion;

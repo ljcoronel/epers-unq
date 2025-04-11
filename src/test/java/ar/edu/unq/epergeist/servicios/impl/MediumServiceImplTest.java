@@ -43,6 +43,7 @@ public class MediumServiceImplTest {
 
 
     private Ubicacion ubicacion;
+    private Ubicacion ubicacion2;
     private UbicacionServiceImpl ubicacionService;
     private HibernateUbicacionDAO ubicacionDAO;
     private HibernateEspirituDAO espirituDAO;
@@ -59,16 +60,17 @@ public class MediumServiceImplTest {
 
 
         this.ubicacion = new Ubicacion("Bernal");
-        mediumService = new MediumServiceImpl(mediumDAO);
+        this.ubicacion2 = new Ubicacion("Quilmes");
+        mediumService = new MediumServiceImpl(mediumDAO,espirituDAO);
         espirituService = new EspirituServiceImpl(espirituDAO,mediumDAO);
         this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
 
         ubicacionService.crear(ubicacion);
-
+        ubicacionService.crear(ubicacion2);
         medium = new Medium("Max",100,50, this.ubicacion);
         medium2 = new Medium("Pepe",100,0, this.ubicacion);
 
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO());
+        mediumService = new MediumServiceImpl(new HibernateMediumDAO(),new HibernateEspirituDAO());
         espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
         angelDebil = new Angel(10,"gabriel",this.ubicacion);
@@ -114,7 +116,6 @@ public class MediumServiceImplTest {
     }
 
 
-    //feature crear
     @Test
     void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
         mediumService.crear(medium);
@@ -137,8 +138,7 @@ public class MediumServiceImplTest {
         assertNotNull(medium.getId());
     }
     
-    
-    //feature actualizar
+
 
     @Test
     void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
@@ -298,7 +298,7 @@ public class MediumServiceImplTest {
         Espiritu angelDebilRecuperado = espirituService.recuperar(angelDebil.getId()).get();
         Espiritu demonioFuerteRecuperado = espirituService.recuperar(demonioFuerte.getId()).get();
         Espiritu demonioDebilRecuperado = espirituService.recuperar(demonioDebil.getId()).get();
-
+        List<Espiritu> espiritusDeMedium2 = mediumService.espiritus(medium2.getId());
 
         assertEquals(0,demonioDebilRecuperado.getNivelDeConexion());
         assertEquals(60,demonioFuerteRecuperado.getNivelDeConexion());
@@ -306,6 +306,8 @@ public class MediumServiceImplTest {
         assertEquals(15,angelDebilRecuperado.getNivelDeConexion());
         assertEquals(70,angelFuerteRecuperado.getNivelDeConexion());
 
+        assertEquals(1, espiritusDeMedium2.size());
+        assertTrue(demonioDebilRecuperado.estaLibre());
     }
 
     @Test
@@ -343,6 +345,72 @@ public class MediumServiceImplTest {
             mediumService.exorcisar(-1L,medium2.getId());
         });
     }
+
+    @Test
+    void unMediumPersistidoInvocaAUnEspirituQueNoEstaLibreYSuUbicacionCambia() {
+
+        mediumService.crear(medium);
+        espirituService.crear(angelDebil);
+        int manaInicial = medium.getMana();
+
+        //seteo una ubicacion al angel, que es diferente a la de el medium
+        angelDebil.setUbicacion(ubicacion2);
+        espirituService.actualizar(angelDebil);
+
+        mediumService.invocar(medium.getId(), angelDebil.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId()).get();
+        Espiritu espirituRecuperado = espirituService.recuperar(angelDebil.getId()).get();
+
+        Ubicacion ubicacionMedium =  ubicacionService.recuperar(mediumRecuperado.getUbicacion().getId()).get();
+        Ubicacion ubicacionEspiritu = ubicacionService.recuperar(espirituRecuperado.getUbicacion().getId()).get();
+
+        assertEquals(ubicacionMedium.getId(), ubicacionEspiritu.getId());
+        assertEquals( manaInicial - 10 , mediumRecuperado.getMana());
+    }
+
+    @Test
+    void unMediumInvocaAUnEspirituQueEstaLibreYSeLanzaUnaException() {
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+        espirituService.crear(angelDebil);
+
+        medium2.conectarseAEspiritu(angelDebil);
+        espirituService.actualizar(angelDebil);
+
+
+        assertThrows(RuntimeException.class, () -> {
+            mediumService.invocar(medium.getId(), angelDebil.getId());
+        });
+    }
+
+    @Test
+    void unMediumIntentainvocarSinManaSuficienteEntoncesSuManaYLaUbicacionDelEspirituNoCambian() {
+        mediumService.crear(medium);
+        medium.setMana(5);
+        int manaInicial = medium.getMana();
+
+        espirituService.crear(angelDebil);
+
+        //seteo una ubicacion al angel, que es diferente a la de el medium
+        angelDebil.setUbicacion(ubicacion2);
+        espirituService.actualizar(angelDebil);
+
+        mediumService.actualizar(medium);
+
+        mediumService.invocar(medium.getId(), angelDebil.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId()).get();
+        Espiritu espirituRecuperado = espirituService.recuperar(angelDebil.getId()).get();
+
+        Ubicacion ubicacionMedium =  ubicacionService.recuperar(mediumRecuperado.getUbicacion().getId()).get();
+        Ubicacion ubicacionEspiritu = ubicacionService.recuperar(espirituRecuperado.getUbicacion().getId()).get();
+
+        assertNotEquals(ubicacionMedium.getId(), ubicacionEspiritu.getId());
+        assertEquals( manaInicial , mediumRecuperado.getMana());
+
+    }
+
 
     @AfterEach
     void eliminarModelo() {
