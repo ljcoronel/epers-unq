@@ -48,7 +48,7 @@ public class Medium implements Serializable {
 
         if (espiritu.esAngel()) {
             angeles.add((Angel) espiritu);
-        }else{
+        }else if (espiritu.esDemonio()){
             demonios.add((Demonio) espiritu);
         }
 
@@ -107,9 +107,9 @@ public class Medium implements Serializable {
 
     public void desvincularseDeEspiritu(Espiritu espiritu){
 
-        if (espiritu instanceof Angel) {
+        if (espiritu.esAngel()) {
             angeles.remove((Angel) espiritu);
-        }else{
+        }else if(espiritu.esDemonio()){
             demonios.remove((Demonio) espiritu);
         }
     }

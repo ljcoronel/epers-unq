@@ -24,9 +24,9 @@ public class Angel extends Espiritu {
 
     public void atacar(Demonio demonio) {
 
-        int procentajeDeAtaque = this.porcentajeAtaqueRandom();
+        int porcentajeDeAtaque = this.porcentajeAtaqueRandom();
 
-        demonio.defender(this,procentajeDeAtaque);
+        demonio.defender(this,porcentajeDeAtaque);
     }
     @Override
     public boolean esAngel(){

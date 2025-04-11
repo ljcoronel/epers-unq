@@ -8,8 +8,8 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AngelTest {
     private Espiritu angel;
@@ -80,7 +80,17 @@ public class AngelTest {
     assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
+    @Test
+    void elAngelConoceQueEsUnAngel() {
 
+        assertTrue(angel.esAngel());
+    }
+
+    @Test
+    void elAngelConoceQueNoEsUnDemonio() {
+
+        assertFalse(angel.esDemonio());
+    }
 
 
 }
