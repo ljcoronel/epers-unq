@@ -74,40 +74,41 @@ public class EspirituServiceImpl implements EspirituService {
 
             Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
-            Medium medium = this.mediumSiExisteEspirituYMedium(optionalEspiritu,optionalMedium);
+
+            verificarSiExisteMedium(optionalMedium);
+            Medium medium = optionalMedium.get();
+
+            if (optionalEspiritu.isEmpty()) return medium; // @TODO
             Espiritu espiritu = optionalEspiritu.get();
 
-            if (!(espiritu.getUbicacion() == medium.getUbicacion())){
-                throw new UbicacionDistintaException(espiritu, medium);
-             }
-            if (!espiritu.estaLibre()) {
-                throw new EspirituLibreException(espiritu);
-            }
-            mediumDao.actualizar(espiritu.conectarConMedium(medium));
+            verificarEspirituYMediumEnMismaUbicacion(espiritu, medium);
+            verificarEspirituLibre(espiritu);
+
+            espiritu.conectarConMedium(medium);
+
+            mediumDao.actualizar(medium);
 
             return medium;
         });
 
     }
 
-    private void verificarSiExisteEspiritu(Optional<Espiritu> espiritu){
-        if (espiritu.isEmpty()) {
-            throw new NoSuchElementException("No se encontró el Espiritu");
+    private static void verificarEspirituLibre(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new EspirituLibreException(espiritu);
         }
+    }
+
+    private static void verificarEspirituYMediumEnMismaUbicacion(Espiritu espiritu, Medium medium) throws UbicacionDistintaException {
+        if (!(espiritu.getUbicacion() == medium.getUbicacion())){
+            throw new UbicacionDistintaException(espiritu, medium);
+         }
     }
 
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {
             throw new NoSuchElementException("No se encontró el Medium");
         }
-    }
-
-    private Medium mediumSiExisteEspirituYMedium(Optional<Espiritu> espiritu,Optional<Medium> medium){
-        this.verificarSiExisteEspiritu(espiritu);
-        this.verificarSiExisteMedium(medium);
-        return medium.get();
-
-
     }
 
     private void setEspirituDao(EspirituDAO espirituDao) {

@@ -102,13 +102,25 @@ public abstract class Espiritu implements Serializable {
     public abstract boolean esAngel();
 
     public void setUbicacion(Ubicacion ubicacion) {
-        if (this.estaLibre() || this.medium.getUbicacion().getNombre().equals(ubicacion.getNombre())) this.ubicacion = ubicacion;
+        if (this.estaLibre()) this.ubicacion = ubicacion;
+        // @TODO
     }
 
-    public Medium conectarConMedium(Medium medium) {
-        int conexionAAumentar =(int) Math.round(medium.getMana()* 0.20) ;
+    public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
+        if (this.getMedium() == medium) {
+            this.ubicacion = ubicacion;
+        }// @TODO
+    }
+
+    public void conectarConMedium(Medium medium) {
+        int conexionAAumentar =(int) Math.round(medium.getMana()* getPorcentajeDeMana()) ;
         this.aumentarNivelDeConexionEn(conexionAAumentar);
         this.setMedium(medium);
-        return medium;
+
+        medium.realizarConexion(this);
+    }
+
+    private static double getPorcentajeDeMana() {
+        return 0.20;
     }
 }

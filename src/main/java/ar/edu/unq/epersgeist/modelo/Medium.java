@@ -44,19 +44,7 @@ public class Medium implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-//    public void conectarseAEspiritu(Espiritu espiritu) {
-//
-//        if(espiritu.getMedium() != null)return;
-//
-//        this.realizarConexion(espiritu);
-//        espiritu.conectarse();
-//    }
-
-
-    private void realizarConexion(Espiritu espiritu){
-
-        espiritu.setMedium(this);
-        espiritu.setUbicacion(this.ubicacion);
+    public void realizarConexion(Espiritu espiritu){
 
         if (espiritu.esAngel()) {
             angeles.add((Angel) espiritu);
@@ -148,7 +136,7 @@ public class Medium implements Serializable {
 
     public void setUbicacion(Ubicacion unaUbicacion) {
         this.ubicacion = unaUbicacion;
-        this.angeles.forEach(angel -> angel.setUbicacion(unaUbicacion));
-        this.demonios.forEach(demonio -> demonio.setUbicacion(unaUbicacion));
+        this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
+        this.demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
     }
 }

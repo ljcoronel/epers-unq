@@ -232,34 +232,34 @@ public class EspirituServiceImplTest {
     @Test
     void alConectarUnEspirituSeGuardaEnSuRespectivaListaDelMediumAumentandoSuConexionYSePersiste() {
         this.ubicacionService.crear(this.ubicacion);
-        espirituService.crear(angel1);
-        espirituService.crear(demonio1);
+        espirituService.crear(angel1); // 10 de conexión
+        espirituService.crear(demonio1); // 10 de conexión
+        mediumService.crear(medium); // 50 de maná
 
-        mediumService.crear(medium);
-
-        espirituService.conectar(demonio1.getId(), medium.getId());
-        espirituService.conectar(angel1.getId(), medium.getId());
-
+        espirituService.conectar(demonio1.getId(), medium.getId()); // aumenta en 10 la conex, 20% de 50 es 10
+        espirituService.conectar(angel1.getId(), medium.getId()); // aumenta en 10 la conex, 20% de 50 es 10
 
         Espiritu angelRecuperado = espirituService.recuperar(angel1.getId()).get();
         Espiritu demonioRecuperado = espirituService.recuperar(demonio1.getId()).get();
 
-        //List<Espiritu> espiritusRecuperados = mediumService.espiritus(medium.getId());//descomentar cuando se haga el metodo espiritus
+        List<Espiritu> espiritusRecuperados = mediumService.espiritus(medium.getId());
 
         assertEquals(20, angelRecuperado.getNivelDeConexion());
         assertEquals(20, demonioRecuperado.getNivelDeConexion());
-
-        //assertEquals(2, espiritusRecuperados.size());//descomentar cuando se haga el metodo espiritus, se supone que el metodo espiritus trae espiritus de ambas listas
+        assertEquals(2, espiritusRecuperados.size());
 
     }
 
     @Test
-    void alIntentarConectarConUnEspirituQueNoExisteLanzaError(){
+    void alIntentarConectarConUnEspirituQueNoExisteNoHaceNada(){
         this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
-        assertThrows(NoSuchElementException.class, () -> {
-            espirituService.conectar(-1L, medium.getId());
-        });
+
+        espirituService.conectar(-1L, medium.getId());
+
+        List<Espiritu> espiritus = mediumService.espiritus(medium.getId());
+
+        assertTrue(espiritus.isEmpty());
     }
 
     @Test
@@ -271,6 +271,7 @@ public class EspirituServiceImplTest {
             espirituService.conectar(angel1.getId(), -1L);
         });
     }
+
     @Test
     void alRecuperarTodosLosEspiritusDemoniosNoDebenHaberDeOtroTipo() {
         this.ubicacionService.crear(this.ubicacion);
