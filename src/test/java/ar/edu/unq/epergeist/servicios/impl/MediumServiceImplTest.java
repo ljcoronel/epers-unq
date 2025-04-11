@@ -115,7 +115,6 @@ public class MediumServiceImplTest {
         assertDoesNotThrow(() -> mediumService.eliminar(15L));
     }
 
-
     @Test
     void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
         mediumService.crear(medium);
@@ -200,19 +199,31 @@ public class MediumServiceImplTest {
         espirituService.crear(angelDebil);
         espirituService.crear(demonioDebil);
 
-        medium.conectarseAEspiritu(angelDebil);
-        angelDebil.setMedium(medium);
-        medium.conectarseAEspiritu(demonioDebil);
-        demonioDebil.setMedium(medium);
+        espirituService.conectar(angelDebil.getId(), medium.getId());
+        espirituService.conectar(demonioDebil.getId(), medium.getId());
 
-        mediumService.actualizar(medium);
-        espirituService.actualizar(angelDebil);
-        espirituService.actualizar(demonioDebil);
 
         List<Espiritu> espirituRecuperados = mediumService.espiritus(medium.getId());
 
         assertEquals(2, espirituRecuperados.size());
 
+    }
+
+    @Test
+    void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveUnaListaVacia(){
+
+        List<Espiritu> espiritus = mediumService.espiritus(693L);
+
+        assertTrue(espiritus.isEmpty());
+    }
+
+    @Test
+    void seIntentaRecuperarTodosLosEspiritusDeUnMediumQueNoTieneEspiritusEntoncesSeDevuelveUnaListaVacia() {
+        mediumService.crear(medium);
+
+        List<Espiritu> espiritus = mediumService.espiritus(medium.getId());
+
+        assertTrue(espiritus.isEmpty());
     }
 
     @Test

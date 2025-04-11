@@ -12,5 +12,6 @@ public interface EspirituDAO {
     List<Espiritu> recuperarTodos();
     void eliminar(Long idDelEspiritu);
     void actualizar(Espiritu espiritu);
-    <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> tipo);
+    List<Espiritu> todosLosEspiritusDeMedium(Long mediumId);
+    <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> clase);
 }

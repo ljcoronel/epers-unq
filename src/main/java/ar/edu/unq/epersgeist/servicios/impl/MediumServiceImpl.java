@@ -101,16 +101,17 @@ public class MediumServiceImpl implements MediumService {
     public List<Espiritu> espiritus(Long mediumId) {
         return HibernateTransactionRunner.runTrx(()->{
            Optional<Medium> medium = mediumDao.recuperar(mediumId);
-           if (medium.isEmpty()){
-               throw new NoSuchElementException("No se encontró el Medium con ID: " + mediumId);
-           }
-           Medium currentMedium = medium.get();
            List<Espiritu> espiritus = new ArrayList<>();
-           espiritus.addAll(currentMedium.getAngeles());
-           espiritus.addAll(currentMedium.getDemonios());
+
+           if(medium.isEmpty()) {return espiritus;}
+           Medium currentMedium = medium.get();
+
+           espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+
            return espiritus;
         });
     }
+
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
@@ -143,5 +144,4 @@ public class MediumServiceImpl implements MediumService {
         this.verificarSiExisteMedium(medium2);
 
     }
-
 }
