@@ -1,12 +1,15 @@
 package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epergeist.servicios.impl.TestService;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.query.SortDirection;
 import org.junit.jupiter.api.AfterEach;
@@ -22,10 +25,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HibernateEspirituDAOTest {
-    public static final Medium MEDIUM = new Medium("Brujita", null, null);
+    private Ubicacion ubicacion = new Ubicacion("Washington");
+    private UbicacionDAO ubicacionDao = new HibernateUbicacionDAO();
     private EspirituDAO espirituDao = new HibernateEspirituDAO();
-    private Espiritu espiritu1 = new Angel(10, "Angelito1");
-    private Espiritu espiritu2 = new Angel(20, "Angelito2");
+    private Espiritu espiritu1 = new Angel(10, "Angelito1", ubicacion);
+    private Espiritu espiritu2 = new Angel(20, "Angelito2", ubicacion);
     private TestService testService = new TestService();
 
 
@@ -35,6 +39,8 @@ public class HibernateEspirituDAOTest {
         HibernateTransactionRunner.runTrx(() -> {
             espirituDao.crear(espiritu1);
             espirituDao.crear(espiritu2);
+            ubicacionDao.crear(ubicacion);
+
             return null;
         });
     }
@@ -127,7 +133,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarTodosLosEspiritusDeUnTipoNoDebenHaberDeOtroTipo() {
         Demonio espiritu3 = new Demonio(
                 10,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -161,7 +167,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarTodosLosEspiritusDeUnTipoEspecificandoOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -189,7 +195,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarTodosLosEspiritusDeUnTipoEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendente() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -234,7 +240,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarMenosEspíritusDeLosTotalesDeUnTipoEspecíficoDebeTraerLaCantidadEspecificada() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -255,7 +261,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarEspiritusDeUnaPáginaMásAvanzadaDondeHayEspíritusDeUnTipoEspecíficoDebeTraerLosDeEsaPáginaSolamente() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -280,7 +286,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarEspiritusDeUnaPáginaMásAvanzadaDondeNoHayEspíritusDeUnTipoEspecíficoNoTraeNada() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -306,7 +312,7 @@ public class HibernateEspirituDAOTest {
     void alRecuperarEspiritusDeUnaPáginaDondeNoHayMismaCantidadDeEspíritusDeUnTipoEspecíficoQueLaCantidadPorPáginaTraeTodosLosQueHayaEnEsaPágina() {
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -335,12 +341,12 @@ public class HibernateEspirituDAOTest {
         // esp 1 y 2 ya fueron insertados en la base de datos previamente
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         Angel espiritu4 = new Angel(
                 99,
-                "Enrique"
+                "Enrique", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -371,12 +377,12 @@ public class HibernateEspirituDAOTest {
         // esp 1 y 2 ya fueron insertados en la base de datos previamente
         Angel espiritu3 = new Angel(
                 50,
-                "Sebastián"
+                "Sebastián", ubicacion
 
         );
         Angel espiritu4 = new Angel(
                 2,
-                "Enrique"
+                "Enrique", ubicacion
 
         );
         HibernateTransactionRunner.runTrx(() -> {
@@ -408,7 +414,7 @@ public class HibernateEspirituDAOTest {
     // test para actualizar un espíritu pero que tire error porque no existe todavía
     @Test
     void AlActualizarUnEspirituInexistenteNoActualizaNada () {
-        Espiritu espiritu_inexistente = new Angel(10, "NoExiste");
+        Espiritu espiritu_inexistente = new Angel(10, "NoExiste", ubicacion);
 
         HibernateTransactionRunner.runTrx(() -> {
             espirituDao.actualizar(espiritu_inexistente);
@@ -421,5 +427,6 @@ public class HibernateEspirituDAOTest {
     @AfterEach
     void emilinarModelo () {
         testService.eliminarModelo(Espiritu.class);
+        testService.eliminarModelo(Ubicacion.class);
     }
 }

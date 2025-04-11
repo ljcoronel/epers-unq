@@ -1,6 +1,7 @@
 package ar.edu.unq.epergeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -13,8 +14,8 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DemonioTest {
-    public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private Espiritu demonio;
+    private Ubicacion ubicacion = new Ubicacion("Washington");
 
 //    Descomentar para ver logs.
 
@@ -34,7 +35,7 @@ public class DemonioTest {
     void crearEspiritu() {
         demonio = new Demonio(
                 0,
-                "Pepardo"
+                "Pepardo", ubicacion
 
         );
     }
@@ -43,7 +44,7 @@ public class DemonioTest {
     void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
         demonio = new Demonio(
                 250,
-                "Pepe"
+                "Pepe", ubicacion
         );
 
         assertEquals(100, demonio.getNivelDeConexion());
@@ -53,7 +54,7 @@ public class DemonioTest {
     void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
         demonio = new Demonio(
                 -50,
-                "Pepe"
+                "Pepe", ubicacion
         );
 
         assertEquals(0, demonio.getNivelDeConexion());
@@ -66,7 +67,7 @@ public class DemonioTest {
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
         demonio = new Demonio(
                 100,
-                "Pepe"
+                "Pepe", ubicacion
         );
         demonio.aumentarNivelDeConexionEn(10);
 

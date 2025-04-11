@@ -73,6 +73,8 @@ public class EspirituServiceImpl implements EspirituService {
 
             this.verificarExistenciaEspirituYMedium(optionalEspiritu,optionalMedium);
 
+            // como existen, se sabe que ambos se pueden obtener del Optional.
+
             Medium medium = optionalMedium.get();
             Espiritu espiritu = optionalEspiritu.get();
 

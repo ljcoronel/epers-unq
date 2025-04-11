@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import lombok.ToString;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -33,22 +33,29 @@ public abstract class Espiritu implements Serializable {
     private Medium medium;
 
 
-    public Espiritu(Integer nivelDeConexion, String nombre) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
+        this.ubicacion = ubicacion;
     }
 
-    public Espiritu(String nombre) {
+    public Espiritu(String nombre, Ubicacion ubicacion) {
 
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
+        this.ubicacion = ubicacion;
     }
 
 
     public void aumentarNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
         setNivelDeConexion(i + nivel);
+    }
+
+    public void reducirNivelDeConexionEn(int i) {
+        int nivel = getNivelDeConexion();
+        setNivelDeConexion(nivel - i);
     }
 
     private void setNivelDeConexion(int i) {
@@ -66,8 +73,36 @@ public abstract class Espiritu implements Serializable {
         this.aumentarNivelDeConexionEn(10);
     }
 
+    protected void recibirDamage(int ataque){
+        this.reducirNivelDeConexionEn(ataque);
+        if(this.getNivelDeConexion()==0){
+            this.desvincularseDeMedium();
+        }
+
+    }
+
+    private void desvincularseDeMedium(){
+
+        medium.desvincularseDeEspiritu(this);
+
+        this.setMedium(null);
+    }
+
+    protected int porcentajeAtaqueRandom(){
+        int procentajeDeExito = RandomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
+        return procentajeDeExito;
+    }
+
+    protected int porcentajeDefensaRandom(){
+        int procentajeDeDefensa = RandomGenerator.getRandom(1, 100);
+        return procentajeDeDefensa;
+    }
+
+    public abstract boolean esAngel();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
+
+
 
 }

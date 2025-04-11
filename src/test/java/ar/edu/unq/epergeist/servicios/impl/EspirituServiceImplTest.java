@@ -1,14 +1,17 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
+import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.query.SortDirection;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +37,11 @@ public class EspirituServiceImplTest {
     private Demonio demonio1;
     private Demonio demonio2;
     private Demonio demonio3;
-
+    private Ubicacion ubicacion;
+    private UbicacionServiceImpl ubicacionService;
+    private HibernateUbicacionDAO ubicacionDAO;
+    private HibernateEspirituDAO espirituDAO;
+    private HibernateMediumDAO mediumDAO;
 
 //    Descomentar para ver logs.
 
@@ -52,25 +59,29 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        angel1 = new Angel(10,"Angel1");
-        angel2 = new Angel(10,"Angel2");
-        angel3 = new Angel(10,"Angel3");
+        this.ubicacion = new Ubicacion("Bernal");
+        angel1 = new Angel(10,"Angel1", this.ubicacion);
+        angel2 = new Angel(10,"Angel2", this.ubicacion);
+        angel3 = new Angel(10,"Angel3", this.ubicacion);
         demonio1 = new Demonio(
                 10,
-                "Pepito"
-
+                "Pepito", this.ubicacion
         );
         demonio2 = new Demonio(
                 90,
-                "Diavolo"
+                "Diavolo", this.ubicacion
 
         );
         demonio3 = new Demonio(
                 50,
-                "Sebastián"
+                "Sebastián", this.ubicacion
 
         );
-        medium = new Medium("Brujita", 100, 50);
+        medium = new Medium("Brujita", 100, 50, this.ubicacion);
+        this.ubicacionDAO = new HibernateUbicacionDAO();
+        this.espirituDAO = new HibernateEspirituDAO();
+        this.mediumDAO = new HibernateMediumDAO();
+        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
     }
 
     @Test
@@ -85,6 +96,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void sePuedenRecuperarTodosLosEspiritusCreados(){
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         espirituService.crear(angel2);
         espirituService.crear(angel3);
@@ -94,6 +106,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alEliminarUnEspirituDejaDeEstarPersistido() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         espirituService.eliminar(angel1.getId());
         Optional<Espiritu> espirituInexistente = espirituService.recuperar(angel1.getId());
@@ -102,6 +115,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alEliminarUnEspirituQueNoFueCreadoNoHaceNada() { // está de más testear esto?
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         assertDoesNotThrow( () -> {
             espirituService.eliminar(angel1.getId());
@@ -111,6 +125,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alActualizarUnEspirituSeCambiaCorrectamente() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         angel1.setNombre("Nuevo Nombre");
         espirituService.actualizar(angel1);
@@ -123,7 +138,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         var otroEspiritu = espirituService.recuperar(angel1.getId()).get();
         assertEquals(angel1.getNombre(), otroEspiritu.getNombre());
@@ -134,6 +149,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void seAgregaElIdAlEspirituAlCrearUnEspiritu() {
+        this.ubicacionService.crear(this.ubicacion);
         assertNull(angel1.getId());
         espirituService.crear(angel1);
         assertNotNull(angel1.getId());
@@ -146,7 +162,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarUnEspirituSeGuardaEnSuRespectivaListaDelMediumAumentandoSuConexionYSePersiste() {
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         espirituService.crear(demonio1);
 
@@ -169,7 +185,7 @@ public class EspirituServiceImplTest {
     }
     @Test
     void alIntentarConectarConUnEspirituQueYaSeConectoNoHaceNada(){
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         mediumService.crear(medium);
 
@@ -189,7 +205,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alIntentarConectarConUnEspirituQueNoExisteLanzaError(){
-
+        this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
 
         assertThrows(NoSuchElementException.class, () -> {
@@ -199,7 +215,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alIntentarConectarConUnMediumQueNoExisteLanzaError(){
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
 
         assertThrows(NoSuchElementException.class, () -> {
@@ -208,6 +224,7 @@ public class EspirituServiceImplTest {
     }
     @Test
     void alRecuperarTodosLosEspiritusDemoniosNoDebenHaberDeOtroTipo() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(angel1); //es un angel
@@ -223,7 +240,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarTodosLosDemoniosPeroNoHaberDevuelveListaVacía() {
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
 
         List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 2);// agarro sólo los demonios
@@ -234,7 +251,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarTodosLosDemoniosEspecificandoOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
-
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -256,6 +273,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarTodosLosDemoniosEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendente() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -294,6 +312,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarMenosDemoniosDeLosTotalesDebeTraerLaCantidadEspecificada() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -308,6 +327,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeHayDemoniosDebeTraerLosDeEsaPáginaSolamente() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -326,6 +346,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeNoHayDemoniosNoTraeNada() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -345,6 +366,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarDemoniosDeUnaPáginaDondeNoHayMismaCantidadDeDemoniosQueLaCantidadPorPáginaTraeTodosLosQueHayaEnEsaPágina() {
+        this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
@@ -364,9 +386,10 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarTodosLosDemoniosOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendenteEntreTodosLosDemonios() {
+        this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 99,
-                "Enrique"
+                "Enrique", this.ubicacion
 
         );
         espirituService.crear(demonio1);
@@ -390,9 +413,10 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarTodosLosDemoniosDeUnTipoEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendenteEntreTodosLosDemonios() {
+        this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 2,
-                "Enrique"
+                "Enrique", this.ubicacion
 
         );
         espirituService.crear(demonio1);
@@ -419,5 +443,6 @@ public class EspirituServiceImplTest {
     void eliminarModelo() {
         testService.eliminarModelo(Espiritu.class);
         testService.eliminarModelo(Medium.class);
+        testService.eliminarModelo(Ubicacion.class);
     }
 }
