@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.MediumService;
@@ -15,6 +16,7 @@ public class MediumServiceImpl implements MediumService {
 
     private MediumDAO mediumDao;
 
+
     public MediumServiceImpl (MediumDAO mediumDao){
         this.mediumDao = mediumDao;
     }
@@ -22,25 +24,25 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Medium crear(Medium medium) {
         return HibernateTransactionRunner.runTrx(() -> {
-            getMediumDao().crear(medium);
+            mediumDao.crear(medium);
             return null;
         });
     }
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) {
-        return HibernateTransactionRunner.runTrx(() -> getMediumDao().recuperar(mediumId));
+        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(mediumId));
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> this.getMediumDao().recuperarTodos());
+        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperarTodos());
     }
 
     @Override
     public void actualizar(Medium medium) {
         HibernateTransactionRunner.runTrx(()-> {
-            getMediumDao().actualizar(medium);
+            mediumDao.actualizar(medium);
             return null;
         } );
 
@@ -49,7 +51,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void eliminar(Long idDelMedium) {
         HibernateTransactionRunner.runTrx(() -> {
-            getMediumDao().eliminar(idDelMedium);
+            mediumDao.eliminar(idDelMedium);
             return null;
         });
     }
@@ -71,7 +73,22 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
+        HibernateTransactionRunner.runTrx(() -> {
+            Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
+            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
 
+            this.verificarSiExistenLosMediums(optionalExorcista,optionalPoseido);
+
+            Medium exorcista = optionalExorcista.get();
+            Medium exorcizado = optionalPoseido.get();
+
+            exorcista.exorcizarA(exorcizado);
+
+            this.actualizar(exorcista);
+            this.actualizar(exorcizado);
+
+            return null;
+        });
     }
 
     @Override
@@ -94,7 +111,16 @@ public class MediumServiceImpl implements MediumService {
         return null;
     }
 
-    public MediumDAO getMediumDao() {
-        return mediumDao;
+    private void verificarSiExisteMedium(Optional<Medium> medium){
+        if (medium.isEmpty()) {
+            throw new NoSuchElementException("No se encontró el Medium");
+        }
     }
+
+    private void verificarSiExistenLosMediums(Optional<Medium> medium,Optional<Medium> medium2){
+        this.verificarSiExisteMedium(medium);
+        this.verificarSiExisteMedium(medium2);
+
+    }
+
 }

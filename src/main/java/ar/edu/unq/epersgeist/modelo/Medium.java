@@ -3,16 +3,14 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
-import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString
@@ -59,7 +57,8 @@ public class Medium implements Serializable {
 
         espiritu.setMedium(this);
         espiritu.setUbicacion(this.ubicacion);
-        if (espiritu instanceof Angel) {
+
+        if (espiritu.esAngel()) {
             angeles.add((Angel) espiritu);
         }else{
             demonios.add((Demonio) espiritu);
@@ -94,6 +93,42 @@ public class Medium implements Serializable {
         }
 
     }
+    public void exorcizarA(Medium medium){
 
+        this.verificarSiPuedeExorcizar();
+
+        for (Angel angel : angeles){
+
+            List<Demonio> otrosDemonios = medium.getDemonios();
+
+            if(medium.poseido()){
+
+                angel.atacar(otrosDemonios.get(0));
+
+            }else{
+                break;
+            }
+        }
+    }
+
+    private void verificarSiPuedeExorcizar(){
+        if (this.angeles.isEmpty()){
+            throw new ExorcistaSinAngelesException(this);
+        }
+    }
+
+    public void desvincularseDeEspiritu(Espiritu espiritu){
+
+        if (espiritu instanceof Angel) {
+            angeles.remove((Angel) espiritu);
+        }else{
+            demonios.remove((Demonio) espiritu);
+        }
+    }
+
+
+    private boolean poseido(){
+        return (!demonios.isEmpty());
+    }
 
 }
