@@ -111,9 +111,6 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-        //dado un medium y un espíritu, el medium deber invocar al espíritu a su ubicación
-        // generándole un costo de 10 puntos de mana. si el medium no tiene mana suficiente
-        // no hace nada. si el espíritu un esta libre, lanzar una excepción.
         return HibernateTransactionRunner.runTrx(()->{
             Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
@@ -122,13 +119,13 @@ public class MediumServiceImpl implements MediumService {
 
             Medium medium = optionalMedium.get();
             Espiritu espiritu = optionalEspiritu.get();
-
             medium.invocar(espiritu);
             mediumDao.actualizar(medium);
             espirituDao.actualizar(espiritu);
             return espiritu;
         });
     }
+
 
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {

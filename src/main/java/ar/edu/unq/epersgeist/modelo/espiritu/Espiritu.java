@@ -98,11 +98,13 @@ public abstract class Espiritu implements Serializable {
         return procentajeDeDefensa;
     }
 
+    public boolean estaLibre() {
+        return this.medium == null;
+    }
+
     public abstract boolean esAngel();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
-
-
 
 }
