@@ -32,16 +32,19 @@ public abstract class Espiritu implements Serializable {
     @ManyToOne
     private Medium medium;
 
-    public Espiritu(Integer nivelDeConexion, String nombre) {
+
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
+        this.ubicacion = ubicacion;
     }
 
-    public Espiritu(String nombre) {
+    public Espiritu(String nombre, Ubicacion ubicacion) {
 
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
+        this.ubicacion = ubicacion;
     }
 
 

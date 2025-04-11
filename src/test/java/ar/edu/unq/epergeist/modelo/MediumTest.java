@@ -1,6 +1,7 @@
 package ar.edu.unq.epergeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-
+    private Ubicacion ubicacion = new Ubicacion("Washington");
 
     private Angel angel1;
     private Angel angel2;
@@ -23,14 +24,14 @@ public class MediumTest {
 
     @BeforeEach
     void crearMedium() {
-        medium = new Medium("Francisco", 50, 30);
-        medium2 = new Medium("Rafa", 50, 15);
+        medium = new Medium("Francisco", 50, 30,ubicacion);
+        medium2 = new Medium("Rafa", 50, 15,ubicacion);
 
-        angel1 = new Angel(60, "Uriel");
-        angel2 = new Angel(5, "Ariel");
+        angel1 = new Angel(60, "Uriel",ubicacion);
+        angel2 = new Angel(5, "Ariel",ubicacion);
 
-        demonio1 = new Demonio(50, "Azazel");
-        demonio2 = new Demonio(3, "Dismas");
+        demonio1 = new Demonio(50, "Azazel",ubicacion);
+        demonio2 = new Demonio(3, "Dismas",ubicacion);
     }
 
     @Test

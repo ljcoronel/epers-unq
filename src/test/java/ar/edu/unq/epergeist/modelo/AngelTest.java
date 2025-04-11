@@ -1,5 +1,6 @@
 package ar.edu.unq.epergeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -10,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AngelTest {
-    public static final Medium MEDIUM = new Medium("Brujita", null, null);
     private Espiritu angel;
+    private Ubicacion ubicacion = new Ubicacion("Washington");
 
 //    Descomentar para ver logs.
 
@@ -31,7 +32,7 @@ public class AngelTest {
     void crearEspiritu() {
         angel = new Angel(
                 0,
-                "pepe"
+                "pepe",ubicacion
 
         );
     }
@@ -40,7 +41,7 @@ public class AngelTest {
     void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
         angel = new Angel(
                 250,
-                "Pepe"
+                "Pepe", ubicacion
         );
 
         assertEquals(100, angel.getNivelDeConexion());
@@ -50,7 +51,7 @@ public class AngelTest {
     void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
         angel = new Angel(
                 -50,
-                "Pepe"
+                "Pepe", ubicacion
         );
 
         assertEquals(0, angel.getNivelDeConexion());
@@ -63,7 +64,7 @@ public class AngelTest {
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
         angel = new Demonio(
                 100,
-                "Pepe"
+                "Pepe", ubicacion
         );
         angel.aumentarNivelDeConexionEn(10);
 

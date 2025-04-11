@@ -37,10 +37,11 @@ public class Medium implements Serializable {
     private Ubicacion ubicacion;
 
 
-    public Medium(String nombre, Integer manaMax, Integer mana) {
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
+        this.ubicacion = ubicacion;
     }
 
     public void conectarseAEspiritu(Espiritu espiritu) {
@@ -55,12 +56,14 @@ public class Medium implements Serializable {
     private void realizarConexion(Espiritu espiritu){
 
         espiritu.setMedium(this);
+        espiritu.setUbicacion(this.ubicacion);
 
         if (espiritu.esAngel()) {
             angeles.add((Angel) espiritu);
         }else{
             demonios.add((Demonio) espiritu);
         }
+
     }
 
     public void descansar(){
