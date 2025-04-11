@@ -86,17 +86,6 @@ public class EspirituServiceImplTest {
         this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
     }
 
-    @Test
-    void sePuedeAumentarLaConexionConElEspiritu(){
-//        int nivelDeConexion = 10
-//        Espiritu angel = new Angel(nivelDeConexion,"Angel1", this.ubicacion);
-//        espirituService.crear(angel);
-//        espirituService.
-
-
-
-
-    }
 
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){

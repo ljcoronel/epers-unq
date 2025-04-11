@@ -422,6 +422,29 @@ public class MediumServiceImplTest {
 
     }
 
+    @Test
+    void alRecibirMuchoDanoElEspirituSeDesviculaDelMedium() {
+
+        RandomGenerator.addValorFijo(1);
+        RandomGenerator.addValorFijo(100);
+
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        espirituService.crear(angelDebil);
+        espirituService.crear(demonioFuerte);
+
+        espirituService.conectar(angelDebil.getId(),medium.getId());
+
+        espirituService.conectar(demonioFuerte.getId(),medium2.getId());
+
+        mediumService.exorcisar(medium.getId(),medium2.getId());
+
+       assertTrue(medium.getAngeles().isEmpty());
+
+
+    }
+
 
     @AfterEach
     void eliminarModelo() {
