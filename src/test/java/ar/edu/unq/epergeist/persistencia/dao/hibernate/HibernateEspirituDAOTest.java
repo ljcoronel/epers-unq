@@ -44,6 +44,26 @@ public class HibernateEspirituDAOTest {
             return null;
         });
     }
+    @Test
+    void alActualizarLaConexionDeUnEspirituSePersiste(){
+        int conexionInicial = 10;
+        Espiritu espirituConConexion = new Angel(conexionInicial, "Angel", ubicacion);
+        Espiritu espiritu = HibernateTransactionRunner.runTrx(() -> {
+            return espirituDao.crear(espirituConConexion);
+        });
+        int conexionAmentada = 20;
+        espiritu.aumentarNivelDeConexionEn(conexionAmentada);
+        HibernateTransactionRunner.runTrx(() -> {
+           espirituDao.actualizar(espirituConConexion);
+           return null;
+        });
+
+        Espiritu espiritu_recuperado = HibernateTransactionRunner.runTrx(() -> {
+            return espirituDao.recuperar(espirituConConexion.getId()).get();
+        });
+
+        assertEquals(espiritu_recuperado.getNivelDeConexion(), conexionAmentada + conexionInicial);
+    }
 
     @Test
     void SePuedeRecuperarAlEspirituCreadoConLaMismaInformacion() {

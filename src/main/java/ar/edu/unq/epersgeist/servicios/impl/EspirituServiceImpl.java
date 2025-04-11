@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.excepcion.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.excepcion.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
@@ -70,15 +72,19 @@ public class EspirituServiceImpl implements EspirituService {
 
             Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
-
             this.verificarExistenciaEspirituYMedium(optionalEspiritu,optionalMedium);
-
-            // como existen, se sabe que ambos se pueden obtener del Optional.
-
             Medium medium = optionalMedium.get();
             Espiritu espiritu = optionalEspiritu.get();
 
-            medium.conectarseAEspiritu(espiritu);
+            if (!(espiritu.getUbicacion() == medium.getUbicacion())){
+                throw new UbicacionDistintaException(espiritu, medium);
+             }
+            if (!espiritu.estaLibre()) {
+                throw new EspirituLibreException(espiritu);
+            }
+            int conexionAAumentar = (int) Math.round(medium.getMana() * 0.20);
+            espiritu.aumentarNivelDeConexionEn(conexionAAumentar);
+            espiritu.setMedium(medium);
 
             mediumDao.actualizar(medium);
 

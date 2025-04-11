@@ -5,6 +5,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.excepcion.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.excepcion.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
@@ -85,6 +87,18 @@ public class EspirituServiceImplTest {
     }
 
     @Test
+    void sePuedeAumentarLaConexionConElEspiritu(){
+//        int nivelDeConexion = 10
+//        Espiritu angel = new Angel(nivelDeConexion,"Angel1", this.ubicacion);
+//        espirituService.crear(angel);
+//        espirituService.
+
+
+
+
+    }
+
+    @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
         Long id_Inexistente = 50L;
         Long id_Inexistente2 = -50L;
@@ -93,6 +107,62 @@ public class EspirituServiceImplTest {
         assertFalse(espirituService.recuperar(id_Inexistente2).isPresent());
     }
 
+    @Test
+    void alConectarseConUnMediumEnUnaUbicacionDiferenteDaErrorUbicacionDistintaException() {
+        Ubicacion quilmes = new Ubicacion("Quilmes");
+        Ubicacion bernal = new Ubicacion("Bernal");
+        ubicacionService.crear(quilmes);
+        ubicacionService.crear(bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        mediumService.crear(mediumDeBernal);
+        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes", quilmes);
+        espirituService.crear(espirituDeQuilmes);
+        assertThrows(UbicacionDistintaException.class, ()->espirituService.conectar(espirituDeQuilmes.getId(), mediumDeBernal.getId()));
+    }
+
+    @Test
+    void permiteConectarseAlMediunEnLaMismaUbicacion() {
+        Ubicacion bernal = new Ubicacion("Bernal");
+        ubicacionService.crear(bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        mediumService.crear(mediumDeBernal);
+        Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes", bernal);
+        espirituService.crear(espirituDeBernal);
+        assertDoesNotThrow(()->espirituService.conectar(espirituDeBernal.getId(), mediumDeBernal.getId()));
+
+    }
+    @Test
+    void SiUnEspirituaNoEstaLibreDaErrorEspirituLibreException(){
+        ubicacionService.crear(this.ubicacion);
+        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion);
+        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion);
+        mediumService.crear(mediumLibre);
+        mediumService.crear(mediumConEspiritu);
+
+        Angel espirituConectado = new Angel(10, "AngelDeQuilmes", this.ubicacion);
+        espirituService.crear(espirituConectado);
+        espirituService.conectar(espirituConectado.getId(), mediumConEspiritu.getId());
+
+        assertThrows(EspirituLibreException.class, ()->espirituService.conectar(espirituConectado.getId(), mediumLibre.getId()));
+
+    }
+
+
+    @Test
+    void alConectarConUnEspirituSeFortaleceElNivelDeConexion20delMedium(){
+        ubicacionService.crear(this.ubicacion);
+        int manaMedium = 50;
+        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion);
+        mediumService.crear(medium);
+        int conexionAngel = 30;
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael", this.ubicacion);
+        espirituService.crear(angelRafael);
+
+        int conexionBuscada = ((int) Math.round(manaMedium* 0.20) ) + conexionAngel;
+        espirituService.conectar(angelRafael.getId() , medium.getId());
+        Optional<Espiritu> AngelRecuperado = espirituService.recuperar(angelRafael.getId());
+        assertEquals(AngelRecuperado.get().getNivelDeConexion(), conexionBuscada );
+    }
 
     @Test
     void sePuedenRecuperarTodosLosEspiritusCreados(){
@@ -134,7 +204,6 @@ public class EspirituServiceImplTest {
         assertEquals("Nuevo Nombre", espiritu_recuperado.getNombre());
 
     }
-
 
     @Test
     void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
@@ -183,31 +252,11 @@ public class EspirituServiceImplTest {
         //assertEquals(2, espiritusRecuperados.size());//descomentar cuando se haga el metodo espiritus, se supone que el metodo espiritus trae espiritus de ambas listas
 
     }
-    @Test
-    void alIntentarConectarConUnEspirituQueYaSeConectoNoHaceNada(){
-        this.ubicacionService.crear(this.ubicacion);
-        espirituService.crear(angel1);
-        mediumService.crear(medium);
-
-
-        espirituService.conectar(angel1.getId(), medium.getId());
-
-        Espiritu angelRecuperado = espirituService.recuperar(angel1.getId()).get();
-
-        assertDoesNotThrow( () -> {
-                    espirituService.conectar(angel1.getId(), medium.getId());
-                }
-        );
-
-        assertEquals(20, angelRecuperado.getNivelDeConexion());//como no hizo nada la segunda conexion su nivel se mantuvo en 20
-
-    }
 
     @Test
     void alIntentarConectarConUnEspirituQueNoExisteLanzaError(){
         this.ubicacionService.crear(this.ubicacion);
         mediumService.crear(medium);
-
         assertThrows(NoSuchElementException.class, () -> {
             espirituService.conectar(-1L, medium.getId());
         });

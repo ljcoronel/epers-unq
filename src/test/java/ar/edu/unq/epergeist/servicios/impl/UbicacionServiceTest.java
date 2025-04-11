@@ -172,11 +172,13 @@ class UbicacionServiceTest {
         this.mediumUno.setUbicacion(this.ubicacionUno);
         this.mediumDos.setUbicacion(this.ubicacionUno);
         this.mediumTres.setUbicacion(this.ubicacionUno);
-        this.mediumUno.conectarseAEspiritu(this.angelUno);
-        this.mediumDos.conectarseAEspiritu(this.demonioUno);
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
         this.mediumService.actualizar(this.mediumTres);
+        this.espirituService.crear(this.demonioUno);
+        this.espirituService.crear(this.angelUno);
+        this.espirituService.conectar(this.demonioUno.getId(), this.mediumDos.getId());
+        this.espirituService.conectar(this.angelUno.getId(), this.mediumUno.getId());
         List<Medium> mediumsSinEspiritus = this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId());
 
         assertEquals(1, mediumsSinEspiritus.size());

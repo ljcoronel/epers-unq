@@ -127,8 +127,8 @@ public class MediumServiceImplTest {
 
         assertNotNull(medium.getId());
     }
-    
-    
+
+
     //feature actualizar
 
     @Test
@@ -188,10 +188,9 @@ public class MediumServiceImplTest {
         mediumService.crear(medium);
         espirituService.crear(angel1);
         espirituService.crear(demonio1);
-
-        medium.conectarseAEspiritu(angel1);
+        espirituService.conectar(angel1.getId(), medium.getId());
         angel1.setMedium(medium);
-        medium.conectarseAEspiritu(demonio1);
+        espirituService.conectar(demonio1.getId(), medium.getId());
         demonio1.setMedium(medium);
 
         mediumService.actualizar(medium);

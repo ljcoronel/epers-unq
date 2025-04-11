@@ -71,5 +71,28 @@ public class AngelTest {
         assertEquals(100, angel.getNivelDeConexion());
     }
 
+    @Test
+    void seAumentaCorrectamenteElNivelDeConexion(){
+        int nivelDeConexionDemonio = 60;
+        int nivelDeConexionAngel= 20;
+
+        Espiritu demonio = new Demonio( nivelDeConexionDemonio
+                ,
+                "Pepe", ubicacion
+        );
+        Espiritu angel = new Angel( nivelDeConexionAngel
+                ,
+                "angel", ubicacion
+        );
+        int aumetoDeConexion = 10;
+
+        demonio.aumentarNivelDeConexionEn(aumetoDeConexion);
+        angel.aumentarNivelDeConexionEn(aumetoDeConexion);
+
+        assertEquals(demonio.getNivelDeConexion(), aumetoDeConexion + nivelDeConexionDemonio);
+        assertEquals(angel.getNivelDeConexion(), aumetoDeConexion + nivelDeConexionAngel);
+
+    }
+
 
 }

@@ -46,13 +46,13 @@ public class Medium implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    public void conectarseAEspiritu(Espiritu espiritu) {
-
-        if(espiritu.getMedium() != null)return;
-
-        this.realizarConexion(espiritu);
-        espiritu.conectarse();
-    }
+//    public void conectarseAEspiritu(Espiritu espiritu) {
+//
+//        if(espiritu.getMedium() != null)return;
+//
+//        this.realizarConexion(espiritu);
+//        espiritu.conectarse();
+//    }
 
 
     private void realizarConexion(Espiritu espiritu){

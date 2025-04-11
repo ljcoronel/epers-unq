@@ -48,9 +48,8 @@ public abstract class Espiritu implements Serializable {
     }
 
 
-    public void aumentarNivelDeConexionEn(int i) {
-        int nivel = getNivelDeConexion();
-        setNivelDeConexion(i + nivel);
+    public void aumentarNivelDeConexionEn(int cantConexion) {
+        this.setNivelDeConexion(this.getNivelDeConexion() + cantConexion);
     }
 
     private void setNivelDeConexion(int i) {
@@ -63,9 +62,10 @@ public abstract class Espiritu implements Serializable {
         }
 
     }
-    public void conectarse(){
 
-        this.aumentarNivelDeConexionEn(10);
+
+    public boolean estaLibre(){
+        return this.medium == null;
     }
 
 

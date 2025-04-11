@@ -18,24 +18,7 @@ public class MediumTest {
     @BeforeEach
     void crearMedium() {
         medium = new Medium("Francisco", 50, 30, ubicacion);
-
-    }
-
-
-    @Test
-    void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
-        medium.conectarseAEspiritu(espiritu);
-
-        assertEquals(1, medium.getAngeles().size());
-        assertTrue(medium.getAngeles().contains(espiritu));
-
-    }
-    @Test
-    void alDescansarAumentaSuManaEn15YElNivelDeConexionDeSusEspiritusEn5(){
-        medium.conectarseAEspiritu(espiritu);
-        medium.descansar();
-        assertEquals(45,medium.getMana());
-        assertEquals(60,espiritu1.getNivelDeConexion());
+//        espiritu.
     }
 
 
