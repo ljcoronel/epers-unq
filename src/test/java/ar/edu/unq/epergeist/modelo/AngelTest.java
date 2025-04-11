@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AngelTest {
     private Espiritu angel;
@@ -71,5 +72,21 @@ public class AngelTest {
         assertEquals(100, angel.getNivelDeConexion());
     }
 
+    @Test
+    void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        this.angel.setUbicacion(ubicacion1);
 
+        assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
+
+    @Test
+    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        Medium medium = new Medium("Franco", 200, 50, this.ubicacion);
+        medium.conectarseAEspiritu(this.angel);
+        this.angel.setUbicacion(ubicacion1);
+
+        assertNotEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
 }
