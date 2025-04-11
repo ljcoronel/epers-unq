@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.modelo.excepcion;
+package ar.edu.unq.epersgeist.modelo.exception;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;

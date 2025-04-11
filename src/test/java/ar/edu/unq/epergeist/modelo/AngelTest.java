@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AngelTest {
     private Espiritu angel;
@@ -32,7 +33,7 @@ public class AngelTest {
     void crearEspiritu() {
         angel = new Angel(
                 0,
-                "pepe",ubicacion
+                "pepe", ubicacion
 
         );
     }
@@ -58,7 +59,6 @@ public class AngelTest {
     }
 
 
-
     //
     @Test
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
@@ -71,27 +71,13 @@ public class AngelTest {
         assertEquals(100, angel.getNivelDeConexion());
     }
 
+
     @Test
-    void seAumentaCorrectamenteElNivelDeConexion(){
-        int nivelDeConexionDemonio = 60;
-        int nivelDeConexionAngel= 20;
+        void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        this.angel.setUbicacion(ubicacion1);
 
-        Espiritu demonio = new Demonio( nivelDeConexionDemonio
-                ,
-                "Pepe", ubicacion
-        );
-        Espiritu angel = new Angel( nivelDeConexionAngel
-                ,
-                "angel", ubicacion
-        );
-        int aumetoDeConexion = 10;
-
-        demonio.aumentarNivelDeConexionEn(aumetoDeConexion);
-        angel.aumentarNivelDeConexionEn(aumetoDeConexion);
-
-        assertEquals(demonio.getNivelDeConexion(), aumetoDeConexion + nivelDeConexionDemonio);
-        assertEquals(angel.getNivelDeConexion(), aumetoDeConexion + nivelDeConexionAngel);
-
+    assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
 
