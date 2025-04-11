@@ -26,19 +26,25 @@ class UbicacionServiceTest {
     private UbicacionServiceImpl ubicacionService;
     private EspirituServiceImpl espirituService;
     private MediumServiceImpl mediumService;
+
     private HibernateUbicacionDAO ubicacionDAO;
     private HibernateEspirituDAO espirituDAO;
     private HibernateMediumDAO mediumDAO;
+
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
     private Ubicacion ubicacionTres;
+
     private Angel angelUno;
     private Angel angelDos;
+
     private Demonio demonioUno;
     private Demonio demonioDos;
+
     private Medium mediumUno;
     private Medium mediumDos;
     private Medium mediumTres;
+
     private TestService limpiador;
 
     @BeforeEach
@@ -118,10 +124,12 @@ class UbicacionServiceTest {
 
     @Test
     void seRecuperanTodasLasUbicacionesPersistidasDeLaBasesDeDatos() {
-        this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionDos.setNombre("Quilmes");
+
+        this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
+
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
         assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId());
@@ -141,14 +149,18 @@ class UbicacionServiceTest {
     void seObtieneLosEspiritusExistentesEnDistintasUbicaciones() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionTres);
+
         this.espirituService.crear(this.angelUno);
         this.espirituService.crear(this.angelDos);
         this.espirituService.crear(this.demonioUno);
         this.espirituService.crear(this.demonioDos);
+
         this.angelUno.setUbicacion(this.ubicacionUno);
         this.angelDos.setUbicacion(this.ubicacionUno);
+
         this.demonioUno.setUbicacion(this.ubicacionTres);
         this.demonioDos.setUbicacion(this.ubicacionUno);
+
         this.espirituService.actualizar(this.angelUno);
         this.espirituService.actualizar(this.angelDos);
         this.espirituService.actualizar(this.demonioUno);
@@ -168,22 +180,26 @@ class UbicacionServiceTest {
         this.mediumService.crear(this.mediumUno);
         this.mediumService.crear(this.mediumDos);
         this.mediumService.crear(this.mediumTres);
+
         this.mediumUno.setUbicacion(this.ubicacionUno);
         this.mediumDos.setUbicacion(this.ubicacionUno);
         this.mediumTres.setUbicacion(this.ubicacionUno);
+
+        espirituService.crear(this.angelUno);
+        espirituService.crear(this.demonioUno);
+
+        espirituService.conectar(this.angelUno.getId(), mediumUno.getId());
+        espirituService.conectar(this.demonioUno.getId(), mediumDos.getId());
+
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
         this.mediumService.actualizar(this.mediumTres);
-        this.espirituService.crear(this.demonioUno);
-        this.espirituService.crear(this.angelUno);
-        this.espirituService.conectar(this.demonioUno.getId(), this.mediumDos.getId());
-        this.espirituService.conectar(this.angelUno.getId(), this.mediumUno.getId());
+
         List<Medium> mediumsSinEspiritus = this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId());
 
         assertEquals(1, mediumsSinEspiritus.size());
         assertEquals(this.mediumTres.getId(),mediumsSinEspiritus.getFirst().getId());
     }
-
 
     @Test
     void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {

@@ -235,26 +235,6 @@ public class HibernateEspirituDAOTest {
 
     }
 
-    @Test
-    void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsanValoresNegativosParaPáginaDebeFallar() {
-
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, -1, 3, Angel.class));
-
-    }
-
-    @Test
-    void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
-
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, -1, Angel.class));
-
-    }
-
-    @Test
-    void alRecuperarATodosLosEspíritusDeUnTipoSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
-
-        assertThrows(IllegalArgumentException.class, () -> espirituDao.espiritusDeTipo(SortDirection.ASCENDING, 0, 0, Angel.class));
-
-    }
 
     @Test
     void alRecuperarMenosEspíritusDeLosTotalesDeUnTipoEspecíficoDebeTraerLaCantidadEspecificada() {

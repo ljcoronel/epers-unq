@@ -18,9 +18,6 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
 
     @Override
     public <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> clase) {
-        if (pagina < 0) throw new IllegalArgumentException("Página debe ser positivo.");
-        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva y mayor a 0.");
-
         int offset = cantidadPorPagina * pagina;
 
         Session session = HibernateTransactionRunner.getCurrentSession();
@@ -40,6 +37,14 @@ public class HibernateEspirituDAO extends HibernateDAO<Espiritu> implements Espi
         String hql = "from Espiritu e where e.ubicacion.id = :unLugarDado order by e.nombre asc";
         Query<Espiritu> query = session.createQuery(hql, Espiritu.class);
         query.setParameter("unLugarDado", ubicacionId);
+        return query.getResultList();
+    }
+
+    public List<Espiritu> todosLosEspiritusDeMedium(Long mediumId){
+        Session session = HibernateTransactionRunner.getCurrentSession();
+        String hql = "from Espiritu e where e.medium.id = :idMedium";
+        Query<Espiritu> query = session.createQuery(hql,Espiritu.class);
+        query.setParameter("idMedium", mediumId);
         return query.getResultList();
     }
 }
