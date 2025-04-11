@@ -187,8 +187,8 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExepcion(){
-        assertThrows(NoSuchElementException.class, () -> {
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
+        assertDoesNotThrow( () -> {
             mediumService.descansar(-1L);
         });
     }
@@ -321,29 +321,33 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaExorcizarAUnMediumQueNoFuePersistidoYLanzaUnError(){
+    void seIntentaExorcizarAUnMediumQueNoFuePersistidoYNoHaceNada(){
 
         mediumService.crear(medium);
         espirituService.crear(angelDebil);
 
         espirituService.conectar(angelDebil.getId(),medium.getId());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            mediumService.exorcisar(medium.getId(),-1L);
-        });
+        Integer angelDebilNivelDeConex = angelDebil.getNivelDeConexion();
+
+        mediumService.exorcisar(medium.getId(),-1L);
+
+        assertEquals(angelDebilNivelDeConex, angelDebil.getNivelDeConexion());
     }
 
     @Test
-    void unMediumNoPersistidoIntentaExorcizarAOtroYLanzaUnError(){
+    void unMediumNoPersistidoIntentaExorcizarAOtroEntoncesNoPasaNada(){
 
         mediumService.crear(medium2);
         espirituService.crear(demonioDebil);
 
         espirituService.conectar(demonioDebil.getId(),medium2.getId());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            mediumService.exorcisar(-1L,medium2.getId());
-        });
+        Integer demonioDebilNivelDeConex = demonioDebil.getNivelDeConexion();
+
+        mediumService.exorcisar(-1L,medium2.getId());
+
+        assertEquals(demonioDebilNivelDeConex, demonioDebil.getNivelDeConexion());
     }
 
     @Test
@@ -353,7 +357,7 @@ public class MediumServiceImplTest {
         espirituService.crear(angelDebil);
         int manaInicial = medium.getMana();
 
-        //seteo una ubicacion al angel, que es diferente a la de el medium
+        //seteo una ubicacion al angel, que es diferente a la del medium
         angelDebil.setUbicacion(ubicacion2);
         espirituService.actualizar(angelDebil);
 
@@ -381,6 +385,27 @@ public class MediumServiceImplTest {
 
         assertThrows(RuntimeException.class, () -> {
             mediumService.invocar(medium.getId(), angelDebil.getId());
+        });
+    }
+
+    @Test
+    void unMediumNoPersistidoInvocaAUnEspirituYNoHaceNada() {
+
+        espirituService.crear(angelDebil);
+        Ubicacion angelDebilUbicacion = angelDebil.getUbicacion();
+
+        mediumService.invocar(-1L, angelDebil.getId());
+
+        assertEquals(angelDebilUbicacion, angelDebil.getUbicacion());
+    }
+
+    @Test
+    void unEspírituNoPersistidoEsInvocadoPorUnMediumYLanzaExcepción() {
+
+        mediumService.crear(medium);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            mediumService.invocar(medium.getId(), -1L);
         });
     }
 

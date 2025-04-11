@@ -61,6 +61,8 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Demonio> espiritusDemoniacos(SortDirection direccion, int pagina, int cantidadPorPagina) {
+        if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
+        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
         return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class));
     }
 
