@@ -72,8 +72,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
-            this.verificarExistenciaEspirituYMedium(optionalEspiritu,optionalMedium);
-            Medium medium = optionalMedium.get();
+            Medium medium = this.mediumSiExisteEspirituYMedium(optionalEspiritu,optionalMedium);
             Espiritu espiritu = optionalEspiritu.get();
 
             if (!(espiritu.getUbicacion() == medium.getUbicacion())){
@@ -82,11 +81,7 @@ public class EspirituServiceImpl implements EspirituService {
             if (!espiritu.estaLibre()) {
                 throw new EspirituLibreException(espiritu);
             }
-            int conexionAAumentar = (int) Math.round(medium.getMana() * 0.20);
-            espiritu.aumentarNivelDeConexionEn(conexionAAumentar);
-            espiritu.setMedium(medium);
-
-            mediumDao.actualizar(medium);
+            mediumDao.actualizar(espiritu.conectarConMedium(medium));
 
             return medium;
         });
@@ -94,7 +89,7 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     private void verificarSiExisteEspiritu(Optional<Espiritu> espiritu){
-        if (!espiritu.isPresent()) {
+        if (espiritu.isEmpty()) {
             throw new NoSuchElementException("No se encontró el Espiritu");
         }
     }
@@ -105,9 +100,11 @@ public class EspirituServiceImpl implements EspirituService {
         }
     }
 
-    private void verificarExistenciaEspirituYMedium(Optional<Espiritu> espiritu,Optional<Medium> medium){
+    private Medium mediumSiExisteEspirituYMedium(Optional<Espiritu> espiritu,Optional<Medium> medium){
         this.verificarSiExisteEspiritu(espiritu);
         this.verificarSiExisteMedium(medium);
+        return medium.get();
+
 
     }
 
