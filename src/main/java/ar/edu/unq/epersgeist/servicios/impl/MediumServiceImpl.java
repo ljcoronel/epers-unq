@@ -62,14 +62,16 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void descansar(Long mediumId) {
         HibernateTransactionRunner.runTrx(() -> {
-            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
-            if (!optionalMedium.isPresent()) {
-                throw new NoSuchElementException("No se encontró el Medium con ID: " + mediumId);
-            }
-            Medium medium = optionalMedium.get();
 
+            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
+
+            if (optionalMedium.isEmpty()) return null;
+
+            Medium medium = optionalMedium.get();
             medium.descansar();
+
             this.actualizar(medium);
+
             return null;
         });
     }
@@ -80,7 +82,8 @@ public class MediumServiceImpl implements MediumService {
             Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
             Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
 
-            this.verificarSiExistenLosMediums(optionalExorcista,optionalPoseido);
+            if (optionalExorcista.isEmpty()) return null;
+            if (optionalPoseido.isEmpty()) return null;
 
             Medium exorcista = optionalExorcista.get();
             Medium exorcizado = optionalPoseido.get();
@@ -116,11 +119,13 @@ public class MediumServiceImpl implements MediumService {
             Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
 
-            if (optionalMedium.isEmpty()|| optionalEspiritu.isEmpty()) return null;
+            if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
+            Espiritu espiritu = optionalEspiritu.get();
+            if (optionalMedium.isEmpty()) return espiritu;
 
             Medium medium = optionalMedium.get();
-            Espiritu espiritu = optionalEspiritu.get();
             medium.invocar(espiritu);
+
             mediumDao.actualizar(medium);
             espirituDao.actualizar(espiritu);
             return espiritu;
