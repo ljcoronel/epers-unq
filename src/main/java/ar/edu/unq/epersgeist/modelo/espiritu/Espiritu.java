@@ -31,7 +31,8 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ubicacion ubicacion;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
@@ -100,9 +101,11 @@ public abstract class Espiritu implements Serializable {
 
     public abstract boolean esAngel();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Ubicacion ubicacion;
+    public boolean estaLibre() {
+        return this.medium == null;
+    }
 
-
-
+    public void setUbicacion(Ubicacion ubicacion) {
+        if (this.estaLibre() || this.medium.getUbicacion().getNombre().equals(ubicacion.getNombre())) this.ubicacion = ubicacion;
+    }
 }

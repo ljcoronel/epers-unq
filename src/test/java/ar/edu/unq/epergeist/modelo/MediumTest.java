@@ -152,4 +152,15 @@ public class MediumTest {
             medium.exorcizarA(medium2);
         });
     }
+
+    @Test
+    void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        this.medium.conectarseAEspiritu(this.angel1);
+        this.medium.conectarseAEspiritu(this.demonio1);
+        this.medium.setUbicacion(ubicacion1);
+
+        assertEquals(this.angel1.getUbicacion().getNombre(), ubicacion1.getNombre());
+        assertEquals(this.demonio1.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
 }

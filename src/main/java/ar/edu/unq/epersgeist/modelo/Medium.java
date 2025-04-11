@@ -131,4 +131,9 @@ public class Medium implements Serializable {
         return (!demonios.isEmpty());
     }
 
+    public void setUbicacion(Ubicacion unaUbicacion) {
+        this.ubicacion = unaUbicacion;
+        this.angeles.forEach(angel -> angel.setUbicacion(unaUbicacion));
+        this.demonios.forEach(demonio -> demonio.setUbicacion(unaUbicacion));
+    }
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class DemonioTest {
     private Espiritu demonio;
@@ -72,5 +73,23 @@ public class DemonioTest {
         demonio.aumentarNivelDeConexionEn(10);
 
         assertEquals(100, demonio.getNivelDeConexion());
+    }
+
+    @Test
+    void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        this.demonio.setUbicacion(ubicacion1);
+
+        assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
+
+    @Test
+    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        Medium medium = new Medium("Franco", 200, 50, this.ubicacion);
+        medium.conectarseAEspiritu(this.demonio);
+        this.demonio.setUbicacion(ubicacion1);
+
+        assertNotEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 }
