@@ -133,7 +133,6 @@ public class Medium implements Serializable {
         }
     }
 
-
     public void setUbicacion(Ubicacion unaUbicacion) {
         this.ubicacion = unaUbicacion;
         this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
