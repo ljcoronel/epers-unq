@@ -98,4 +98,7 @@ public class Medium implements Serializable {
     }
 
 
+    public void invocar(Espiritu espiritu) {
+        //implementar
+    }
 }
