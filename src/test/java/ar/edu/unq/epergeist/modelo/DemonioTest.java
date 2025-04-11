@@ -83,13 +83,4 @@ public class DemonioTest {
         assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
-        Medium medium = new Medium("Franco", 200, 50, this.ubicacion);
-        medium.conectarseAEspiritu(this.demonio);
-        this.demonio.setUbicacion(ubicacion1);
-
-        assertNotEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
-    }
 }

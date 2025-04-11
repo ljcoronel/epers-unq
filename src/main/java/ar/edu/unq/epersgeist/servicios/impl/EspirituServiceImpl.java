@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
@@ -73,14 +75,16 @@ public class EspirituServiceImpl implements EspirituService {
             Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
 
-            this.verificarExistenciaEspirituYMedium(optionalEspiritu,optionalMedium);
-
-            // como existen, se sabe que ambos se pueden obtener del Optional.
-
+            verificarSiExisteMedium(optionalMedium);
             Medium medium = optionalMedium.get();
+
+            if (optionalEspiritu.isEmpty()) return medium; // @TODO
             Espiritu espiritu = optionalEspiritu.get();
 
-            medium.conectarseAEspiritu(espiritu);
+            verificarEspirituYMediumEnMismaUbicacion(espiritu, medium);
+            verificarEspirituLibre(espiritu);
+
+            espiritu.conectarConMedium(medium);
 
             mediumDao.actualizar(medium);
 
@@ -89,22 +93,22 @@ public class EspirituServiceImpl implements EspirituService {
 
     }
 
-    private void verificarSiExisteEspiritu(Optional<Espiritu> espiritu){
-        if (!espiritu.isPresent()) {
-            throw new NoSuchElementException("No se encontró el Espiritu");
+    private static void verificarEspirituLibre(Espiritu espiritu) {
+        if (!espiritu.estaLibre()) {
+            throw new EspirituLibreException(espiritu);
         }
+    }
+
+    private static void verificarEspirituYMediumEnMismaUbicacion(Espiritu espiritu, Medium medium) throws UbicacionDistintaException {
+        if (!(espiritu.getUbicacion() == medium.getUbicacion())){
+            throw new UbicacionDistintaException(espiritu, medium);
+         }
     }
 
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {
             throw new NoSuchElementException("No se encontró el Medium");
         }
-    }
-
-    private void verificarExistenciaEspirituYMedium(Optional<Espiritu> espiritu,Optional<Medium> medium){
-        this.verificarSiExisteEspiritu(espiritu);
-        this.verificarSiExisteMedium(medium);
-
     }
 
     private void setEspirituDao(EspirituDAO espirituDao) {

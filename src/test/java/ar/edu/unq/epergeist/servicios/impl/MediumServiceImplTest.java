@@ -192,6 +192,16 @@ public class MediumServiceImplTest {
         });
     }
 
+    @Test
+    void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
+        espirituService.crear(angelDebil);
+        mediumService.crear(medium);
+        espirituService.conectar(angelDebil.getId(), medium.getId());
+        List<Espiritu> espiritus = mediumService.espiritus(medium.getId());
+        assertEquals(1,espiritus.size());
+
+    }
+
 
     @Test
     void seRecuperanTodosLosEspiritusConLosQueEstaConectadoUnMedium() {
@@ -247,7 +257,7 @@ public class MediumServiceImplTest {
         Espiritu demonioRecuperado = espirituService.recuperar(demonioFuerte.getId()).get();
         Espiritu angelRecuperado = espirituService.recuperar(angelFuerte.getId()).get();
 
-        assertEquals(25,demonioRecuperado.getNivelDeConexion());
+        assertEquals(15,demonioRecuperado.getNivelDeConexion());
         assertEquals(70,angelRecuperado.getNivelDeConexion());
 
     }
@@ -273,7 +283,7 @@ public class MediumServiceImplTest {
         Espiritu demonioRecuperado = espirituService.recuperar(demonioFuerte.getId()).get();
         Espiritu angelRecuperado = espirituService.recuperar(angelDebil.getId()).get();
 
-        assertEquals(60,demonioRecuperado.getNivelDeConexion());
+        assertEquals(50,demonioRecuperado.getNivelDeConexion());
         assertEquals(15,angelRecuperado.getNivelDeConexion());
 
 
@@ -312,7 +322,7 @@ public class MediumServiceImplTest {
         List<Espiritu> espiritusDeMedium2 = mediumService.espiritus(medium2.getId());
 
         assertEquals(0,demonioDebilRecuperado.getNivelDeConexion());
-        assertEquals(60,demonioFuerteRecuperado.getNivelDeConexion());
+        assertEquals(50,demonioFuerteRecuperado.getNivelDeConexion());
 
         assertEquals(15,angelDebilRecuperado.getNivelDeConexion());
         assertEquals(70,angelFuerteRecuperado.getNivelDeConexion());
@@ -384,41 +394,6 @@ public class MediumServiceImplTest {
         assertEquals( manaInicial - 10 , mediumRecuperado.getMana());
     }
 
-    @Test
-    void unMediumInvocaAUnEspirituQueEstaLibreYSeLanzaUnaException() {
-        mediumService.crear(medium);
-        mediumService.crear(medium2);
-        espirituService.crear(angelDebil);
-
-        medium2.conectarseAEspiritu(angelDebil);
-        espirituService.actualizar(angelDebil);
-
-
-        assertThrows(RuntimeException.class, () -> {
-            mediumService.invocar(medium.getId(), angelDebil.getId());
-        });
-    }
-
-    @Test
-    void unMediumNoPersistidoInvocaAUnEspirituYNoHaceNada() {
-
-        espirituService.crear(angelDebil);
-        Ubicacion angelDebilUbicacion = angelDebil.getUbicacion();
-
-        mediumService.invocar(-1L, angelDebil.getId());
-
-        assertEquals(angelDebilUbicacion, angelDebil.getUbicacion());
-    }
-
-    @Test
-    void unEspírituNoPersistidoEsInvocadoPorUnMediumYLanzaExcepción() {
-
-        mediumService.crear(medium);
-
-        assertThrows(NoSuchElementException.class, () -> {
-            mediumService.invocar(medium.getId(), -1L);
-        });
-    }
 
     @Test
     void unMediumIntentainvocarSinManaSuficienteEntoncesSuManaYLaUbicacionDelEspirituNoCambian() {

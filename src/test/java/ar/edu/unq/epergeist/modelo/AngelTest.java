@@ -33,7 +33,7 @@ public class AngelTest {
     void crearEspiritu() {
         angel = new Angel(
                 0,
-                "pepe",ubicacion
+                "pepe", ubicacion
 
         );
     }
@@ -59,7 +59,6 @@ public class AngelTest {
     }
 
 
-
     //
     @Test
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
@@ -72,21 +71,16 @@ public class AngelTest {
         assertEquals(100, angel.getNivelDeConexion());
     }
 
+
     @Test
-    void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
+        void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
         Ubicacion ubicacion1 = new Ubicacion("Magical");
         this.angel.setUbicacion(ubicacion1);
 
-        assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
+    assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
-        Medium medium = new Medium("Franco", 200, 50, this.ubicacion);
-        medium.conectarseAEspiritu(this.angel);
-        this.angel.setUbicacion(ubicacion1);
 
-        assertNotEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
-    }
+
+
 }

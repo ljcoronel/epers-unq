@@ -185,8 +185,11 @@ class UbicacionServiceTest {
         this.mediumDos.setUbicacion(this.ubicacionUno);
         this.mediumTres.setUbicacion(this.ubicacionUno);
 
-        this.mediumUno.conectarseAEspiritu(this.angelUno);
-        this.mediumDos.conectarseAEspiritu(this.demonioUno);
+        espirituService.crear(this.angelUno);
+        espirituService.crear(this.demonioUno);
+
+        espirituService.conectar(this.angelUno.getId(), mediumUno.getId());
+        espirituService.conectar(this.demonioUno.getId(), mediumDos.getId());
 
         this.mediumService.actualizar(this.mediumUno);
         this.mediumService.actualizar(this.mediumDos);
@@ -196,6 +199,23 @@ class UbicacionServiceTest {
 
         assertEquals(1, mediumsSinEspiritus.size());
         assertEquals(this.mediumTres.getId(),mediumsSinEspiritus.getFirst().getId());
+    }
+
+    @Test
+    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
+        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        Ubicacion ubicacion2 = new Ubicacion("Masedonia");
+        ubicacionService.crear(ubicacion1);
+        ubicacionService.crear(ubicacion2);
+        Medium medium = new Medium("Franco", 200, 50, ubicacion1);
+        Espiritu espiritu = new Angel(10, "angelical", ubicacion1);
+        espirituService.crear(espiritu);
+        mediumService.crear(medium);
+
+        espirituService.conectar(espiritu.getId(), medium.getId());
+        espiritu.setUbicacion(ubicacion2);
+
+        assertNotEquals(espiritu.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
     @AfterEach

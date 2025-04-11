@@ -49,9 +49,8 @@ public abstract class Espiritu implements Serializable {
     }
 
 
-    public void aumentarNivelDeConexionEn(int i) {
-        int nivel = getNivelDeConexion();
-        setNivelDeConexion(i + nivel);
+    public void aumentarNivelDeConexionEn(int cantConexion) {
+        this.setNivelDeConexion(this.getNivelDeConexion() + cantConexion);
     }
 
     public void reducirNivelDeConexionEn(int i) {
@@ -69,9 +68,10 @@ public abstract class Espiritu implements Serializable {
         }
 
     }
-    public void conectarse(){
 
-        this.aumentarNivelDeConexionEn(10);
+
+    public boolean estaLibre(){
+        return this.medium == null;
     }
 
     protected void recibirDamage(int ataque){
@@ -101,11 +101,26 @@ public abstract class Espiritu implements Serializable {
 
     public abstract boolean esAngel();
 
-    public boolean estaLibre() {
-        return this.medium == null;
+    public void setUbicacion(Ubicacion ubicacion) {
+        if (this.estaLibre()) this.ubicacion = ubicacion;
+        // @TODO
     }
 
-    public void setUbicacion(Ubicacion ubicacion) {
-        if (this.estaLibre() || this.medium.getUbicacion().getNombre().equals(ubicacion.getNombre())) this.ubicacion = ubicacion;
+    public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
+        if (this.getMedium() == medium) {
+            this.ubicacion = ubicacion;
+        }// @TODO
+    }
+
+    public void conectarConMedium(Medium medium) {
+        int conexionAAumentar =(int) Math.round(medium.getMana()* getPorcentajeDeMana()) ;
+        this.aumentarNivelDeConexionEn(conexionAAumentar);
+        this.setMedium(medium);
+
+        medium.realizarConexion(this);
+    }
+
+    private static double getPorcentajeDeMana() {
+        return 0.20;
     }
 }

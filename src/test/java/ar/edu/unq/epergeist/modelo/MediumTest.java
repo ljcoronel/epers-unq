@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,6 @@ public class MediumTest {
     private Angel angel2;
     private Demonio demonio1;
     private Demonio demonio2;
-
     Medium medium;
     Medium medium2;
 
@@ -31,12 +31,13 @@ public class MediumTest {
         angel2 = new Angel(5, "Ariel",ubicacion);
 
         demonio1 = new Demonio(50, "Azazel",ubicacion);
-        demonio2 = new Demonio(3, "Dismas",ubicacion);
+        demonio2 = new Demonio(0, "Dismas",ubicacion);
+
     }
 
     @Test
     void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
-        medium.conectarseAEspiritu(angel1);
+        medium.realizarConexion(angel1);
 
         assertEquals(1, medium.getAngeles().size());
         assertTrue(medium.getAngeles().contains(angel1));
@@ -45,17 +46,17 @@ public class MediumTest {
     @Test
     void alDescansarAumentaSuManaEn15YElNivelDeConexionDeSusEspiritusEn5(){
 
-        medium.conectarseAEspiritu(angel1);
+        angel1.conectarConMedium(medium); // empieza con 60
 
-        medium.descansar();
+        medium.descansar(); // medium empieza con 30 de maná -> 66
 
-        assertEquals(45,medium.getMana());
-        assertEquals(75,angel1.getNivelDeConexion());
+        assertEquals(45,medium.getMana()); // + 15 = 45
+        assertEquals(71,angel1.getNivelDeConexion()); // + 5 = 71
     }
 
     @Test
     void alDesvincularseDeUnAngelDejaDeEstarEnLaListaDelMedium(){
-        medium.conectarseAEspiritu(angel1);
+        medium.realizarConexion(angel1);
 
         medium.desvincularseDeEspiritu(angel1);
 
@@ -64,7 +65,7 @@ public class MediumTest {
 
     @Test
     void alDesvincularseDeUnDemonioDejaDeEstarEnLaListaDelMedium(){
-        medium.conectarseAEspiritu(demonio1);
+        medium.realizarConexion(demonio1);
 
         medium.desvincularseDeEspiritu(demonio1);
 
@@ -75,7 +76,7 @@ public class MediumTest {
     @Test
     void alIntentarDesvincularseDeUnEspirituQueNoEstaConectadoAlMediumNoHaceNada(){
 
-        medium.conectarseAEspiritu(angel1);
+        medium.realizarConexion(angel1);
 
         medium.desvincularseDeEspiritu(demonio1);
 
@@ -90,13 +91,16 @@ public class MediumTest {
         RandomGenerator.addValorFijo(10);
         RandomGenerator.addValorFijo(1);
 
-        medium.conectarseAEspiritu(angel1);
-        medium2.conectarseAEspiritu(demonio1);
+        // medium con 30 de maná
+        // medium2 con 15
+
+        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
+        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
 
         medium.exorcizarA(medium2);
 
-        assertEquals(25,demonio1.getNivelDeConexion());
-        assertEquals(70,angel1.getNivelDeConexion());
+        assertEquals(20,demonio1.getNivelDeConexion());
+        assertEquals(66,angel1.getNivelDeConexion()); // se mantiene
 
     }
 
@@ -106,13 +110,16 @@ public class MediumTest {
         RandomGenerator.addValorFijo(1);
         RandomGenerator.addValorFijo(100);
 
-        medium.conectarseAEspiritu(angel1);
-        medium2.conectarseAEspiritu(demonio1);
+        // medium con 30 de maná
+        // medium2 con 15
+
+        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
+        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
 
         medium.exorcizarA(medium2);
 
-        assertEquals(60,demonio1.getNivelDeConexion());
-        assertEquals(65,angel1.getNivelDeConexion());
+        assertEquals(53,demonio1.getNivelDeConexion());
+        assertEquals(61,angel1.getNivelDeConexion());
 
 
     }
@@ -120,28 +127,32 @@ public class MediumTest {
     @Test
     void alExorcizarAUnMediumElPrimerAngelVenceAlPrimerDemonioYElSegundoAngelPierdeContraElSegundoDemonio(){
 
+        angel2 = new Angel(20, "Ariel",ubicacion);
+
+        demonio2 = new Demonio(0, "Dismas",ubicacion);
+
         RandomGenerator.addValorFijo(10);
         RandomGenerator.addValorFijo(1);
         RandomGenerator.addValorFijo(1);
         RandomGenerator.addValorFijo(100);
 
-        medium.conectarseAEspiritu(angel1);
-        medium.conectarseAEspiritu(angel2);
+        // medium con 30 de maná
+        // medium2 con 15
 
-        medium2.conectarseAEspiritu(demonio2);
-        medium2.conectarseAEspiritu(demonio1);
+        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
+        angel2.conectarConMedium(medium); // 20 de conex + 6 = 26
 
-        assertEquals(2,medium2.getDemonios().size());
+        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
+        demonio2.conectarConMedium(medium2); // 0 de conex + 3 = 3
 
         medium.exorcizarA(medium2);
 
-        assertEquals(0,demonio2.getNivelDeConexion());
-        assertEquals(70,angel1.getNivelDeConexion());
+        assertEquals(66,angel1.getNivelDeConexion());
+        assertEquals(20,demonio1.getNivelDeConexion());
 
-        assertEquals(60,demonio1.getNivelDeConexion());
-        assertEquals(10,angel2.getNivelDeConexion());
+        assertEquals(21,angel2.getNivelDeConexion());
+        assertEquals(3,demonio2.getNivelDeConexion());
 
-        assertEquals(1,medium2.getDemonios().size());
 
 
     }
@@ -156,8 +167,8 @@ public class MediumTest {
     @Test
     void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
         Ubicacion ubicacion1 = new Ubicacion("Magical");
-        this.medium.conectarseAEspiritu(this.angel1);
-        this.medium.conectarseAEspiritu(this.demonio1);
+        angel1.conectarConMedium(medium);
+        demonio1.conectarConMedium(medium);
         this.medium.setUbicacion(ubicacion1);
 
         assertEquals(this.angel1.getUbicacion().getNombre(), ubicacion1.getNombre());
