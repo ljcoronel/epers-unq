@@ -45,19 +45,6 @@ public class EspirituServiceImplTest {
     private HibernateEspirituDAO espirituDAO;
     private HibernateMediumDAO mediumDAO;
 
-//    Descomentar para ver logs.
-
-//    @BeforeAll
-//    static void setupLogging() {
-//        try {
-//            // Cargamos la configuración de logging
-//            getLogManager().readConfiguration(
-//                JDBCPersonajeDAOTest.class.getClassLoader().getResourceAsStream("logging.properties")
-//            );
-//        } catch (Exception e) {
-//            System.err.println("No se pudo cargar la configuración de logging: " + e.getMessage());
-//        }
-//    }
 
     @BeforeEach
     void crearInstancias() {
@@ -298,9 +285,9 @@ public class EspirituServiceImplTest {
         List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
         //  2 3 1
 
-        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
+        List<Long> demoniosIds =
                 espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 3)
-        ).stream().map(Espiritu::getId).toList();
+                .stream().map(Espiritu::getId).toList();
 
 
         assertEquals(expected, demoniosIds);
