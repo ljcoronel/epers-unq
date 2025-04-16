@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.modelo;
+package ar.edu.unq.epergeist.testUtils;
 
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomStrategy;
 
