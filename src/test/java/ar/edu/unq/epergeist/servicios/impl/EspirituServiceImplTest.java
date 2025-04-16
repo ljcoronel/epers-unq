@@ -307,9 +307,8 @@ public class EspirituServiceImplTest {
         List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
         //  1 3 2
 
-        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
-        ).stream().map(Espiritu::getId).toList();
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
+                                    .stream().map(Espiritu::getId).toList();
 
         assertEquals(expected, demoniosIds);
 
@@ -343,9 +342,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 2)
-        );
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 2);
 
         assertEquals(2, demonios.size());
 
@@ -358,9 +355,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2)
-        );
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -377,9 +372,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 5)
-        );
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 5);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -397,9 +390,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2)
-        );
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -425,9 +416,8 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 3)
-        ).stream().map((Demonio::getId)).toList();
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 3)
+                                    .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
 
@@ -452,9 +442,8 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = HibernateTransactionRunner.runTrx(() ->
-                espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
-        ).stream().map((Demonio::getId)).toList();
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
+                                    .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());
 
