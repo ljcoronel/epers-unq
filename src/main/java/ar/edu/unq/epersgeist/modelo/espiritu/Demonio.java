@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import jakarta.persistence.Entity;
@@ -34,9 +35,15 @@ public class Demonio extends Espiritu {
             angel.recibirDamage(5);
         }
     }
+
     @Override
-    public boolean esDemonio(){
-        return true;
+    public void agregarAEspiritusDeMedium(Medium medium) {
+        medium.agregarADemonios(this);
+    }
+
+    @Override
+    public void desconectarDeMedium(Medium medium) {
+        medium.quitarDeDemonios(this);
     }
 
 

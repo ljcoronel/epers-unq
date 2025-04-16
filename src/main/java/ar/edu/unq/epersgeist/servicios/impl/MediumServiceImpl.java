@@ -132,16 +132,4 @@ public class MediumServiceImpl implements MediumService {
         });
     }
 
-
-    private void verificarSiExisteMedium(Optional<Medium> medium){
-        if (medium.isEmpty()) {
-            throw new NoSuchElementException("No se encontró el Medium");
-        }
-    }
-
-    private void verificarSiExistenLosMediums(Optional<Medium> medium,Optional<Medium> medium2){
-        this.verificarSiExisteMedium(medium);
-        this.verificarSiExisteMedium(medium2);
-
-    }
 }

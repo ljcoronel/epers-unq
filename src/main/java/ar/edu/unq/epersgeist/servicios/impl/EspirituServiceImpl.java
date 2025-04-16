@@ -78,11 +78,9 @@ public class EspirituServiceImpl implements EspirituService {
             verificarSiExisteMedium(optionalMedium);
             Medium medium = optionalMedium.get();
 
-            if (optionalEspiritu.isEmpty()) return medium; // @TODO
+            if (optionalEspiritu.isEmpty()) return medium;
             Espiritu espiritu = optionalEspiritu.get();
 
-            verificarEspirituYMediumEnMismaUbicacion(espiritu, medium);
-            verificarEspirituLibre(espiritu);
 
             espiritu.conectarConMedium(medium);
 
@@ -93,21 +91,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     }
 
-    private static void verificarEspirituLibre(Espiritu espiritu) {
-        if (!espiritu.estaLibre()) {
-            throw new EspirituLibreException(espiritu);
-        }
-    }
-
-    private static void verificarEspirituYMediumEnMismaUbicacion(Espiritu espiritu, Medium medium) throws UbicacionDistintaException {
-        if (!(espiritu.getUbicacion() == medium.getUbicacion())){
-            throw new UbicacionDistintaException(espiritu, medium);
-         }
-    }
 
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {
-            throw new NoSuchElementException("No se encontró el Medium");
+            throw new NoSuchElementException("No se encontró al Medium");
         }
     }
 
