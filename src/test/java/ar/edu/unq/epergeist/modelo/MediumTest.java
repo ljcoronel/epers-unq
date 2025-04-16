@@ -1,12 +1,15 @@
 package ar.edu.unq.epergeist.modelo;
 
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomStrategy;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +22,9 @@ public class MediumTest {
     private Angel angel2;
     private Demonio demonio1;
     private Demonio demonio2;
-    Medium medium;
-    Medium medium2;
+    private Medium medium;
+    private Medium medium2;
+    private FakeRandomStrategyImpl fakeRandomStrategy;
 
     @BeforeEach
     void crearMedium() {
@@ -32,6 +36,9 @@ public class MediumTest {
 
         demonio1 = new Demonio(50, "Azazel",ubicacion);
         demonio2 = new Demonio(0, "Dismas",ubicacion);
+
+        fakeRandomStrategy = new FakeRandomStrategyImpl();
+        RandomGenerator.getInstance().setStrategy(fakeRandomStrategy);
 
     }
 
@@ -88,8 +95,9 @@ public class MediumTest {
     @Test
     void alExorcizarAUnMediumElAngelGanaYDisminuyeNivelDeConexionDelDemonio(){
 
-        RandomGenerator.addValorFijo(10);
-        RandomGenerator.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(10);
+        fakeRandomStrategy.addValorFijo(1);
+
 
         // medium con 30 de maná
         // medium2 con 15
@@ -106,9 +114,9 @@ public class MediumTest {
 
     @Test
     void alExorcizarAUnMediumElAngelPierdeYDisminuyeNivelDeConexionDelAngel(){
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(100);
 
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(100);
 
         // medium con 30 de maná
         // medium2 con 15
@@ -131,10 +139,10 @@ public class MediumTest {
 
         demonio2 = new Demonio(0, "Dismas",ubicacion);
 
-        RandomGenerator.addValorFijo(10);
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(100);
+        fakeRandomStrategy.addValorFijo(10);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(100);
 
         // medium con 30 de maná
         // medium2 con 15
@@ -175,4 +183,8 @@ public class MediumTest {
         assertEquals(this.demonio1.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
+    @AfterEach
+    void cleanUp() {
+        fakeRandomStrategy.cleanUp();
+    }
 }

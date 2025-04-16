@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import org.hibernate.query.SortDirection;
+//import org.hibernate.query.SortDirection;
 
 import java.util.List;
 import java.util.Optional;

@@ -93,12 +93,12 @@ public abstract class Espiritu implements Serializable {
     }
 
     protected int porcentajeAtaqueRandom(){
-        int porcentajeDeExito = RandomGenerator.getRandom(1, 10) + this.getNivelDeConexion();
+        int porcentajeDeExito = RandomGenerator.getInstance().getRandom(1, 10) + this.getNivelDeConexion();
         return Math.min(porcentajeDeExito, 100);
     }
 
     protected int porcentajeDefensaRandom(){
-        return RandomGenerator.getRandom(1, 100);
+        return RandomGenerator.getInstance().getRandom(1, 100);
     }
 
     public void setUbicacion(Ubicacion ubicacion) {

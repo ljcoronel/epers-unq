@@ -15,19 +15,6 @@ public class AngelTest {
     private Espiritu angel;
     private Ubicacion ubicacion = new Ubicacion("Washington");
 
-//    Descomentar para ver logs.
-
-//    @BeforeAll
-//    static void setupLogging() {
-//        try {
-//            // Cargamos la configuración de logging
-//            getLogManager().readConfiguration(
-//                JDBCPersonajeDAOTest.class.getClassLoader().getResourceAsStream("logging.properties")
-//            );
-//        } catch (Exception e) {
-//            System.err.println("No se pudo cargar la configuración de logging: " + e.getMessage());
-//        }
-//    }
 
     @BeforeEach
     void crearEspiritu() {

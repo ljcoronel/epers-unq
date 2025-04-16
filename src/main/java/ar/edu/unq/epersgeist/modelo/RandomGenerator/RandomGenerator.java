@@ -4,24 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class RandomGenerator{
+public class RandomGenerator{
 
-    private static final List<Integer> valoresFijos = new ArrayList<>();
+    private RandomStrategy strategy;
+    private static  RandomGenerator uniqueInstance;
 
-    public static void addValorFijo(int valor) {
-        valoresFijos.add(valor);
-    }
-
-    public static int getRandom(int min, int max) {
-        if (!valoresFijos.isEmpty()) {
-            int valor = valoresFijos.get(0);
-
-            valoresFijos.remove(0);
-
-            return valor;
+    public static RandomGenerator getInstance(){
+        if(uniqueInstance == null){
+            uniqueInstance =  new RandomGenerator(new RandomStrategyDefault());
         }
-
-        return (int) (Math.random() * (max - min)) + min;
+        return uniqueInstance;
     }
+
+
+    private RandomGenerator(RandomStrategy strategy){
+        this.strategy = strategy;
+    }
+
+    public void setStrategy(RandomStrategy strategy){
+        this.strategy = strategy;
+    }
+
+    public int getRandom(int min, int max){
+        return this.strategy.getRandom(min,max);
+    }
+
 
 }
