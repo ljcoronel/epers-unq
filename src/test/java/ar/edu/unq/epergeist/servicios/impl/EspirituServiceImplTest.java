@@ -1,5 +1,6 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epergeist.servicios.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -14,7 +15,6 @@ import ar.edu.unq.epersgeist.servicios.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.query.SortDirection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -76,11 +76,11 @@ public class EspirituServiceImplTest {
 
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
-        Long id_Inexistente = 50L;
-        Long id_Inexistente2 = -50L;
-        espirituService.recuperar(id_Inexistente);
-        assertFalse(espirituService.recuperar(id_Inexistente).isPresent());
-        assertFalse(espirituService.recuperar(id_Inexistente2).isPresent());
+        Long idInexistente = 50L;
+        Long idInexistente2 = -50L;
+        espirituService.recuperar(idInexistente);
+        assertFalse(espirituService.recuperar(idInexistente).isPresent());
+        assertFalse(espirituService.recuperar(idInexistente2).isPresent());
     }
 
     @Test
@@ -146,8 +146,8 @@ public class EspirituServiceImplTest {
         espirituService.crear(angel1);
         espirituService.crear(angel2);
         espirituService.crear(angel3);
-        List<Espiritu> espiritus_recuperados = espirituService.recuperarTodos();
-        assertEquals(3, espiritus_recuperados.size());
+        List<Espiritu> espiritusRecuperados = espirituService.recuperarTodos();
+        assertEquals(3, espiritusRecuperados.size());
     }
 
     @Test
@@ -176,8 +176,8 @@ public class EspirituServiceImplTest {
         angel1.setNombre("Nuevo Nombre");
         espirituService.actualizar(angel1);
 
-        var espiritu_recuperado = espirituService.recuperar(angel1.getId()).get();
-        assertEquals("Nuevo Nombre", espiritu_recuperado.getNombre());
+        var espirituRecuperado = espirituService.recuperar(angel1.getId()).get();
+        assertEquals("Nuevo Nombre", espirituRecuperado.getNombre());
 
     }
 

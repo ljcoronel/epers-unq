@@ -1,6 +1,6 @@
 package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
-import ar.edu.unq.epergeist.servicios.impl.TestService;
+import ar.edu.unq.epergeist.servicios.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;

@@ -4,6 +4,8 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,10 +71,6 @@ public abstract class Espiritu implements Serializable {
 
     }
 
-    public boolean esAngel() { return false;};
-
-    public boolean esDemonio() { return false;};
-
     public boolean estaLibre(){
         return this.medium == null;
     }
@@ -103,16 +101,18 @@ public abstract class Espiritu implements Serializable {
 
     public void setUbicacion(Ubicacion ubicacion) {
         if (this.estaLibre()) this.ubicacion = ubicacion;
-        // @TODO
     }
 
     public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
         if (this.getMedium() == medium) {
             this.ubicacion = ubicacion;
-        }// @TODO
+        }
     }
 
     public void conectarConMedium(Medium medium) {
+        verificarMediumEnMismaUbicacion(medium);
+        verificarEspirituLibre();
+
         int conexionAAumentar =(int) Math.round(medium.getMana()* getPorcentajeDeMana()) ;
         this.aumentarNivelDeConexionEn(conexionAAumentar);
         this.setMedium(medium);
@@ -120,7 +120,24 @@ public abstract class Espiritu implements Serializable {
         medium.realizarConexion(this);
     }
 
+    private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
+        if (!(this.getUbicacion() == medium.getUbicacion())){
+            throw new UbicacionDistintaException(this, medium);
+        }
+    }
+
+    private void verificarEspirituLibre() {
+        if (!this.estaLibre()) {
+            throw new EspirituLibreException(this);
+        }
+    }
+
     private static double getPorcentajeDeMana() {
         return 0.20;
     }
+
+    abstract public void agregarAEspiritusDeMedium(Medium medium);
+
+    abstract public void desconectarDeMedium(Medium medium);
+
 }

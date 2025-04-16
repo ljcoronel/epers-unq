@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
+import org.hibernate.grammars.hql.HqlParser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,11 +47,7 @@ public class Medium implements Serializable {
 
     public void realizarConexion(Espiritu espiritu){
 
-        if (espiritu.esAngel()) {
-            angeles.add((Angel) espiritu);
-        }else if (espiritu.esDemonio()){
-            demonios.add((Demonio) espiritu);
-        }
+       espiritu.agregarAEspiritusDeMedium(this);
 
     }
 
@@ -107,11 +104,7 @@ public class Medium implements Serializable {
 
     public void desvincularseDeEspiritu(Espiritu espiritu){
 
-        if (espiritu.esAngel()) {
-            angeles.remove((Angel) espiritu);
-        }else if(espiritu.esDemonio()){
-            demonios.remove((Demonio) espiritu);
-        }
+        espiritu.desconectarDeMedium(this);
     }
 
     private boolean poseido(){
@@ -137,5 +130,21 @@ public class Medium implements Serializable {
         this.ubicacion = unaUbicacion;
         this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
         this.demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+    }
+
+    public void agregarAAngeles(Angel angel) {
+        this.getAngeles().add(angel);
+    }
+
+    public void agregarADemonios(Demonio demonio) {
+        this.getDemonios().add(demonio);
+    }
+
+    public void quitarDeAngeles(Angel angel) {
+        this.getAngeles().remove(angel);
+    }
+
+    public void quitarDeDemonios(Demonio demonio) {
+        this.getDemonios().remove(demonio);
     }
 }

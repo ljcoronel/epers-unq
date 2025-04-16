@@ -1,5 +1,6 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epergeist.servicios.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -82,7 +83,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void sePersisteDosUbicacionesConElMismoNombre_entoncesNoSePuedePersistir() {
+    void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
         this.ubicacionService.crear(this.ubicacionUno);
 
         assertThrows(PersistenceException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
@@ -106,7 +107,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seIntentaActualizarElNombredeUnaUbicacionYaRegistradaEnLaBaseDeDatos_entoncesLanzaUnaExcepcion() {
+    void seIntentaActualizarElNombredeUnaUbicacionYaRegistradaEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionTres);
         this.ubicacionTres.setNombre("Bernal");
