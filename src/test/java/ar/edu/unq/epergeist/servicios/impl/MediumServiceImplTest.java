@@ -1,5 +1,7 @@
 package ar.edu.unq.epergeist.servicios.impl;
 
+import ar.edu.unq.epergeist.testUtils.TestService;
+import ar.edu.unq.epergeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -7,22 +9,17 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.TestService;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import org.hibernate.Session;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +45,7 @@ public class MediumServiceImplTest {
     private HibernateUbicacionDAO ubicacionDAO;
     private HibernateEspirituDAO espirituDAO;
     private HibernateMediumDAO mediumDAO;
-
+    private FakeRandomStrategyImpl fakeRandomStrategy;
 
 
 
@@ -79,7 +76,8 @@ public class MediumServiceImplTest {
         demonioDebil = new Demonio(5,"Rufi",this.ubicacion);
         demonioFuerte = new Demonio(50,"Adam",this.ubicacion);
 
-
+        fakeRandomStrategy = new FakeRandomStrategyImpl();
+        RandomGenerator.getInstance().setStrategy(fakeRandomStrategy);
 
     }
     @Test
@@ -237,10 +235,11 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void alExorcizarAUnMediumElAngelGanaYDisminuyeNivelDeConexionDelDemonio(){
+    void alExorcizarAUnMediumElAngelGanaYDisminuyeNivelDeConexionDelDemonio() {
 
-        RandomGenerator.addValorFijo(10);
-        RandomGenerator.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(10);
+        fakeRandomStrategy.addValorFijo(1);
+
 
         mediumService.crear(medium);
         mediumService.crear(medium2);
@@ -265,8 +264,9 @@ public class MediumServiceImplTest {
     @Test
     void alExorcizarAUnMediumElAngelPierdeYDisminuyeNivelDeConexionDelAngel(){
 
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(100);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(100);
+
 
         mediumService.crear(medium);
         mediumService.crear(medium2);
@@ -292,10 +292,11 @@ public class MediumServiceImplTest {
     @Test
     void alExorcizarAUnMediumElPrimerAngelVenceAlPrimerDemonioYElSegundoAngelPierdeContraElSegundoDemonio(){
 
-        RandomGenerator.addValorFijo(10);
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(100);
+        fakeRandomStrategy.addValorFijo(10);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(100);
+
 
         mediumService.crear(medium);
         mediumService.crear(medium2);
@@ -423,10 +424,11 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void alRecibirMuchoDanoElEspirituSeDesviculaDelMedium() {
+    void alRecibirMuchoDanhoElEspirituSeDesviculaDelMedium() {
 
-        RandomGenerator.addValorFijo(1);
-        RandomGenerator.addValorFijo(100);
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(100);
+
 
         mediumService.crear(medium);
         mediumService.crear(medium2);
@@ -451,6 +453,7 @@ public class MediumServiceImplTest {
         testService.eliminarModelo(Espiritu.class);
         testService.eliminarModelo(Medium.class);
         testService.eliminarModelo(Ubicacion.class);
+        fakeRandomStrategy.cleanUp();
     }
 
 
