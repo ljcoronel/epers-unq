@@ -8,15 +8,18 @@ import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import lombok.Getter;
 import org.hibernate.query.SortDirection;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Getter
+@Service
+@Transactional
 public class EspirituServiceImpl implements EspirituService {
 
     private EspirituDAO espirituDao;
@@ -29,48 +32,46 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        return HibernateTransactionRunner.runTrx(() -> {
+
             getEspirituDao().crear(espiritu);
             return null;
-        });
+
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
+        return this.espirituDao.recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> espirituDao.recuperarTodos());
+
+        return espirituDao.recuperarTodos();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        HibernateTransactionRunner.runTrx(() -> {
+
             getEspirituDao().actualizar(espiritu);
-            return null;
-        });
+
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        HibernateTransactionRunner.runTrx(() -> {
+
             getEspirituDao().eliminar(espirituId);
-            return null;
-        });
     }
 
     @Override
     public List<Demonio> espiritusDemoniacos(SortDirection direccion, int pagina, int cantidadPorPagina) {
         if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
         if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
-        return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class));
+        return getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class);
     }
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
-         return HibernateTransactionRunner.runTrx(() -> {
+
 
             Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
             Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
@@ -87,7 +88,7 @@ public class EspirituServiceImpl implements EspirituService {
             mediumDao.actualizar(medium);
 
             return medium;
-        });
+
 
     }
 
