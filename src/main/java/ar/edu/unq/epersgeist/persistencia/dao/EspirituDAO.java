@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.dao;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+//import org.hibernate.query.SortDirection;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +12,6 @@ public interface EspirituDAO {
     List<Espiritu> recuperarTodos();
     void eliminar(Long idDelEspiritu);
     void actualizar(Espiritu espiritu);
-//    List<Espiritu> espiritusDeTipo(String tipo);
+    List<Espiritu> todosLosEspiritusDeMedium(Long mediumId);
+    <T extends Espiritu> List<T> espiritusDeTipo(SortDirection direccion, int pagina, int cantidadPorPagina, Class<T> clase);
 }

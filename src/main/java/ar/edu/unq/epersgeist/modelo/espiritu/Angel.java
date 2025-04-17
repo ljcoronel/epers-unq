@@ -1,5 +1,8 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,20 +13,31 @@ import lombok.ToString;
 
 @Entity
 public class Angel extends Espiritu {
-    public Angel(String nombre) {
-        super(nombre);
+    public Angel(String nombre, Ubicacion ubicacion) {
+        super(nombre, ubicacion);
     }
 
-    public Angel(Integer nivelDeConexion, String nombre) {
-        super(nivelDeConexion,nombre);
+    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+        super(nivelDeConexion,nombre, ubicacion);
     }
 
-//    public Angel( Integer nivelDeConexion, String nombre) {
-//        super(nivelDeConexion, nombre);
-//    }
 
-//    public void atacar(Demonio demonio) {
-//        //hacer algo
-//        demonio.defender(this);
-//    }
+
+    public void atacar(Demonio demonio) {
+
+        int porcentajeDeAtaque = this.porcentajeAtaqueRandom();
+
+        demonio.defender(this,porcentajeDeAtaque);
+    }
+
+    @Override
+    public void agregarAEspiritusDeMedium(Medium medium) {
+        medium.agregarAAngeles(this);
+    }
+
+    @Override
+    public void desconectarDeMedium(Medium medium) {
+        medium.quitarDeAngeles(this);
+    }
+
 }

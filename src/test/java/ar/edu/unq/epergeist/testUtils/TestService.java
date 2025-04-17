@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.servicios.impl;
+package ar.edu.unq.epergeist.testUtils;
 
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
