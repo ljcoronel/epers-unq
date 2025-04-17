@@ -1,15 +1,20 @@
 package ar.edu.unq.epergeist.testUtils;
 
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
-import org.hibernate.Session;
+import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
+@Service
+@Transactional
 public class TestService {
 
-    public void eliminarModelo(Class clase) {
-        HibernateTransactionRunner.runTrx(() -> {
-            Session session = HibernateTransactionRunner.getCurrentSession();
-            session.createQuery("delete from " + clase.getSimpleName()).executeUpdate();
-            return null;
-        });
+    private EspirituDAO espDao;
+
+    public TestService(EspirituDAO espDao) {
+        this.espDao = espDao;
+    }
+
+    public void eliminarEspíritus() {
+        espDao.deleteAll();
     }
 }

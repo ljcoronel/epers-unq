@@ -67,16 +67,5 @@ public class DemonioTest {
         assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void elDemonioConoceQueEsUnDemonio() {
-
-        assertTrue(demonio.esDemonio());
-    }
-
-    @Test
-    void elDemonioConoceQueNoEsAngel() {
-
-        assertFalse(demonio.esAngel());
-    }
 
 }

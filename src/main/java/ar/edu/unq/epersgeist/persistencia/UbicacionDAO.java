@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.dao;
+package ar.edu.unq.epersgeist.persistencia;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import org.springframework.stereotype.Repository;
