@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.testUtils;
+package ar.edu.unq.epersgeist.testUtils;
 
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import jakarta.transaction.Transactional;

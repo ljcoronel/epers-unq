@@ -16,7 +16,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
 
     // ^ ya no es necesario porque Spring con el JpaRepository ya maneja crud, también recuperar todos
 
-    List<Espiritu> todosLosEspiritusDeMedium(Long mediumId);
+//    List<Espiritu> todosLosEspiritusDeMedium(Long mediumId);
 //    ^ te dejo este para que hagas
 
 
