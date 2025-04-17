@@ -29,30 +29,34 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        return this.ubicacionDAO.crear(ubicacion);
+//        return this.ubicacionDAO.crear(ubicacion);
+        return null;
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return this.ubicacionDAO.recuperar(id);
+//        return this.ubicacionDAO.recuperar(id);
+        return null;
     }
 
     @Override
     public void actualizar(Ubicacion ubicacionUno) {
         
-        this.ubicacionDAO.actualizar(ubicacionUno);
+//        this.ubicacionDAO.actualizar(ubicacionUno);
 
     }
 
     @Override
     public void eliminar(Long id) {
         
-            this.ubicacionDAO.eliminar(id);
+//            this.ubicacionDAO.eliminar(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return this.ubicacionDAO.recuperarTodos();
+
+//        return this.ubicacionDAO.recuperarTodos();
+        return null;
     }
 
     @Override

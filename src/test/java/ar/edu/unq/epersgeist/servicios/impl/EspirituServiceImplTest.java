@@ -33,10 +33,10 @@ public class EspirituServiceImplTest {
     @Autowired
     private EspirituService espirituService;
 
-//    @Autowired
+
 //    private MediumService mediumService;
 //
-//    @Autowired
+
 //    private UbicacionService ubicacionService;
 
 //    @Autowired
@@ -77,18 +77,17 @@ public class EspirituServiceImplTest {
 
         );
         medium = new Medium("Brujita", 100, 50, this.ubicacion);
-//        espirituService.crear(demonio1);
     }
 
 
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
 
-//        Long idInexistente = 50L;
-//        Long idInexistente2 = -50L;
-//        espirituService.recuperar(idInexistente);
-//        assertFalse(espirituService.recuperar(idInexistente).isPresent());
-//        assertFalse(espirituService.recuperar(idInexistente2).isPresent());
+        Long idInexistente = 50L;
+        Long idInexistente2 = -50L;
+        espirituService.recuperar(idInexistente);
+        assertFalse(espirituService.recuperar(idInexistente).isPresent());
+        assertFalse(espirituService.recuperar(idInexistente2).isPresent());
     }
 
 //    @Test

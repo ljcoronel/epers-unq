@@ -25,10 +25,10 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
-    @Check(constraints = "manaMax > 0")
+    @Check(constraints = "mana_max > 0")
     private Integer manaMax;
     @Column(nullable = false)
-    @Check(constraints = "mana BETWEEN 0 AND manaMax")
+    @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Angel> angeles = new ArrayList<>();
