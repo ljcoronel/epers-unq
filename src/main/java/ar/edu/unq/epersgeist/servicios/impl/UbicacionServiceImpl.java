@@ -29,8 +29,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-//        return this.ubicacionDAO.crear(ubicacion);
-        return null;
+        return this.ubicacionDAO.save(ubicacion);
+//        return null;
     }
 
     @Override

@@ -33,13 +33,13 @@ public class EspirituServiceImplTest {
     @Autowired
     private EspirituService espirituService;
 
+    @Autowired
+    private MediumService mediumService;
 
-//    private MediumService mediumService;
-//
+    @Autowired
+    private UbicacionService ubicacionService;
 
-//    private UbicacionService ubicacionService;
-
-//    @Autowired
+    @Autowired
     private TestService testService;
 
     private  Medium medium;
@@ -188,25 +188,26 @@ public class EspirituServiceImplTest {
 //
 //    }
 //
-//    @Test
-//    void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(angel1);
-//        var otroEspiritu = espirituService.recuperar(angel1.getId()).get();
-//        assertEquals(angel1.getNombre(), otroEspiritu.getNombre());
-//        assertEquals(angel1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
-//        assertEquals(angel1.getId(), otroEspiritu.getId());
-//        Assertions.assertNotEquals(angel1, otroEspiritu);
-//    }
-//
-//    @Test
-//    void seAgregaElIdAlEspirituAlCrearUnEspiritu() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        assertNull(angel1.getId());
-//        espirituService.crear(angel1);
-//        assertNotNull(angel1.getId());
-//    }
-//
+    @Test
+    void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
+
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(angel1);
+        var otroEspiritu = espirituService.recuperar(angel1.getId()).get();
+        assertEquals(angel1.getNombre(), otroEspiritu.getNombre());
+        assertEquals(angel1.getNivelDeConexion(), otroEspiritu.getNivelDeConexion());
+        assertEquals(angel1.getId(), otroEspiritu.getId());
+        Assertions.assertNotEquals(angel1, otroEspiritu);
+    }
+
+    @Test
+    void seAgregaElIdAlEspirituAlCrearUnEspiritu() {
+        this.ubicacionService.crear(this.ubicacion);
+        assertNull(angel1.getId());
+        espirituService.crear(angel1);
+        assertNotNull(angel1.getId());
+    }
+
 //    @Test
 //    void alRecuperarTodosEspíritusPeroNoHayNingunoDevuelveListaVacía() {
 //        assertTrue(espirituService.recuperarTodos().isEmpty());
@@ -255,214 +256,216 @@ public class EspirituServiceImplTest {
 //        });
 //    }
 //
-//    @Test
-//    void alRecuperarTodosLosEspiritusDemoniosNoDebenHaberDeOtroTipo() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(angel1); //es un angel
-//
-//
-//        // hay 3 en total, 2 son ángeles y 1 es demonio
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
-//
-//        assertEquals(2, demonios.size());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarTodosLosDemoniosPeroNoHaberDevuelveListaVacía() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(angel1);
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 2);// agarro sólo los demonios
-//
-//        assertTrue(demonios.isEmpty());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarTodosLosDemoniosEspecificandoOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
-//        //  2 3 1
-//
-//        List<Long> demoniosIds =
-//                espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
-//                .stream().map(Espiritu::getId).toList();
-//
-//
-//        assertEquals(expected, demoniosIds);
-//
-//
-//
-//
-//    }
-//
-//    @Test
-//    void alRecuperarTodosLosDemoniosEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendente() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
-//        //  1 3 2
-//
-//        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
-//                                    .stream().map(Espiritu::getId).toList();
-//
-//        assertEquals(expected, demoniosIds);
-//
-//    }
-//
-//    @Test
-//    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaPáginaDebeFallar() {
-//
-//        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, -1, 3));
-//
-//    }
-//
-//    @Test
-//    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
-//
-//        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, -1));
-//
-//    }
-//
-//    @Test
-//    void alRecuperarATodosLosDemoniosSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
-//
-//        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 0));
-//
-//    }
-//
-//    @Test
-//    void alRecuperarMenosDemoniosDeLosTotalesDebeTraerLaCantidadEspecificada() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
-//
-//        assertEquals(2, demonios.size());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeHayDemoniosDebeTraerLosDeEsaPáginaSolamente() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
-//
-//        //dem 1 -> pag 0
-//        //dem 2 -> pag 0
-//        //dem 3 -> pag 1
-//
-//        assertEquals(1, demonios.size());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeNoHayDemoniosNoTraeNada() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 5);
-//
-//        //dem 1 -> pag 0
-//        //dem 2 -> pag 0
-//        //dem 3 -> pag 0
-//        // no hay más
-//
-//        assertTrue(demonios.isEmpty());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarDemoniosDeUnaPáginaDondeNoHayMismaCantidadDeDemoniosQueLaCantidadPorPáginaTraeTodosLosQueHayaEnEsaPágina() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
-//
-//        //dem 1 -> pag 0
-//        //dem 2 -> pag 0
-//        //dem 3 -> pag 1
-//        // no hay más
-//
-//        assertEquals(1, demonios.size());
-//
-//    }
-//
-//    @Test
-//    void alRecuperarTodosLosDemoniosOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendenteEntreTodosLosDemonios() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        Demonio demonio4 = new Demonio(
-//                99,
-//                "Enrique", this.ubicacion
-//
-//        );
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//        espirituService.crear(demonio4);
-//
-//        // el orden por inserción es: 1, 2, 3, 4
-//
-//        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
-//                                    .stream().map((Demonio::getId)).toList();
-//
-//        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
-//
-//        // 4 2 3
-//
-//        assertEquals(demoniosIdsEsperados, demoniosIds);
-//
-//    }
-//
-//    @Test
-//    void alRecuperarTodosLosDemoniosDeUnTipoEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendenteEntreTodosLosDemonios() {
-//        this.ubicacionService.crear(this.ubicacion);
-//        Demonio demonio4 = new Demonio(
-//                2,
-//                "Enrique", this.ubicacion
-//
-//        );
-//        espirituService.crear(demonio1);
-//        espirituService.crear(demonio2);
-//        espirituService.crear(demonio3);
-//        espirituService.crear(demonio4);
-//
-//        // el orden por inserción es: 1, 2, 3, 4
-//
-//        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
-//                                    .stream().map((Demonio::getId)).toList();
-//
-//        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());
-//
-//        // 4 1 3
-//
-//        assertEquals(demoniosIdsEsperados, demoniosIds);
-//
-//    }
+    @Test
+    void alRecuperarTodosLosEspiritusDemoniosNoDebenHaberDeOtroTipo() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(angel1); //es un angel
 
 
-//    @AfterEach
-//    void eliminarModelo() {
-//        testService.eliminarEspíritus();
-//    }
+        // hay 3 en total, 2 son ángeles y 1 es demonio
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
+
+        assertEquals(2, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosPeroNoHaberDevuelveListaVacía() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(angel1);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 2);// agarro sólo los demonios
+
+        assertTrue(demonios.isEmpty());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosEspecificandoOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendente() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Long> expected = Arrays.asList(demonio2.getId(), demonio3.getId(), demonio1.getId());
+        //  2 3 1
+
+        List<Long> demoniosIds =
+                espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
+                .stream().map(Espiritu::getId).toList();
+
+
+        assertEquals(expected, demoniosIds);
+
+
+
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendente() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
+        //  1 3 2
+
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
+                                    .stream().map(Espiritu::getId).toList();
+
+        assertEquals(expected, demoniosIds);
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, -1, 3));
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, -1));
+
+    }
+
+    @Test
+    void alRecuperarATodosLosDemoniosSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
+
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 0));
+
+    }
+
+    @Test
+    void alRecuperarMenosDemoniosDeLosTotalesDebeTraerLaCantidadEspecificada() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
+
+        assertEquals(2, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeHayDemoniosDebeTraerLosDeEsaPáginaSolamente() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 1
+
+        assertEquals(1, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaMásAvanzadaDondeNoHayDemoniosNoTraeNada() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 5);
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 0
+        // no hay más
+
+        assertTrue(demonios.isEmpty());
+
+    }
+
+    @Test
+    void alRecuperarDemoniosDeUnaPáginaDondeNoHayMismaCantidadDeDemoniosQueLaCantidadPorPáginaTraeTodosLosQueHayaEnEsaPágina() {
+        this.ubicacionService.crear(this.ubicacion);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
+
+        //dem 1 -> pag 0
+        //dem 2 -> pag 0
+        //dem 3 -> pag 1
+        // no hay más
+
+        assertEquals(1, demonios.size());
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosOrdenDescendenteDebenEstarEnOrdenDeNivelDeConexiónDescendenteEntreTodosLosDemonios() {
+        this.ubicacionService.crear(this.ubicacion);
+        Demonio demonio4 = new Demonio(
+                99,
+                "Enrique", this.ubicacion
+
+        );
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
+
+        // el orden por inserción es: 1, 2, 3, 4
+
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
+                                    .stream().map((Demonio::getId)).toList();
+
+        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
+
+        // 4 2 3
+
+        assertEquals(demoniosIdsEsperados, demoniosIds);
+
+    }
+
+    @Test
+    void alRecuperarTodosLosDemoniosDeUnTipoEspecificandoOrdenAscendenteDebenEstarEnOrdenDeNivelDeConexiónAscendenteEntreTodosLosDemonios() {
+        this.ubicacionService.crear(this.ubicacion);
+        Demonio demonio4 = new Demonio(
+                2,
+                "Enrique", this.ubicacion
+
+        );
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
+
+        // el orden por inserción es: 1, 2, 3, 4
+
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
+                                    .stream().map((Demonio::getId)).toList();
+
+        List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());
+
+        // 4 1 3
+
+        assertEquals(demoniosIdsEsperados, demoniosIds);
+
+    }
+
+
+    @AfterEach
+    void eliminarModelo() {
+        testService.eliminarMediums();
+        testService.eliminarEspíritus();
+        testService.eliminarUbicaciones();
+    }
 }

@@ -26,8 +26,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium crear(Medium medium) {
-//            return mediumDao.crear(medium);
-        return null;
+        return mediumDao.save(medium);
 
     }
 

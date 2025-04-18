@@ -68,7 +68,7 @@ public class EspirituServiceImpl implements EspirituService {
         if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
         if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
 
-        return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina).withSort(direccion)).toList();
+        return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
     }
 
     @Override
