@@ -1,7 +1,7 @@
-package ar.edu.unq.epergeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epergeist.testUtils.TestService;
-import ar.edu.unq.epergeist.testUtils.FakeRandomStrategyImpl;
+import ar.edu.unq.epersgeist.testUtils.TestService;
+import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -9,22 +9,35 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
+import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
+import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class MediumServiceImplTest {
 
-    private MediumServiceImpl mediumService;
-    private TestService testService = new TestService();
-    private EspirituServiceImpl espirituService;
+    @Autowired
+    private EspirituService espirituService;
+
+    @Autowired
+    private MediumService mediumService;
+
+    @Autowired
+    private UbicacionService ubicacionService;
+
+    @Autowired
+    private TestService testService;
+
 
     private Medium medium;
     private Medium medium2;
@@ -38,34 +51,22 @@ public class MediumServiceImplTest {
 
     private Ubicacion ubicacion;
     private Ubicacion ubicacion2;
-    private UbicacionServiceImpl ubicacionService;
-    private HibernateUbicacionDAO ubicacionDAO;
-    private HibernateEspirituDAO espirituDAO;
-    private HibernateMediumDAO mediumDAO;
+
     private FakeRandomStrategyImpl fakeRandomStrategy;
 
 
 
     @BeforeEach
     void crearMedium(){
-        this.ubicacionDAO = new HibernateUbicacionDAO();
-        this.espirituDAO = new HibernateEspirituDAO();
-        this.mediumDAO = new HibernateMediumDAO();
 
 
         this.ubicacion = new Ubicacion("Bernal");
         this.ubicacion2 = new Ubicacion("Quilmes");
-        mediumService = new MediumServiceImpl(mediumDAO,espirituDAO);
-        espirituService = new EspirituServiceImpl(espirituDAO,mediumDAO);
-        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
 
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(ubicacion2);
         medium = new Medium("Max",100,50, this.ubicacion);
         medium2 = new Medium("Pepe",100,0, this.ubicacion);
-
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(),new HibernateEspirituDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
         angelDebil = new Angel(10,"gabriel",this.ubicacion);
         angelFuerte = new Angel(60,"Rafael",this.ubicacion);
@@ -77,6 +78,55 @@ public class MediumServiceImplTest {
         RandomGenerator.getInstance().setStrategy(fakeRandomStrategy);
 
     }
+
+    @Test
+    void alCrearUnMediumSeLeAgregaUnId() {
+
+        assertNull(medium.getId());
+
+        mediumService.crear(medium);
+
+        assertNotNull(medium.getId());
+    }
+
+    @Test
+    void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
+        mediumService.crear(medium);
+
+        Medium mediumRecuperado =  mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(medium.getId(), mediumRecuperado.getId());
+        assertEquals(medium.getMana(),mediumRecuperado.getMana());
+        assertEquals(medium.getManaMax(), mediumRecuperado.getManaMax());
+        assertEquals(medium.getNombre(), mediumRecuperado.getNombre());
+    }
+
+    @Test
+    void alRecuperarUnMediumQueNoEstaGuardadoSeRetornaEmpty() {
+        Long idInexistente = 333L;
+
+        assertTrue(mediumService.recuperar(idInexistente).isEmpty());
+
+    }
+
+    @Test
+    void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
+        mediumService.crear(medium);
+        medium.setNombre("nombreModificado");
+
+        mediumService.actualizar(medium);
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals("nombreModificado", recuperado.getNombre());
+    }
+
+    @Test
+    void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
+
+        assertDoesNotThrow(() -> mediumService.actualizar(medium));
+    }
+
+
     @Test
     void seRecuperanTodosLosMediumsGuardados(){
         this.mediumService.crear(medium);
@@ -110,56 +160,7 @@ public class MediumServiceImplTest {
         assertDoesNotThrow(() -> mediumService.eliminar(15L));
     }
 
-    @Test
-    void alCrearYRecuperarMediumSeObtienenObjetosSimilares() {
-        mediumService.crear(medium);
 
-        Medium mediumRecuperado =  mediumService.recuperar(medium.getId()).get();
-
-        assertEquals(medium.getId(), mediumRecuperado.getId());
-        assertEquals(medium.getMana(),mediumRecuperado.getMana());
-        assertEquals(medium.getManaMax(), mediumRecuperado.getManaMax());
-        assertEquals(medium.getNombre(), mediumRecuperado.getNombre());
-    }
-
-    @Test
-    void alCrearUnMediumSeLeAgregaUnId() {
-
-        assertNull(medium.getId());
-
-        mediumService.crear(medium);
-
-        assertNotNull(medium.getId());
-    }
-    
-
-
-    @Test
-    void seActualizanUnMediumYAlRecuperarloLosCambiosSeVenReflejados() {
-        mediumService.crear(medium);
-        medium.setNombre("nombreModificado");
-
-        mediumService.actualizar(medium);
-        Medium recuperado = mediumService.recuperar(medium.getId()).get();
-
-        assertEquals("nombreModificado", recuperado.getNombre());
-    }
-
-    @Test
-    void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
-
-        assertDoesNotThrow(() -> mediumService.actualizar(medium));
-    }
-
-
-
-    @Test
-    void alRecuperarUnMediumQueNoEstaGuardadoSeRetornaEmpty() {
-        Long idInexistente = 333L;
-
-        assertTrue(mediumService.recuperar(idInexistente).isEmpty());
-
-    }
 
     @Test
     void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
@@ -447,9 +448,9 @@ public class MediumServiceImplTest {
 
     @AfterEach
     void eliminarModelo() {
-        testService.eliminarModelo(Espiritu.class);
-        testService.eliminarModelo(Medium.class);
-        testService.eliminarModelo(Ubicacion.class);
+        testService.eliminarMediums();
+        testService.eliminarEspíritus();
+        testService.eliminarUbicaciones();
         fakeRandomStrategy.cleanUp();
     }
 

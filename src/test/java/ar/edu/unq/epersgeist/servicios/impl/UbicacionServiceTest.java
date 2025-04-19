@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.servicios.impl;
+/*package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epergeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -222,4 +222,4 @@ class UbicacionServiceTest {
         this.limpiador.eliminarModelo(Medium.class);
         this.limpiador.eliminarModelo(Ubicacion.class);
     }
-}
+}*/

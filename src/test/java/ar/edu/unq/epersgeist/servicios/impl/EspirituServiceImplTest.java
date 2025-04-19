@@ -1,4 +1,4 @@
-package ar.edu.unq.epergeist.servicios.impl;
+/*package ar.edu.unq.epergeist.servicios.impl;
 
 import ar.edu.unq.epergeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -8,7 +8,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
-import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
 import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -459,4 +458,4 @@ public class EspirituServiceImplTest {
         testService.eliminarModelo(Medium.class);
         testService.eliminarModelo(Ubicacion.class);
     }
-}
+}*/

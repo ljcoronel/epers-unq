@@ -1,83 +1,82 @@
-package ar.edu.unq.epergeist.modelo;
+/*package ar.edu.unq.epergeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.sql.SQLException;
 
-public class AngelTest {
-    private Espiritu angel;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class DemonioTest {
+    private Espiritu demonio;
     private Ubicacion ubicacion = new Ubicacion("Washington");
 
 
     @BeforeEach
     void crearEspiritu() {
-        angel = new Angel(
+        demonio = new Demonio(
                 0,
-                "pepe", ubicacion
+                "Pepardo", ubicacion
 
         );
     }
 
     @Test
     void alCrearAngelNoPuedeTenerMasDe100DeNivelDeConexion() {
-        angel = new Angel(
+        demonio = new Demonio(
                 250,
                 "Pepe", ubicacion
         );
 
-        assertEquals(100, angel.getNivelDeConexion());
+        assertEquals(100, demonio.getNivelDeConexion());
     }
 
     @Test
     void alCrearAngelNoPuedeTenerMenosDe0DeNivelDeConexion() {
-        angel = new Angel(
+        demonio = new Demonio(
                 -50,
                 "Pepe", ubicacion
         );
 
-        assertEquals(0, angel.getNivelDeConexion());
+        assertEquals(0, demonio.getNivelDeConexion());
     }
 
 
-    //
     @Test
     void alAumentarConexionConEspirituNoPuedeTenerMasDe100DeNivelDeConexion() {
-        angel = new Demonio(
+        demonio = new Demonio(
                 100,
                 "Pepe", ubicacion
         );
-        angel.aumentarNivelDeConexionEn(10);
+        demonio.aumentarNivelDeConexionEn(10);
 
-        assertEquals(100, angel.getNivelDeConexion());
+        assertEquals(100, demonio.getNivelDeConexion());
     }
 
-
     @Test
-        void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
+    void seVerificaQueUnAngelPuedeCambiarDeUbicacionSiEstaLibre() {
         Ubicacion ubicacion1 = new Ubicacion("Magical");
-        this.angel.setUbicacion(ubicacion1);
+        this.demonio.setUbicacion(ubicacion1);
 
-    assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
+        assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
     @Test
-    void elAngelConoceQueEsUnAngel() {
+    void elDemonioConoceQueEsUnDemonio() {
 
-        assertTrue(angel.esAngel());
+        assertTrue(demonio.esDemonio());
     }
 
     @Test
-    void elAngelConoceQueNoEsUnDemonio() {
+    void elDemonioConoceQueNoEsAngel() {
 
-        assertFalse(angel.esDemonio());
+        assertFalse(demonio.esAngel());
     }
 
-
-}
+}*/

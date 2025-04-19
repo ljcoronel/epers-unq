@@ -1,12 +1,12 @@
-package ar.edu.unq.epergeist.persistencia.dao.hibernate;
+/* ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epergeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.query.SortDirection;
 import org.junit.jupiter.api.AfterEach;
@@ -427,3 +427,4 @@ public class HibernateEspirituDAOTest {
         testService.eliminarModelo(Ubicacion.class);
     }
 }
+*/

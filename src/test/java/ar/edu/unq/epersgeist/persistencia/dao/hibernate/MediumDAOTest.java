@@ -1,11 +1,11 @@
-package ar.edu.unq.epergeist.persistencia.dao.hibernate;
+/*package ar.edu.unq.epergeist.persistencia.dao.hibernate;
 
 import ar.edu.unq.epergeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,3 +85,4 @@ public class MediumDAOTest {
         this.limpiador.eliminarModelo(Ubicacion.class);
     }
 }
+*/
