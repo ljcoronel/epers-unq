@@ -3,7 +3,7 @@ package ar.edu.unq.epersgeist.servicios;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import org.hibernate.query.SortDirection;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +14,6 @@ public interface EspirituService {
     List<Espiritu> recuperarTodos();
     void actualizar(Espiritu espiritu);
     void eliminar(Long espirituId);
-    List<Demonio> espiritusDemoniacos(SortDirection direccion, int pagina, int cantidadPorPagina);
+    List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina);
     Medium conectar(Long espirituId, Long mediumId);
 }
