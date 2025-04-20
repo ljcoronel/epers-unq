@@ -1,7 +1,9 @@
-package ar.edu.unq.epergeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epergeist.testUtils.TestService;
-import ar.edu.unq.epergeist.testUtils.FakeRandomStrategyImpl;
+import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
+import ar.edu.unq.epersgeist.testUtils.TestService;
+import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
@@ -9,22 +11,27 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class MediumServiceImplTest {
 
+    @Autowired
     private MediumServiceImpl mediumService;
-    private TestService testService = new TestService();
+    @Autowired
+    private TestService testService;
+    @Autowired
     private EspirituServiceImpl espirituService;
+    @Autowired
+    private UbicacionServiceImpl ubicacionService;
 
     private Medium medium;
     private Medium medium2;
@@ -38,34 +45,24 @@ public class MediumServiceImplTest {
 
     private Ubicacion ubicacion;
     private Ubicacion ubicacion2;
-    private UbicacionServiceImpl ubicacionService;
-    private HibernateUbicacionDAO ubicacionDAO;
-    private HibernateEspirituDAO espirituDAO;
-    private HibernateMediumDAO mediumDAO;
+
+
+
+
+
     private FakeRandomStrategyImpl fakeRandomStrategy;
 
 
 
     @BeforeEach
     void crearMedium(){
-        this.ubicacionDAO = new HibernateUbicacionDAO();
-        this.espirituDAO = new HibernateEspirituDAO();
-        this.mediumDAO = new HibernateMediumDAO();
-
-
         this.ubicacion = new Ubicacion("Bernal");
         this.ubicacion2 = new Ubicacion("Quilmes");
-        mediumService = new MediumServiceImpl(mediumDAO,espirituDAO);
-        espirituService = new EspirituServiceImpl(espirituDAO,mediumDAO);
-        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
 
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(ubicacion2);
         medium = new Medium("Max",100,50, this.ubicacion);
         medium2 = new Medium("Pepe",100,0, this.ubicacion);
-
-        mediumService = new MediumServiceImpl(new HibernateMediumDAO(),new HibernateEspirituDAO());
-        espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(),new HibernateMediumDAO());
 
         angelDebil = new Angel(10,"gabriel",this.ubicacion);
         angelFuerte = new Angel(60,"Rafael",this.ubicacion);
@@ -79,7 +76,7 @@ public class MediumServiceImplTest {
     }
     @Test
     void seRecuperanTodosLosMediumsGuardados(){
-        this.mediumService.crear(medium);
+        mediumService.crear(medium);
         mediumService.crear(medium2);
 
         var mediums = mediumService.recuperarTodos();
@@ -447,9 +444,9 @@ public class MediumServiceImplTest {
 
     @AfterEach
     void eliminarModelo() {
-        testService.eliminarModelo(Espiritu.class);
-        testService.eliminarModelo(Medium.class);
-        testService.eliminarModelo(Ubicacion.class);
+        testService.eliminarEspíritus();
+        testService.eliminarMediums();
+        testService.eliminarUbicaciones();
         fakeRandomStrategy.cleanUp();
     }
 

@@ -7,7 +7,6 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
-import org.hibernate.grammars.hql.HqlParser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,10 +24,10 @@ public class Medium implements Serializable {
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
-    @Check(constraints = "manaMax > 0")
+    @Check(constraints = "mana_max > 0")
     private Integer manaMax;
     @Column(nullable = false)
-    @Check(constraints = "mana BETWEEN 0 AND manaMax")
+    @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Angel> angeles = new ArrayList<>();
