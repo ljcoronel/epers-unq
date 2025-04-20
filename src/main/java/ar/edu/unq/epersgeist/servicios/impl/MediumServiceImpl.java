@@ -30,8 +30,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium crear(Medium medium) {
-        mediumDao.save(medium);
-        return null;
+        return mediumDao.save(medium);
 
     }
 
@@ -44,14 +43,13 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public List<Medium> recuperarTodos() {
 
-        //return mediumDao.recuperarTodos();
-        return null;//borrar despues
+        return mediumDao.findAll();
     }
 
     @Override
     public void actualizar(Medium medium) {
 
-           // mediumDao.actualizar(medium);
+            mediumDao.save(medium);
 
 
     }
@@ -59,7 +57,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void eliminar(Long idDelMedium) {
 
-        //    mediumDao.eliminar(idDelMedium);
+           mediumDao.deleteById(idDelMedium);
 
     }
 

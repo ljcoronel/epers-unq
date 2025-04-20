@@ -12,11 +12,5 @@ import java.util.Optional;
 
 @Repository
 public interface MediumDAO extends JpaRepository<Medium, Long> {
-    /*
-    Medium crear(Medium medium);
-    Optional<Medium> recuperar(Long mediumId);
-    List<Medium> recuperarTodos();
-    void actualizar(Medium medium);
-    void eliminar(Long idDelMedium);
-*/
+
 }

@@ -160,8 +160,6 @@ public class MediumServiceImplTest {
         assertDoesNotThrow(() -> mediumService.eliminar(15L));
     }
 
-
-
     @Test
     void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
 
