@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@Getter
 @Service
 @Transactional
 public class MediumServiceImpl implements MediumService {
@@ -50,37 +48,34 @@ public class MediumServiceImpl implements MediumService {
     public void actualizar(Medium medium) {
 
             mediumDao.save(medium);
-
-
     }
 
     @Override
     public void eliminar(Long idDelMedium) {
 
            mediumDao.deleteById(idDelMedium);
-
     }
 
     @Override
     public void descansar(Long mediumId) {
-/*
 
-            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
+
+            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
             if (optionalMedium.isEmpty()) return;
 
             Medium medium = optionalMedium.get();
             medium.descansar();
 
-            this.actualizar(medium);
-*/
+            mediumDao.save(medium);
+
     }
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
-/*
-            Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
-            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
+
+            Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
+            Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
 
             if (optionalExorcista.isEmpty()) return ;
             if (optionalPoseido.isEmpty()) return ;
@@ -90,15 +85,15 @@ public class MediumServiceImpl implements MediumService {
 
             exorcista.exorcizarA(exorcizado);
 
-            this.actualizar(exorcista);
-            this.actualizar(exorcizado);
-*/
+            mediumDao.save(exorcista);
+            mediumDao.save(exorcizado);
+
     }
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
-/*
-           Optional<Medium> medium = mediumDao.recuperar(mediumId);
+
+           Optional<Medium> medium = mediumDao.findById(mediumId);
            List<Espiritu> espiritus = new ArrayList<>();
 
            if(medium.isEmpty()) {return espiritus;}
@@ -107,16 +102,15 @@ public class MediumServiceImpl implements MediumService {
            espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
 
            return espiritus;
-*/
-        return null;//borrar despues
+
     }
 
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-/*
-            Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
-            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
+
+            Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
+            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
             if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
             Espiritu espiritu = optionalEspiritu.get();
@@ -125,10 +119,9 @@ public class MediumServiceImpl implements MediumService {
             Medium medium = optionalMedium.get();
             medium.invocar(espiritu);
 
-            mediumDao.actualizar(medium);
-            espirituDao.actualizar(espiritu);
+            mediumDao.save(medium);
+            espirituDao.save(espiritu);
             return espiritu;
-*/return null;//borrar despues
     }
 
 }

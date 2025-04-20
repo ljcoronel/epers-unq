@@ -7,7 +7,6 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
-import org.hibernate.grammars.hql.HqlParser;
 
 import java.io.Serializable;
 import java.util.ArrayList;

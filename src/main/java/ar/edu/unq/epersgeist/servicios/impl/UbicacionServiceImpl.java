@@ -6,7 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
-import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,45 +29,41 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-
         return this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-
-        //return this.ubicacionDAO.recuperar(id);
-        return null;
+        return this.ubicacionDAO.findById(id);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacionUno) {
         
-       // this.ubicacionDAO.actualizar(ubicacionUno);
+        this.ubicacionDAO.save(ubicacionUno);
 
     }
 
     @Override
     public void eliminar(Long id) {
         
-         //   this.ubicacionDAO.eliminar(id);
+            this.ubicacionDAO.deleteById(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        //return this.ubicacionDAO.recuperarTodos();
-        return null;
+        return this.ubicacionDAO.findAll();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-       // return this.espirituDAO.espiritusEn(ubicacionId);
-        return null;//borrar despues
+        //return this.espirituDAO.espiritusEn(ubicacionId);
+        return null;
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-       // return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
-        return null;//borrar despues
+        //return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
+        return null;
     }
 }

@@ -1,19 +1,13 @@
-/*package ar.edu.unq.epergeist.modelo;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DemonioTest {
+public class DemonioTest {/*
     private Espiritu demonio;
     private Ubicacion ubicacion = new Ubicacion("Washington");
 
@@ -78,5 +72,5 @@ public class DemonioTest {
 
         assertFalse(demonio.esAngel());
     }
-
-}*/
+*/
+}

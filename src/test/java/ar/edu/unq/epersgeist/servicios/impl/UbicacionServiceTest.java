@@ -1,14 +1,11 @@
-/*package ar.edu.unq.epergeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epergeist.testUtils.TestService;
+import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UbicacionServiceTest {
+class UbicacionServiceTest {/*
     private UbicacionServiceImpl ubicacionService;
     private EspirituServiceImpl espirituService;
     private MediumServiceImpl mediumService;
@@ -221,5 +218,5 @@ class UbicacionServiceTest {
         this.limpiador.eliminarModelo(Espiritu.class);
         this.limpiador.eliminarModelo(Medium.class);
         this.limpiador.eliminarModelo(Ubicacion.class);
-    }
-}*/
+    }*/
+}
