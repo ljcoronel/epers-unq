@@ -9,13 +9,13 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-class UbicacionServiceTest {
+public class UbicacionServiceTest {
 
     @Autowired
     private UbicacionService ubicacionService;
@@ -80,7 +80,7 @@ class UbicacionServiceTest {
     public void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
         this.ubicacionService.crear(this.ubicacionUno);
 
-        assertThrows(PersistenceException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
+        assertThrows(DataIntegrityViolationException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
     }
 
     @Test
@@ -106,7 +106,7 @@ class UbicacionServiceTest {
         this.ubicacionService.crear(this.ubicacionTres);
         this.ubicacionTres.setNombre("Bernal");
 
-        assertThrows(PersistenceException.class, () -> this.ubicacionService.actualizar(this.ubicacionTres));
+        assertThrows(DataIntegrityViolationException.class, () -> this.ubicacionService.actualizar(this.ubicacionTres));
     }
 
     @Test
