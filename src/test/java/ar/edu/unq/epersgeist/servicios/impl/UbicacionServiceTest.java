@@ -1,33 +1,38 @@
-package ar.edu.unq.epergeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epergeist.testUtils.TestService;
+import ar.edu.unq.epersgeist.servicios.EspirituService;
+import ar.edu.unq.epersgeist.servicios.MediumService;
+import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
 import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
 class UbicacionServiceTest {
-    private UbicacionServiceImpl ubicacionService;
-    private EspirituServiceImpl espirituService;
-    private MediumServiceImpl mediumService;
 
-    private HibernateUbicacionDAO ubicacionDAO;
-    private HibernateEspirituDAO espirituDAO;
-    private HibernateMediumDAO mediumDAO;
+    @Autowired
+    private UbicacionService ubicacionService;
+
+    @Autowired
+    private EspirituService espirituService;
+
+    @Autowired
+    private MediumService mediumService;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -43,22 +48,14 @@ class UbicacionServiceTest {
     private Medium mediumDos;
     private Medium mediumTres;
 
+    @Autowired
     private TestService limpiador;
 
     @BeforeEach
     void prepare() {
-        this.ubicacionDAO = new HibernateUbicacionDAO();
-        this.espirituDAO = new HibernateEspirituDAO();
-        this.mediumDAO = new HibernateMediumDAO();
-
         this.ubicacionUno = new Ubicacion("Bernal");
         this.ubicacionDos = new Ubicacion("Bernal");
         this.ubicacionTres = new Ubicacion("Avellaneda");
-
-        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
-        this.espirituService = new EspirituServiceImpl(this.espirituDAO,new HibernateMediumDAO());
-        this.mediumService = new MediumServiceImpl(this.mediumDAO, this.espirituDAO);
-        this.limpiador = new TestService();
 
         this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
         this.angelDos = new Angel(20, "angel", this.ubicacionUno);
@@ -72,7 +69,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void sePersisteUnaUbicacionEnLaBaseDeDatos() {
+    public void sePersisteUnaUbicacionEnLaBaseDeDatos() {
         Ubicacion ubicacionPersistida =this.ubicacionService.crear(ubicacionUno);
 
         assertEquals(this.ubicacionUno.getId(), ubicacionPersistida.getId());
@@ -80,21 +77,21 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
+    public void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
         this.ubicacionService.crear(this.ubicacionUno);
 
         assertThrows(PersistenceException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
     }
 
     @Test
-    void seIntentaRecuperarUnaUbicacionNoPersistidaYNoDevuelveNada() {
+    public void seIntentaRecuperarUnaUbicacionNoPersistidaYNoDevuelveNada() {
         this.ubicacionUno.setId(1L);
 
         assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
-    void seActualizaUnaUbicacionPersistidaEnLaBaseDeDatos() {
+    public void seActualizaUnaUbicacionPersistidaEnLaBaseDeDatos() {
         Ubicacion ubicacionPersistida = this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionUno.setNombre("Quilmes");
         this.ubicacionService.actualizar(this.ubicacionUno);
@@ -104,7 +101,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seIntentaActualizarElNombredeUnaUbicacionYaRegistradaEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
+    public void seIntentaActualizarElNombredeUnaUbicacionYaRegistradaEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionTres);
         this.ubicacionTres.setNombre("Bernal");
@@ -113,7 +110,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExiste() {
+    public void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExiste() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.eliminar(this.ubicacionUno.getId());
 
@@ -121,7 +118,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seRecuperanTodasLasUbicacionesPersistidasDeLaBasesDeDatos() {
+    public void seRecuperanTodasLasUbicacionesPersistidasDeLaBasesDeDatos() {
         this.ubicacionDos.setNombre("Quilmes");
 
         this.ubicacionService.crear(this.ubicacionUno);
@@ -137,14 +134,14 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seRecuperanLasUbicacionesDeUnaBaseDeDatosVaciaYNoDevuelveNingunaUbicacion() {
+    public void seRecuperanLasUbicacionesDeUnaBaseDeDatosVaciaYNoDevuelveNingunaUbicacion() {
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
         assertEquals(0, ubicaciones.size());
     }
 
     @Test
-    void seObtieneLosEspiritusExistentesEnDistintasUbicaciones() {
+    public void seObtieneLosEspiritusExistentesEnDistintasUbicaciones() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionTres);
 
@@ -173,7 +170,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seObtieneLosMediumsDeUnaUbicacionQueNoTenganEspiritusConectados() {
+    public void seObtieneLosMediumsDeUnaUbicacionQueNoTenganEspiritusConectados() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.mediumService.crear(this.mediumUno);
         this.mediumService.crear(this.mediumDos);
@@ -200,7 +197,7 @@ class UbicacionServiceTest {
     }
 
     @Test
-    void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
+    public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
         Ubicacion ubicacion1 = new Ubicacion("Magical");
         Ubicacion ubicacion2 = new Ubicacion("Masedonia");
         ubicacionService.crear(ubicacion1);
@@ -217,9 +214,9 @@ class UbicacionServiceTest {
     }
 
     @AfterEach
-    void cleanUp() {
-        this.limpiador.eliminarModelo(Espiritu.class);
-        this.limpiador.eliminarModelo(Medium.class);
-        this.limpiador.eliminarModelo(Ubicacion.class);
+    public void tearDown() {
+        this.limpiador.eliminarEspiritus();
+        this.limpiador.eliminarMediums();
+        this.limpiador.eliminarUbicaciones();
     }
 }
