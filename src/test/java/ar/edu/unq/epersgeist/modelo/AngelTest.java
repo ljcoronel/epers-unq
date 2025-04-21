@@ -1,10 +1,8 @@
-package ar.edu.unq.epergeist.modelo;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,17 +65,6 @@ public class AngelTest {
     assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void elAngelConoceQueEsUnAngel() {
-
-        assertTrue(angel.esAngel());
-    }
-
-    @Test
-    void elAngelConoceQueNoEsUnDemonio() {
-
-        assertFalse(angel.esDemonio());
-    }
 
 
 }

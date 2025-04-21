@@ -1,11 +1,9 @@
-package ar.edu.unq.epergeist.modelo;
+package ar.edu.unq.epersgeist.modelo;
 
-import ar.edu.unq.epergeist.testUtils.FakeRandomStrategyImpl;
+import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
