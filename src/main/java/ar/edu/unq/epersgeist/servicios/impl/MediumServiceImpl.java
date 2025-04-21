@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,14 +33,14 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) {
-//        return mediumDao.recuperar(mediumId);
-        return null;
+        return mediumDao.findById(mediumId);
+
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-//         return mediumDao.recuperarTodos();
-         return null;
+         return mediumDao.findAll();
+
     }
 
     @Override
@@ -93,17 +94,17 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
-//
-//           Optional<Medium> medium = mediumDao.recuperar(mediumId);
-//           List<Espiritu> espiritus = new ArrayList<>();
-//
-//           if(medium.isEmpty()) {return espiritus;}
-//           Medium currentMedium = medium.get();
-//
-//           espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
-//
-//           return espiritus;
-    return null;
+
+           Optional<Medium> medium = mediumDao.findById(mediumId);
+           List<Espiritu> espiritus = new ArrayList<>();
+
+           if(medium.isEmpty()) {return espiritus;}
+           Medium currentMedium = medium.get();
+
+           espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+
+           return espiritus;
+//    return null;
     }
 
 

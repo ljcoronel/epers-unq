@@ -46,21 +46,18 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public List<Espiritu> recuperarTodos() {
 
-//        return espirituDao.recuperarTodos();
-        return null;
+        return espirituDao.findAll();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-
-//            getEspirituDao().actualizar(espiritu);
+            getEspirituDao().save(espiritu);
 
     }
 
     @Override
     public void eliminar(Long espirituId) {
-
-//            getEspirituDao().eliminar(espirituId);
+            getEspirituDao().deleteById(espirituId);
     }
 
     @Override
@@ -74,23 +71,20 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
 
+            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-//            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
-//            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
-//
-//            verificarSiExisteMedium(optionalMedium);
-//            Medium medium = optionalMedium.get();
-//
-//            if (optionalEspiritu.isEmpty()) return medium;
-//            Espiritu espiritu = optionalEspiritu.get();
-//
-//            espiritu.conectarConMedium(medium);
-//
-//            mediumDao.actualizar(medium);
-//
-//            return medium;
-        return null;
+            verificarSiExisteMedium(optionalMedium);
+            Medium medium = optionalMedium.get();
 
+            if (optionalEspiritu.isEmpty()) return medium;
+            Espiritu espiritu = optionalEspiritu.get();
+
+            espiritu.conectarConMedium(medium);
+
+            mediumDao.save(medium);
+
+            return medium;
 
     }
 
