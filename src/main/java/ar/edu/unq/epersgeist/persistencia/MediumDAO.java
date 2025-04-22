@@ -1,9 +1,7 @@
-package ar.edu.unq.epersgeist.persistencia.dao;
+package ar.edu.unq.epersgeist.persistencia;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateSessionFactoryProvider;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
 import org.hibernate.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
