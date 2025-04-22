@@ -27,7 +27,7 @@ public abstract class Espiritu implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    @Check(name = "valoresValidosDeConexion", constraints = "nivelDeConexion BETWEEN 0 AND 100")
+    @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
     @Column(nullable = false, unique = true, length = 50)
     private String nombre;
