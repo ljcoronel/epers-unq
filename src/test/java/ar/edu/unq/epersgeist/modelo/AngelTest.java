@@ -65,17 +65,6 @@ public class AngelTest {/*
     assertEquals(this.angel.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void elAngelConoceQueEsUnAngel() {
-
-        assertTrue(angel.esAngel());
-    }
-
-    @Test
-    void elAngelConoceQueNoEsUnDemonio() {
-
-        assertFalse(angel.esDemonio());
-    }
 
 */
 }

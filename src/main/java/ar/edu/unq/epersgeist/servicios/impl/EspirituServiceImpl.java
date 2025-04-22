@@ -33,32 +33,31 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Espiritu crear(Espiritu espiritu) {
 
-        return espirituDao.save(espiritu);
+            getEspirituDao().save(espiritu);
+            return null;
+
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return espirituDao.findById(espirituId);
+        return getEspirituDao().findById(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
 
-//        return espirituDao.recuperarTodos();
         return espirituDao.findAll();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        espirituDao.save(espiritu);
-//            getEspirituDao().actualizar(espiritu);
+            getEspirituDao().save(espiritu);
 
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        espirituDao.deleteById(espirituId);
-//            getEspirituDao().eliminar(espirituId);
+            getEspirituDao().deleteById(espirituId);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     }
 
-    // TODO es esto válido? se vuelve transactional?
+        // TODO es esto válido? se vuelve transactional?
     private void verificarSiExisteMedium(Optional<Medium> medium){
         if (medium.isEmpty()) {
             throw new NoSuchElementException("No se encontró al Medium");

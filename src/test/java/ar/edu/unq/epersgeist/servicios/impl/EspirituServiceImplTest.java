@@ -1,6 +1,6 @@
-/*package ar.edu.unq.epergeist.servicios.impl;
+package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epergeist.testUtils.TestService;
+import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -8,15 +8,17 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
+import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
-import ar.edu.unq.epersgeist.servicios.impl.EspirituServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.MediumServiceImpl;
-import ar.edu.unq.epersgeist.servicios.impl.UbicacionServiceImpl;
-import org.hibernate.query.SortDirection;
+import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,23 +27,32 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class EspirituServiceImplTest {
-    private final EspirituServiceImpl espirituService = new EspirituServiceImpl(new HibernateEspirituDAO(), new HibernateMediumDAO());
-    private  Medium medium;
-    private MediumService mediumService = new MediumServiceImpl(new HibernateMediumDAO(),new HibernateEspirituDAO());
-    private TestService testService  = new TestService();
+
+    @Autowired
+    private EspirituService espirituService;
+
+    @Autowired
+    private MediumService mediumService;
+
+    @Autowired
+    private UbicacionService ubicacionService;
+
+    @Autowired
+    private TestService testService;
+
     private Espiritu angel1;
+    private Medium medium;
     private Espiritu angel2;
     private Espiritu angel3;
+
     private Demonio demonio1;
     private Demonio demonio2;
     private Demonio demonio3;
-    private Ubicacion ubicacion;
-    private UbicacionServiceImpl ubicacionService;
 
-    private HibernateUbicacionDAO ubicacionDAO;
-    private HibernateEspirituDAO espirituDAO;
-    private HibernateMediumDAO mediumDAO;
+    private Ubicacion ubicacion;
+
 
 
     @BeforeEach
@@ -65,15 +76,13 @@ public class EspirituServiceImplTest {
 
         );
         medium = new Medium("Brujita", 100, 50, this.ubicacion);
-        this.ubicacionDAO = new HibernateUbicacionDAO();
-        this.espirituDAO = new HibernateEspirituDAO();
-        this.mediumDAO = new HibernateMediumDAO();
-        this.ubicacionService = new UbicacionServiceImpl(this.ubicacionDAO, this.espirituDAO, this.mediumDAO);
+
     }
 
 
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
+
         Long idInexistente = 50L;
         Long idInexistente2 = -50L;
         espirituService.recuperar(idInexistente);
@@ -181,6 +190,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alCrearYLuegoRecuperarSeObtieneObjetosSimilares() {
+
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         var otroEspiritu = espirituService.recuperar(angel1.getId()).get();
@@ -205,6 +215,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarUnEspirituSeGuardaEnSuRespectivaListaDelMediumAumentandoSuConexionYSePersiste() {
+
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1); // 10 de conexión
         espirituService.crear(demonio1); // 10 de conexión
@@ -256,7 +267,7 @@ public class EspirituServiceImplTest {
 
         // hay 3 en total, 2 son ángeles y 1 es demonio
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
 
         assertEquals(2, demonios.size());
 
@@ -267,7 +278,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 2);// agarro sólo los demonios
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 2);// agarro sólo los demonios
 
         assertTrue(demonios.isEmpty());
 
@@ -284,7 +295,7 @@ public class EspirituServiceImplTest {
         //  2 3 1
 
         List<Long> demoniosIds =
-                espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 3)
+                espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
                 .stream().map(Espiritu::getId).toList();
 
 
@@ -305,7 +316,7 @@ public class EspirituServiceImplTest {
         List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
         //  1 3 2
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
                                     .stream().map(Espiritu::getId).toList();
 
         assertEquals(expected, demoniosIds);
@@ -315,21 +326,21 @@ public class EspirituServiceImplTest {
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(SortDirection.ASCENDING, -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, -1, 3));
 
     }
 
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, -1));
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, -1));
 
     }
 
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 0));
 
     }
 
@@ -340,7 +351,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
 
         assertEquals(2, demonios.size());
 
@@ -353,7 +364,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -370,7 +381,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 5);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 5);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -388,7 +399,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 1, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -414,7 +425,7 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.DESCENDING, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
                                     .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
@@ -440,7 +451,7 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(SortDirection.ASCENDING, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
                                     .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());
@@ -454,8 +465,8 @@ public class EspirituServiceImplTest {
 
     @AfterEach
     void eliminarModelo() {
-        testService.eliminarModelo(Espiritu.class);
-        testService.eliminarModelo(Medium.class);
-        testService.eliminarModelo(Ubicacion.class);
+        testService.eliminarMediums();
+        testService.eliminarEspiritus();
+        testService.eliminarUbicaciones();
     }
-}*/
+}

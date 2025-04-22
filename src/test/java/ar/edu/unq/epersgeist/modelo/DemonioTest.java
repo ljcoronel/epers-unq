@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DemonioTest {/*
+public class DemonioTest {
     private Espiritu demonio;
     private Ubicacion ubicacion = new Ubicacion("Washington");
 
@@ -61,16 +61,5 @@ public class DemonioTest {/*
         assertEquals(this.demonio.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
 
-    @Test
-    void elDemonioConoceQueEsUnDemonio() {
 
-        assertTrue(demonio.esDemonio());
-    }
-
-    @Test
-    void elDemonioConoceQueNoEsAngel() {
-
-        assertFalse(demonio.esAngel());
-    }
-*/
 }

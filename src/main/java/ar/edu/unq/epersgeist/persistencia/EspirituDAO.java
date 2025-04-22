@@ -12,8 +12,10 @@ import java.util.List;
 public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
 
     @Query(
-            "FROM Espiritu e WHERE e.medium.id = :idDelMedium"
+            "From Espiritu e where e.medium.id= :MediuId "
     )
-    List<Espiritu> todosLosEspiritusDeMedium(@Param("idDelMedium") Long mediumId);
+    List<Espiritu> todosLosEspiritusDeMedium(@Param("MediuId") Long mediumId);
 
+    @Query("from Espiritu e where e.ubicacion.id = :unaUbicacion order by e.nombre asc")
+    List<Espiritu> espiritusEn(@Param("unaUbicacion") Long ubicacionId);
 }

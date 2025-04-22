@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.testUtils;
 
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
-
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class TestService {
         this.medDao = medDao;
     }
 
-    public void eliminarEspíritus() {
+    public void eliminarEspiritus() {
         espDao.deleteAll();
     }
 

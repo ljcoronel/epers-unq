@@ -21,18 +21,24 @@ public class Medium implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String nombre;
+
     @Column(nullable = false)
     @Check(constraints = "mana_max > 0")
     private Integer manaMax;
+
     @Column(nullable = false)
     @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
+
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Angel> angeles = new ArrayList<>();
+
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Demonio> demonios = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Ubicacion ubicacion;
 

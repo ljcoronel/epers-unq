@@ -10,15 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class MediumServiceImpl implements MediumService {
 
-    private final MediumDAO mediumDao;
-    private final EspirituDAO espirituDao;
+    private MediumDAO mediumDao;
+    private EspirituDAO espirituDao;
 
 
     public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao) {
@@ -34,59 +33,62 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) {
-
         return mediumDao.findById(mediumId);
+
     }
 
     @Override
     public List<Medium> recuperarTodos() {
+         return mediumDao.findAll();
 
-        return mediumDao.findAll();
     }
 
     @Override
     public void actualizar(Medium medium) {
 
-            mediumDao.save(medium);
+//            mediumDao.actualizar(medium);
+
+
     }
 
     @Override
     public void eliminar(Long idDelMedium) {
 
-           mediumDao.deleteById(idDelMedium);
+//            mediumDao.eliminar(idDelMedium);
+
     }
 
     @Override
     public void descansar(Long mediumId) {
 
-
-            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
-
-            if (optionalMedium.isEmpty()) return;
-
-            Medium medium = optionalMedium.get();
-            medium.descansar();
-
-            mediumDao.save(medium);
+//
+//            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
+//
+//            if (optionalMedium.isEmpty()) return;
+//
+//            Medium medium = optionalMedium.get();
+//            medium.descansar();
+//
+//            this.actualizar(medium);
 
     }
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
-
-            Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
-            Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
-
-            if (optionalExorcista.isEmpty()) return ;
-            if (optionalPoseido.isEmpty()) return ;
-
-            Medium exorcista = optionalExorcista.get();
-            Medium exorcizado = optionalPoseido.get();
-
-            exorcista.exorcizarA(exorcizado);
-
-            mediumDao.save(exorcista);
-            mediumDao.save(exorcizado);
+//
+//            Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
+//            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
+//
+//            if (optionalExorcista.isEmpty()) return ;
+//            if (optionalPoseido.isEmpty()) return ;
+//
+//            Medium exorcista = optionalExorcista.get();
+//            Medium exorcizado = optionalPoseido.get();
+//
+//            exorcista.exorcizarA(exorcizado);
+//
+//            this.actualizar(exorcista);
+//            this.actualizar(exorcizado);
 
     }
 
@@ -102,26 +104,28 @@ public class MediumServiceImpl implements MediumService {
            espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
 
            return espiritus;
-
+//    return null;
     }
 
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
-            Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
-            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+//            Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
+//            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
+//
+//            if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
+//            Espiritu espiritu = optionalEspiritu.get();
+//            if (optionalMedium.isEmpty()) return espiritu;
+//
+//            Medium medium = optionalMedium.get();
+//            medium.invocar(espiritu);
+//
+//            mediumDao.actualizar(medium);
+//            espirituDao.actualizar(espiritu);
+//            return espiritu;
+        return null;
 
-            if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
-            Espiritu espiritu = optionalEspiritu.get();
-            if (optionalMedium.isEmpty()) return espiritu;
-
-            Medium medium = optionalMedium.get();
-            medium.invocar(espiritu);
-
-            mediumDao.save(medium);
-            espirituDao.save(espiritu);
-            return espiritu;
     }
 
 }

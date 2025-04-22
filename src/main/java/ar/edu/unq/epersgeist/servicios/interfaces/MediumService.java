@@ -1,4 +1,3 @@
-
 package ar.edu.unq.epersgeist.servicios.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
