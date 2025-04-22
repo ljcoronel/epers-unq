@@ -16,4 +16,6 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     )
     List<Espiritu> todosLosEspiritusDeMedium(@Param("MediuId") Long mediumId);
 
+    @Query("from Espiritu e where e.ubicacion.id = :unaUbicacion order by e.nombre asc")
+    List<Espiritu> espiritusEn(@Param("unaUbicacion") Long ubicacionId);
 }

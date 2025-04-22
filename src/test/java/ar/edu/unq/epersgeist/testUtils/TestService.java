@@ -20,7 +20,7 @@ public class TestService {
         this.medDao = medDao;
     }
 
-    public void eliminarEspíritus() {
+    public void eliminarEspiritus() {
         espDao.deleteAll();
     }
 

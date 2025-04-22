@@ -466,7 +466,7 @@ public class EspirituServiceImplTest {
     @AfterEach
     void eliminarModelo() {
         testService.eliminarMediums();
-        testService.eliminarEspíritus();
+        testService.eliminarEspiritus();
         testService.eliminarUbicaciones();
     }
 }

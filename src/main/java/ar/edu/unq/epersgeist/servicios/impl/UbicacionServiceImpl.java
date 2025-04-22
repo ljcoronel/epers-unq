@@ -3,10 +3,12 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.NombreDeUbicacionRepetido;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,45 +31,40 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        return this.ubicacionDAO.save(ubicacion);
-//        return null;
+        try {
+            return this.ubicacionDAO.save(ubicacion);
+        } catch (DataIntegrityViolationException e) {
+            throw new NombreDeUbicacionRepetido(ubicacion.getNombre());
+        }
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-//        return this.ubicacionDAO.recuperar(id);
-        return null;
+        return this.ubicacionDAO.findById(id);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacionUno) {
-        
-//        this.ubicacionDAO.actualizar(ubicacionUno);
-
+        this.ubicacionDAO.save(ubicacionUno);
     }
 
     @Override
     public void eliminar(Long id) {
-        
-//            this.ubicacionDAO.eliminar(id);
+        this.ubicacionDAO.deleteById(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-
-//        return this.ubicacionDAO.recuperarTodos();
-        return null;
+        return List.copyOf(this.ubicacionDAO.findAll());
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return null;
-//                this.espirituDAO.espiritusEn(ubicacionId);
+        return this.espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-//        return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
-        return null;
+        return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 }
