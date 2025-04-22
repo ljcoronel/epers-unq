@@ -1,9 +1,9 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.NombreDeUbicacionRepetido;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
+import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
+import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
