@@ -24,9 +24,9 @@ public class Demonio extends Espiritu {
 
     public void defender(Angel angel,int ataque) {
 
-        int procentajeDeDefensa = this.porcentajeDefensaRandom();
+        int porcentajeDeDefensa = this.porcentajeDefensaRandom();
 
-        if(ataque>procentajeDeDefensa){
+        if(ataque>porcentajeDeDefensa){
 
            int daño = angel.getNivelDeConexion()/2;
            this.recibirDamage(daño);
