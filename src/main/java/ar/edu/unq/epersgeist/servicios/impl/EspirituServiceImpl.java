@@ -33,8 +33,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Espiritu crear(Espiritu espiritu) {
 
-            getEspirituDao().save(espiritu);
-            return null;
+        return getEspirituDao().save(espiritu);
 
     }
 

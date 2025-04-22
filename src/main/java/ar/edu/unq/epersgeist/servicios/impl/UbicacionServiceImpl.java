@@ -33,7 +33,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     public Ubicacion crear(Ubicacion ubicacion) {
         try {
             return this.ubicacionDAO.save(ubicacion);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) { //TODO hacer menos genérico, puede atrapar otros errores que no sean repetir nombre
             throw new NombreDeUbicacionRepetido(ubicacion.getNombre());
         }
     }
