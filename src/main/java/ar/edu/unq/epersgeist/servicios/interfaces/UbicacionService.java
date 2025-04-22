@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.servicios;
+package ar.edu.unq.epersgeist.servicios.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -7,7 +7,7 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import java.util.List;
 import java.util.Optional;
 
-public interface UbicacionService {
+public interface UbicacionService  {
     Ubicacion crear(Ubicacion ubicacion);
     Optional<Ubicacion> recuperar(Long ubicacionId);
     List<Ubicacion> recuperarTodos();

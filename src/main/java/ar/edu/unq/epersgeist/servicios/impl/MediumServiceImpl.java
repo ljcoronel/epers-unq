@@ -1,22 +1,24 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.servicios.MediumService;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import ar.edu.unq.epersgeist.persistencia.MediumDAO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Service
+@Transactional
 public class MediumServiceImpl implements MediumService {
 
-    private MediumDAO mediumDao;
-    private EspirituDAO espirituDao;
+    private final MediumDAO mediumDao;
+    private final EspirituDAO espirituDao;
 
 
     public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao) {
@@ -26,110 +28,100 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium crear(Medium medium) {
-        return HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.crear(medium);
-            return null;
-        });
+        return mediumDao.save(medium);
+
     }
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) {
-        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperar(mediumId));
+
+        return mediumDao.findById(mediumId);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> mediumDao.recuperarTodos());
+
+        return mediumDao.findAll();
     }
 
     @Override
     public void actualizar(Medium medium) {
-        HibernateTransactionRunner.runTrx(()-> {
-            mediumDao.actualizar(medium);
-            return null;
-        } );
 
+        mediumDao.save(medium);
     }
 
     @Override
     public void eliminar(Long idDelMedium) {
-        HibernateTransactionRunner.runTrx(() -> {
-            mediumDao.eliminar(idDelMedium);
-            return null;
-        });
+
+        mediumDao.deleteById(idDelMedium);
     }
 
     @Override
     public void descansar(Long mediumId) {
-        HibernateTransactionRunner.runTrx(() -> {
 
-            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
 
-            if (optionalMedium.isEmpty()) return null;
+        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
-            Medium medium = optionalMedium.get();
-            medium.descansar();
+        if (optionalMedium.isEmpty()) return;
 
-            this.actualizar(medium);
+        Medium medium = optionalMedium.get();
+        medium.descansar();
 
-            return null;
-        });
+        mediumDao.save(medium);
+
     }
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
-        HibernateTransactionRunner.runTrx(() -> {
-            Optional<Medium> optionalExorcista = mediumDao.recuperar(idMediumExorcista);
-            Optional<Medium> optionalPoseido = mediumDao.recuperar(idMediumAExorcisar);
 
-            if (optionalExorcista.isEmpty()) return null;
-            if (optionalPoseido.isEmpty()) return null;
+        Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
+        Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
 
-            Medium exorcista = optionalExorcista.get();
-            Medium exorcizado = optionalPoseido.get();
+        if (optionalExorcista.isEmpty()) return ;
+        if (optionalPoseido.isEmpty()) return ;
 
-            exorcista.exorcizarA(exorcizado);
+        Medium exorcista = optionalExorcista.get();
+        Medium exorcizado = optionalPoseido.get();
 
-            this.actualizar(exorcista);
-            this.actualizar(exorcizado);
+        exorcista.exorcizarA(exorcizado);
 
-            return null;
-        });
+        mediumDao.save(exorcista);
+        mediumDao.save(exorcizado);
+
     }
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
-        return HibernateTransactionRunner.runTrx(()->{
-           Optional<Medium> medium = mediumDao.recuperar(mediumId);
-           List<Espiritu> espiritus = new ArrayList<>();
 
-           if(medium.isEmpty()) {return espiritus;}
-           Medium currentMedium = medium.get();
+        Optional<Medium> medium = mediumDao.findById(mediumId);
+        List<Espiritu> espiritus = new ArrayList<>();
 
-           espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+        if(medium.isEmpty()) {return espiritus;}
+        Medium currentMedium = medium.get();
 
-           return espiritus;
-        });
+        espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+
+        return espiritus;
+
     }
 
 
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
-        return HibernateTransactionRunner.runTrx(()->{
-            Optional<Medium> optionalMedium =  mediumDao.recuperar(mediumId);
-            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
 
-            if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
-            Espiritu espiritu = optionalEspiritu.get();
-            if (optionalMedium.isEmpty()) return espiritu;
+        Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
+        Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-            Medium medium = optionalMedium.get();
-            medium.invocar(espiritu);
+        if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
+        Espiritu espiritu = optionalEspiritu.get();
+        if (optionalMedium.isEmpty()) return espiritu;
 
-            mediumDao.actualizar(medium);
-            espirituDao.actualizar(espiritu);
-            return espiritu;
-        });
+        Medium medium = optionalMedium.get();
+        medium.invocar(espiritu);
+
+        mediumDao.save(medium);
+        espirituDao.save(espiritu);
+        return espiritu;
     }
 
 }
