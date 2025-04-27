@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.controller;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class MediumControllerREST {
     public ResponseEntity<MediumDTO> getMediumById(@PathVariable Long id) {
         Optional<Medium> optionalMedium = mediumService.recuperar(id);
 
-        if (optionalMedium.isEmpty()) return ResponseEntity.ok(null);
+        if (optionalMedium.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         return ResponseEntity.ok(MediumDTO.desdeModelo(optionalMedium.get()));
     }

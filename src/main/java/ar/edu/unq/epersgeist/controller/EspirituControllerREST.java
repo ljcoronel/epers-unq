@@ -37,6 +37,6 @@ public final class EspirituControllerREST {
 
     @PostMapping
     public void createEspiritu(@RequestBody EspirituDTO espiritu) {
-        espirituService.crear(espiritu.aModelo());
+        espirituService.crear(espiritu.aModeloAngel());
     }
 }
