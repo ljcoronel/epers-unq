@@ -5,6 +5,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
+import java.util.Arrays;
+
 public enum TipoEspiritu {
     ANGEL {
         @Override
@@ -21,6 +23,10 @@ public enum TipoEspiritu {
 
 
     };
+
+    public static boolean esTipoValido(String tipo) {
+        return Arrays.stream(TipoEspiritu.values()).anyMatch(t -> t.name().equals(tipo));
+    }
 
     public abstract <T extends Espiritu> T getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion);
 
