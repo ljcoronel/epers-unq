@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +34,7 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) @NotNull
     private Ubicacion ubicacion;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
