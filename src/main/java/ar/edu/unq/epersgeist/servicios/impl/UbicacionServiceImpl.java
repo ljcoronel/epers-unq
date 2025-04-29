@@ -61,9 +61,4 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
-
-    @Override
-    public boolean existe(Long id){
-        return this.ubicacionDAO.existsById(id);
-    }
 }

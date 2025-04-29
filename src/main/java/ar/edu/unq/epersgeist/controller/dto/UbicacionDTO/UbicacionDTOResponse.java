@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.controller.dto;
+package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 
