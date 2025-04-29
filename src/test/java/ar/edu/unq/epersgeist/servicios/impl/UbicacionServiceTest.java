@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.exception.NombreDeUbicacionRepetido;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -81,7 +80,7 @@ public class UbicacionServiceTest {
     public void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
         this.ubicacionService.crear(this.ubicacionUno);
 
-        assertThrows(NombreDeUbicacionRepetido.class, () -> this.ubicacionService.crear(this.ubicacionDos));
+        assertThrows(DataIntegrityViolationException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
     }
 
     @Test
