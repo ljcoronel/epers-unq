@@ -1,8 +1,10 @@
 package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumRequestDTO;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,32 +27,34 @@ public class MediumControllerREST {
         this.mediumService = mediumService;
     }
 
+    @PostMapping
+    public ResponseEntity<MediumDTO> createMedium(@RequestBody MediumRequestDTO mediumDTO) {
+        Medium medium = mediumService.crear(mediumDTO.aModelo());
+        return ResponseEntity.ok(MediumDTO.desdeModelo(medium));
+    }
+
     @GetMapping
-    public Set<MediumDTO>getAllMediums(){
-        return mediumService.recuperarTodos().stream()
-                .map(MediumDTO::desdeModelo)
-                .collect(Collectors.toSet());
+    public ResponseEntity<List<MediumDTO>> getAllMediums(){
+        return ResponseEntity.ok(
+                mediumService.recuperarTodos().stream()
+                        .map(MediumDTO::desdeModelo)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMediumById(@PathVariable Long id) {
+    public ResponseEntity<MediumDTO> getMediumById(@PathVariable Long id) {
         Optional<Medium> optionalMedium = mediumService.recuperar(id);
-
-        if (optionalMedium.isEmpty())
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new HashMap<>().put("error", "Medium no encontrado"));
-
+        //en el service me lanzo una excepcion si el medium esta vacio y la capturo en el controlerAdvice
+        //deberia lanzar el error desde el controller? o esta bien en el service?
         return ResponseEntity.ok(MediumDTO.desdeModelo(optionalMedium.get()));
     }
 
-    @PostMapping
-    public void createMedium(@RequestBody MediumDTO medium) {
+//    @PutMapping("/{id}")
+//    public ResponseEntity<MediumDTO> updateMedium(@PathVariable Long id, @RequestBody MediumRequestDTO mediumDTO) {
+//        Op
+//    }
 
-        mediumService.crear(medium.aModelo());
-    }
-
-//    Medium crear(Medium medium);
 //    void actualizar(Medium medium);
 //    void eliminar(Long idDelMedium);
 //    void descansar(Long mediumId);

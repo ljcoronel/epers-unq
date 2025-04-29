@@ -4,6 +4,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
+import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -44,10 +46,20 @@ public class Medium implements Serializable {
 
 
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
+        this.validarLosCampos(nombre,manaMax,mana);
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
         this.ubicacion = ubicacion;
+    }
+
+    private void validarLosCampos(String nombre, Integer manaMax, Integer mana)
+            throws InvalidFieldsException, NullRequiredFieldsException {
+
+        if (nombre == null || manaMax == null || mana == null )
+            throw new NullRequiredFieldsException(this.getClass().getSimpleName());
+        else if (mana < 0 || mana > manaMax || manaMax > 100)
+            throw new InvalidFieldsException(this.getClass().getSimpleName());
     }
 
     public void realizarConexion(Espiritu espiritu){
