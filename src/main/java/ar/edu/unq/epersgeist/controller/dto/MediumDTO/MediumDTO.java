@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.controller.dto;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 
 import java.util.ArrayList;
 
@@ -27,19 +29,19 @@ public record MediumDTO(Long id, String nombre, int manaMax, int mana, List<Espi
         );
     }
 
-    public Medium aModelo() {
+    public Medium aModelo() {//mediumDTORequest crear dto aparte
         Medium medium = new Medium(this.nombre, this.manaMax, this.mana,this.ubicacion.aModelo());
         medium.setId(this.id);
 
         medium.setAngeles(this.angeles != null ?
                 this.angeles.stream()
-                        .map(espirituDTO -> espirituDTO.aModeloAngel())//espirituDTO deberia de devolver una clase angel,reemplazar
+                        .map(dto -> (Angel) dto.aModelo())//espirituDTO deberia de devolver una clase angel,reemplazar
                         .collect(Collectors.toList()) :
                 new ArrayList<>()
         );
         medium.setDemonios(this.demonios != null ?
                 this.demonios.stream()
-                        .map(espirituDTO -> espirituDTO.aModeloDemonio())//espirituDTO deberia de devolver una clase angel,reemplazar
+                        .map(dto -> (Demonio) dto.aModelo())//espirituDTO deberia de devolver una clase angel,reemplazar
                         .collect(Collectors.toList()) :
                 new ArrayList<>()
         );
