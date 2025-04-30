@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
@@ -37,8 +38,6 @@ public class MediumServiceImpl implements MediumService {
     public Optional<Medium> recuperar(Long mediumId) throws RecursoNoEncontradoException {
         Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
-        if (optionalMedium.isEmpty()) throw new RecursoNoEncontradoException("Medium",mediumId);
-
         return mediumDao.findById(mediumId);
     }
 
@@ -50,7 +49,6 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void actualizar(Medium medium) {
-
         mediumDao.save(medium);
     }
 
