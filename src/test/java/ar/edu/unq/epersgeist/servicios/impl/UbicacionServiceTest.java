@@ -187,9 +187,9 @@ public class UbicacionServiceTest {
         espirituService.conectar(this.angelUno.getId(), mediumUno.getId());
         espirituService.conectar(this.demonioUno.getId(), mediumDos.getId());
 
-        this.mediumService.actualizar(this.mediumUno);
-        this.mediumService.actualizar(this.mediumDos);
-        this.mediumService.actualizar(this.mediumTres);
+        this.mediumService.actualizar(mediumUno.getId(), this.mediumUno);
+        this.mediumService.actualizar(mediumDos.getId(), this.mediumDos);
+        this.mediumService.actualizar(mediumTres.getId(), this.mediumTres);
 
         List<Medium> mediumsSinEspiritus = this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId());
 

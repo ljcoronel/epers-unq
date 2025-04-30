@@ -133,7 +133,7 @@ public class MediumServiceImplTest {
         mediumService.crear(medium);
         medium.setNombre("nombreModificado");
 
-        mediumService.actualizar(medium);
+        mediumService.actualizar(medium.getId(), medium);
         Medium recuperado = mediumService.recuperar(medium.getId()).get();
 
         assertEquals("nombreModificado", recuperado.getNombre());
@@ -142,7 +142,7 @@ public class MediumServiceImplTest {
     @Test
     void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
 
-        assertDoesNotThrow(() -> mediumService.actualizar(medium));
+        assertDoesNotThrow(() -> mediumService.actualizar(medium.getId(), medium));
     }
 
 
@@ -399,7 +399,7 @@ public class MediumServiceImplTest {
         angelDebil.setUbicacion(ubicacion2);
         espirituService.actualizar(angelDebil);
 
-        mediumService.actualizar(medium);
+        mediumService.actualizar(medium.getId(), medium);
 
         mediumService.invocar(medium.getId(), angelDebil.getId());
 

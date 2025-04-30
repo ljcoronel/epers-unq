@@ -6,6 +6,6 @@ public class RecursoNoEncontradoException extends RuntimeException {
 
     public RecursoNoEncontradoException(String className, Long id) {
 
-        super("No se encontro el recurso "+className+" con Id: "+id+".");
+        super("No se encontro "+className+" con Id: "+id+".");
     }
 }

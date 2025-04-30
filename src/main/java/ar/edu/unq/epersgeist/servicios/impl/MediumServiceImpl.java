@@ -48,8 +48,16 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public void actualizar(Medium medium) {
-        mediumDao.save(medium);
+    public  Medium actualizar(Long id, Medium updateMedium) {
+        Medium medium = mediumDao.findById(id)
+                .orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
+
+        medium.setNombre(updateMedium.getNombre());
+        medium.setManaMax(updateMedium.getManaMax());
+        medium.setMana(updateMedium.getMana());
+        if(updateMedium.getUbicacion() != null) medium.setUbicacion(updateMedium.getUbicacion());
+
+        return mediumDao.save(medium);
     }
 
     @Override

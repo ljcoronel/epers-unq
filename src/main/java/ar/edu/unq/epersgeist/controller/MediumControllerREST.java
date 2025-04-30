@@ -49,19 +49,10 @@ public class MediumControllerREST {
 
     @PutMapping("/{id}")
     public ResponseEntity<MediumDTO> updateMedium(@PathVariable Long id, @RequestBody MediumRequestDTO mediumRequestDTO){
-        Medium updateMedium = mediumService.recuperar(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medium", id));
 
         Medium mediumReq = mediumRequestDTO.aModelo();
 
-        updateMedium.setNombre(mediumReq.getNombre());
-        updateMedium.setManaMax(mediumReq.getManaMax());
-        updateMedium.setMana(mediumReq.getMana());
-        if(mediumReq.getUbicacion() != null) updateMedium.setUbicacion(mediumReq.getUbicacion());
-
-        mediumService.actualizar(updateMedium);
-
-        return ResponseEntity.ok(MediumDTO.desdeModelo(updateMedium));
+        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumService.actualizar(id, mediumReq)));
     }
 
     @DeleteMapping("/{id}")
@@ -76,10 +67,9 @@ public class MediumControllerREST {
 
         mediumService.descansar(id);
 
-        Medium mediumDescansado = mediumService.recuperar(id)
-                .orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
-
-        return ResponseEntity.ok(MediumDTO.desdeModelo(mediumDescansado));
+        return mediumService.recuperar(id)
+                .map(medium -> ResponseEntity.ok(MediumDTO.desdeModelo(medium)))
+                .orElseThrow(() -> new RecursoNoEncontradoException("Medium", id));
     }
 
 //    void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar);
