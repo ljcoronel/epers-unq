@@ -1,7 +1,8 @@
-package ar.edu.unq.epersgeist.controller.dto;
+package ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 
@@ -24,8 +25,7 @@ public record MediumDTO(Long id, String nombre, int manaMax, int mana, List<Espi
                 medium.getDemonios().stream()
                         .map(EspirituDTO::desdeModelo)
                         .collect(Collectors.toList()),
-                //UbicacionDTO.desdeModelo(medium.getUbicacion().getId(),medium.getUbicacion().getNombre())
-                UbicacionDTO.desdeModelo(1L,"Bosque de los Lamentos")//temporal para pruebas,cambiar por lo de arriba
+                UbicacionDTO.desdeModelo(medium.getUbicacion())
         );
     }
 

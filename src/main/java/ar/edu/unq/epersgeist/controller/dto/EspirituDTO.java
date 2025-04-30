@@ -12,12 +12,18 @@ public class EspirituDTO {
 
     public static EspirituDTO desdeModelo(Espiritu espiritu) {return null;}
 
+    public Espiritu aModelo() {
+        return null;
+    }
+
+   /*
     public Angel aModeloAngel() {
         return null;
     }
-//cambiar metodos aModelo
+
     public Demonio aModeloDemonio() {
         return null;
     }
+    */
 
 }

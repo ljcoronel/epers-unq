@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.controller;
 
-public class ResponseMessage {
+public record ResponseMessage(String message, int statusCode) {
+
 }
