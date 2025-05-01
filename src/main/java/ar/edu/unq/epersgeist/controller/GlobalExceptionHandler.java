@@ -1,8 +1,6 @@
 package ar.edu.unq.epersgeist.controller;
 
-import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
-import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
-import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RecursoNoEncontradoException.class)
     public ResponseEntity<Map<String,String>> recursoNoEncontradoException(RecursoNoEncontradoException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(ExorcistaSinAngelesException.class)
+    public ResponseEntity<Map<String,String>> ExorcistaSinAngelesException(ExorcistaSinAngelesException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(EspirituLibreException.class)
+    public ResponseEntity<Map<String,String>> EspirituLibreException(EspirituLibreException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
     }
 

@@ -13,6 +13,6 @@ public class ExorcistaSinAngelesException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "El Medium [" + medium + "] no tiene angeles para exorcizar";
+        return "El Medium [" + medium.getNombre() + "] no tiene angeles para exorcizar";
     }
 }

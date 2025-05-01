@@ -84,9 +84,8 @@ public class MediumControllerREST {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> eliminarMedium(@PathVariable Long id){
-        Optional<Medium> optionalMedium = mediumService.recuperar(id);
 
-        if (optionalMedium.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        Medium mediumOriginal = mediumService.recuperar(id).orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
 
         mediumService.eliminar(id);
 
@@ -107,8 +106,6 @@ public class MediumControllerREST {
         Medium mediumExorcista = mediumService.recuperar(mediumExorcistaId).orElseThrow(()-> new RecursoNoEncontradoException("Medium", mediumExorcistaId));
 
         Medium mediumPoseido = mediumService.recuperar(mediumPoseidoId).orElseThrow(()-> new RecursoNoEncontradoException("Medium", mediumPoseidoId));
-
-        //verificar si exorcista tiene angeles
 
         mediumService.exorcisar(mediumExorcistaId,mediumPoseidoId);
 
