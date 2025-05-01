@@ -37,7 +37,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-
+        if (espiritu.getNombre().isEmpty()) throw new IllegalArgumentException("Es espiritu debe tener un nombre");
         return getEspirituDao().save(espiritu);
 
     }

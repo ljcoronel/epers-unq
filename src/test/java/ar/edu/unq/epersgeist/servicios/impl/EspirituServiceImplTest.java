@@ -79,7 +79,15 @@ public class EspirituServiceImplTest {
 
     }
 
-
+    @Test
+    void noSePuedenCrearAngelesODemonioSinNombres() {
+        Ubicacion quilmes = new Ubicacion("quilmes");
+        ubicacionService.crear(quilmes);
+        Demonio demonioSinNombre = new Demonio(10, "", quilmes);
+        Angel angelSinNombre = new Angel(10, "", quilmes);
+        assertThrows(IllegalArgumentException.class, () -> espirituService.crear(angelSinNombre));
+        assertThrows(IllegalArgumentException.class, () -> espirituService.crear(demonioSinNombre));
+    }
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
 
