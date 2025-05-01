@@ -38,6 +38,8 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Espiritu crear(Espiritu espiritu) {
         if (espiritu.getNombre().isEmpty()) throw new IllegalArgumentException("Es espiritu debe tener un nombre");
+        if (this.existeConNombre(espiritu.getNombre())) throw new IllegalArgumentException("ya existe un espiritu con el nombre: " + espiritu.getNombre());
+
         return getEspirituDao().save(espiritu);
 
     }
@@ -95,7 +97,6 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public boolean existeConNombre(String nombre) {
         Espiritu espirituConNombre = this.espirituDao.espirituConNombre(nombre); // TODO preguntar si se debe devolver true o false, o si así es suficiente
-
         return espirituConNombre != null;
     }
 
