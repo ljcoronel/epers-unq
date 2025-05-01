@@ -8,16 +8,18 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import  ar. edu. unq. epersgeist. modelo. espiritu. Espiritu;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/espiritu")
+@RequestMapping("/espiritus")
 public final class EspirituControllerREST {
     private final EspirituService espirituService;
     private final UbicacionService ubicacionService;
@@ -35,8 +37,12 @@ public final class EspirituControllerREST {
     }
 
     @GetMapping("/demonios")
-    public Set<EspirituDTOResponse> getEspiritusDemoniacos(@RequestParam(defaultValue = "DESC") Sort.Direction direccion, @RequestParam(defaultValue = "0") int pagina, @RequestParam(defaultValue = "10") int cantidadPorPagina) {
-        // TODO no puedo hacer chequeos al menos que pueda devolver ResponseEntity...
+    public Set<EspirituDTOResponse> getEspiritusDemoniacos(@RequestParam Sort.Direction direccion, @RequestParam int pagina, @RequestParam int cantidadPorPagina) {
+        if (pagina < 0) throw new ResponseStatusException
+                    (HttpStatus.BAD_REQUEST, "El número de página debe ser 0 o mayor.");
+
+        if (cantidadPorPagina <= 0) throw new ResponseStatusException
+                (HttpStatus.BAD_REQUEST, "La cantidad por página debe ser positiva y mayor a 0.");
 
         return espirituService.espiritusDemoniacos(direccion, pagina, cantidadPorPagina).stream()
                 .map(EspirituDTOResponse::desdeModelo) // TODO mantenemos algún tipo de default value o no?
@@ -47,49 +53,39 @@ public final class EspirituControllerREST {
     public ResponseEntity<EspirituDTOResponse> getEspirituById(@PathVariable Long id) {
         Optional<Espiritu> optionalEspiritu = espirituService.recuperar(id);
 
-        if (optionalEspiritu.isEmpty()) return ResponseEntity.status(404).build(); // TODO no sé cómo hacer que se le pueda pasar un mensaje
+        if (optionalEspiritu.isEmpty())
+            throw new ResponseStatusException
+                    (HttpStatus.NOT_FOUND, "Espíritu de id " + id + " no encontrado");
 
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(optionalEspiritu.get()));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMessage> createEspiritu(@RequestBody EspirituDTORequest espirituDTO) {
+    public ResponseEntity<EspirituDTOResponse> createEspiritu(@RequestBody EspirituDTORequest espirituDTO) {
 
-//        // TIPO
-//        if (!TipoEspiritu.esTipoValido(espirituDTO.tipo().name())) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseMessage("Tipo erróneo: " + espirituDTO.tipo(), 400)); // TODO creo que no se puede hacer esto, porque directamente sale Bad Request por parte de Spring
-//        }
+        // TIPO
+        if (!TipoEspiritu.esTipoValido(espirituDTO.tipo().name())) {
+            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "Tipo erróneo: " + espirituDTO.tipo()); // TODO creo que no se puede hacer esto, porque directamente sale Bad Request por parte de Spring
+        }
 
         // NIVEL DE CONEXIÓN
-        if (espirituDTO.nivelDeConexion() > 100 || espirituDTO.nivelDeConexion() < 0) { //TODO aclaramos cada caso?
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ResponseMessage("Valor inválido de nivel de conexión: " + espirituDTO.nivelDeConexion(), 400));
-        }
+
+        if (espirituDTO.nivelDeConexion() > 100 || espirituDTO.nivelDeConexion() < 0) throw new ResponseStatusException
+                (HttpStatus.BAD_REQUEST, "Valor inválido de nivel de conexión (debe estar entre 0 y 100 inclusive): " + espirituDTO.nivelDeConexion());
 
         // UBICACIÓN
         Optional<Ubicacion> ubicacionOptional = ubicacionService.recuperar(espirituDTO.ubicacionId());
-        if (ubicacionOptional.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(new ResponseMessage("Ubicación no encontrada: " + espirituDTO.ubicacionId(), 404));
-
-        }
+        if (ubicacionOptional.isEmpty()) throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Ubicación no encontrada: " + espirituDTO.ubicacionId());
 
         // NOMBRE
-        if (espirituService.existeConNombre(espirituDTO.nombre())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ResponseMessage("Nombre duplicado: " + espirituDTO.nombre(), 400));
-        }
-
-
+        if (espirituService.existeConNombre(espirituDTO.nombre())) throw new ResponseStatusException
+                (HttpStatus.CONFLICT, "Nombre ya existente: " + espirituDTO.nombre());
 
         Espiritu espirituModelo = espirituDTO.aModelo(ubicacionOptional.get());
-        espirituService.crear(espirituModelo);
+        Espiritu espirituCreado = espirituService.crear(espirituModelo);
         return ResponseEntity
                 .status(201)
-                .body( new ResponseMessage("Espiritu creado: " + espirituModelo.getNombre(), 201));
+                .body(EspirituDTOResponse.desdeModelo(espirituCreado));
     }
 }

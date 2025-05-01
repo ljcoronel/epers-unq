@@ -6,7 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
 
 
-public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTO ubicacionDTO) {
+public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTO ubicacion) {
     public static EspirituDTOResponse desdeModelo(Espiritu espiritu) {
         return new EspirituDTOResponse(
                 espiritu.getId(),
@@ -21,7 +21,7 @@ public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int
 
     public Espiritu aModelo() {
 
-        return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, this.ubicacionDTO.aModelo());
+        return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, this.ubicacion.aModelo());
 
     }
 }
