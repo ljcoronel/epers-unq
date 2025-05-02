@@ -5,13 +5,13 @@ import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTORequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionNoEncontradaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/ubicacion")
@@ -23,25 +23,15 @@ public final class UbicacionControllerREST {
     }
 
     @PostMapping
-    public ResponseEntity<UbicacionDTOResponse> createUbicacion(@RequestBody UbicacionDTORequest ubicacion) {
-        try {
-            if (ubicacion.nombre() == null) throw new IllegalArgumentException();
-            Ubicacion ubicacionPersistida = this.ubicacionService.crear(ubicacion.aModelo());
-            return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacionPersistida));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<UbicacionDTOResponse> createUbicacion(@RequestBody UbicacionDTORequest ubicacionRequest) {
+        Ubicacion ubicacion = this.ubicacionService.crear(ubicacionRequest.aModelo());
+        return ResponseEntity.status(HttpStatus.CREATED).body(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> getUbicacionById(@PathVariable Long id) {
-        if (this.ubicacionService.recuperar(id).isPresent()) {
-            return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(this.ubicacionService.recuperar(id).get()));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Ubicacion ubicacion = this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
+        return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
 
     @GetMapping
@@ -52,32 +42,23 @@ public final class UbicacionControllerREST {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTORequest ubicacion) {
-        try {
-            this.ubicacionService.recuperar(id).orElseThrow();
-            if (ubicacion.nombre() == null) throw new IllegalArgumentException();
-            Ubicacion ubicacionActual = ubicacion.aModelo(id);
-            this.ubicacionService.actualizar(ubicacionActual);
-            return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacionActual));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTORequest ubicacionRequest) {
+        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
+        Ubicacion ubicacion = ubicacionRequest.aModelo(id);
+        this.ubicacionService.actualizar(ubicacion);
+        return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> deleteUbicacion(@PathVariable Long id) {
-        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.notFound().build();
+        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
         this.ubicacionService.eliminar(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/espiritus")
     public ResponseEntity<List<EspirituDTOResponse>> espiritusEnUbicacion(@PathVariable Long id) {
-        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.notFound().build();
+        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
         return ResponseEntity.ok(this.ubicacionService.espiritusEn(id).stream()
                 .map(EspirituDTOResponse::desdeModelo)
                 .toList());
@@ -85,7 +66,7 @@ public final class UbicacionControllerREST {
 
     @GetMapping("/{id}/mediumsSinEspiritus")
     public ResponseEntity<List<MediumDTOResponse>> mediumsSinEspiritusEnUbicacion(@PathVariable Long id) {
-        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.notFound().build();
+        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
         return ResponseEntity.ok(this.ubicacionService.mediumsSinEspiritusEn(id).stream()
                 .map(MediumDTOResponse::desdeModelo)
                 .toList());
