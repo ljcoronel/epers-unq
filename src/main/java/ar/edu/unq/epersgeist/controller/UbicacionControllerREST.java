@@ -58,7 +58,6 @@ public final class UbicacionControllerREST {
 
     @GetMapping("/{id}/espiritus")
     public ResponseEntity<List<EspirituDTOResponse>> espiritusEnUbicacion(@PathVariable Long id) {
-        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
         return ResponseEntity.ok(this.ubicacionService.espiritusEn(id).stream()
                 .map(EspirituDTOResponse::desdeModelo)
                 .toList());
@@ -66,7 +65,6 @@ public final class UbicacionControllerREST {
 
     @GetMapping("/{id}/mediumsSinEspiritus")
     public ResponseEntity<List<MediumDTOResponse>> mediumsSinEspiritusEnUbicacion(@PathVariable Long id) {
-        this.ubicacionService.recuperar(id).orElseThrow(UbicacionNoEncontradaException::new);
         return ResponseEntity.ok(this.ubicacionService.mediumsSinEspiritusEn(id).stream()
                 .map(MediumDTOResponse::desdeModelo)
                 .toList());
