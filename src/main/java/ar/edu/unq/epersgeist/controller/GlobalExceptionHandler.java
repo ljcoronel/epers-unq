@@ -1,8 +1,6 @@
 package ar.edu.unq.epersgeist.controller;
 
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionConMismoNombreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionNoEncontradaException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionRequestSinNombreException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,14 +18,14 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UbicacionRequestSinNombreException.class)
-    public Map<String, Object> ubicacionSinNombre(UbicacionRequestSinNombreException ex) {
+    @ExceptionHandler(BodyIncompletoException.class)
+    public Map<String, Object> bodyIncompleto(BodyIncompletoException ex) {
         return Map.of("response_code", HttpStatus.BAD_REQUEST.value(), "description", ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UbicacionNoEncontradaException.class)
-    public Map<String, Object> ubicacionNoEncontrada(UbicacionNoEncontradaException ex) {
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public Map<String, Object> recursoNoEncontrado(RecursoNoEncontradoException ex) {
         return Map.of("response_code", HttpStatus.NOT_FOUND.value(), "description", ex.getMessage());
     }
 }
