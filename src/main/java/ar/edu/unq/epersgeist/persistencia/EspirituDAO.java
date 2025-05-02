@@ -2,10 +2,12 @@ package ar.edu.unq.epersgeist.persistencia;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.lang.annotation.Native;
 import java.util.List;
 
 @Repository
@@ -25,4 +27,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
             "from Espiritu e where e.nombre = :nombre"
     )
     Espiritu espirituConNombre(@Param("nombre") String nombre);
+
+
+
 }

@@ -35,6 +35,7 @@ public class EspirituServiceImpl implements EspirituService {
         this.mediumDao = mediumDAO;
     }
 
+
     @Override
     public Espiritu crear(Espiritu espiritu) {
         if (espiritu.getNombre().isEmpty()) throw new IllegalArgumentException("Es espiritu debe tener un nombre");
@@ -93,6 +94,7 @@ public class EspirituServiceImpl implements EspirituService {
             return medium;
 
     }
+
 
     @Override
     public boolean existeConNombre(String nombre) {

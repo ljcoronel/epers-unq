@@ -61,7 +61,7 @@ public abstract class Espiritu implements Serializable {
         setNivelDeConexion(nivel - i);
     }
 
-    private void setNivelDeConexion(int i) {
+    public void setNivelDeConexion(int i) {
         if (i < 0) {
             this.nivelDeConexion = 0;
         } else if (i > 100) {

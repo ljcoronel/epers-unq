@@ -30,6 +30,32 @@ public final class EspirituControllerREST {
         this.ubicacionService = ubicacionService;
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTORequest espirituDTORequest) {
+        Espiritu espiritu = espirituService.recuperar(id)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro el id de la espiritu"));
+
+        Ubicacion ubicacion = ubicacionService.recuperar(espirituDTORequest.ubicacionId())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro la ubicacion del espiritu"));
+
+        Espiritu espirituDto = espirituDTORequest.aModelo(ubicacion);
+
+//        espirituService.cambiarTipo(id, espirituDto); //TODO hacemos el cambiar tipo SI??, si no puede cambiar entonces hay que hacer un DTO sin el tipo
+        espiritu.setNombre(espirituDto.getNombre());
+        espiritu.setNivelDeConexion(espirituDto.getNivelDeConexion());
+        espiritu.setUbicacion(espirituDto.getUbicacion());
+        espirituService.actualizar(espiritu);
+        return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EspirituDTOResponse> eliminarEspiritu(@PathVariable Long id) {
+        Espiritu espiritu = espirituService.recuperar(id)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro el id de la espiritu"));
+        espirituService.eliminar(id);
+        return ResponseEntity.accepted().build();
+    }
+
     @GetMapping
     public Set<EspirituDTOResponse> getAllEspiritus() {
         return espirituService.recuperarTodos().stream()

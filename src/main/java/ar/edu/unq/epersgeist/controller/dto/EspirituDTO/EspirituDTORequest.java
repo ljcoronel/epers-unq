@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 
 public record EspirituDTORequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionId) {
+
     public static EspirituDTORequest desdeModelo(Espiritu espiritu) {
         return new EspirituDTORequest(
                 TipoEspiritu.getValueOfEspiritu(espiritu),
