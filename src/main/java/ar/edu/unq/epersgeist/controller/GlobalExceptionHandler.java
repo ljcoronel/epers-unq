@@ -12,14 +12,14 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(UbicacionConMismoNombreException.class)
-    public Map<String, Object> nombreRepetido(UbicacionConMismoNombreException ex) {
+    @ExceptionHandler(NombreRepetidoException.class)
+    public Map<String, Object> nombreRepetido(NombreRepetidoException ex) {
         return Map.of("response_code", HttpStatus.CONFLICT.value(), "description", ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BodyIncompletoException.class)
-    public Map<String, Object> bodyIncompleto(BodyIncompletoException ex) {
+    @ExceptionHandler(RequestBodyIncompletoException.class)
+    public Map<String, Object> requestBodyIncompleto(RequestBodyIncompletoException ex) {
         return Map.of("response_code", HttpStatus.BAD_REQUEST.value(), "description", ex.getMessage());
     }
 

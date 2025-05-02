@@ -85,10 +85,10 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seIntentaRecuperarUnaUbicacionNoPersistidaYNoDevuelveNada() {
+    public void seIntentaRecuperarUnaUbicacionNoPersistidaEntoncesSeLanzaUnaExcepcion() {
         this.ubicacionUno.setId(1L);
 
-        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
+        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.recuperar(this.ubicacionUno.getId()));
     }
 
     @Test
@@ -111,11 +111,23 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExiste() {
+    public void seIntentaActualizarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
+        this.ubicacionUno.setId(1L);
+
+        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.actualizar(this.ubicacionUno));
+    }
+
+    @Test
+    public void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExisteYSeLanzaUnaExcepcionAlIntentarRecuperarla() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.eliminar(this.ubicacionUno.getId());
 
-        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
+        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.recuperar(this.ubicacionUno.getId()));
+    }
+
+    @Test
+    public void seIntentaEliminarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
+        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.eliminar(1L));
     }
 
     @Test

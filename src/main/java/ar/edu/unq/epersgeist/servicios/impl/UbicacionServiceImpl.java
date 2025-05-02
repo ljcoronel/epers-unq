@@ -37,17 +37,20 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
+        if (this.ubicacionDAO.findById(id).isEmpty()) throw new UbicacionNoEncontradaException();
         return this.ubicacionDAO.findById(id);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
+        if (this.ubicacionDAO.findById(ubicacion.getId()).isEmpty()) throw new UbicacionNoEncontradaException();
         if (this.ubicacionDAO.existeNombre(ubicacion.getNombre())) throw new UbicacionConMismoNombreException();
         this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public void eliminar(Long id) {
+        if (this.ubicacionDAO.findById(id).isEmpty()) throw new UbicacionNoEncontradaException();
         this.ubicacionDAO.deleteById(id);
     }
 
