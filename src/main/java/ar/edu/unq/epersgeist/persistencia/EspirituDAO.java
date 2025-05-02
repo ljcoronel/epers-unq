@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,6 +29,9 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     )
     boolean espirituConNombre(@Param("otroNombre") String nombre, @Param("otroId") Long id);
 
-
-
+    @Modifying
+    @Query(
+            "update Espiritu e set e.nombre=:nombre, e.nivelDeConexion=:nivelDeConexion, where e.id = :id"
+    )
+    void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 }

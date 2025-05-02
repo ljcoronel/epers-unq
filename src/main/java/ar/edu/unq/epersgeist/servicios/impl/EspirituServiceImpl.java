@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -9,6 +10,7 @@ import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Example;
@@ -32,15 +34,22 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDao;
     private final MediumDAO mediumDao;
+    private final UbicacionDAO ubicacionDao;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao,MediumDAO mediumDAO) {
+    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionDAO ubicacionDao) {
         this.espirituDao = espirituDao;
         this.mediumDao = mediumDAO;
+        this.ubicacionDao = ubicacionDao;
     }
 
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
+
+        Ubicacion ubicacion = ubicacionDao.findById(espiritu.getUbicacion().getId())
+                .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
+        espiritu.setUbicacion(ubicacion);
+
         verificarNombreValido(espiritu);
 
         return getEspirituDao().save(espiritu);
@@ -66,17 +75,9 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void actualizar(Espiritu espiritu) {
 
-            Espiritu espirituDelService = this.recuperar(espiritu.getId())
-                    .orElseThrow(()->new EntidadInexistenteException("No se encontró el id de la espíritu."));
+        verificarNombreValido(espiritu);
 
-            espirituDelService.setNombre(espiritu.getNombre());
-            espirituDelService.setNivelDeConexion(espiritu.getNivelDeConexion());
-            espirituDelService.setUbicacion(espiritu.getUbicacion());
-
-
-            verificarNombreValido(espiritu);
-
-            getEspirituDao().save(espirituDelService);
+        getEspirituDao().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
     }
 
     @Override

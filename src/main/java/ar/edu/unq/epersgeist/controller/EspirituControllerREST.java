@@ -1,15 +1,12 @@
 package ar.edu.unq.epersgeist.controller;
 
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTORequest;
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
-import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import  ar. edu. unq. epersgeist. modelo. espiritu. Espiritu;
@@ -29,13 +26,10 @@ public final class EspirituControllerREST {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTORequest espirituDTORequest) {
+    public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTOPostRequest espirituDTORequest) {
         //TODO dejamos DTOs que no usan ciertos parámetros, o hacemos otro DTO?
 
-        Ubicacion ubicacion = ubicacionService.recuperar(espirituDTORequest.ubicacionId())
-                .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
-
-        Espiritu espiritu = espirituDTORequest.aModelo(id, ubicacion); //TODO habría que hacer cada set en el controller, o en el DTO?
+        Espiritu espiritu = espirituDTORequest.aModeloId(id);
 
         espirituService.actualizar(espiritu);
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu));
@@ -72,17 +66,14 @@ public final class EspirituControllerREST {
     }
 
     @PostMapping
-    public ResponseEntity<EspirituDTOResponse> createEspiritu(@RequestBody EspirituDTORequest espirituDTO) {
+    public ResponseEntity<EspirituDTOResponse> createEspiritu(@RequestBody EspirituDTOPostRequest espirituDTO) {
 
         // TODO ojo con NivelDeConexión porque si se pasa para arriba o para abajo del valor válido, lo defaultea en el máximo o mínimo respectivamente
         // preguntar al profe si está bien esto, o si tiramos excepción. Lo mismo puede ir para otros errores.
 
-        Ubicacion ubicacion = ubicacionService.recuperar(espirituDTO.ubicacionId())
-                .orElseThrow(() -> new EntidadInexistenteException
-                        ("Ubicación no encontrada: " + espirituDTO.ubicacionId()));
-
-        Espiritu espirituModelo = espirituDTO.aModelo(2L, ubicacion);
+        Espiritu espirituModelo = espirituDTO.aModelo();
         Espiritu espirituCreado = espirituService.crear(espirituModelo);
+
         return ResponseEntity
                 .status(201)
                 .body(EspirituDTOResponse.desdeModelo(espirituCreado));
