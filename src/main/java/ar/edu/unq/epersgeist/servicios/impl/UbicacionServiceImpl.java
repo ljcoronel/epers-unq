@@ -3,7 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.NombreDeUbicacionRepetido;
+import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
@@ -34,7 +34,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         try {
             return this.ubicacionDAO.save(ubicacion);
         } catch (DataIntegrityViolationException e) { //TODO hacer menos genérico, puede atrapar otros errores que no sean repetir nombre
-            throw new NombreDeUbicacionRepetido(ubicacion.getNombre());
+            throw new NombreRepetidoException(ubicacion.getNombre());
         }
     }
 

@@ -4,6 +4,9 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
@@ -38,11 +41,15 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        if (espiritu.getNombre().isEmpty()) throw new IllegalArgumentException("Es espiritu debe tener un nombre");
-        if (this.existeConNombre(espiritu.getNombre())) throw new IllegalArgumentException("ya existe un espiritu con el nombre: " + espiritu.getNombre());
+        verificarNombreValido(espiritu);
 
         return getEspirituDao().save(espiritu);
 
+    }
+
+    private void verificarNombreValido(Espiritu espiritu) {
+        if (espiritu.getNombre().isEmpty()) throw new ParametroIncorrectoException("El espíritu debe tener un nombre.");
+        if (this.existeConNombre(espiritu)) throw new NombreRepetidoException("Ya existe un espíritu con el nombre: " + espiritu.getNombre());
     }
 
     @Override
@@ -58,8 +65,18 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-            getEspirituDao().save(espiritu);
 
+            Espiritu espirituDelService = this.recuperar(espiritu.getId())
+                    .orElseThrow(()->new EntidadInexistenteException("No se encontró el id de la espíritu."));
+
+            espirituDelService.setNombre(espiritu.getNombre());
+            espirituDelService.setNivelDeConexion(espiritu.getNivelDeConexion());
+            espirituDelService.setUbicacion(espiritu.getUbicacion());
+
+
+            verificarNombreValido(espiritu);
+
+            getEspirituDao().save(espirituDelService);
     }
 
     @Override
@@ -69,8 +86,8 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-        if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
-        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
+        if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
+        if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
 
         return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
     }
@@ -78,11 +95,10 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
 
-            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
-            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+            Medium medium = mediumDao.findById(mediumId)
+                    .orElseThrow(() -> new EntidadInexistenteException("No se encontró al Medium"));
 
-            verificarSiExisteMedium(optionalMedium);
-            Medium medium = optionalMedium.get();
+            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
             if (optionalEspiritu.isEmpty()) return medium;
             Espiritu espiritu = optionalEspiritu.get();
@@ -97,14 +113,8 @@ public class EspirituServiceImpl implements EspirituService {
 
 
     @Override
-    public boolean existeConNombre(String nombre) {
-        Espiritu espirituConNombre = this.espirituDao.espirituConNombre(nombre); // TODO preguntar si se debe devolver true o false, o si así es suficiente
-        return espirituConNombre != null;
+    public boolean existeConNombre(Espiritu espiritu) {
+        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId()); // TODO preguntar si se debe devolver true o false, o si así es suficiente
     }
 
-    private void verificarSiExisteMedium(Optional<Medium> medium){
-        if (medium.isEmpty()) {
-            throw new NoSuchElementException("No se encontró al Medium");
-        }
-    }
 }

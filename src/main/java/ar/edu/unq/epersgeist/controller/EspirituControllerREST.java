@@ -3,9 +3,9 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTORequest;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
-import ar.edu.unq.epersgeist.controller.exception.invalidPathParameters;
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.data.domain.Sort;
@@ -13,14 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import  ar. edu. unq. epersgeist. modelo. espiritu. Espiritu;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/espiritus")
+@RequestMapping("/espiritu")
 public final class EspirituControllerREST {
     private final EspirituService espirituService;
     private final UbicacionService ubicacionService;
@@ -32,18 +30,13 @@ public final class EspirituControllerREST {
 
     @PutMapping("/{id}")
     public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTORequest espirituDTORequest) {
-        Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro el id de la espiritu"));
+        //TODO dejamos DTOs que no usan ciertos parámetros, o hacemos otro DTO?
 
         Ubicacion ubicacion = ubicacionService.recuperar(espirituDTORequest.ubicacionId())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro la ubicacion del espiritu"));
+                .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
 
-        Espiritu espirituDto = espirituDTORequest.aModelo(ubicacion);
+        Espiritu espiritu = espirituDTORequest.aModelo(id, ubicacion); //TODO habría que hacer cada set en el controller, o en el DTO?
 
-//        espirituService.cambiarTipo(id, espirituDto); //TODO hacemos el cambiar tipo SI??, si no puede cambiar entonces hay que hacer un DTO sin el tipo
-        espiritu.setNombre(espirituDto.getNombre());
-        espiritu.setNivelDeConexion(espirituDto.getNivelDeConexion());
-        espiritu.setUbicacion(espirituDto.getUbicacion());
         espirituService.actualizar(espiritu);
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu));
     }
@@ -51,7 +44,7 @@ public final class EspirituControllerREST {
     @DeleteMapping("/{id}")
     public ResponseEntity<EspirituDTOResponse> eliminarEspiritu(@PathVariable Long id) {
         Espiritu espiritu = espirituService.recuperar(id)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontro el id de la espiritu"));
+                .orElseThrow(()->new EntidadInexistenteException("No se encontro el id de la espiritu"));
         espirituService.eliminar(id);
         return ResponseEntity.accepted().build();
     }
@@ -65,9 +58,6 @@ public final class EspirituControllerREST {
 
     @GetMapping("/demonios")
     public Set<EspirituDTOResponse> getEspiritusDemoniacos(@RequestParam Sort.Direction direccion, @RequestParam int pagina, @RequestParam int cantidadPorPagina) {
-//        if (pagina < 0) throw new invalidPathParameters("El número de página debe ser 0 o mayor.",HttpStatus.BAD_REQUEST);
-//        if (cantidadPorPagina <= 0) throw new invalidPathParameters("La cantidad por página debe ser positiva y mayor a 0.",HttpStatus.BAD_REQUEST);
-        // Error capturado desde el handler
         return espirituService.espiritusDemoniacos(direccion, pagina, cantidadPorPagina).stream()
                 .map(EspirituDTOResponse::desdeModelo) // TODO mantenemos algún tipo de default value o no?
                 .collect(Collectors.toSet());
@@ -75,41 +65,36 @@ public final class EspirituControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<EspirituDTOResponse> getEspirituById(@PathVariable Long id) {
-        Optional<Espiritu> optionalEspiritu = espirituService.recuperar(id);
+        Espiritu espiritu = espirituService.recuperar(id).orElseThrow(() -> new EntidadInexistenteException
+                ("Espíritu de id " + id + " no encontrado"));
 
-        if (optionalEspiritu.isEmpty())
-            throw new ResponseStatusException
-                    (HttpStatus.NOT_FOUND, "Espíritu de id " + id + " no encontrado"); //TODO quizas podes hacer que el services tire un error si el id no existe y sacamos esta logica de aca
-
-        return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(optionalEspiritu.get()));
+        return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu));
     }
 
     @PostMapping
     public ResponseEntity<EspirituDTOResponse> createEspiritu(@RequestBody EspirituDTORequest espirituDTO) {
-        // TIPO
-//        if (!TipoEspiritu.esTipoValido(espirituDTO.tipo().name())) {
-//            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "Tipo erróneo: " + espirituDTO.tipo()); // TODO creo que no se puede hacer esto, porque directamente sale Bad Request por parte de Spring
-//        }// esta capturado con el tipo de error HttpMessageNotReadableException, //TODO ver si podemos capturar un error mas bajo
 
-        // NIVEL DE CONEXIÓN
-//        if (espirituDTO.nivelDeConexion() > 100 || espirituDTO.nivelDeConexion() < 0) throw new ResponseStatusException
-//                (HttpStatus.BAD_REQUEST, "Valor inválido de nivel de conexión (debe estar entre 0 y 100 inclusive): " + espirituDTO.nivelDeConexion());
-// Lo saco ya que desde el service no da error, siempre se genera con 100 como maximo, si diera error lo handelamos desde el handler
+        // TODO ojo con NivelDeConexión porque si se pasa para arriba o para abajo del valor válido, lo defaultea en el máximo o mínimo respectivamente
+        // preguntar al profe si está bien esto, o si tiramos excepción. Lo mismo puede ir para otros errores.
 
-        // UBICACIÓN
-        Optional<Ubicacion> ubicacionOptional = ubicacionService.recuperar(espirituDTO.ubicacionId());
-        if (ubicacionOptional.isEmpty()) throw new ResponseStatusException
-                (HttpStatus.NOT_FOUND, "Ubicación no encontrada: " + espirituDTO.ubicacionId()); //TODO quizas podes hacer que el services tire un error si el id no existe y sacamos esta logica de aca
+        Ubicacion ubicacion = ubicacionService.recuperar(espirituDTO.ubicacionId())
+                .orElseThrow(() -> new EntidadInexistenteException
+                        ("Ubicación no encontrada: " + espirituDTO.ubicacionId()));
 
-        // NOMBRE
-//        if (espirituService.existeConNombre(espirituDTO.nombre())) throw new ResponseStatusException
-//                (HttpStatus.CONFLICT, "Nombre ya existente: " + espirituDTO.nombre());
-        // Lo pase a service la logica y tiro un IllegalArgumentException si existe el nombre
-
-        Espiritu espirituModelo = espirituDTO.aModelo(ubicacionOptional.get());
+        Espiritu espirituModelo = espirituDTO.aModelo(2L, ubicacion);
         Espiritu espirituCreado = espirituService.crear(espirituModelo);
         return ResponseEntity
                 .status(201)
                 .body(EspirituDTOResponse.desdeModelo(espirituCreado));
+    }
+
+    @PatchMapping("/{id}/conectar/{mediumId}")
+    public ResponseEntity<EspirituDTOResponse> conectar(@PathVariable Long id, @PathVariable Long mediumId) {
+        Espiritu espiritu = espirituService.recuperar(id).orElseThrow(() -> new EntidadInexistenteException
+                ("Espíritu de id " + id + " no encontrado"));
+
+        espirituService.conectar(id, mediumId);
+        Espiritu espirituConectado = espirituService.recuperar(id).get();
+        return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espirituConectado));
     }
 }

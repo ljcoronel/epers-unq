@@ -16,5 +16,5 @@ public interface EspirituService {
     void eliminar(Long espirituId);
     List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina);
     Medium conectar(Long espirituId, Long mediumId);
-    boolean existeConNombre(String nombre);
+    boolean existeConNombre(Espiritu espiritu);
 }

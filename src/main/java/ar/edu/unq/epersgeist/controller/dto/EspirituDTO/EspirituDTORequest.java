@@ -1,11 +1,7 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 
-import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 
 public record EspirituDTORequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionId) {
@@ -19,9 +15,17 @@ public record EspirituDTORequest(TipoEspiritu tipo, String nombre, int nivelDeCo
         );
     }
 
-    public Espiritu aModelo(Ubicacion ubicacion) {
+    public Espiritu aModelo(Long id, Ubicacion ubicacion) {
+        Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacion);
+        espiritu.setId(id);
+        return espiritu;
+    }
 
-        return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacion);
+    public Espiritu AActualizado(Ubicacion ubicacion, Espiritu espiritu) {
+        espiritu.setNombre(this.nombre);
+        espiritu.setNivelDeConexion(this.nivelDeConexion);
+        espiritu.setUbicacion(ubicacion);
+        return espiritu;
     }
 
 }

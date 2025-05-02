@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -85,8 +87,8 @@ public class EspirituServiceImplTest {
         ubicacionService.crear(quilmes);
         Demonio demonioSinNombre = new Demonio(10, "", quilmes);
         Angel angelSinNombre = new Angel(10, "", quilmes);
-        assertThrows(IllegalArgumentException.class, () -> espirituService.crear(angelSinNombre));
-        assertThrows(IllegalArgumentException.class, () -> espirituService.crear(demonioSinNombre));
+        assertThrows(ParametroIncorrectoException.class, () -> espirituService.crear(angelSinNombre));
+        assertThrows(ParametroIncorrectoException.class, () -> espirituService.crear(demonioSinNombre));
     }
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
@@ -260,7 +262,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
 
-        assertThrows(NoSuchElementException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             espirituService.conectar(angel1.getId(), -1L);
         });
     }
@@ -334,21 +336,21 @@ public class EspirituServiceImplTest {
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, -1, 3));
+        assertThrows(ParametroIncorrectoException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, -1, 3));
 
     }
 
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsanValoresNegativosParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, -1));
+        assertThrows(ParametroIncorrectoException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, -1));
 
     }
 
     @Test
     void alRecuperarATodosLosDemoniosSiSeUsa0ParaCantidadPorPáginaDebeFallar() {
 
-        assertThrows(IllegalArgumentException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 0));
+        assertThrows(ParametroIncorrectoException.class, () -> espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 0));
 
     }
 
