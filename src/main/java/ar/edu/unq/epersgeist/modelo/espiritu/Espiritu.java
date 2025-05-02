@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -31,11 +32,12 @@ public abstract class Espiritu implements Serializable {
     @Column(nullable = false)
     @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(nullable = false, unique = true, length = 50) @NotEmpty
+    @Column(unique = true, length = 50, nullable = false)
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.LAZY) @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Ubicacion ubicacion;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {

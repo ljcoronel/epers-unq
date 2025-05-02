@@ -25,13 +25,13 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     List<Espiritu> espiritusEn(@Param("unaUbicacion") Long ubicacionId);
 
     @Query(
-            "select count(e) > 0 from Espiritu e where e.nombre = :otroNombre and e.id != :otroId"
+            "select count(e) > 0 from Espiritu e where e.nombre = :otroNombre and (e.id != :otroId or e.id is not null)"
     )
     boolean espirituConNombre(@Param("otroNombre") String nombre, @Param("otroId") Long id);
 
     @Modifying
     @Query(
-            "update Espiritu e set e.nombre=:nombre, e.nivelDeConexion=:nivelDeConexion, where e.id = :id"
+            "update Espiritu e set e.nombre=:nombre, e.nivelDeConexion=:nivelDeConexion where e.id = :id"
     )
     void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 }

@@ -2,10 +2,12 @@ package ar.edu.unq.epersgeist.controller;
 
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOPostRequest;
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +20,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/espiritu")
 public final class EspirituControllerREST {
     private final EspirituService espirituService;
-    private final UbicacionService ubicacionService;
 
     public EspirituControllerREST(EspirituService espirituService, UbicacionService ubicacionService ) {
         this.espirituService = espirituService;
-        this.ubicacionService = ubicacionService;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTOPostRequest espirituDTORequest) {
-        //TODO dejamos DTOs que no usan ciertos parámetros, o hacemos otro DTO?
+    public ResponseEntity<EspirituDTOResponse> actualizarEspiritu(@PathVariable Long id, @RequestBody EspirituDTOPutRequest espirituDTOPutRequest) {
 
-        Espiritu espiritu = espirituDTORequest.aModeloId(id);
+        Espiritu espiritu = espirituDTOPutRequest.aModeloId(id);
 
         espirituService.actualizar(espiritu);
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu));
@@ -53,7 +52,7 @@ public final class EspirituControllerREST {
     @GetMapping("/demonios")
     public Set<EspirituDTOResponse> getEspiritusDemoniacos(@RequestParam Sort.Direction direccion, @RequestParam int pagina, @RequestParam int cantidadPorPagina) {
         return espirituService.espiritusDemoniacos(direccion, pagina, cantidadPorPagina).stream()
-                .map(EspirituDTOResponse::desdeModelo) // TODO mantenemos algún tipo de default value o no?
+                .map(EspirituDTOResponse::desdeModelo)
                 .collect(Collectors.toSet());
     }
 

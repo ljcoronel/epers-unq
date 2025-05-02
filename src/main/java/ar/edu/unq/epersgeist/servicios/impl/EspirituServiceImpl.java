@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -14,18 +13,13 @@ import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.caseSensitive;
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Getter
 @Service
@@ -46,18 +40,17 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Espiritu crear(Espiritu espiritu) {
 
+        verificarNombreRepetido(espiritu);
+
         Ubicacion ubicacion = ubicacionDao.findById(espiritu.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
         espiritu.setUbicacion(ubicacion);
-
-        verificarNombreValido(espiritu);
 
         return getEspirituDao().save(espiritu);
 
     }
 
-    private void verificarNombreValido(Espiritu espiritu) {
-        if (espiritu.getNombre().isEmpty()) throw new ParametroIncorrectoException("El espíritu debe tener un nombre.");
+    private void verificarNombreRepetido(Espiritu espiritu) {
         if (this.existeConNombre(espiritu)) throw new NombreRepetidoException("Ya existe un espíritu con el nombre: " + espiritu.getNombre());
     }
 
@@ -75,7 +68,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void actualizar(Espiritu espiritu) {
 
-        verificarNombreValido(espiritu);
+        verificarNombreRepetido(espiritu);
 
         getEspirituDao().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
     }
