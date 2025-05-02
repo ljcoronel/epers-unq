@@ -4,35 +4,36 @@ import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({InvalidFieldsException.class , NullRequiredFieldsException.class})
-    public ResponseEntity<Map<String,String>> handleBadRequest(RuntimeException e ){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+    public String handleBadRequest(RuntimeException e ){
+        return e.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<Map<String,String>> recursoNoEncontradoException(RecursoNoEncontradoException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    public String recursoNoEncontradoException(RecursoNoEncontradoException e){
+        return e.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ExorcistaSinAngelesException.class)
-    public ResponseEntity<Map<String,String>> ExorcistaSinAngelesException(ExorcistaSinAngelesException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    public String ExorcistaSinAngelesException(ExorcistaSinAngelesException e){
+        return e.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EspirituLibreException.class)
-    public ResponseEntity<Map<String,String>> EspirituLibreException(EspirituLibreException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    String EspirituLibreException(EspirituLibreException e){
+        return e.getMessage();
     }
 
 }

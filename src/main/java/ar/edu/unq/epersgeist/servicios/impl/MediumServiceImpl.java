@@ -1,9 +1,11 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import org.springframework.stereotype.Service;
@@ -20,15 +22,23 @@ public class MediumServiceImpl implements MediumService {
 
     private final MediumDAO mediumDao;
     private final EspirituDAO espirituDao;
+    private final UbicacionDAO ubicacionDao;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao) {
+    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao,UbicacionDAO ubicacionDao) {
         this.mediumDao = mediumDao;
         this.espirituDao = espirituDao;
+        this.ubicacionDao = ubicacionDao;
     }
 
     @Override
     public Medium crear(Medium medium) {
+
+        Ubicacion ubicacion =  ubicacionDao.findById(medium.getUbicacion().getId())
+                .orElseThrow(()-> new RecursoNoEncontradoException("Ubicacion", medium.getUbicacion().getId()));
+
+        medium.setUbicacion(ubicacion);
+
         return mediumDao.save(medium);
 
     }
@@ -48,6 +58,16 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public  Medium actualizar(Medium updateMedium) {
+
+        Long mediumId = updateMedium.getId();
+
+        Medium mediumOriginal = mediumDao.findById(mediumId).orElseThrow(()-> new RecursoNoEncontradoException("Medium", mediumId));
+
+        updateMedium.setId(mediumOriginal.getId());
+        updateMedium.setAngeles(mediumOriginal.getAngeles());
+        updateMedium.setDemonios(mediumOriginal.getDemonios());
+        updateMedium.setUbicacion(mediumOriginal.getUbicacion());
+
         return mediumDao.save(updateMedium);
     }
 
@@ -63,7 +83,7 @@ public class MediumServiceImpl implements MediumService {
 
         Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
-        if (optionalMedium.isEmpty()) return;
+        if (optionalMedium.isEmpty()) throw new RecursoNoEncontradoException("Medium", mediumId);
 
         Medium medium = optionalMedium.get();
         medium.descansar();
@@ -78,8 +98,8 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
         Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
 
-        if (optionalExorcista.isEmpty()) return ;
-        if (optionalPoseido.isEmpty()) return ;
+        if (optionalExorcista.isEmpty()) throw new RecursoNoEncontradoException("Medium", idMediumExorcista);
+        if (optionalPoseido.isEmpty()) throw new RecursoNoEncontradoException("Medium", idMediumAExorcisar);
 
         Medium exorcista = optionalExorcista.get();
         Medium exorcizado = optionalPoseido.get();
@@ -97,7 +117,7 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> medium = mediumDao.findById(mediumId);
         List<Espiritu> espiritus = new ArrayList<>();
 
-        if(medium.isEmpty()) {return espiritus;}
+        if(medium.isEmpty()) throw new RecursoNoEncontradoException("Medium", mediumId);
         Medium currentMedium = medium.get();
 
         espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
@@ -110,14 +130,16 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
+
         Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-        if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
-        Espiritu espiritu = optionalEspiritu.get();
-        if (optionalMedium.isEmpty()) return espiritu;
+        if (optionalMedium.isEmpty()) throw new RecursoNoEncontradoException("Medium", espirituId);
+        if (optionalEspiritu.isEmpty()) throw new RecursoNoEncontradoException("Espiritu", espirituId);
 
+        Espiritu espiritu = optionalEspiritu.get();
         Medium medium = optionalMedium.get();
+
         medium.invocar(espiritu);
 
         mediumDao.save(medium);

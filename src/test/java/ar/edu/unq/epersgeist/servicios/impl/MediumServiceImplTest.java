@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
+import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -176,7 +177,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
-        assertDoesNotThrow( () -> {
+        assertThrows(RecursoNoEncontradoException.class, () -> {
             mediumService.descansar(-1L);
         });
     }
@@ -209,11 +210,11 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveUnaListaVacia(){
+    void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveUnaExepcion(){
 
-        List<Espiritu> espiritus = mediumService.espiritus(693L);
-
-        assertTrue(espiritus.isEmpty());
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.espiritus(-1L);
+        });
     }
 
     @Test
@@ -334,7 +335,7 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaExorcizarAUnMediumQueNoFuePersistidoYNoHaceNada(){
+    void seIntentaExorcizarAUnMediumQueNoFuePersistidoYLanzaUnaExepcion(){
 
         mediumService.crear(medium);
         espirituService.crear(angelDebil);
@@ -343,7 +344,9 @@ public class MediumServiceImplTest {
 
         Integer angelDebilNivelDeConex = angelDebil.getNivelDeConexion();
 
-        mediumService.exorcisar(medium.getId(),-1L);
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.exorcisar(medium.getId(),-1L);
+        });
 
         assertEquals(angelDebilNivelDeConex, angelDebil.getNivelDeConexion());
     }
@@ -358,7 +361,9 @@ public class MediumServiceImplTest {
 
         Integer demonioDebilNivelDeConex = demonioDebil.getNivelDeConexion();
 
-        mediumService.exorcisar(-1L,medium2.getId());
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.exorcisar(-1L,medium2.getId());
+        });
 
         assertEquals(demonioDebilNivelDeConex, demonioDebil.getNivelDeConexion());
     }
