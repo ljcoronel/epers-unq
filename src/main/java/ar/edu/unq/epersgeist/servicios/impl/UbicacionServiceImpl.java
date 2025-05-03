@@ -3,12 +3,12 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.NombreDeUbicacionRepetido;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionConMismoNombreException;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionNoEncontradaException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,25 +31,26 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        try {
-            return this.ubicacionDAO.save(ubicacion);
-        } catch (DataIntegrityViolationException e) { //TODO hacer menos genérico, puede atrapar otros errores que no sean repetir nombre
-            throw new NombreDeUbicacionRepetido(ubicacion.getNombre());
-        }
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre())) throw new UbicacionConMismoNombreException();
+        return this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
+        if (this.ubicacionDAO.findById(id).isEmpty()) throw new UbicacionNoEncontradaException();
         return this.ubicacionDAO.findById(id);
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacionUno) {
-        this.ubicacionDAO.save(ubicacionUno);
+    public void actualizar(Ubicacion ubicacion) {
+        if (this.ubicacionDAO.findById(ubicacion.getId()).isEmpty()) throw new UbicacionNoEncontradaException();
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre())) throw new UbicacionConMismoNombreException();
+        this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public void eliminar(Long id) {
+        if (this.ubicacionDAO.findById(id).isEmpty()) throw new UbicacionNoEncontradaException();
         this.ubicacionDAO.deleteById(id);
     }
 
@@ -60,11 +61,13 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
+        if (this.ubicacionDAO.findById(ubicacionId).isEmpty()) throw new UbicacionNoEncontradaException();
         return this.espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
+        if (this.ubicacionDAO.findById(ubicacionId).isEmpty()) throw new UbicacionNoEncontradaException();
         return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 }
