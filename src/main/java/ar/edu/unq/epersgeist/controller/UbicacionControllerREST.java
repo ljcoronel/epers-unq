@@ -45,9 +45,9 @@ public final class UbicacionControllerREST {
     @PutMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTORequest ubicacionRequest) {
         Ubicacion ubicacion = ubicacionRequest.aModelo(id);
-        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.ok(null);
+
         this.ubicacionService.actualizar(ubicacion);
-        return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
