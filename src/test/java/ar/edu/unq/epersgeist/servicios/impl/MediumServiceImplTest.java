@@ -179,10 +179,13 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExcepcion(){
-        assertThrows(EntidadInexistenteException.class, () -> {
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
+        assertDoesNotThrow( () -> {
             mediumService.descansar(-1L);
         });
+
+
+
     }
 
     @Test
@@ -213,11 +216,10 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveUnaExepcion(){
+    void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveNull(){
 
-        assertThrows(EntidadInexistenteException.class, () -> {
-            mediumService.espiritus(-1L);
-        });
+        assertEquals(null,mediumService.espiritus(-1L));
+
     }
 
     @Test
@@ -364,7 +366,7 @@ public class MediumServiceImplTest {
 
         Integer demonioDebilNivelDeConex = demonioDebil.getNivelDeConexion();
 
-        assertThrows(EntidadInexistenteException.class, () -> {
+        assertDoesNotThrow( () -> {
             mediumService.exorcisar(-1L,medium2.getId());
         });
 

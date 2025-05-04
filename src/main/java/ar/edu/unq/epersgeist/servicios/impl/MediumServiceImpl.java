@@ -82,7 +82,7 @@ public class MediumServiceImpl implements MediumService {
 
         Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
-        if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium no existe");
+        if (optionalMedium.isEmpty()) return;
 
         Medium medium = optionalMedium.get();
         medium.descansar();
@@ -97,7 +97,7 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
         Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
 
-        if (optionalExorcista.isEmpty()) throw new EntidadInexistenteException("el Medium exorcista no existe");
+        if (optionalExorcista.isEmpty()) return;
 
         Medium exorcista = optionalExorcista.get();
 
@@ -116,7 +116,7 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> medium = mediumDao.findById(mediumId);
         List<Espiritu> espiritus = new ArrayList<>();
 
-        if(medium.isEmpty()) throw new EntidadInexistenteException("el Medium al que se le pide los espiritus no existe");
+        if(medium.isEmpty()) return null;
         Medium currentMedium = medium.get();
 
         espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());

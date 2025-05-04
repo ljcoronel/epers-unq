@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntidadInexistenteException.class)
-    public DTOResponseError entidadInexistente(EntidadInexistenteException eie) {
-        return new DTOResponseError( eie.getMessage());
+    public DTOResponseError entidadInexistente(EntidadInexistenteException e) {
+        return new DTOResponseError( e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EspirituLibreException.class)
-    public DTOResponseError espirituLibre(EspirituLibreException ele) {
-        return new DTOResponseError( ele.getMessage());
+    public DTOResponseError espirituLibre(EspirituLibreException e) {
+        return new DTOResponseError( e.getMessage());
     }
 
 }
