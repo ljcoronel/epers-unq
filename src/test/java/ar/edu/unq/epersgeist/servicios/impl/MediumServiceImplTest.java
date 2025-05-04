@@ -142,8 +142,11 @@ public class MediumServiceImplTest {
 
     @Test
     void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
+        medium.setId(-1L);
 
-        assertDoesNotThrow(() -> mediumService.actualizar(medium));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            mediumService.actualizar(medium);
+        });
     }
 
 
@@ -176,7 +179,7 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExcepcion(){
         assertThrows(RecursoNoEncontradoException.class, () -> {
             mediumService.descansar(-1L);
         });

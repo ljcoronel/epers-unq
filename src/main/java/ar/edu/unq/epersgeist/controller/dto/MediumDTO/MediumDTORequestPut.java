@@ -5,14 +5,6 @@ import ar.edu.unq.epersgeist.modelo.Ubicacion;
 
 public record MediumDTORequestPut(String nombre, int manaMax, int mana) {
 
-    public static MediumDTORequestPut desdeModelo(Medium medium) {
-        return new MediumDTORequestPut(
-                medium.getNombre(),
-                medium.getManaMax(),
-                medium.getMana()
-        );
-    }
-
     public Medium aModelo(Long id) {
         Ubicacion ubicacionPlaceholder = new Ubicacion("Placeholder");
 

@@ -2,11 +2,10 @@ package ar.edu.unq.epersgeist.controller;
 
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
-import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPost;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPut;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
@@ -45,29 +44,29 @@ public class MediumControllerREST {
     }
 
     @GetMapping
-    public ResponseEntity<List<MediumDTO>> getAllMediums(){
+    public ResponseEntity<List<MediumDTOResponse>> getAllMediums(){
         return ResponseEntity.ok(
                 mediumService.recuperarTodos().stream()
-                        .map(MediumDTO::desdeModelo)
+                        .map(MediumDTOResponse::desdeModelo)
                         .collect(Collectors.toList())
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MediumDTO> getMediumById(@PathVariable Long id) {
+    public ResponseEntity<MediumDTOResponse> getMediumById(@PathVariable Long id) {
         Medium Medium = mediumService.recuperar(id).orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
 
-        return ResponseEntity.ok(MediumDTO.desdeModelo(Medium));
+        return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(Medium));
     }
 
-    @PutMapping("/{id}")//REVISAR METODO
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> actualizarMedium(@PathVariable Long id, @RequestBody MediumDTORequestPut mediumDTORequest){
 
         Medium mediumModelo = mediumDTORequest.aModelo(id);
 
         mediumService.actualizar(mediumModelo);
 
-        return ResponseEntity.ok( new ResponseMessage("Medium actualizado ", 200));
+        return ResponseEntity.ok().body(new ResponseMessage("Medium actualizado ", 200));
     }
 
     @DeleteMapping("/{id}")
@@ -77,7 +76,7 @@ public class MediumControllerREST {
 
         mediumService.eliminar(id);
 
-        return ResponseEntity.ok( new ResponseMessage("Medium eliminado ", 200));
+        return ResponseEntity.ok().body(new ResponseMessage("Medium eliminado ", 200));
     }
 
 
@@ -86,7 +85,7 @@ public class MediumControllerREST {
 
         mediumService.descansar(id);
 
-        return ResponseEntity.ok( new ResponseMessage("descanso realizado ", 200));
+        return ResponseEntity.ok().body(new ResponseMessage("descanso realizado ", 200));
     }
 
     @PatchMapping("/{mediumExorcistaId}/exorcisar/{mediumPoseidoId}")
@@ -94,7 +93,7 @@ public class MediumControllerREST {
 
         mediumService.exorcisar(mediumExorcistaId,mediumPoseidoId);
 
-        return ResponseEntity.ok( new ResponseMessage("exorcismo realizado ", 200));
+        return ResponseEntity.ok().body( new ResponseMessage("exorcismo realizado ", 200));
     }
 
     @PatchMapping("/{mediumId}/espiritus")
@@ -102,7 +101,7 @@ public class MediumControllerREST {
 
         List<Espiritu> espiritus = mediumService.espiritus(mediumId);
 
-        return ResponseEntity.ok(espiritus.stream().map(EspirituDTO::desdeModelo).collect(Collectors.toSet()));
+        return ResponseEntity.ok().body(espiritus.stream().map(EspirituDTO::desdeModelo).collect(Collectors.toSet()));
     }
 
     @PatchMapping("/{mediumId}/invocar/{espirituId}")
@@ -111,6 +110,6 @@ public class MediumControllerREST {
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 
-        return ResponseEntity.ok(EspirituDTO.desdeModelo(espiritu));
+        return ResponseEntity.ok().body(EspirituDTO.desdeModelo(espiritu));
     }
 }
