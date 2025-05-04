@@ -6,15 +6,6 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
 public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionId) {
 
-    public static EspirituDTOPostRequest desdeModelo(Espiritu espiritu) {
-        return new EspirituDTOPostRequest(
-                TipoEspiritu.getValueOfEspiritu(espiritu),
-                espiritu.getNombre(),
-                espiritu.getNivelDeConexion(),
-                espiritu.getUbicacion().getId()
-        );
-    }
-
     public Espiritu aModelo() {
         Ubicacion ubicacionPlaceholder = new Ubicacion("Placeholder");
         ubicacionPlaceholder.setId(this.ubicacionId);

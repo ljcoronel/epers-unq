@@ -56,6 +56,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
+        // si tiro un error acá cuando no existe... para qué uso Optional?
         return getEspirituDao().findById(espirituId);
     }
 
@@ -108,7 +109,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public boolean existeConNombre(Espiritu espiritu) {
-        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId()); // TODO preguntar si se debe devolver true o false, o si así es suficiente
+        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
 
 }

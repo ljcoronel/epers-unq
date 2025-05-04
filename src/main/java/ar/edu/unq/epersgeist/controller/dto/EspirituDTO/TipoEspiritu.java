@@ -11,29 +11,25 @@ import java.util.stream.Collectors;
 public enum TipoEspiritu {
     ANGEL {
         @Override
-        public <T extends Espiritu> T getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion){
-            return (T) new Angel(nivelDeConexion, nombre, ubicacion); //TODO check
+        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion){
+            return new Angel(nivelDeConexion, nombre, ubicacion);
         }
 
     },
     DEMONIO {
         @Override
-        public <T extends Espiritu> T getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion){
-            return (T) new Demonio(nivelDeConexion, nombre, ubicacion); //TODO check
+        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion){
+            return new Demonio(nivelDeConexion, nombre, ubicacion);
         }
 
 
     };
 
-    public static boolean esTipoValido(String tipo) {
-        return Arrays.stream(TipoEspiritu.values()).anyMatch(t -> t.name().equals(tipo));
-    }
-
     public static String getNombreTipos() {
         return " | " + Arrays.stream(values()).map(tipo -> tipo.toString() + " | ").collect(Collectors.joining());
     }
 
-    public abstract <T extends Espiritu> T getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion);
+    public abstract Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion);
 
     public static TipoEspiritu getValueOfEspiritu(Espiritu espiritu) {
         return switch(espiritu.getClass().getSimpleName()) {

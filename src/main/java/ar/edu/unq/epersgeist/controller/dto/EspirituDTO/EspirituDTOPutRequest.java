@@ -1,34 +1,20 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
 
-public record EspirituDTOPutRequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionId) {
-
-    public static EspirituDTOPutRequest desdeModelo(Espiritu espiritu) {
-        return new EspirituDTOPutRequest(
-                TipoEspiritu.getValueOfEspiritu(espiritu),
-                espiritu.getNombre(),
-                espiritu.getNivelDeConexion(),
-                espiritu.getUbicacion().getId()
-        );
-    }
+public record EspirituDTOPutRequest(String nombre, int nivelDeConexion) {
 
     public Espiritu aModeloId(Long id) {
-        Ubicacion ubicacionPlaceholder = new Ubicacion("Placeholder");
-        ubicacionPlaceholder.setId(this.ubicacionId);
 
-        Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacionPlaceholder);
+//        Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacionPlaceholder);
+        Espiritu espiritu = new Angel(this.nivelDeConexion, this.nombre);
+        // un placeholder, el tipo es irrelevante porque no se puede modificar
+
         espiritu.setId(id);
-        return espiritu;
-    }
-
-    public Espiritu aModelo() {
-        Ubicacion ubicacionPlaceholder = new Ubicacion("Placeholder");
-        ubicacionPlaceholder.setId(this.ubicacionId);
-
-        Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacionPlaceholder);
         return espiritu;
     }
 

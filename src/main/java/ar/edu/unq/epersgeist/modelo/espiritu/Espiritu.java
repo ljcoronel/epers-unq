@@ -54,9 +54,7 @@ public abstract class Espiritu implements Serializable {
         this.ubicacion = ubicacion;
     }
 
-    public Espiritu(String nombre, int nivelDeConexion) {
-
-        this.setNivelDeConexion(0); //default es 0
+    public Espiritu(int nivelDeConexion, String nombre) {
         this.nombre = nombre;
         this.nivelDeConexion = nivelDeConexion;
     }

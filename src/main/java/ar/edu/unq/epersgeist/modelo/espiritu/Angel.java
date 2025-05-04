@@ -13,15 +13,17 @@ import lombok.ToString;
 
 @Entity
 public class Angel extends Espiritu {
-    public Angel(String nombre, Ubicacion ubicacion) {
-        super(nombre, ubicacion);
-    }
+//    public Angel(String nombre, Ubicacion ubicacion) {
+//        super(nombre, ubicacion);
+//    }
 
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);
     }
 
-
+    public Angel(int nivelDeConexion, String nombre) {
+        super(nivelDeConexion, nombre);
+    }
 
     public void atacar(Demonio demonio) {
 
