@@ -1,5 +1,6 @@
-package ar.edu.unq.epersgeist.controller;
+package ar.edu.unq.epersgeist.controller.exception;
 
+import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,9 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(RecursoNoEncontradoException.class)
-    public Map<String, String> recursoNoEncontradoException(RecursoNoEncontradoException e){
-        return Map.of("error", e.getMessage());
+    @ExceptionHandler(EntidadInexistenteException.class)
+    public DTOResponseError entidadInexistente(EntidadInexistenteException eie) {
+        return new DTOResponseError( eie.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -29,8 +30,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EspirituLibreException.class)
-    public Map<String, String> EspirituLibreException(EspirituLibreException e){
-        return Map.of("error", e.getMessage());
+    public DTOResponseError espirituLibre(EspirituLibreException ele) {
+        return new DTOResponseError( ele.getMessage());
     }
 
 }

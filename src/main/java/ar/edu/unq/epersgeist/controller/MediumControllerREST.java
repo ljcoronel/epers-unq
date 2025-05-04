@@ -5,16 +5,15 @@ import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPost;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPut;
+import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
-import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
-import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,25 +21,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/medium")
 public class MediumControllerREST {
     private final MediumService mediumService;
-    private final UbicacionService ubicacionService;
-    private final EspirituService espirituService;
 
-    public MediumControllerREST(MediumService mediumService, UbicacionService ubicacionService,EspirituService espirituService){
+    public MediumControllerREST(MediumService mediumService){
 
         this.mediumService = mediumService;
-        this.ubicacionService = ubicacionService;
-        this.espirituService = espirituService;
 
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMessage> crearMedium(@RequestBody MediumDTORequestPost mediumDTO) {
+    public ResponseEntity<MediumDTOResponse> crearMedium(@RequestBody MediumDTORequestPost mediumDTO) {
 
         Medium mediumModelo = mediumDTO.aModelo();
 
-        mediumService.crear(mediumModelo);
+        Medium medium = mediumService.crear(mediumModelo);
 
-        return ResponseEntity.status(201).body( new ResponseMessage("Medium creado: " + mediumModelo.getNombre(), 201));
+        return ResponseEntity.status(201).body(MediumDTOResponse.desdeModelo(medium));
     }
 
     @GetMapping
@@ -54,46 +49,46 @@ public class MediumControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<MediumDTOResponse> getMediumById(@PathVariable Long id) {
-        Medium Medium = mediumService.recuperar(id).orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
+        Optional <Medium> medium = mediumService.recuperar(id);
 
-        return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(Medium));
+        if(medium.isEmpty()) return ResponseEntity.ok().body(null);
+
+        return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium.get()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessage> actualizarMedium(@PathVariable Long id, @RequestBody MediumDTORequestPut mediumDTORequest){
+    public ResponseEntity<DTOResponseError> actualizarMedium(@PathVariable Long id, @RequestBody MediumDTORequestPut mediumDTORequest){
 
         Medium mediumModelo = mediumDTORequest.aModelo(id);
 
         mediumService.actualizar(mediumModelo);
 
-        return ResponseEntity.ok().body(new ResponseMessage("Medium actualizado ", 200));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseMessage> eliminarMedium(@PathVariable Long id){
-
-        Medium mediumOriginal = mediumService.recuperar(id).orElseThrow(()-> new RecursoNoEncontradoException("Medium", id));
+    public ResponseEntity<DTOResponseError> eliminarMedium(@PathVariable Long id){
 
         mediumService.eliminar(id);
 
-        return ResponseEntity.ok().body(new ResponseMessage("Medium eliminado ", 200));
+        return ResponseEntity.accepted().build();
     }
 
 
     @PatchMapping("/descansar/{id}")
-    public ResponseEntity<ResponseMessage> descansarMedium(@PathVariable Long id){
+    public ResponseEntity<DTOResponseError> descansarMedium(@PathVariable Long id){
 
         mediumService.descansar(id);
 
-        return ResponseEntity.ok().body(new ResponseMessage("descanso realizado ", 200));
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{mediumExorcistaId}/exorcisar/{mediumPoseidoId}")
-    public ResponseEntity<ResponseMessage> exorcisar(@PathVariable Long mediumExorcistaId,@PathVariable Long mediumPoseidoId){
+    public ResponseEntity<DTOResponseError> exorcisar(@PathVariable Long mediumExorcistaId, @PathVariable Long mediumPoseidoId){
 
         mediumService.exorcisar(mediumExorcistaId,mediumPoseidoId);
 
-        return ResponseEntity.ok().body( new ResponseMessage("exorcismo realizado ", 200));
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{mediumId}/espiritus")
@@ -106,7 +101,6 @@ public class MediumControllerREST {
 
     @PatchMapping("/{mediumId}/invocar/{espirituId}")
     public ResponseEntity<EspirituDTO> descansarMedium(@PathVariable Long mediumId,@PathVariable Long espirituId){
-
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 

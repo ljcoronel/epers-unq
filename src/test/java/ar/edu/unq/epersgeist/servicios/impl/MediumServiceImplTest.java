@@ -1,5 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
-import ar.edu.unq.epersgeist.modelo.exception.RecursoNoEncontradoException;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -144,7 +144,7 @@ public class MediumServiceImplTest {
     void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
         medium.setId(-1L);
 
-        assertThrows(RecursoNoEncontradoException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             mediumService.actualizar(medium);
         });
     }
@@ -180,7 +180,7 @@ public class MediumServiceImplTest {
 
     @Test
     void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYLanzaExcepcion(){
-        assertThrows(RecursoNoEncontradoException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             mediumService.descansar(-1L);
         });
     }
@@ -215,7 +215,7 @@ public class MediumServiceImplTest {
     @Test
     void seIntentaRecuperarLosEspiritusDeUnMediumQueNoExiseEntoncesSeDevuelveUnaExepcion(){
 
-        assertThrows(RecursoNoEncontradoException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             mediumService.espiritus(-1L);
         });
     }
@@ -347,7 +347,7 @@ public class MediumServiceImplTest {
 
         Integer angelDebilNivelDeConex = angelDebil.getNivelDeConexion();
 
-        assertThrows(RecursoNoEncontradoException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             mediumService.exorcisar(medium.getId(),-1L);
         });
 
@@ -364,7 +364,7 @@ public class MediumServiceImplTest {
 
         Integer demonioDebilNivelDeConex = demonioDebil.getNivelDeConexion();
 
-        assertThrows(RecursoNoEncontradoException.class, () -> {
+        assertThrows(EntidadInexistenteException.class, () -> {
             mediumService.exorcisar(-1L,medium2.getId());
         });
 

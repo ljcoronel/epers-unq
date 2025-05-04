@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.Check;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString
@@ -95,7 +97,10 @@ public class Medium implements Serializable {
         }
 
     }
-    public void exorcizarA(Medium medium){
+    public void exorcizarA(Optional<Medium> optionalMedium){
+
+        if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium a exorcizar no existe");
+        Medium medium = optionalMedium.get();
 
         this.verificarSiPuedeExorcizar();
 
@@ -128,7 +133,11 @@ public class Medium implements Serializable {
         return (!demonios.isEmpty());
     }
 
-    public void invocar(Espiritu espiritu) {
+    public void invocar(Optional<Espiritu> opcionalEspiritu) {
+
+        if(opcionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe");//CAMBIAR
+
+        Espiritu espiritu = opcionalEspiritu.get();
 
         verificarSiEstaLibre(espiritu);
         if (this.mana >= 10) {
