@@ -31,11 +31,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        try {
-            return this.ubicacionDAO.save(ubicacion);
-        } catch (DataIntegrityViolationException e) { //TODO hacer menos genérico, puede atrapar otros errores que no sean repetir nombre
-            throw new NombreRepetidoException(ubicacion.getNombre());
-        }
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        return this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
@@ -44,8 +41,9 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacionUno) {
-        this.ubicacionDAO.save(ubicacionUno);
+    public void actualizar(Ubicacion ubicacion) {
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        this.ubicacionDAO.actualizar(ubicacion.getId(), ubicacion.getNombre());
     }
 
     @Override

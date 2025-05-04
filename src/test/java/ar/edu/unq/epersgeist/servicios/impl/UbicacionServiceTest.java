@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -107,7 +106,16 @@ public class UbicacionServiceTest {
         this.ubicacionService.crear(this.ubicacionTres);
         this.ubicacionTres.setNombre("Bernal");
 
-        assertThrows(DataIntegrityViolationException.class, () -> this.ubicacionService.actualizar(this.ubicacionTres));
+        assertThrows(NombreRepetidoException.class, () -> this.ubicacionService.actualizar(this.ubicacionTres));
+    }
+
+    @Test
+    public void seIntentaActualizarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesNoSeActualiza() {
+        this.ubicacionUno.setId(1L);
+        this.ubicacionUno.setNombre("Quilmes");
+        this.ubicacionService.actualizar(this.ubicacionUno);
+
+        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
@@ -214,6 +222,20 @@ public class UbicacionServiceTest {
         espiritu.setUbicacion(ubicacion2);
 
         assertNotEquals(espiritu.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
+
+    @Test
+    public void seIntentaObtenerLosEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosYDevuelveUnaListaVacia() {
+        this.ubicacionUno.setId(1L);
+
+        assertTrue(this.ubicacionService.espiritusEn(this.ubicacionUno.getId()).isEmpty());
+    }
+
+    @Test
+    public void seIntentaObtenerLosMediumsSinEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosYDevuelveUnaListaVacia() {
+        this.ubicacionUno.setId(1L);
+
+        assertTrue(this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).isEmpty());
     }
 
     @AfterEach
