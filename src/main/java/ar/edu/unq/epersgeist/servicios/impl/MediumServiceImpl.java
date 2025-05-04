@@ -56,18 +56,9 @@ public class MediumServiceImpl implements MediumService {
     }
 
     @Override
-    public void actualizar(Medium updateMedium) {
+    public void actualizar(Medium medium) {
 
-        Long mediumId = updateMedium.getId();
-
-        Medium mediumOriginal = mediumDao.findById(mediumId).orElseThrow(()-> new EntidadInexistenteException("el Medium a actualizar no existe"));
-
-        updateMedium.setId(mediumOriginal.getId());
-        updateMedium.setAngeles(mediumOriginal.getAngeles());
-        updateMedium.setDemonios(mediumOriginal.getDemonios());
-        updateMedium.setUbicacion(mediumOriginal.getUbicacion());
-
-        mediumDao.save(updateMedium);
+        mediumDao.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override

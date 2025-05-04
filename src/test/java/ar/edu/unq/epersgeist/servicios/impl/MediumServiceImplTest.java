@@ -144,7 +144,7 @@ public class MediumServiceImplTest {
     void seActualizaUnMediumInexistenteYNoSeLanzaNingunaExcepcion() {
         medium.setId(-1L);
 
-        assertThrows(EntidadInexistenteException.class, () -> {
+        assertDoesNotThrow( () -> {
             mediumService.actualizar(medium);
         });
     }
