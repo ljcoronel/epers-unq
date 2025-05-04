@@ -142,6 +142,18 @@ public class EspirituServiceImplTest {
 
 
     @Test
+    void alConectarSiElMediumNoExisteLanzaError(){
+        ubicacionService.crear(this.ubicacion);
+
+        int conexionAngel = 30;
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael", this.ubicacion);
+        espirituService.crear(angelRafael);
+
+        assertThrows(EntidadInexistenteException.class, () -> espirituService.conectar(angelRafael.getId() , -1L));
+
+    }
+
+    @Test
     void alConectarConUnEspirituSeFortaleceElNivelDeConexion20delMedium(){
         ubicacionService.crear(this.ubicacion);
         int manaMedium = 50;
@@ -153,8 +165,8 @@ public class EspirituServiceImplTest {
 
         int conexionBuscada = ((int) Math.round(manaMedium* 0.20) ) + conexionAngel;
         espirituService.conectar(angelRafael.getId() , medium.getId());
-        Optional<Espiritu> AngelRecuperado = espirituService.recuperar(angelRafael.getId());
-        assertEquals(AngelRecuperado.get().getNivelDeConexion(), conexionBuscada );
+        Optional<Espiritu> angelRecuperado = espirituService.recuperar(angelRafael.getId());
+        assertEquals(angelRecuperado.get().getNivelDeConexion(), conexionBuscada );
     }
 
     @Test

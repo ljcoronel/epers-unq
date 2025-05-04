@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
@@ -49,7 +51,7 @@ public class MediumTest {
     @Test
     void alDescansarAumentaSuManaEn15YElNivelDeConexionDeSusEspiritusEn5(){
 
-        angel1.conectarConMedium(medium); // empieza con 60
+        angel1.conectarConMedium(Optional.of(medium)); // empieza con 60
 
         medium.descansar(); // medium empieza con 30 de maná -> 66
 
@@ -98,8 +100,8 @@ public class MediumTest {
         // medium con 30 de maná
         // medium2 con 15
 
-        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
-        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
+        angel1.conectarConMedium(Optional.of(medium)); // 60 de conex + 6 = 66
+        demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
 
         medium.exorcizarA(medium2);
 
@@ -117,8 +119,8 @@ public class MediumTest {
         // medium con 30 de maná
         // medium2 con 15
 
-        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
-        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
+        angel1.conectarConMedium(Optional.of(medium)); // 60 de conex + 6 = 66
+        demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
 
         medium.exorcizarA(medium2);
 
@@ -143,11 +145,11 @@ public class MediumTest {
         // medium con 30 de maná
         // medium2 con 15
 
-        angel1.conectarConMedium(medium); // 60 de conex + 6 = 66
-        angel2.conectarConMedium(medium); // 20 de conex + 6 = 26
+        angel1.conectarConMedium(Optional.of(medium)); // 60 de conex + 6 = 66
+        angel2.conectarConMedium(Optional.of(medium)); // 20 de conex + 6 = 26
 
-        demonio1.conectarConMedium(medium2); // 50 de conex + 3 = 53
-        demonio2.conectarConMedium(medium2); // 0 de conex + 3 = 3
+        demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
+        demonio2.conectarConMedium(Optional.of(medium2)); // 0 de conex + 3 = 3
 
         medium.exorcizarA(medium2);
 
@@ -171,8 +173,8 @@ public class MediumTest {
     @Test
     void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
         Ubicacion ubicacion1 = new Ubicacion("Magical");
-        angel1.conectarConMedium(medium);
-        demonio1.conectarConMedium(medium);
+        angel1.conectarConMedium(Optional.of(medium));
+        demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(ubicacion1);
 
         assertEquals(this.angel1.getUbicacion().getNombre(), ubicacion1.getNombre());

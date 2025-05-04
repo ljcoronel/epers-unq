@@ -56,7 +56,6 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        // si tiro un error acá cuando no existe... para qué uso Optional?
         return getEspirituDao().findById(espirituId);
     }
 
@@ -90,15 +89,16 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
 
-            Medium medium = mediumDao.findById(mediumId)
-                    .orElseThrow(() -> new EntidadInexistenteException("No se encontró al Medium"));
+            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
             Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-            if (optionalEspiritu.isEmpty()) return medium;
+            if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
 
-            espiritu.conectarConMedium(medium);
+            espiritu.conectarConMedium(optionalMedium);
+
+            Medium medium = optionalMedium.get();
 
             mediumDao.save(medium);
 

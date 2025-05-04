@@ -4,6 +4,7 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -118,7 +120,9 @@ public abstract class Espiritu implements Serializable {
         }
     }
 
-    public void conectarConMedium(Medium medium) {
+    public void conectarConMedium(Optional<Medium> optionalMedium) {
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("No se encontró al Médium"));
+
         verificarMediumEnMismaUbicacion(medium);
         verificarEspirituLibre();
 

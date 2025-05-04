@@ -6,8 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 
 
 
-public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTO ubicacion)
-        implements ControllerMessage {
+public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTO ubicacion) {
     public static EspirituDTOResponse desdeModelo(Espiritu espiritu) {
         return new EspirituDTOResponse(
                 espiritu.getId(),

@@ -1,16 +1,10 @@
 package ar.edu.unq.epersgeist.controller;
-
-
-import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.ControllerMessage;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
-import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +19,7 @@ import java.util.stream.Collectors;
 public final class EspirituControllerREST {
     private final EspirituService espirituService;
 
-    public EspirituControllerREST(EspirituService espirituService, UbicacionService ubicacionService ) {
+    public EspirituControllerREST(EspirituService espirituService) {
         this.espirituService = espirituService;
     }
 
@@ -40,11 +34,9 @@ public final class EspirituControllerREST {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<EspirituDTOResponse> eliminarEspiritu(@PathVariable Long id) {
-//        Espiritu espiritu = espirituService.recuperar(id)
-//                .orElseThrow(()->new EntidadInexistenteException("No se encontró el id del espíritu")); // TODO ojo si esto va o no
 
         espirituService.eliminar(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
@@ -62,9 +54,10 @@ public final class EspirituControllerREST {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ControllerMessage> getEspirituById(@PathVariable Long id) {
+    public ResponseEntity<EspirituDTOResponse> getEspirituById(@PathVariable Long id) {
         Optional<Espiritu> espiritu = espirituService.recuperar(id);
-        if (espiritu.isEmpty()) return ResponseEntity.badRequest().body(new DTOResponseError("Espíritu no encontrado de id: " + id));
+
+        if (espiritu.isEmpty()) return ResponseEntity.ok().body(null);
 
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu.get()));
     }
@@ -80,11 +73,8 @@ public final class EspirituControllerREST {
 
     @PatchMapping("/{id}/conectar/{mediumId}")
     public ResponseEntity<MediumDTOResponse> conectar(@PathVariable Long id, @PathVariable Long mediumId) {
-        Espiritu espiritu = espirituService.recuperar(id).orElseThrow(() -> new EntidadInexistenteException
-                ("Espíritu de id " + id + " no encontrado"));
-
         Medium medium = espirituService.conectar(id, mediumId);
 
-        return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium));
+        return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium)); // TODO fijarse que esto devuelva null
     }
 }
