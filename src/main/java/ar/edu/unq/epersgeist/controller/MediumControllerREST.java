@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.controller;
 
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPost;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPut;
@@ -92,18 +92,18 @@ public class MediumControllerREST {
     }
 
     @PatchMapping("/{mediumId}/espiritus")
-    public ResponseEntity<Set<EspirituDTO>> espiritus(@PathVariable Long mediumId){
+    public ResponseEntity<Set<EspirituDTOResponse>> espiritus(@PathVariable Long mediumId){
 
         List<Espiritu> espiritus = mediumService.espiritus(mediumId);
 
-        return ResponseEntity.ok().body(espiritus.stream().map(EspirituDTO::desdeModelo).collect(Collectors.toSet()));
+        return ResponseEntity.ok().body(espiritus.stream().map(EspirituDTOResponse::desdeModelo).collect(Collectors.toSet()));
     }
 
     @PatchMapping("/{mediumId}/invocar/{espirituId}")
-    public ResponseEntity<EspirituDTO> descansarMedium(@PathVariable Long mediumId,@PathVariable Long espirituId){
+    public ResponseEntity<EspirituDTOResponse> descansarMedium(@PathVariable Long mediumId,@PathVariable Long espirituId){
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 
-        return ResponseEntity.ok().body(EspirituDTO.desdeModelo(espiritu));
+        return ResponseEntity.ok().body(EspirituDTOResponse.desdeModelo(espiritu));
     }
 }

@@ -4,9 +4,13 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +18,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
@@ -29,11 +34,12 @@ public abstract class Espiritu implements Serializable {
     @Column(nullable = false)
     @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(unique = true, length = 50, nullable = false)
     private String nombre;
     @ManyToOne
     private Medium medium;
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Ubicacion ubicacion;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
@@ -50,6 +56,11 @@ public abstract class Espiritu implements Serializable {
         this.ubicacion = ubicacion;
     }
 
+    public Espiritu(int nivelDeConexion, String nombre) {
+        this.nombre = nombre;
+        this.nivelDeConexion = nivelDeConexion;
+    }
+
 
     public void aumentarNivelDeConexionEn(int cantConexion) {
         this.setNivelDeConexion(this.getNivelDeConexion() + cantConexion);
@@ -60,7 +71,7 @@ public abstract class Espiritu implements Serializable {
         setNivelDeConexion(nivel - i);
     }
 
-    private void setNivelDeConexion(int i) {
+    public void setNivelDeConexion(int i) {
         if (i < 0) {
             this.nivelDeConexion = 0;
         } else if (i > 100) {
@@ -109,7 +120,9 @@ public abstract class Espiritu implements Serializable {
         }
     }
 
-    public void conectarConMedium(Medium medium) {
+    public void conectarConMedium(Optional<Medium> optionalMedium) {
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("No se encontró al Médium"));
+
         verificarMediumEnMismaUbicacion(medium);
         verificarEspirituLibre();
 
