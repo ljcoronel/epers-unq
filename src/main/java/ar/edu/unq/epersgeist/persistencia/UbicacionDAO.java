@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
 
-    @Query("select count(u) > 0 from Ubicacion u where u.nombre = :unaUbicacion")
-    boolean existeNombre(@Param("unaUbicacion") String nombre);
+    @Query("select count(u) > 0 from Ubicacion u where u.nombre = :unaUbicacion and (u.id != :unId or :unId is null)")
+    boolean existeNombre(@Param("unaUbicacion") String nombre, @Param("unId") Long unId);
 
     @Modifying
     @Query("update Ubicacion set nombre = :unNombre where id = :unaId")

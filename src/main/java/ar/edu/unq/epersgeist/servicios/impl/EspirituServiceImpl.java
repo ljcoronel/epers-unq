@@ -1,10 +1,15 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Example;
@@ -14,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Getter
@@ -24,17 +28,30 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDao;
     private final MediumDAO mediumDao;
+    private final UbicacionDAO ubicacionDao;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao,MediumDAO mediumDAO) {
+    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionDAO ubicacionDao) {
         this.espirituDao = espirituDao;
         this.mediumDao = mediumDAO;
+        this.ubicacionDao = ubicacionDao;
     }
+
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
 
+        verificarNombreRepetido(espiritu);
+
+        Ubicacion ubicacion = ubicacionDao.findById(espiritu.getUbicacion().getId())
+                .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
+        espiritu.setUbicacion(ubicacion);
+
         return getEspirituDao().save(espiritu);
 
+    }
+
+    private void verificarNombreRepetido(Espiritu espiritu) {
+        if (this.existeConNombre(espiritu)) throw new NombreRepetidoException("Ya existe un espíritu con el nombre: " + espiritu.getNombre());
     }
 
     @Override
@@ -50,8 +67,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void actualizar(Espiritu espiritu) {
-            getEspirituDao().save(espiritu);
 
+        verificarNombreRepetido(espiritu);
+
+        getEspirituDao().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
     }
 
     @Override
@@ -61,8 +80,8 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-        if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
-        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
+        if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
+        if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
 
         return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
     }
@@ -71,15 +90,15 @@ public class EspirituServiceImpl implements EspirituService {
     public Medium conectar(Long espirituId, Long mediumId) {
 
             Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+
             Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-            verificarSiExisteMedium(optionalMedium);
-            Medium medium = optionalMedium.get();
-
-            if (optionalEspiritu.isEmpty()) return medium;
+            if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
 
-            espiritu.conectarConMedium(medium);
+            espiritu.conectarConMedium(optionalMedium);
+
+            Medium medium = optionalMedium.get();
 
             mediumDao.save(medium);
 
@@ -87,10 +106,10 @@ public class EspirituServiceImpl implements EspirituService {
 
     }
 
-        // TODO es esto válido? se vuelve transactional?
-    private void verificarSiExisteMedium(Optional<Medium> medium){
-        if (medium.isEmpty()) {
-            throw new NoSuchElementException("No se encontró al Medium");
-        }
+
+    @Override
+    public boolean existeConNombre(Espiritu espiritu) {
+        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
+
 }

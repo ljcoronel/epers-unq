@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.controller;
 
-import ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import org.springframework.http.ResponseEntity;
@@ -21,23 +21,23 @@ public class MediumControllerREST {
     }
 
     @GetMapping
-    public Set<MediumDTO>getAllMediums(){
+    public Set<MediumDTOResponse>getAllMediums(){
         return mediumService.recuperarTodos().stream()
-                .map(MediumDTO::desdeModelo)
+                .map(MediumDTOResponse::desdeModelo)
                 .collect(Collectors.toSet());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MediumDTO> getMediumById(@PathVariable Long id) {
+    public ResponseEntity<MediumDTOResponse> getMediumById(@PathVariable Long id) {
         Optional<Medium> optionalMedium = mediumService.recuperar(id);
 
         if (optionalMedium.isEmpty()) return ResponseEntity.ok(null);
 
-        return ResponseEntity.ok(MediumDTO.desdeModelo(optionalMedium.get()));
+        return ResponseEntity.ok(MediumDTOResponse.desdeModelo(optionalMedium.get()));
     }
 
     @PostMapping
-    public void createMedium(@RequestBody MediumDTO medium) {
+    public void createMedium(@RequestBody MediumDTOResponse medium) {
 
         mediumService.crear(medium.aModelo());
     }
