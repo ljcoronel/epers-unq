@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionConMismoNombreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionNoEncontradaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -85,10 +84,10 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seIntentaRecuperarUnaUbicacionNoPersistidaEntoncesSeLanzaUnaExcepcion() {
+    public void seIntentaRecuperarUnaUbicacionNoPersistidaYNoDevuelveNada() {
         this.ubicacionUno.setId(1L);
 
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.recuperar(this.ubicacionUno.getId()));
+        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
@@ -111,23 +110,20 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seIntentaActualizarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
+    public void seIntentaActualizarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesNoSeActualiza() {
         this.ubicacionUno.setId(1L);
+        this.ubicacionUno.setNombre("Quilmes");
+        this.ubicacionService.actualizar(this.ubicacionUno);
 
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.actualizar(this.ubicacionUno));
+        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
-    public void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExisteYSeLanzaUnaExcepcionAlIntentarRecuperarla() {
+    public void seEliminaUnaUbicacionPersistidaEnLaBaseDeDatosPorLoQueYaNoExiste() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.eliminar(this.ubicacionUno.getId());
 
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.recuperar(this.ubicacionUno.getId()));
-    }
-
-    @Test
-    public void seIntentaEliminarUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.eliminar(1L));
+        assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
     }
 
     @Test
@@ -227,13 +223,17 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seIntentaObtenerLosEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.espiritusEn(1L));
+    public void seIntentaObtenerLosEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosYDevuelveUnaListaVacia() {
+        this.ubicacionUno.setId(1L);
+
+        assertTrue(this.ubicacionService.espiritusEn(this.ubicacionUno.getId()).isEmpty());
     }
 
     @Test
-    public void seIntentaObtenerLosMediumsSinEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosEntoncesLanzaUnaExcepcion() {
-        assertThrows(UbicacionNoEncontradaException.class, () -> this.ubicacionService.mediumsSinEspiritusEn(1L));
+    public void seIntentaObtenerLosMediumsSinEspiritusDeUnaUbicacionQueNoExisteEnLaBaseDeDatosYDevuelveUnaListaVacia() {
+        this.ubicacionUno.setId(1L);
+
+        assertTrue(this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).isEmpty());
     }
 
     @AfterEach

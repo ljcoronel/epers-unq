@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/ubicacion")
@@ -29,20 +30,22 @@ public final class UbicacionControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> getUbicacionById(@PathVariable Long id) {
+        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.ok(null);
         Ubicacion ubicacion = this.ubicacionService.recuperar(id).get();
         return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
 
     @GetMapping
-    public ResponseEntity<List<UbicacionDTOResponse>> getAllUbicaciones() {
+    public ResponseEntity<Set<UbicacionDTOResponse>> getAllUbicaciones() {
         return ResponseEntity.ok(this.ubicacionService.recuperarTodos().stream()
                 .map(UbicacionDTOResponse::desdeModelo)
-                .toList());
+                .collect(Collectors.toSet()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTORequest ubicacionRequest) {
         Ubicacion ubicacion = ubicacionRequest.aModelo(id);
+        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.ok(null);
         this.ubicacionService.actualizar(ubicacion);
         return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
@@ -54,16 +57,16 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/{id}/espiritus")
-    public ResponseEntity<List<EspirituDTOResponse>> espiritusEnUbicacion(@PathVariable Long id) {
+    public ResponseEntity<Set<EspirituDTOResponse>> espiritusEnUbicacion(@PathVariable Long id) {
         return ResponseEntity.ok(this.ubicacionService.espiritusEn(id).stream()
                 .map(EspirituDTOResponse::desdeModelo)
-                .toList());
+                .collect(Collectors.toSet()));
     }
 
     @GetMapping("/{id}/mediumsSinEspiritus")
-    public ResponseEntity<List<MediumDTOResponse>> mediumsSinEspiritusEnUbicacion(@PathVariable Long id) {
+    public ResponseEntity<Set<MediumDTOResponse>> mediumsSinEspiritusEnUbicacion(@PathVariable Long id) {
         return ResponseEntity.ok(this.ubicacionService.mediumsSinEspiritusEn(id).stream()
                 .map(MediumDTOResponse::desdeModelo)
-                .toList());
+                .collect(Collectors.toSet()));
     }
 }
