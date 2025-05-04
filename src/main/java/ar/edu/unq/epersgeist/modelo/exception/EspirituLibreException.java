@@ -13,6 +13,6 @@ public class EspirituLibreException extends RuntimeException{
 
     @Override
     public String getMessage() {
-        return "El Espiritu [" + espiritu.getNombre() + "] Es libre y no puede conectarse";
+        return "El Espiritu [" + espiritu.getNombre() + "] no es libre y no puede conectarse";
     }
 }

@@ -1,8 +1,11 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import org.springframework.stereotype.Service;
@@ -10,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -19,21 +21,30 @@ public class MediumServiceImpl implements MediumService {
 
     private final MediumDAO mediumDao;
     private final EspirituDAO espirituDao;
+    private final UbicacionDAO ubicacionDao;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao) {
+    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao,UbicacionDAO ubicacionDao) {
         this.mediumDao = mediumDao;
         this.espirituDao = espirituDao;
+        this.ubicacionDao = ubicacionDao;
     }
 
     @Override
     public Medium crear(Medium medium) {
+
+        Ubicacion ubicacion =  ubicacionDao.findById(medium.getUbicacion().getId())
+                .orElseThrow(()-> new EntidadInexistenteException("La Ubicacion no existe"));
+
+        medium.setUbicacion(ubicacion);
+
         return mediumDao.save(medium);
 
     }
 
     @Override
-    public Optional<Medium> recuperar(Long mediumId) {
+    public Optional<Medium> recuperar(Long mediumId) throws EntidadInexistenteException {
+        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
         return mediumDao.findById(mediumId);
     }
@@ -47,7 +58,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void actualizar(Medium medium) {
 
-        mediumDao.save(medium);
+        mediumDao.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override
@@ -77,13 +88,13 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
         Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
 
-        if (optionalExorcista.isEmpty()) return ;
-        if (optionalPoseido.isEmpty()) return ;
+        if (optionalExorcista.isEmpty()) return;
 
         Medium exorcista = optionalExorcista.get();
-        Medium exorcizado = optionalPoseido.get();
 
-        exorcista.exorcizarA(exorcizado);
+        exorcista.exorcizarA(optionalPoseido);
+
+        Medium exorcizado = optionalPoseido.get();
 
         mediumDao.save(exorcista);
         mediumDao.save(exorcizado);
@@ -96,7 +107,7 @@ public class MediumServiceImpl implements MediumService {
         Optional<Medium> medium = mediumDao.findById(mediumId);
         List<Espiritu> espiritus = new ArrayList<>();
 
-        if(medium.isEmpty()) {return espiritus;}
+        if(medium.isEmpty()) return null;
         Medium currentMedium = medium.get();
 
         espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
@@ -109,15 +120,17 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
+
         Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
 
-        if (optionalEspiritu.isEmpty()) throw new NoSuchElementException();
-        Espiritu espiritu = optionalEspiritu.get();
-        if (optionalMedium.isEmpty()) return espiritu;
+        if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
         Medium medium = optionalMedium.get();
-        medium.invocar(espiritu);
+
+        medium.invocar(optionalEspiritu);
+
+        Espiritu espiritu = optionalEspiritu.get();
 
         mediumDao.save(medium);
         espirituDao.save(espiritu);

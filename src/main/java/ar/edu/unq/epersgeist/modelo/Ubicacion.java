@@ -3,7 +3,7 @@ package ar.edu.unq.epersgeist.modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED) @ToString
+@Getter @Setter @NoArgsConstructor(access = AccessLevel.PUBLIC) @ToString
 
 @Entity
 public class Ubicacion {

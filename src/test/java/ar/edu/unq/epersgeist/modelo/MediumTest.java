@@ -103,7 +103,9 @@ public class MediumTest {
         angel1.conectarConMedium(Optional.of(medium)); // 60 de conex + 6 = 66
         demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
 
-        medium.exorcizarA(medium2);
+        Optional<Medium> optionalMedium = Optional.of(medium2);
+
+        medium.exorcizarA(optionalMedium);
 
         assertEquals(20,demonio1.getNivelDeConexion());
         assertEquals(66,angel1.getNivelDeConexion()); // se mantiene
@@ -122,7 +124,9 @@ public class MediumTest {
         angel1.conectarConMedium(Optional.of(medium)); // 60 de conex + 6 = 66
         demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
 
-        medium.exorcizarA(medium2);
+        Optional<Medium> optionalMedium = Optional.of(medium2);
+
+        medium.exorcizarA(optionalMedium);
 
         assertEquals(53,demonio1.getNivelDeConexion());
         assertEquals(61,angel1.getNivelDeConexion());
@@ -151,7 +155,9 @@ public class MediumTest {
         demonio1.conectarConMedium(Optional.of(medium2)); // 50 de conex + 3 = 53
         demonio2.conectarConMedium(Optional.of(medium2)); // 0 de conex + 3 = 3
 
-        medium.exorcizarA(medium2);
+        Optional<Medium> optionalMedium = Optional.of(medium2);
+
+        medium.exorcizarA(optionalMedium);
 
         assertEquals(66,angel1.getNivelDeConexion());
         assertEquals(20,demonio1.getNivelDeConexion());
@@ -165,8 +171,10 @@ public class MediumTest {
 
     @Test
     void alIntentarExorcizarSinAngelesLanzaUnError(){
+        Optional<Medium> optionalMedium = Optional.of(medium2);
+
         assertThrows(ExorcistaSinAngelesException.class, () -> {
-            medium.exorcizarA(medium2);
+            medium.exorcizarA(optionalMedium);
         });
     }
 

@@ -4,6 +4,9 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
+import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -11,6 +14,7 @@ import org.hibernate.annotations.Check;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString
@@ -44,10 +48,20 @@ public class Medium implements Serializable {
 
 
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
+        this.validarLosCampos(nombre,manaMax,mana);
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
         this.ubicacion = ubicacion;
+    }
+
+    private void validarLosCampos(String nombre, Integer manaMax, Integer mana)
+            throws InvalidFieldsException, NullRequiredFieldsException {
+
+        if (nombre == null || manaMax == null || mana == null )
+            throw new NullRequiredFieldsException(this.getClass().getSimpleName());
+        else if (mana < 0 || mana > manaMax)
+            throw new InvalidFieldsException(this.getClass().getSimpleName());
     }
 
     public void realizarConexion(Espiritu espiritu){
@@ -83,7 +97,10 @@ public class Medium implements Serializable {
         }
 
     }
-    public void exorcizarA(Medium medium){
+    public void exorcizarA(Optional<Medium> optionalMedium){
+
+        if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium a exorcizar no existe");
+        Medium medium = optionalMedium.get();
 
         this.verificarSiPuedeExorcizar();
 
@@ -116,7 +133,11 @@ public class Medium implements Serializable {
         return (!demonios.isEmpty());
     }
 
-    public void invocar(Espiritu espiritu) {
+    public void invocar(Optional<Espiritu> opcionalEspiritu) {
+
+        if(opcionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe");
+
+        Espiritu espiritu = opcionalEspiritu.get();
 
         verificarSiEstaLibre(espiritu);
         if (this.mana >= 10) {

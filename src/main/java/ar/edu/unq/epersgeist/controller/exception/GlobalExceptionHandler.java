@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.controller.exception;
 
+import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -34,7 +35,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntidadInexistenteException.class)
     public DTOResponseError entidadInexistente(EntidadInexistenteException eie) {
-        return new DTOResponseError( eie.getMessage());
+        return new DTOResponseError(eie.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ExorcistaSinAngelesException.class)
+    public DTOResponseError ExorcistaSinAngelesException(ExorcistaSinAngelesException e){
+            return new DTOResponseError( e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -49,6 +56,4 @@ public class GlobalExceptionHandler {
         return new DTOResponseError( ude.getMessage());
     }
 
-
 }
-
