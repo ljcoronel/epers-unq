@@ -1,0 +1,38 @@
+package ar.edu.unq.epersgeist.modelo.ubicacion;
+
+import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Cementerio extends Ubicacion {
+
+
+    public Cementerio(String nombre, int energia) { super(nombre, energia); }
+
+    @Override
+    public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium) {
+        espiritu.invocadoACementerioPorMedium(this, medium);
+    };
+
+    @Override
+    public void recuperarConexionParaAngeles(List<Angel> angeles) {}
+
+    @Override
+    public void recuperarConexionParaDemonios(List<Demonio> demonios) {
+        demonios.forEach(demonio -> demonio.aumentarNivelDeConexionEn(this.getEnergia()));
+    }
+
+    @Override
+    public void recuperarManaParaMedium(Medium medium) {
+
+        medium.aumentarMana(this.getEnergiaParaRecuperarMedium());
+    }
+
+    private int getEnergiaParaRecuperarMedium() {
+        return (int) (this.getEnergia()*0.5);
+    }
+}

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.Entity;
@@ -49,6 +50,12 @@ public class Demonio extends Espiritu {
 
     @Override
     public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {}
+
+    @Override
+    public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(cementerio);
+    }
 
 
 }
