@@ -1,12 +1,11 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -18,9 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.NoSuchElementException;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class EstadisticaServiceImplTest {
@@ -37,61 +34,85 @@ public class EstadisticaServiceImplTest {
     @Autowired
     private MediumService mediumService;
 
-    private Espiritu demonio1;
-    private Espiritu demonio2;
-    private Espiritu demonio3;
+    private Demonio demonio1;
+    private Demonio demonio2;
+    private Demonio demonio3;
+    private Demonio demonio4;
+    private Demonio demonio5;
 
     private Medium medium;
+    private Medium medium2;
     private Espiritu angel1;
 
-    private Ubicacion santuarioUno;
-    private Ubicacion santuarioDos;
-    private Ubicacion cementerio;
+    private Santuario ubicacion;
+    private Santuario ubicacion2;
 
     @Autowired
     private TestService testService;
 
     @BeforeEach
     void crearInstancias() {
-        this.santuarioUno = new Santuario("Bernal");
-        this.santuarioDos = new Cementerio("Quilmes");
-        this.cementerio = new Cementerio("Ezpeleta");
-        this.angel1 = new Angel(10,"Angel1", this.santuarioUno);
-        this.demonio1 = new Demonio(10, "Pepito", this.santuarioDos);
-        this.demonio2 = new Demonio(90, "Diavolo", this.santuarioDos);
-        this.demonio3 = new Demonio(50, "Sebastián", this.santuarioDos);
-        this.medium = new Medium("Brujita", 100, 50, this.santuarioUno);
+        this.ubicacion = new Santuario("Bernal");
+        this.ubicacion2 = new Santuario("Quilmes");
+        angel1 = new Angel(10,"Angel1", this.ubicacion);
+        demonio1 = new Demonio(
+                10,
+                "Pepito", this.ubicacion
+        );
+        demonio2 = new Demonio(
+                90,
+                "Diavolo", this.ubicacion
+
+        );
+        demonio3 = new Demonio(
+                50,
+                "Sebastián", this.ubicacion
+
+        );
+        demonio4 = new Demonio(
+                50,
+                "Jorge", this.ubicacion
+
+        );
+        demonio5 = new Demonio(
+                50,
+                "Jose", this.ubicacion2
+
+        );
+        medium = new Medium("Brujita", 100, 50, this.ubicacion);
+        medium2 = new Medium("Pepe", 100, 60, this.ubicacion);
+
     }
 
     @Test
     void testing(){
-        ubicacionService.crear(santuarioUno);
+        ubicacionService.crear(ubicacion);
+        ubicacionService.crear(ubicacion2);
+
         mediumService.crear(medium);
+        mediumService.crear(medium2);
+
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
+        espirituService.crear(demonio5);
         espirituService.crear(angel1);
 
-        espirituService.conectar(demonio1.getId(),medium.getId());
+        espirituService.conectar(demonio1.getId(),medium2.getId());
+        espirituService.conectar(demonio2.getId(),medium2.getId());
+        espirituService.conectar(demonio3.getId(),medium.getId());
+        espirituService.conectar(angel1.getId(),medium.getId());
 
-        //int numero = estadisticaService.santuarioCorrupto(ubicacion.getId());// cambiar por reporte
+        ReporteSantuarioMasCorrupto reporte = estadisticaService.santuarioCorrupto();
 
-        //assertEquals(2,numero);// cambiar a reporte.getdemonioslibres
+        assertEquals("Bernal",reporte.getNombreSantuario());
+        assertEquals(medium2.getId(),reporte.getMedium().getId());
+        assertEquals(4,reporte.getCantidadDeDemonios());
+        assertEquals(1,reporte.getCantidadDeDemoniosLibres());
+
     }
 
-    @Test
-    void testing2(){
-        this.ubicacionService.crear(this.santuarioUno);
-        this.ubicacionService.crear(this.santuarioDos);
-        this.espirituService.crear(this.angel1);
-        this.espirituService.crear(this.demonio1);
-        this.espirituService.crear(this.demonio2);
-        this.espirituService.crear(this.demonio3);
-
-        //assertEquals("Bernal", this.estadisticaService.test().getNombre());
-        //en caso de empatar con cantidad de demonios sobre angeles entre dos ubicaciones devuelve el id mas reciente
-        //si hay un solo santuario pero que no tenga espiritus no lo devolvera solo si hay al menos un angel en el mismo, ya que debe estar en la db de espiritu
-    }
 
     @AfterEach
     void eliminarModelo() {
