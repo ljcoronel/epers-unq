@@ -1,10 +1,10 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -40,14 +40,14 @@ public class EstadisticaServiceImplTest {
     private Medium medium;
     private Espiritu angel1;
 
-    private Ubicacion ubicacion;
+    private Santuario ubicacion;
 
     @Autowired
     private TestService testService;
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Ubicacion("Bernal");
+        this.ubicacion = new Santuario("Bernal");
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         demonio1 = new Demonio(
                 10,

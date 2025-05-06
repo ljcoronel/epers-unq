@@ -3,13 +3,11 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

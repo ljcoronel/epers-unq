@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
 public record UbicacionDTOResponse(Long id, String nombre) {
 
@@ -9,13 +10,13 @@ public record UbicacionDTOResponse(Long id, String nombre) {
     }
 
     public Ubicacion aModelo() {
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
+        Ubicacion ubicacion = new Santuario(this.nombre);
         ubicacion.setId(this.id);
         return ubicacion;
     }
 
     public Ubicacion aModelo(Long id) {
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
+        Ubicacion ubicacion = new Santuario(this.nombre);
         ubicacion.setId(id);
         return ubicacion;
     }

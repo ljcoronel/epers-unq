@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -14,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    private Ubicacion ubicacion = new Ubicacion("Washington");
+    private Ubicacion ubicacion = new Santuario("Washington");
 
     private Angel angel1;
     private Angel angel2;
@@ -180,7 +182,7 @@ public class MediumTest {
 
     @Test
     void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        Ubicacion ubicacion1 = new Santuario("Magical");
         angel1.conectarConMedium(Optional.of(medium));
         demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(ubicacion1);

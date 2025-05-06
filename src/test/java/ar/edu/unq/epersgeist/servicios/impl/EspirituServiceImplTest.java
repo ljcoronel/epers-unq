@@ -2,8 +2,9 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -58,7 +59,7 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Ubicacion("Bernal");
+        this.ubicacion = new Santuario("Bernal");
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         angel2 = new Angel(10,"Angel2", this.ubicacion);
         angel3 = new Angel(10,"Angel3", this.ubicacion);
@@ -102,8 +103,8 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarseConUnMediumEnUnaUbicacionDiferenteDaErrorUbicacionDistintaException() {
-        Ubicacion quilmes = new Ubicacion("Quilmes");
-        Ubicacion bernal = new Ubicacion("Bernal");
+        Ubicacion quilmes = new Santuario("Quilmes");
+        Ubicacion bernal = new Santuario("Bernal");
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
@@ -115,7 +116,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
-        Ubicacion bernal = new Ubicacion("Bernal");
+        Ubicacion bernal = new Santuario("Bernal");
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
         mediumService.crear(mediumDeBernal);
