@@ -4,7 +4,9 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -16,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class EstadisticaServiceImplTest {
@@ -33,43 +37,35 @@ public class EstadisticaServiceImplTest {
     @Autowired
     private MediumService mediumService;
 
-    private Demonio demonio1;
-    private Demonio demonio2;
-    private Demonio demonio3;
+    private Espiritu demonio1;
+    private Espiritu demonio2;
+    private Espiritu demonio3;
 
     private Medium medium;
     private Espiritu angel1;
 
-    private Santuario ubicacion;
+    private Ubicacion santuarioUno;
+    private Ubicacion santuarioDos;
+    private Ubicacion cementerio;
 
     @Autowired
     private TestService testService;
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal");
-        angel1 = new Angel(10,"Angel1", this.ubicacion);
-        demonio1 = new Demonio(
-                10,
-                "Pepito", this.ubicacion
-        );
-        demonio2 = new Demonio(
-                90,
-                "Diavolo", this.ubicacion
-
-        );
-        demonio3 = new Demonio(
-                50,
-                "Sebastián", this.ubicacion
-
-        );
-        medium = new Medium("Brujita", 100, 50, this.ubicacion);
-
+        this.santuarioUno = new Santuario("Bernal");
+        this.santuarioDos = new Cementerio("Quilmes");
+        this.cementerio = new Cementerio("Ezpeleta");
+        this.angel1 = new Angel(10,"Angel1", this.santuarioUno);
+        this.demonio1 = new Demonio(10, "Pepito", this.santuarioDos);
+        this.demonio2 = new Demonio(90, "Diavolo", this.santuarioDos);
+        this.demonio3 = new Demonio(50, "Sebastián", this.santuarioDos);
+        this.medium = new Medium("Brujita", 100, 50, this.santuarioUno);
     }
 
     @Test
     void testing(){
-        ubicacionService.crear(ubicacion);
+        ubicacionService.crear(santuarioUno);
         mediumService.crear(medium);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
@@ -81,6 +77,20 @@ public class EstadisticaServiceImplTest {
         //int numero = estadisticaService.santuarioCorrupto(ubicacion.getId());// cambiar por reporte
 
         //assertEquals(2,numero);// cambiar a reporte.getdemonioslibres
+    }
+
+    @Test
+    void testing2(){
+        this.ubicacionService.crear(this.santuarioUno);
+        this.ubicacionService.crear(this.santuarioDos);
+        this.espirituService.crear(this.angel1);
+        this.espirituService.crear(this.demonio1);
+        this.espirituService.crear(this.demonio2);
+        this.espirituService.crear(this.demonio3);
+
+        //assertEquals("Bernal", this.estadisticaService.test().getNombre());
+        //en caso de empatar con cantidad de demonios sobre angeles entre dos ubicaciones devuelve el id mas reciente
+        //si hay un solo santuario pero que no tenga espiritus no lo devolvera solo si hay al menos un angel en el mismo, ya que debe estar en la db de espiritu
     }
 
     @AfterEach
