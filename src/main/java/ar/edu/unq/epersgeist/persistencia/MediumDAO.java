@@ -19,4 +19,9 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
             "update Medium m set m.nombre=:nombre, m.manaMax=:manaMax,m.mana=:mana where m.id = :id"
     )
     void actualizar(@Param("nombre")String nombre, @Param("manaMax")int manaMax,@Param("mana")int mana, @Param("id")Long id);
+
+    @Query(
+            "select e.medium from Espiritu e where e.ubicacion.id = :unaUbicacion and TYPE(e) = Demonio and e.medium is not null group by e.medium order by count(e) desc"
+    )
+    Medium mediumConMasDemoniosEn(@Param("unaUbicacion") Long ubicacionId);
 }
