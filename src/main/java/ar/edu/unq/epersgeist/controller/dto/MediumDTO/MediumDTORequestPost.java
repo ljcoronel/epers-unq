@@ -1,12 +1,13 @@
 package ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
 public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ubicacionID) {
 
     public Medium aModelo() {
-        Ubicacion ubicacionPlaceholder = new Ubicacion("Placeholder");
+        Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
         ubicacionPlaceholder.setId(this.ubicacionID);
         return new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder);
     }

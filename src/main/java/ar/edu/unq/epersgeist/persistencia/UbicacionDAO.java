@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +14,6 @@ public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
     boolean existeNombre(@Param("unaUbicacion") String nombre, @Param("unId") Long unId);
 
     @Modifying
-    @Query("update Ubicacion set nombre = :unNombre where id = :unaId")
-    void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre);
+    @Query("update Ubicacion set nombre = :unNombre, energia = :cantEnergia where id = :unaId")
+    void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia);
 }

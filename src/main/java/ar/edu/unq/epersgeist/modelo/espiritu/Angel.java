@@ -1,7 +1,8 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,12 @@ public class Angel extends Espiritu {
     @Override
     public void desconectarDeMedium(Medium medium) {
         medium.quitarDeAngeles(this);
+    }
+
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(santuario);
     }
 
 }

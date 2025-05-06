@@ -1,8 +1,8 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ public class Demonio extends Espiritu {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
     }
+
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion, nombre, ubicacion);
     }
@@ -45,6 +46,9 @@ public class Demonio extends Espiritu {
     public void desconectarDeMedium(Medium medium) {
         medium.quitarDeDemonios(this);
     }
+
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {}
 
 
 }

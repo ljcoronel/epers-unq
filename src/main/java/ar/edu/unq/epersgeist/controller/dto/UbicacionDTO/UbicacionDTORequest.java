@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 
 public record UbicacionDTORequest(String nombre) {
@@ -12,13 +12,15 @@ public record UbicacionDTORequest(String nombre) {
 
     public Ubicacion aModelo() {
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
-        return new Ubicacion(this.nombre);
+//        return new Ubicacion(this.nombre);
+        return null;
     }
 
     public Ubicacion aModelo(Long id) {
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
-        ubicacion.setId(id);
-        return ubicacion;
+//        Ubicacion ubicacion = new Ubicacion(this.nombre);
+//        ubicacion.setId(id);
+//        return ubicacion;
+        return null;
     }
 }

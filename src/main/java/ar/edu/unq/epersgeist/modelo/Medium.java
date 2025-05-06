@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -71,20 +72,14 @@ public class Medium implements Serializable {
     }
 
     public void descansar(){
-        this.aumentarMana(15);
-        this.recuperarConexion(angeles);
-        this.recuperarConexion(demonios);
+        getUbicacion().recuperarManaParaMedium(this);
+        getUbicacion().recuperarConexionParaAngeles(getAngeles());
+        getUbicacion().recuperarConexionParaDemonios(getDemonios());
     }
 
-    private void recuperarConexion(List<? extends Espiritu> espiritus){
-        for(Espiritu espiritu : espiritus){
-            espiritu.aumentarNivelDeConexionEn(5);
-        }
-    }
-
-    private void aumentarMana(int i) {
-        int manaActual = getMana();
-        setMana(i + manaActual);
+    public void aumentarMana(int cantidad) {
+        int mana = this.getMana();
+        setMana(mana + cantidad);
     }
 
     public void setMana(int i) {
@@ -140,9 +135,9 @@ public class Medium implements Serializable {
         Espiritu espiritu = opcionalEspiritu.get();
 
         verificarSiEstaLibre(espiritu);
-        if (this.mana >= 10) {
-            espiritu.setUbicacion(this.ubicacion);
-            this.mana -= 10;
+
+        if (this.getMana() >= 10) {
+            this.getUbicacion().invocarAEspirituParaMedium(espiritu, this);
         }
     }
 
@@ -172,5 +167,9 @@ public class Medium implements Serializable {
 
     public void quitarDeDemonios(Demonio demonio) {
         this.getDemonios().remove(demonio);
+    }
+
+    public void usarManaParaInvocar() {
+        this.setMana(this.getMana() - 10);
     }
 }
