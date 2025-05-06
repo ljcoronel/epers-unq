@@ -24,6 +24,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     @Override
     public ReporteSantuarioMasCorrupto santuarioCorrupto(){
+
         return null;
     }
 }
