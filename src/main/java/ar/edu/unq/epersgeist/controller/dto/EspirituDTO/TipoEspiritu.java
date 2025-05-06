@@ -32,9 +32,9 @@ public enum TipoEspiritu {
     public abstract Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion);
 
     public static TipoEspiritu getValueOfEspiritu(Espiritu espiritu) {
-        return switch(espiritu.getClass().getSimpleName()) {
-            case "Angel" -> ANGEL;
-            case "Demonio" -> DEMONIO;
+        return switch(espiritu) {
+            case Angel ignored -> ANGEL;
+            case Demonio ignored -> DEMONIO;
             default -> throw new IllegalStateException("Unexpected value: " + espiritu.getClass().getSimpleName());
         };
     }
