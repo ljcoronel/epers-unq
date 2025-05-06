@@ -5,7 +5,9 @@ import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -17,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class EstadisticaServiceImplTest {
@@ -34,18 +36,20 @@ public class EstadisticaServiceImplTest {
     @Autowired
     private MediumService mediumService;
 
-    private Demonio demonio1;
-    private Demonio demonio2;
-    private Demonio demonio3;
-    private Demonio demonio4;
-    private Demonio demonio5;
+    private Espiritu demonio1;
+    private Espiritu demonio2;
+    private Espiritu demonio3;
+    private Espiritu demonio4;
+    private Espiritu demonio5;
+    private Espiritu demonio6;
 
     private Medium medium;
     private Medium medium2;
     private Espiritu angel1;
 
-    private Santuario ubicacion;
-    private Santuario ubicacion2;
+    private Ubicacion ubicacion;
+    private Ubicacion ubicacion2;
+    private Ubicacion ubicacion3;
 
     @Autowired
     private TestService testService;
@@ -54,38 +58,23 @@ public class EstadisticaServiceImplTest {
     void crearInstancias() {
         this.ubicacion = new Santuario("Bernal");
         this.ubicacion2 = new Santuario("Quilmes");
+        this.ubicacion3 = new Cementerio("Solano");
+
         angel1 = new Angel(10,"Angel1", this.ubicacion);
-        demonio1 = new Demonio(
-                10,
-                "Pepito", this.ubicacion
-        );
-        demonio2 = new Demonio(
-                90,
-                "Diavolo", this.ubicacion
+        demonio1 = new Demonio(10, "Pepito", this.ubicacion);
+        demonio2 = new Demonio(90, "Diavolo", this.ubicacion);
+        demonio3 = new Demonio(50, "Sebastián", this.ubicacion);
+        demonio4 = new Demonio(50, "Jorge", this.ubicacion);
+        demonio5 = new Demonio(50, "Jose", this.ubicacion2);
+        this.demonio6 = new Demonio(40, "Dracula", this.ubicacion3);
 
-        );
-        demonio3 = new Demonio(
-                50,
-                "Sebastián", this.ubicacion
-
-        );
-        demonio4 = new Demonio(
-                50,
-                "Jorge", this.ubicacion
-
-        );
-        demonio5 = new Demonio(
-                50,
-                "Jose", this.ubicacion2
-
-        );
         medium = new Medium("Brujita", 100, 50, this.ubicacion);
         medium2 = new Medium("Pepe", 100, 60, this.ubicacion);
 
     }
 
     @Test
-    void testing(){
+    void seObtieneUnReporteDeUnSantuarioQueTieneEspiritusYMediums() {
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(ubicacion2);
 
@@ -113,6 +102,17 @@ public class EstadisticaServiceImplTest {
 
     }
 
+    @Test
+    void seObtieneUnReporteDondeNoHayEspiritusEnElSantuario() {
+        this.ubicacionService.crear(this.ubicacion3);
+        this.espirituService.crear(this.demonio6);
+        ReporteSantuarioMasCorrupto reporte = estadisticaService.santuarioCorrupto();
+
+        assertTrue(reporte.getNombreSantuario().isEmpty());
+        assertNull(reporte.getMedium());
+        assertEquals(0,reporte.getCantidadDeDemonios());
+        assertEquals(0,reporte.getCantidadDeDemoniosLibres());
+    }
 
     @AfterEach
     void eliminarModelo() {
