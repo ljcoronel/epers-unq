@@ -1,10 +1,11 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -54,8 +55,8 @@ public class MediumServiceImplTest {
 
     @BeforeEach
     void crearMedium(){
-        this.ubicacion = new Ubicacion("Bernal");
-        this.ubicacion2 = new Ubicacion("Quilmes");
+        this.ubicacion = new Santuario("Bernal");
+        this.ubicacion2 = new Santuario("Quilmes");
 
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(ubicacion2);

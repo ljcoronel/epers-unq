@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
@@ -23,7 +24,15 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     }
 
     @Override
-    public ReporteSantuarioMasCorrupto santuarioCorrupto(){
-        return null;
+    public ReporteSantuarioMasCorrupto santuarioCorrupto() {
+        ReporteSantuarioMasCorrupto reporte = new ReporteSantuarioMasCorrupto();
+        Long id = this.espirituDAO.santuarioCorrupto();
+        if (id == null || this.ubicacionDAO.findById(id).isEmpty()) return reporte;
+        Ubicacion ubicacion = this.ubicacionDAO.findById(id).get();
+        reporte.setNombreSantuario(ubicacion.getNombre());
+        //reporte.setMedium(this.mediumDAO.mediumConMasDemonios(id));
+        reporte.setCantidadDeDemonios(this.espirituDAO.cantidadTotalDeDemonios(id));
+        //reporte.setCantidadDeDemoniosLibres(this.espirituDAO.cantidadDeDemoniosLibresEn(id));
+        return reporte;
     }
 }
