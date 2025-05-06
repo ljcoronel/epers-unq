@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.modelo;
+package ar.edu.unq.epersgeist.modelo.ubicacion;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,7 +6,8 @@ import lombok.*;
 @Getter @Setter @NoArgsConstructor(access = AccessLevel.PUBLIC) @ToString
 
 @Entity
-public class Ubicacion {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Ubicacion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

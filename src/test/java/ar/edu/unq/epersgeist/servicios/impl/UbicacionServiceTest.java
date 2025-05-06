@@ -1,12 +1,14 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -53,9 +55,9 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-        this.ubicacionUno = new Ubicacion("Bernal");
-        this.ubicacionDos = new Ubicacion("Bernal");
-        this.ubicacionTres = new Ubicacion("Avellaneda");
+        this.ubicacionUno = new Santuario("Bernal");
+        this.ubicacionDos = new Cementerio("Bernal");
+        this.ubicacionTres = new Santuario("Avellaneda");
 
         this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
         this.angelDos = new Angel(20, "angel", this.ubicacionUno);
@@ -209,8 +211,8 @@ public class UbicacionServiceTest {
 
     @Test
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
-        Ubicacion ubicacion2 = new Ubicacion("Masedonia");
+        Ubicacion ubicacion1 = new Santuario("Magical");
+        Ubicacion ubicacion2 = new Santuario("Masedonia");
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
         Medium medium = new Medium("Franco", 200, 50, ubicacion1);
