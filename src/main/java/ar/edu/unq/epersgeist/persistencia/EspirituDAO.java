@@ -39,9 +39,6 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
     )
     void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 
-//    @Query("select e.ubicacion.id from Espiritu e where e.ubicacion.dtype = 'Santuario' group by e.ubicacion.id order by sum(case when e.dtype = 'Demonio' then 1 else 0 end) - sum(case when e.dtype = 'Angel' then 1 else 0 end) desc")
-//    Ubicacion santuarioCorrupto();
-
     @Query(value = "SELECT u.id FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id WHERE u.dtype = 'Santuario' GROUP BY u.id ORDER BY SUM(CASE WHEN e.dtype = 'Demonio' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.dtype = 'Angel' THEN 1 ELSE 0 END) DESC LIMIT 1", nativeQuery = true)
     Long santuarioCorrupto();
 
