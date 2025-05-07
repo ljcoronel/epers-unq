@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
@@ -149,7 +150,7 @@ public class Medium implements Serializable {
 
     private void verificarSiEstaLibre(Espiritu espiritu) {
         if(!espiritu.estaLibre()){
-            throw new RuntimeException("El espiritu no esta libre");
+            throw new EspirituLibreException(espiritu);
         }
     }
 
