@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
@@ -135,6 +135,18 @@ public class MediumServiceImpl implements MediumService {
         mediumDao.save(medium);
         espirituDao.save(espiritu);
         return espiritu;
+    }
+
+    @Override
+    public void mover(Long mediumId, Long ubicacionId) {
+        Medium medium = mediumDao.findById(mediumId).orElse(null);
+
+        Ubicacion ubicacion = ubicacionDao.findById(ubicacionId).orElse(null);
+
+        medium.setUbicacion(ubicacion);
+
+        mediumDao.save(medium);
+
     }
 
 }

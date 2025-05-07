@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 
 public record UbicacionDTORequest(String nombre) {

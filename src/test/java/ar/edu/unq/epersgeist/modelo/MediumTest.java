@@ -1,5 +1,8 @@
 package ar.edu.unq.epersgeist.modelo;
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -180,13 +183,64 @@ public class MediumTest {
 
     @Test
     void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
+        Ubicacion ubicacion1 = new Cementerio("Magical");
         angel1.conectarConMedium(Optional.of(medium));
         demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(ubicacion1);
 
+
         assertEquals(this.angel1.getUbicacion().getNombre(), ubicacion1.getNombre());
         assertEquals(this.demonio1.getUbicacion().getNombre(), ubicacion1.getNombre());
+    }
+
+    @Test
+    void cuandoUnAngelSeQuedaSinManaSeLiberaDeSuMedium(){
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+
+        angel1.conectarConMedium(Optional.of(medium));
+
+        this.medium.setUbicacion(iglesia);
+
+        assertEquals(this.angel1.getNivelDeConexion(), 66);
+    }
+
+    @Test
+    void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+
+        angel1.conectarConMedium(Optional.of(medium));
+
+        this.medium.setUbicacion(iglesia);
+
+        assertEquals(this.angel1.getNivelDeConexion(), 66);
+    }
+
+    @Test
+    void CuandoUnMediumSeMueveAUnCementerioAngelRecibeElEfectoDelCorrespondiente(){
+        Ubicacion cementerio = new Cementerio("Recoleta");
+
+        angel1.conectarConMedium(Optional.of(medium));
+
+        this.medium.setUbicacion(cementerio);
+
+        assertEquals(this.angel1.getNivelDeConexion(), 61); // nivel de Conexion 66 - 5 de efecto de Zona
+    }
+
+
+    @Test
+    void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
+        Ubicacion ubicacion1 = new Santuario("Vaticano");
+        demonio1.conectarConMedium(Optional.of(medium));
+        this.medium.setUbicacion(ubicacion1);
+        assertEquals(this.demonio1.getNivelDeConexion(), 46); // 56 - 10 de efecto de Zona
+    }
+
+    @Test
+    void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
+        Ubicacion cementerio = new Cementerio("Sarandi");
+        demonio1.conectarConMedium(Optional.of(medium));
+        this.medium.setUbicacion(cementerio);
+        assertEquals(this.demonio1.getNivelDeConexion(), 56);
     }
 
     @AfterEach

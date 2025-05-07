@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
 public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ubicacionID) {
 

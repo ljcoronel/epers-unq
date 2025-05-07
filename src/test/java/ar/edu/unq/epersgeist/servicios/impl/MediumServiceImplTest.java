@@ -1,10 +1,12 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -445,7 +448,141 @@ public class MediumServiceImplTest {
 
         assertTrue(medium.getAngeles().isEmpty());
 
+    }
 
+
+
+
+    @Test
+    void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
+
+        Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita");
+        ubicacionService.crear(iglesia);
+
+        Angel libertador = new Angel(10,"Libertador",ubicacion);
+        espirituService.crear(libertador);
+
+        mediumService.crear(medium);
+        espirituService.conectar(libertador.getId(),medium.getId());
+        mediumService.mover(medium.getId(), iglesia.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(libertador.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 15);
+        //10 de angel + 20% de Mana del medium - 5 de efecto de Cementerio,
+    }
+
+    @Test
+    void unMediumSeMueveYSuAngelSeQuedaSinConexionEntoncesSeLibera(){
+
+        Ubicacion wilde = new Cementerio("Wilde");
+        ubicacionService.crear(wilde);
+
+        Angel mabel = new Angel(5,"Amon",ubicacion);
+        espirituService.crear(mabel);
+
+        Medium osvaldo = new Medium("Osvaldo",100,20, this.ubicacion);
+
+        mediumService.crear(osvaldo);
+        espirituService.conectar(mabel.getId(),osvaldo.getId());
+        mediumService.mover(osvaldo.getId(), wilde.getId());
+
+        Ubicacion sarandi = new Cementerio("Sarandi");
+        ubicacionService.crear(sarandi);
+
+        mediumService.mover(osvaldo.getId(), sarandi.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(mabel.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
+        assertTrue(espirituRecuperado.estaLibre());
+    }
+
+
+    @Test
+    void unMediumSeMueveYSuDemonioSeQuedaSinConexionEntoncesSeLibera(){
+
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        ubicacionService.crear(iglesia);
+
+        Demonio amon = new Demonio(10,"Amon",ubicacion);
+        espirituService.crear(amon);
+
+        Medium osvaldo = new Medium("Osvaldo",100,50, this.ubicacion);
+
+        mediumService.crear(osvaldo);
+        espirituService.conectar(amon.getId(),osvaldo.getId());
+        mediumService.mover(osvaldo.getId(), iglesia.getId());
+
+        Ubicacion vaticano = new Santuario("vaticano");
+        ubicacionService.crear(vaticano);
+
+        mediumService.mover(osvaldo.getId(), vaticano.getId());
+        mediumService.mover(osvaldo.getId(), iglesia.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(amon.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
+        assertTrue(espirituRecuperado.estaLibre());
+
+    }
+
+    @Test
+    void CuandoUnMediumSeMueveAUnCementerioElAngelRecibeElEfectoDelCorrespondiente(){
+
+        Ubicacion cementerio = new Cementerio("Recoleta");
+        ubicacionService.crear(cementerio);
+
+        Angel libertador = new Angel(10,"Libertador",ubicacion);
+        espirituService.crear(libertador);
+
+        mediumService.crear(medium);
+        espirituService.conectar(libertador.getId(),medium.getId());
+        mediumService.mover(medium.getId(), cementerio.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(libertador.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 15);
+        //10 de angel + 20% de Mana del medium - 5 de efecto de Cementerio,
+    }
+
+
+    @Test
+    void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
+
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        ubicacionService.crear(iglesia);
+
+        Demonio demonicaco = new Demonio(10,"demonicaco",ubicacion);
+        espirituService.crear(demonicaco);
+
+        mediumService.crear(medium);
+        espirituService.conectar(demonicaco.getId(),medium.getId());
+        mediumService.mover(medium.getId(), iglesia.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 10);
+        //10 de angel + 20% de Mana del medium - 10 de efecto de Santuario,
+    }
+
+    @Test
+    void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
+
+        Ubicacion sanMiguel = new Cementerio("San Miguel");
+        ubicacionService.crear(sanMiguel);
+
+        Demonio demonicaco = new Demonio(10,"demonicaco",ubicacion);
+        espirituService.crear(demonicaco);
+
+        mediumService.crear(medium);
+        espirituService.conectar(demonicaco.getId(),medium.getId());
+        mediumService.mover(medium.getId(), sanMiguel.getId());
+
+        Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
+
+        assertEquals(espirituRecuperado.getNivelDeConexion(), 20);
+        //10 de angel + 20% de Mana del medium(10) - 0 de efecto de Cementerio,
     }
 
 

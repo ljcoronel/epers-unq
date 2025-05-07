@@ -1,15 +1,16 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Entity
 // singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Espiritu implements Serializable {
+public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +73,8 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void setNivelDeConexion(int i) {
-        if (i < 0) {
+        if (i <= 0) {
+            this.desvincularseDeMedium();
             this.nivelDeConexion = 0;
         } else if (i > 100) {
             this.nivelDeConexion = 100;
@@ -116,6 +118,7 @@ public abstract class Espiritu implements Serializable {
 
     public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
         if (this.getMedium() == medium) {
+            ubicacion.recibir(this);
             this.ubicacion = ubicacion;
         }
     }
@@ -153,4 +156,13 @@ public abstract class Espiritu implements Serializable {
 
     abstract public void desconectarDeMedium(Medium medium);
 
-}
+
+    @Override
+    public void recibirEfectoDe(Cementerio ubicacion) {}
+
+    @Override
+    public void recibirEfectoDe(Santuario ubicacion) {}
+
+
+
+    }

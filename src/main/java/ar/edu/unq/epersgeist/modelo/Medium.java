@@ -7,6 +7,8 @@ import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -154,8 +156,11 @@ public class Medium implements Serializable {
 
     public void setUbicacion(Ubicacion unaUbicacion) {
         this.ubicacion = unaUbicacion;
-        this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
-        this.demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+        List<Angel> angeles=  new ArrayList<>(this.getAngeles());
+        List<Demonio> demonios = new ArrayList<>(this.getDemonios());
+
+        angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
+        demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
     }
 
     public void agregarAAngeles(Angel angel) {
@@ -173,4 +178,6 @@ public class Medium implements Serializable {
     public void quitarDeDemonios(Demonio demonio) {
         this.getDemonios().remove(demonio);
     }
+
+
 }
