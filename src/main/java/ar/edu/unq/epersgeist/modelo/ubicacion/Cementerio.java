@@ -4,14 +4,21 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Getter @Setter @NoArgsConstructor @ToString
+
+@Entity
 public class Cementerio extends Ubicacion {
 
 
     public Cementerio(String nombre, int energia) { super(nombre, energia); }
+
 
     @Override
     public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium) {

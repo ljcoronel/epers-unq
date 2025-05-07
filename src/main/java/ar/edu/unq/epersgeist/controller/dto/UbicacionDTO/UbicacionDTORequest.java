@@ -16,8 +16,11 @@ public record UbicacionDTORequest(TipoUbicacion tipoUbicacion, String nombre, in
 
     public Ubicacion aModelo(Long id) {
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
+        if (this.tipoUbicacion == null) throw new ParametroIncorrectoException("La ubicacion debe tener un tipo");
+
         Ubicacion ubicacion = this.tipoUbicacion.getUbicacionInstance(this.nombre, this.energia);
         ubicacion.setId(id);
+
         return ubicacion;
     }
 }

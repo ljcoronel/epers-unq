@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia;
 
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
