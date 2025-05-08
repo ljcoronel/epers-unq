@@ -4,6 +4,9 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public enum TipoUbicacion {
 
     SANTUARIO{
@@ -17,6 +20,10 @@ public enum TipoUbicacion {
             return new Cementerio(nombre, energia);
         }
     };
+
+    public static String getNombreTipos() {
+        return " | " + Arrays.stream(values()).map(tipo -> tipo.toString() + " | ").collect(Collectors.joining());
+    }
 
     public abstract Ubicacion getUbicacionInstance(String nombre, int energia);
 

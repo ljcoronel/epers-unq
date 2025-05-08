@@ -6,7 +6,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 
 
-public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionId) {
+public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivelDeConexion, Long ubicacionID) {
 
     public Espiritu aModelo() {
         Integer nivelDeConexionInteger = nivelDeConexion;
@@ -14,7 +14,7 @@ public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivel
         if (this.tipo == null) throw new ParametroIncorrectoException("El tipo del espíritu no debe ser nulo.");
 
         Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
-        ubicacionPlaceholder.setId(this.ubicacionId);
+        ubicacionPlaceholder.setId(this.ubicacionID);
 
         return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, ubicacionPlaceholder);
     }
