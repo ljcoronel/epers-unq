@@ -59,7 +59,7 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal");
+        this.ubicacion = new Santuario("Bernal", 50);
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         angel2 = new Angel(10,"Angel2", this.ubicacion);
         angel3 = new Angel(10,"Angel3", this.ubicacion);
@@ -83,7 +83,7 @@ public class EspirituServiceImplTest {
 
 //    @Test
 //    void noSePuedenCrearAngelesODemonioSinNombres() { // TODO implementar esto
-//        Ubicacion quilmes = new Ubicacion("quilmes");
+//        Ubicacion quilmes = new Santuario("quilmes", 50);
 //        ubicacionService.crear(quilmes);
 //        Demonio demonioSinNombre = new Demonio(10, "", quilmes);
 //        Angel angelSinNombre = new Angel(10, "", quilmes);
@@ -103,8 +103,8 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarseConUnMediumEnUnaUbicacionDiferenteDaErrorUbicacionDistintaException() {
-        Ubicacion quilmes = new Santuario("Quilmes");
-        Ubicacion bernal = new Santuario("Bernal");
+        Ubicacion quilmes = new Santuario("Quilmes", 50);
+        Ubicacion bernal = new Santuario("Bernal", 50);
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
@@ -116,7 +116,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
-        Ubicacion bernal = new Santuario("Bernal");
+        Ubicacion bernal = new Santuario("Bernal", 50);
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
         mediumService.crear(mediumDeBernal);

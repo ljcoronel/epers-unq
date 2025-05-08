@@ -70,7 +70,6 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public void descansar(Long mediumId) {
 
-
         Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
         if (optionalMedium.isEmpty()) return;

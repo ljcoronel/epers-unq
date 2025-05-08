@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
@@ -34,40 +35,55 @@ public class MediumServiceImplTest {
 
     private Medium medium;
     private Medium medium2;
+    private Medium medium3;
 
     private Angel angelDebil;
+    private Angel angelDebil2;
     private Angel angelFuerte;
+    private Angel angelEnCementerio;
 
     private Demonio demonioDebil;
+    private Demonio demonioDebil2;
     private Demonio demonioFuerte;
+    private Demonio demonioEnCementerio;
 
-
-    private Ubicacion ubicacion;
+    private Ubicacion santuario;
+    private Ubicacion santuario2;
+    private Ubicacion cementerio;
+    private Ubicacion cementerio2;
     private Ubicacion ubicacion2;
-
-
-
 
 
     private FakeRandomStrategyImpl fakeRandomStrategy;
 
 
-
     @BeforeEach
     void crearMedium(){
-        this.ubicacion = new Santuario("Bernal");
-        this.ubicacion2 = new Santuario("Quilmes");
+        this.santuario = new Santuario("Bernal", 50);
+        this.santuario2 = new Santuario("Villa Devoto", 90);
+        this.ubicacion2 = new Santuario("Quilmes", 50);
+        this.cementerio = new Cementerio("Tenebroso", 50);
+        this.cementerio2 = new Cementerio("oscuro", 90);
 
-        ubicacionService.crear(ubicacion);
+        ubicacionService.crear(santuario);
+        ubicacionService.crear(santuario2);
         ubicacionService.crear(ubicacion2);
-        medium = new Medium("Max",100,50, this.ubicacion);
-        medium2 = new Medium("Pepe",100,0, this.ubicacion);
+        ubicacionService.crear(cementerio);
+        ubicacionService.crear(cementerio2);
 
-        angelDebil = new Angel(10,"gabriel",this.ubicacion);
-        angelFuerte = new Angel(60,"Rafael",this.ubicacion);
+        medium = new Medium("Max",100,50, this.santuario);
+        medium2 = new Medium("Pepe",100,0, this.santuario);
+        medium3 = new Medium("Sabrina",100,60, this.cementerio);
 
-        demonioDebil = new Demonio(5,"Rufi",this.ubicacion);
-        demonioFuerte = new Demonio(50,"Adam",this.ubicacion);
+        angelDebil = new Angel(10,"gabriel",this.santuario);
+        angelDebil2 = new Angel(10,"fernando",this.santuario2);
+        angelFuerte = new Angel(60,"Rafael",this.santuario);
+        angelEnCementerio = new Angel(50,"Di Maria",this.cementerio);
+
+        demonioDebil = new Demonio(5,"Rufi",this.santuario);
+        demonioDebil2 = new Demonio(5,"An",this.santuario2);
+        demonioFuerte = new Demonio(50,"Adam",this.santuario);
+        demonioEnCementerio =  new Demonio(5,"Lali",this.cementerio);
 
         fakeRandomStrategy = new FakeRandomStrategyImpl();
         RandomGenerator.getInstance().setStrategy(fakeRandomStrategy);
@@ -160,34 +176,6 @@ public class MediumServiceImplTest {
 
     }
 
-    @Test
-    void seHaceDescansarAUnMediumRecuperandoManaYSuEspirituRecuperaConexion(){
-
-        mediumService.crear(medium);
-        espirituService.crear(angelDebil);
-
-        espirituService.conectar(angelDebil.getId(), medium.getId());
-
-
-        mediumService.descansar(medium.getId());
-
-        Medium recuperado = mediumService.recuperar(medium.getId()).get();
-        Espiritu recuperado1 = espirituService.recuperar(angelDebil.getId()).get();
-
-        assertEquals(65,recuperado.getMana());
-
-        assertEquals(25, recuperado1.getNivelDeConexion());
-    }
-
-    @Test
-    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
-        assertDoesNotThrow( () -> {
-            mediumService.descansar(-1L);
-        });
-
-
-
-    }
 
     @Test
     void alConectarConUnEspirituElMediumAgregaEseEspirituALosSuyos() {
@@ -397,6 +385,14 @@ public class MediumServiceImplTest {
         assertEquals( manaInicial - 10 , mediumRecuperado.getMana());
     }
 
+    @Test
+    void unMediumNoPuedeInvocarAUnEspirituInexistente() {
+
+        mediumService.crear(medium);
+
+        assertThrows(EntidadInexistenteException.class, () -> mediumService.invocar(medium.getId(), -5L));
+    }
+
 
 //    @Test
 //    void unMediumIntentainvocarSinManaSuficienteEntoncesSuManaYLaUbicacionDelEspirituNoCambian() {
@@ -446,6 +442,174 @@ public class MediumServiceImplTest {
 
         assertTrue(medium.getAngeles().isEmpty());
 
+
+    }
+
+    @Test
+    public void unMediumNoPuedeInvocarAUnDemonioAUnSantuario() {
+        mediumService.crear(medium); // está en "santuario"
+        espirituService.crear(demonioDebil2); // está en "santuario2"
+        int manaInicial = medium.getMana();
+
+        mediumService.invocar(medium.getId(), demonioDebil2.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId()).get();
+        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonioDebil2.getId()).get();
+
+        Long mediumUbicacionId = mediumRecuperado.getUbicacion().getId();
+        Long demonioUbicacionId = demonioRecuperado.getUbicacion().getId();
+
+        assertNotEquals(mediumUbicacionId, demonioUbicacionId); // siguen en diferente ubicación
+    }
+
+    @Test
+    public void unMediumNoPuedeInvocarAUnAngelAUnCementerio() {
+        mediumService.crear(medium3); // está en "cementerio"
+        espirituService.crear(angelDebil); // está en "santuario"
+        int manaInicial = medium3.getMana();
+
+        mediumService.invocar(medium3.getId(), angelDebil.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium3.getId()).get();
+        Angel angelRecuperado = (Angel) espirituService.recuperar(angelDebil.getId()).get();
+
+        Long mediumUbicacionId = mediumRecuperado.getUbicacion().getId();
+        Long angelUbicacionId = angelRecuperado.getUbicacion().getId();
+
+        assertNotEquals(mediumUbicacionId, angelUbicacionId); // siguen en diferente ubicación
+    }
+
+    @Test
+    public void unMediumPuedeInvocarAUnAngelAUnSantuario() {
+        mediumService.crear(medium); // está en "santuario"
+        espirituService.crear(angelDebil2); // está en "santuario2"
+
+        mediumService.invocar(medium.getId(), angelDebil2.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium.getId()).get();
+        Angel angelRecuperado = (Angel) espirituService.recuperar(angelDebil2.getId()).get();
+
+        Long mediumUbicacionId = mediumRecuperado.getUbicacion().getId();
+        Long angelUbicacionId = angelRecuperado.getUbicacion().getId();
+
+        assertEquals(mediumUbicacionId, angelUbicacionId); // misma ubicación
+    }
+
+    @Test
+    public void unMediumPuedeInvocarAUnDemonioAUnCementerio() {
+        mediumService.crear(medium3); // está en "cementerio"
+        espirituService.crear(demonioDebil2); // está en "cementerio2"
+
+
+        mediumService.invocar(medium3.getId(), demonioDebil2.getId());
+
+        Medium mediumRecuperado = mediumService.recuperar(medium3.getId()).get();
+        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonioDebil2.getId()).get();
+
+        Long mediumUbicacionId = mediumRecuperado.getUbicacion().getId();
+        Long demonioUbicacionId = demonioRecuperado.getUbicacion().getId();
+
+        assertEquals(mediumUbicacionId, demonioUbicacionId); // misma ubicacion
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnSantuarioYSuDemonioNoRecuperaConexion(){
+
+        mediumService.crear(medium);
+        espirituService.crear(demonioDebil);
+
+        int nivelDeConexionInicial = demonioDebil.getNivelDeConexion();
+
+        espirituService.conectar(demonioDebil.getId(), medium.getId()); // aumenta en 10 el nivel de conexión, por conectar con el demonio
+        mediumService.descansar(medium.getId());
+
+        Demonio demonio = (Demonio) espirituService.recuperar(demonioDebil.getId()).get();
+
+        assertEquals(nivelDeConexionInicial + 10, demonio.getNivelDeConexion());
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnCementerioYSuAngelNoRecuperaConexion(){
+
+        mediumService.crear(medium3);
+        espirituService.crear(angelEnCementerio);
+
+        int nivelDeConexionInicial = angelEnCementerio.getNivelDeConexion();
+
+        espirituService.conectar(angelEnCementerio.getId(), medium3.getId()); // aumenta en 12 el nivel de conexión, por conectar con el angel
+        mediumService.descansar(medium3.getId());
+
+        Angel angel = (Angel) espirituService.recuperar(angelEnCementerio.getId()).get();
+
+        assertEquals(nivelDeConexionInicial + 12, angel.getNivelDeConexion());
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnSantuarioYSuAngelRecuperaConexionEnLaMismaCantidadQueLaEnergiaDelSantuario(){
+
+        mediumService.crear(medium);
+        espirituService.crear(angelDebil); // empieza con 10 de nivel de conexión
+        // el santuario en el que se encuentran tiene 50 de energía
+
+        espirituService.conectar(angelDebil.getId(), medium.getId()); // gana 10 de nivel de conexión -> 20
+
+        mediumService.descansar(medium.getId()); // gana 50 de nivel de conexión (por el santuario) -> 70
+
+        Espiritu recuperado1 = espirituService.recuperar(angelDebil.getId()).get();
+
+        assertEquals(70, recuperado1.getNivelDeConexion());
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnCementerioYSuDemonioRecuperaConexionEnLaMismaCantidadQueLaEnergiaDelSantuario(){
+
+        mediumService.crear(medium3);
+        espirituService.crear(demonioEnCementerio); // empieza con 5 de nivel de conexión
+        // el cementerio en el que se encuentran tiene 50 de energía
+
+        espirituService.conectar(demonioEnCementerio.getId(), medium3.getId()); // gana 12 de nivel de conexión -> 17
+
+        mediumService.descansar(medium3.getId()); // gana 50 de nivel de conexión (por el santuario) -> 67
+
+        Espiritu recuperado1 = espirituService.recuperar(demonioEnCementerio.getId()).get();
+
+        assertEquals(67, recuperado1.getNivelDeConexion());
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnSantuarioRecuperandoManaEn150PorCientoDeLaEnergiaDelSantuario(){
+        medium.setMana(10);
+        mediumService.crear(medium); // tiene 10 de mana, 100 de mana max, el santuario tiene 50 de energía
+        espirituService.crear(angelDebil);
+
+        espirituService.conectar(angelDebil.getId(), medium.getId());
+
+        mediumService.descansar(medium.getId()); // gana 75 de mana, queda en 85
+
+        Medium recuperado = mediumService.recuperar(medium.getId()).get();
+
+        assertEquals(85, recuperado.getMana());
+    }
+
+    @Test
+    void seHaceDescansarAUnMediumEnUnCementerioRecuperandoManaEn50PorCientoDeLaEnergiaDelCementerio(){
+        medium3.setMana(10);
+        mediumService.crear(medium3); // tiene 10 de mana, 100 de mana max, el cementerio tiene 50 de energía
+        espirituService.crear(angelDebil);
+
+
+        mediumService.descansar(medium3.getId()); // gana 25 de mana, queda en 35
+
+        Medium recuperado = mediumService.recuperar(medium3.getId()).get();
+
+        assertEquals(35, recuperado.getMana());
+    }
+
+    @Test
+    void seIntentaHacerDescansarAUnMediumQueNoFuePersistidoYNoHaceNada(){
+        assertDoesNotThrow( () -> {
+            mediumService.descansar(-1L);
+        });
 
     }
 

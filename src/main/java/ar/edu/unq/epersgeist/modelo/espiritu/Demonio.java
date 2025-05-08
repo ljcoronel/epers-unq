@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -16,6 +18,7 @@ public class Demonio extends Espiritu {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
     }
+
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion, nombre, ubicacion);
     }
@@ -43,6 +46,15 @@ public class Demonio extends Espiritu {
     @Override
     public void desconectarDeMedium(Medium medium) {
         medium.quitarDeDemonios(this);
+    }
+
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {}
+
+    @Override
+    public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(cementerio);
     }
 
 

@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MediumTest {
-    private Ubicacion ubicacion = new Santuario("Washington");
+    private Ubicacion ubicacion = new Santuario("Washington", 50);
 
     private Angel angel1;
     private Angel angel2;
@@ -51,14 +51,40 @@ public class MediumTest {
 
     }
     @Test
-    void alDescansarAumentaSuManaEn15YElNivelDeConexionDeSusEspiritusEn5(){
+    void alDescansarEnUnSantuarioAumentaSuManaEn150PorcientoDeLaEnergiaDelSantuarioYElNivelDeConexionDeSusAngelesEnLaMismaCantidadDeEnergiaDelSantuario(){
 
-        angel1.conectarConMedium(Optional.of(medium)); // empieza con 60
+        // la energía de la ubicación es 50
 
-        medium.descansar(); // medium empieza con 30 de maná -> 66
+        angel1.conectarConMedium(Optional.of(medium));
 
-        assertEquals(45,medium.getMana()); // + 15 = 45
-        assertEquals(71,angel1.getNivelDeConexion()); // + 5 = 71
+        medium.setManaMax(150);
+        medium.descansar(); // médium empieza con 30 de maná -> 105 (gana 75 por el santuario)
+
+        assertEquals(105, medium.getMana());
+    }
+
+    @Test
+    void alDescansarEnUnSantuarioAumentaElNivelDeConexionDeSusAngelesEnLaMismaCantidadDeEnergiaDelSantuario(){
+
+        // la energía de la ubicación es 50
+        angel1.setNivelDeConexion(10);
+        angel1.conectarConMedium(Optional.of(medium)); // empieza con 16
+
+        medium.descansar(); // gana 50 por el santuario -> 66
+
+        assertEquals(66,angel1.getNivelDeConexion());
+    }
+
+    @Test
+    void alDescansarEnUnSantuarioNoAumentaElNivelDeConexionDeSusDemonios(){
+
+        // la energía de la ubicación es 50
+
+        demonio1.conectarConMedium(Optional.of(medium)); // empieza con 60
+
+        medium.descansar();
+
+        assertEquals(60,angel1.getNivelDeConexion());
     }
 
     @Test
@@ -182,7 +208,7 @@ public class MediumTest {
 
     @Test
     void seVerificaQueCuandoUnMediumCambiaLaUbicacionSusEspiritusTambienCambiaLaUbicacion(){
-        Ubicacion ubicacion1 = new Santuario("Magical");
+        Ubicacion ubicacion1 = new Santuario("Magical", 50);
         angel1.conectarConMedium(Optional.of(medium));
         demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(ubicacion1);

@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
@@ -56,7 +58,7 @@ public abstract class Espiritu implements Serializable {
 
     public Espiritu(int nivelDeConexion, String nombre) {
         this.nombre = nombre;
-        this.nivelDeConexion = nivelDeConexion;
+        setNivelDeConexion(nivelDeConexion);
     }
 
 
@@ -151,4 +153,7 @@ public abstract class Espiritu implements Serializable {
 
     abstract public void desconectarDeMedium(Medium medium);
 
+    public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium);
+
+    public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium);
 }
