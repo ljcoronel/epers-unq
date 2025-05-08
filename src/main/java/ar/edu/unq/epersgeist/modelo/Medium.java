@@ -44,7 +44,7 @@ public class Medium implements Serializable {
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Demonio> demonios = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Ubicacion ubicacion;
 
 

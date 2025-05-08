@@ -220,7 +220,7 @@ public class MediumTest {
 
     @Test
     void cuandoUnAngelSeQuedaSinManaSeLiberaDeSuMedium(){
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
 
         angel1.conectarConMedium(Optional.of(medium));
 
@@ -231,7 +231,7 @@ public class MediumTest {
 
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
 
         angel1.conectarConMedium(Optional.of(medium));
 
@@ -242,7 +242,7 @@ public class MediumTest {
 
     @Test
     void CuandoUnMediumSeMueveAUnCementerioAngelRecibeElEfectoDelCorrespondiente(){
-        Ubicacion cementerio = new Cementerio("Recoleta");
+        Ubicacion cementerio = new Cementerio("Recoleta",50);
 
         angel1.conectarConMedium(Optional.of(medium));
 
@@ -254,7 +254,7 @@ public class MediumTest {
 
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
-        Ubicacion ubicacion1 = new Santuario("Vaticano");
+        Ubicacion ubicacion1 = new Santuario("Vaticano",50);
         demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(ubicacion1);
         assertEquals(this.demonio1.getNivelDeConexion(), 46); // 56 - 10 de efecto de Zona
@@ -262,7 +262,7 @@ public class MediumTest {
 
     @Test
     void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
-        Ubicacion cementerio = new Cementerio("Sarandi");
+        Ubicacion cementerio = new Cementerio("Sarandi",50);
         demonio1.conectarConMedium(Optional.of(medium));
         this.medium.setUbicacion(cementerio);
         assertEquals(this.demonio1.getNivelDeConexion(), 56);

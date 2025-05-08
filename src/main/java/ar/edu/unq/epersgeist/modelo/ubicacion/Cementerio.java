@@ -16,7 +16,7 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
-public class Cementerio extends Ubicacion {
+public class Cementerio extends Ubicacion  {
 
 
     public Cementerio(String nombre, int energia) { super(nombre, energia); }
@@ -39,13 +39,14 @@ public class Cementerio extends Ubicacion {
     public void recuperarManaParaMedium(Medium medium) {
 
         medium.aumentarMana(this.getEnergiaParaRecuperarMedium());
+    }
+
     public void recibir(EfectosDeUbicacion espiritu) {
         espiritu.recibirEfectoDe(this);
     }
 
     private int getEnergiaParaRecuperarMedium() {
-        return (int) (this.getEnergia()*0.5);
-    public Cementerio(String nombre) {
-        super(nombre);
-    }
+            return (int) (this.getEnergia() * 0.5);
+        }
+
 }

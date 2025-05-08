@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 // singletable, por el momento tiene sentido porque ambos tipos de ubicación solo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Ubicacion,  UbicacionesRecibidoras  {
+public abstract class Ubicacion implements UbicacionesRecibidoras  {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -41,6 +41,7 @@ public abstract class Ubicacion,  UbicacionesRecibidoras  {
         } else {
             this.energia = i;
         }
+    }
 
     @Override
     public void recibir(EfectosDeUbicacion espiritu) {

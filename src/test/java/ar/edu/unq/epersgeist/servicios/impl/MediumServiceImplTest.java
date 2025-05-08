@@ -438,12 +438,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
 
-        Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita");
+        Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
 
-        Angel libertador = new Angel(10,"Libertador",ubicacion);
+        Angel libertador = new Angel(10,"Libertador",iglesia);
         espirituService.crear(libertador);
-
+        Medium medium = new Medium("Max",100,50,iglesia);
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), iglesia.getId());
@@ -457,19 +457,19 @@ public class MediumServiceImplTest {
     @Test
     void unMediumSeMueveYSuAngelSeQuedaSinConexionEntoncesSeLibera(){
 
-        Ubicacion wilde = new Cementerio("Wilde");
+        Ubicacion wilde = new Cementerio("Wilde",50);
         ubicacionService.crear(wilde);
 
-        Angel mabel = new Angel(5,"Amon",ubicacion);
+        Angel mabel = new Angel(5,"Amon",wilde);
         espirituService.crear(mabel);
 
-        Medium osvaldo = new Medium("Osvaldo",100,20, this.ubicacion);
+        Medium osvaldo = new Medium("Osvaldo",100,20, wilde);
 
         mediumService.crear(osvaldo);
         espirituService.conectar(mabel.getId(),osvaldo.getId());
         mediumService.mover(osvaldo.getId(), wilde.getId());
 
-        Ubicacion sarandi = new Cementerio("Sarandi");
+        Ubicacion sarandi = new Cementerio("Sarandi",50);
         ubicacionService.crear(sarandi);
 
         mediumService.mover(osvaldo.getId(), sarandi.getId());
@@ -484,19 +484,19 @@ public class MediumServiceImplTest {
     @Test
     void unMediumSeMueveYSuDemonioSeQuedaSinConexionEntoncesSeLibera(){
 
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
 
-        Demonio amon = new Demonio(10,"Amon",ubicacion);
+        Demonio amon = new Demonio(10,"Amon",iglesia);
         espirituService.crear(amon);
 
-        Medium osvaldo = new Medium("Osvaldo",100,50, this.ubicacion);
+        Medium osvaldo = new Medium("Osvaldo",100,50, iglesia);
 
         mediumService.crear(osvaldo);
         espirituService.conectar(amon.getId(),osvaldo.getId());
         mediumService.mover(osvaldo.getId(), iglesia.getId());
 
-        Ubicacion vaticano = new Santuario("vaticano");
+        Ubicacion vaticano = new Santuario("vaticano",50);
         ubicacionService.crear(vaticano);
 
         mediumService.mover(osvaldo.getId(), vaticano.getId());
@@ -512,12 +512,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnCementerioElAngelRecibeElEfectoDelCorrespondiente(){
 
-        Ubicacion cementerio = new Cementerio("Recoleta");
+        Ubicacion cementerio = new Cementerio("Recoleta",50);
         ubicacionService.crear(cementerio);
 
-        Angel libertador = new Angel(10,"Libertador",ubicacion);
+        Angel libertador = new Angel(10,"Libertador",cementerio);
         espirituService.crear(libertador);
-
+        Medium medium = new Medium("Max",100,50,cementerio);
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), cementerio.getId());
@@ -532,12 +532,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
 
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita");
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
 
-        Demonio demonicaco = new Demonio(10,"demonicaco",ubicacion);
+        Demonio demonicaco = new Demonio(10,"demonicaco",iglesia);
         espirituService.crear(demonicaco);
-
+        Medium medium = new Medium("Max",100,50,iglesia);
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), iglesia.getId());
@@ -551,12 +551,13 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
 
-        Ubicacion sanMiguel = new Cementerio("San Miguel");
+        Ubicacion sanMiguel = new Cementerio("San Miguel",50);
         ubicacionService.crear(sanMiguel);
 
-        Demonio demonicaco = new Demonio(10,"demonicaco",ubicacion);
+        Demonio demonicaco = new Demonio(10,"demonicaco",sanMiguel);
         espirituService.crear(demonicaco);
 
+        Medium medium = new Medium("Max",100,50,sanMiguel);
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), sanMiguel.getId());

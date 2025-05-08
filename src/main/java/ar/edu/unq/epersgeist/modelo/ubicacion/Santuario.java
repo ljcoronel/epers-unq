@@ -39,6 +39,7 @@ public class Santuario extends Ubicacion {
     @Override
     public void recibir (EfectosDeUbicacion espiritu) {
         espiritu.recibirEfectoDe(this);
+    }
 
     @Override
     public void recuperarConexionParaDemonios(List<Demonio> demonios) {}
