@@ -16,16 +16,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
 
 @Entity
-// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@SQLDelete(sql = "update espiritu set deleted = true where id =?")
+@Where(clause = "deleted=false")
 public abstract class Espiritu implements Serializable {
 
     @Id
@@ -41,6 +47,15 @@ public abstract class Espiritu implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     @NotNull
     private Ubicacion ubicacion;
+
+    private boolean deleted =  false;
+
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 

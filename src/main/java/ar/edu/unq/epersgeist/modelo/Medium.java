@@ -12,6 +12,8 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.io.Serializable;
 import java.util.ArrayList;
