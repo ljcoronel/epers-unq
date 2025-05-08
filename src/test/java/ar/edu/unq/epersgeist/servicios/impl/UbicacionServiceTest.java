@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,9 +55,9 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-        this.ubicacionUno = new Ubicacion("Bernal");
-        this.ubicacionDos = new Ubicacion("Bernal");
-        this.ubicacionTres = new Ubicacion("Avellaneda");
+        this.ubicacionUno = new Santuario("Bernal", 50);
+        this.ubicacionDos = new Santuario("Bernal", 50);
+        this.ubicacionTres = new Santuario("Avellaneda", 50);
 
         this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
         this.angelDos = new Angel(20, "angel", this.ubicacionUno);
@@ -149,6 +151,7 @@ public class UbicacionServiceTest {
         assertEquals(0, ubicaciones.size());
     }
 
+
 //    @Test
 //    public void seObtieneLosEspiritusExistentesEnDistintasUbicaciones() {
 //        this.ubicacionService.crear(this.ubicacionUno);
@@ -209,8 +212,8 @@ public class UbicacionServiceTest {
 
     @Test
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Ubicacion("Magical");
-        Ubicacion ubicacion2 = new Ubicacion("Masedonia");
+        Ubicacion ubicacion1 = new Santuario("Magical",50);
+        Ubicacion ubicacion2 = new Santuario("Masedonia",50);
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
         Medium medium = new Medium("Franco", 200, 50, ubicacion1);
@@ -236,6 +239,34 @@ public class UbicacionServiceTest {
         this.ubicacionUno.setId(1L);
 
         assertTrue(this.ubicacionService.mediumsSinEspiritusEn(this.ubicacionUno.getId()).isEmpty());
+    }
+
+    @Test
+    public void unaUbicacionNoPuedeSerActualizadaConMasDe100DeEnergia() {
+        Ubicacion ubicacion = this.ubicacionService.crear(this.ubicacionUno);
+        ubicacion.setEnergia(900);
+        ubicacionService.actualizar(ubicacion);
+        Ubicacion ubicacionActualizada = ubicacionService.recuperar(ubicacion.getId()).get();
+
+        assertEquals(100, ubicacionActualizada.getEnergia());
+    }
+
+    @Test
+    public void unaUbicacionNoPuedeSerActualizadaConMenosDe0DeEnergia() {
+        Ubicacion ubicacion = this.ubicacionService.crear(this.ubicacionUno);
+        ubicacion.setEnergia(-50);
+        ubicacionService.actualizar(ubicacion);
+        Ubicacion ubicacionActualizada = ubicacionService.recuperar(ubicacion.getId()).get();
+
+        assertEquals(0, ubicacionActualizada.getEnergia());
+    }
+
+    @Test
+    public void unaUbicacionPersisteSuEnergia() {
+        Ubicacion ubicacion = this.ubicacionService.crear(new Santuario("Chocolandia", 75));
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion.getId()).get();
+
+        assertEquals(75, ubicacionRecuperada.getEnergia());
     }
 
     @AfterEach

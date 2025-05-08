@@ -2,23 +2,25 @@ package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import lombok.Builder;
 
-public record UbicacionDTORequest(String nombre) {
-
-    public static UbicacionDTORequest desdeModelo(Ubicacion ubicacion) {
-        if (ubicacion.getNombre() == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
-        return new UbicacionDTORequest(ubicacion.getNombre());
-    }
+public record UbicacionDTORequest(TipoUbicacion tipoUbicacion, String nombre, int energia) {
 
     public Ubicacion aModelo() {
+        if (this.tipoUbicacion == null) throw new ParametroIncorrectoException("La ubicacion debe tener un tipo");
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
-        return new Ubicacion(this.nombre);
+
+        //        return new Ubicacion(this.nombre);
+        return this.tipoUbicacion().getUbicacionInstance(this.nombre, this.energia );
     }
 
     public Ubicacion aModelo(Long id) {
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
+        if (this.tipoUbicacion == null) throw new ParametroIncorrectoException("La ubicacion debe tener un tipo");
+
+        Ubicacion ubicacion = this.tipoUbicacion.getUbicacionInstance(this.nombre, this.energia);
         ubicacion.setId(id);
+
         return ubicacion;
     }
 }

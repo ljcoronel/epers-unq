@@ -2,21 +2,14 @@ package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
-public record UbicacionDTOResponse(Long id, String nombre) {
+public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String nombre, int energia) {
 
     public static UbicacionDTOResponse desdeModelo(Ubicacion ubicacion) {
-        return new UbicacionDTOResponse(ubicacion.getId(), ubicacion.getNombre());
+        return new UbicacionDTOResponse(
+                TipoUbicacion.obtenerTipoUbicacion(ubicacion),
+                ubicacion.getId(),
+                ubicacion.getNombre(),
+                ubicacion.getEnergia());
     }
 
-    public Ubicacion aModelo() {
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
-        ubicacion.setId(this.id);
-        return ubicacion;
-    }
-
-    public Ubicacion aModelo(Long id) {
-        Ubicacion ubicacion = new Ubicacion(this.nombre);
-        ubicacion.setId(id);
-        return ubicacion;
-    }
 }

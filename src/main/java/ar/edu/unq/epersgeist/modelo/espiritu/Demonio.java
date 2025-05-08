@@ -19,9 +19,11 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
     }
+
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion, nombre, ubicacion);
     }
+
 
     public void defender(Angel angel,int ataque) {
 
@@ -46,6 +48,16 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion {
     public void desconectarDeMedium(Medium medium) {
         medium.quitarDeDemonios(this);
     }
+
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {}
+
+    @Override
+    public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(cementerio);
+    }
+
 
     @Override
     public void recibirEfectoDe(Santuario ubicacion) {

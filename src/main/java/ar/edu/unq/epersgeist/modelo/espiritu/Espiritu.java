@@ -59,7 +59,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     public Espiritu(int nivelDeConexion, String nombre) {
         this.nombre = nombre;
-        this.nivelDeConexion = nivelDeConexion;
+        setNivelDeConexion(nivelDeConexion);
     }
 
 
@@ -117,10 +117,9 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     }
 
     public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
-        if (this.getMedium() == medium) {
+
             ubicacion.recibir(this);
             this.ubicacion = ubicacion;
-        }
     }
 
     public void conectarConMedium(Optional<Medium> optionalMedium) {
@@ -156,6 +155,10 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     abstract public void desconectarDeMedium(Medium medium);
 
+    public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium);
+
+    public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium);
+}
 
     @Override
     public void recibirEfectoDe(Cementerio ubicacion) {}
