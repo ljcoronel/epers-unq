@@ -56,9 +56,9 @@ public class EstadisticaServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal");
-        this.ubicacion2 = new Santuario("Quilmes");
-        this.ubicacion3 = new Cementerio("Solano");
+        this.ubicacion = new Santuario("Bernal", 60);
+        this.ubicacion2 = new Santuario("Quilmes",60);
+        this.ubicacion3 = new Cementerio("Solano",60);
 
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         demonio1 = new Demonio(10, "Pepito", this.ubicacion);

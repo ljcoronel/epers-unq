@@ -38,7 +38,7 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     @NotNull
     private Ubicacion ubicacion;
 
