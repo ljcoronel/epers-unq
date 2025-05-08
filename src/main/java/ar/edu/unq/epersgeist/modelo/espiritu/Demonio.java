@@ -9,11 +9,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
 
 @Entity
+@SQLDelete(sql = "update espiritu set deleted = true where id =?")
+@Where(clause = "deleted=false")
 public class Demonio extends Espiritu {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
