@@ -91,7 +91,7 @@ public class MediumControllerREST {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{mediumId}/espiritus")
+    @GetMapping("/{mediumId}/espiritus")
     public ResponseEntity<Set<EspirituDTOResponse>> espiritus(@PathVariable Long mediumId){
 
         List<Espiritu> espiritus = mediumService.espiritus(mediumId);
@@ -100,7 +100,7 @@ public class MediumControllerREST {
     }
 
     @PatchMapping("/{mediumId}/invocar/{espirituId}")
-    public ResponseEntity<EspirituDTOResponse> descansarMedium(@PathVariable Long mediumId,@PathVariable Long espirituId){
+    public ResponseEntity<EspirituDTOResponse> invocarEspiritu(@PathVariable Long mediumId,@PathVariable Long espirituId){
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 
