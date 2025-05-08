@@ -44,25 +44,15 @@ public class Medium implements Serializable {
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Demonio> demonios = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     private Ubicacion ubicacion;
 
 
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
-        this.validarLosCampos(nombre,manaMax,mana);
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
         this.ubicacion = ubicacion;
-    }
-
-    private void validarLosCampos(String nombre, Integer manaMax, Integer mana)
-            throws InvalidFieldsException, NullRequiredFieldsException {
-
-        if (nombre == null || manaMax == null || mana == null )
-            throw new NullRequiredFieldsException(this.getClass().getSimpleName());
-        else if (mana < 0 || mana > manaMax)
-            throw new InvalidFieldsException(this.getClass().getSimpleName());
     }
 
     public void realizarConexion(Espiritu espiritu){

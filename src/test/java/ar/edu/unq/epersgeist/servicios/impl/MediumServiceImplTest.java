@@ -577,7 +577,7 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seHaceDescansarAUnMediumEnUnSantuarioRecuperandoManaEn150PorcientoDeLaEnergiaDelSantuario(){
+    void seHaceDescansarAUnMediumEnUnSantuarioRecuperandoManaEn150PorCientoDeLaEnergiaDelSantuario(){
         medium.setMana(10);
         mediumService.crear(medium); // tiene 10 de mana, 100 de mana max, el santuario tiene 50 de energía
         espirituService.crear(angelDebil);
@@ -592,7 +592,7 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    void seHaceDescansarAUnMediumEnUnCementerioRecuperandoManaEn50PorcientoDeLaEnergiaDelCementerio(){
+    void seHaceDescansarAUnMediumEnUnCementerioRecuperandoManaEn50PorCientoDeLaEnergiaDelCementerio(){
         medium3.setMana(10);
         mediumService.crear(medium3); // tiene 10 de mana, 100 de mana max, el cementerio tiene 50 de energía
         espirituService.crear(angelDebil);

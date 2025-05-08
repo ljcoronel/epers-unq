@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.controller.exception;
 
 import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,10 @@ public class GlobalExceptionHandler {
         if (e.getTargetType() == TipoEspiritu.class) {
             return new DTOResponseError("El tipo del espíritu debe ser" + TipoEspiritu.getNombreTipos());
         }
-        return new DTOResponseError(e.getMessage());
+        if (e.getTargetType() == TipoUbicacion.class) {
+            return new DTOResponseError("El tipo de la ubicación debe ser" + TipoUbicacion.getNombreTipos());
+        }
+        return new DTOResponseError("El formato es inválido.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

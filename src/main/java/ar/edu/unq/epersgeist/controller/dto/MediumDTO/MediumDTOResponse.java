@@ -6,8 +6,6 @@ import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Medium;
 
-import java.util.ArrayList;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
