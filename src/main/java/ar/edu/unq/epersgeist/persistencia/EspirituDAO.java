@@ -35,7 +35,7 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
 
     @Modifying
     @Query(
-            "update Espiritu e set e.nombre=:nombre, e.nivelDeConexion=:nivelDeConexion where e.id = :id"
+            "update Espiritu e set e.nombre=:nombre, e.nivelDeConexion=:nivelDeConexion, e.updatedAt = current_timestamp where e.id = :id"
     )
     void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 

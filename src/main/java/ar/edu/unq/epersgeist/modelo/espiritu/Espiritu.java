@@ -20,8 +20,10 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ import java.util.Optional;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "update espiritu set deleted = true where id =?")
 @Where(clause = "deleted=false")
 public abstract class Espiritu implements Serializable {
@@ -48,9 +51,11 @@ public abstract class Espiritu implements Serializable {
     @NotNull
     private Ubicacion ubicacion;
 
-    private boolean deleted =  false;
+    @Column(nullable = false)
+    private boolean deleted =  Boolean.FALSE;
 
     @CreatedDate
+    @Column(updatable = false)
     private Date createdAt;
 
     @LastModifiedDate
