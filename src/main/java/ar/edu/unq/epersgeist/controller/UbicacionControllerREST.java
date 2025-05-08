@@ -2,7 +2,8 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
-import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTORequest;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -23,7 +24,7 @@ public final class UbicacionControllerREST {
     }
 
     @PostMapping
-    public ResponseEntity<UbicacionDTOResponse> createUbicacion(@RequestBody UbicacionDTORequest ubicacionRequest) {
+    public ResponseEntity<UbicacionDTOResponse> createUbicacion(@RequestBody UbicacionDTOPostRequest ubicacionRequest) {
         Ubicacion ubicacion = this.ubicacionService.crear(ubicacionRequest.aModelo());
         return ResponseEntity.status(HttpStatus.CREATED).body(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
@@ -43,7 +44,7 @@ public final class UbicacionControllerREST {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTORequest ubicacionRequest) {
+    public ResponseEntity<UbicacionDTOResponse> updateUbicacion(@PathVariable Long id, @RequestBody UbicacionDTOPutRequest ubicacionRequest) {
         Ubicacion ubicacion = ubicacionRequest.aModelo(id);
 
         this.ubicacionService.actualizar(ubicacion);
