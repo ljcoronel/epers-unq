@@ -12,9 +12,15 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +28,9 @@ import java.util.Optional;
 @ToString
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@SQLDelete(sql = "update medium set deleted = current_timestamp where id =?")
+@Where(clause = "deleted is null")
 public class Medium implements Serializable {
 
     @Id
@@ -39,15 +48,22 @@ public class Medium implements Serializable {
     @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Angel> angeles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Demonio> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     private Ubicacion ubicacion;
 
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
+    private Date deleted = null;
 
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
         this.nombre = nombre;

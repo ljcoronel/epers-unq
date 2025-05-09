@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
@@ -118,9 +119,18 @@ public class MediumServiceImplTest {
     }
 
     @Test
+    public void noSePuedeEliminarUnMediumTodaviaReferenciado() {
+        this.mediumService.crear(medium);
+        this.espirituService.crear(angelDebil);
+        this.espirituService.conectar(angelDebil.getId(), medium.getId());
+
+        assertThrows(EntidadTodaviaReferenciadaException.class, () -> this.mediumService.eliminar(this.medium.getId()));
+    }
+
+    @Test
     void alEliminarUnMediumNoGuardadoNoHaceNada() {
 
-        assertDoesNotThrow(() -> mediumService.eliminar(15L));
+        assertDoesNotThrow(() -> mediumService.eliminar(-1L));
     }
 
     @Test

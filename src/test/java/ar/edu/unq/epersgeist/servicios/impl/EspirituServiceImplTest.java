@@ -125,6 +125,7 @@ public class EspirituServiceImplTest {
         assertDoesNotThrow(()->espirituService.conectar(espirituDeBernal.getId(), mediumDeBernal.getId()));
 
     }
+
     @Test
     void SiUnEspirituaNoEstaLibreDaErrorEspirituLibreException(){
         ubicacionService.crear(this.ubicacion);
@@ -488,8 +489,8 @@ public class EspirituServiceImplTest {
 
     @AfterEach
     void eliminarModelo() {
-        testService.eliminarMediums();
         testService.eliminarEspiritus();
+        testService.eliminarMediums();
         testService.eliminarUbicaciones();
     }
 }

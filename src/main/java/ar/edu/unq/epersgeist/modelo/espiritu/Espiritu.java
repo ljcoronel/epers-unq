@@ -17,17 +17,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
 
 @Entity
-// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
+@EntityListeners(AuditingEntityListener.class)
+// agregamos una constraint compuesta para validar que no alla nombres de espiritus "activos" repetidos
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted is null")
+public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,13 +45,25 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     @Column(nullable = false)
     @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(unique = true, length = 50, nullable = false)
+    //como usamos soft delete, la validacion de nombre unico la hacemos con una query para verificar
+    // que no haya un nombre existente que pertenezca a un espiritu que NO fue borrado
+    @Column(length = 50, nullable = false)
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     private Ubicacion ubicacion;
+
+    private Date deleted =  null;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
@@ -120,6 +142,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
             ubicacion.recibir(this);
             this.ubicacion = ubicacion;
+
     }
 
     public void conectarConMedium(Optional<Medium> optionalMedium) {

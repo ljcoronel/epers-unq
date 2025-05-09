@@ -1,8 +1,6 @@
 package ar.edu.unq.epersgeist.testUtils;
-
-import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -10,25 +8,18 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class TestService {
 
-    private EspirituDAO espDao;
-    private UbicacionDAO ubDao;
-    private MediumDAO medDao;
-
-    public TestService(EspirituDAO espDao, UbicacionDAO ubDao, MediumDAO medDao) {
-        this.espDao = espDao;
-        this.ubDao = ubDao;
-        this.medDao = medDao;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void eliminarEspiritus() {
-        espDao.deleteAll();
+        entityManager.createNativeQuery("DELETE FROM espiritu").executeUpdate();
     }
 
     public void eliminarUbicaciones() {
-        ubDao.deleteAll();
+        entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
     }
 
     public void eliminarMediums() {
-        medDao.deleteAll();
+        entityManager.createNativeQuery("DELETE FROM medium").executeUpdate();
     }
 }
