@@ -6,23 +6,32 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
-// singletable, por el momento tiene sentido porque ambos tipos de ubicación solo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@EntityListeners(AuditingEntityListener.class)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
+@SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
+@Where(clause = "deleted = null")
 public abstract class Ubicacion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
     private int energia;
+
+    private Date deleted;
 
     public Ubicacion(String nombre, int energia) {
 
