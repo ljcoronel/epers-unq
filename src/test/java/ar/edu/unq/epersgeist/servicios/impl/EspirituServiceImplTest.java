@@ -81,15 +81,6 @@ public class EspirituServiceImplTest {
 
     }
 
-//    @Test
-//    void noSePuedenCrearAngelesODemonioSinNombres() { // TODO implementar esto
-//        Ubicacion quilmes = new Santuario("quilmes", 50);
-//        ubicacionService.crear(quilmes);
-//        Demonio demonioSinNombre = new Demonio(10, "", quilmes);
-//        Angel angelSinNombre = new Angel(10, "", quilmes);
-//        assertThrows(ParametroIncorrectoException.class, () -> espirituService.crear(angelSinNombre));
-//        assertThrows(ParametroIncorrectoException.class, () -> espirituService.crear(demonioSinNombre));
-//    }
 
     @Test
     void alRecuperarUnIdInexistenteNoTraeNada(){
