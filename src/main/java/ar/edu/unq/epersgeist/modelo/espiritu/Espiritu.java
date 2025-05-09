@@ -112,9 +112,6 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
     protected void recibirDamage(int ataque){
         this.reducirNivelDeConexionEn(ataque);
-        if(this.getNivelDeConexion()==0){
-            this.desvincularseDeMedium();
-        }
 
     }
 
