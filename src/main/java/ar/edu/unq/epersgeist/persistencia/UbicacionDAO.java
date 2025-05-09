@@ -15,6 +15,6 @@ public interface UbicacionDAO extends JpaRepository<Ubicacion, Long> {
     boolean existeNombre(@Param("unaUbicacion") String nombre, @Param("unId") Long unId);
 
     @Modifying
-    @Query("update Ubicacion set nombre = :unNombre, energia = :cantEnergia where id = :unaId")
+    @Query("update Ubicacion u set u.nombre = :unNombre, u.energia = :cantEnergia, u.updatedAt = current_timestamp where u.id = :unaId")
     void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia);
 }

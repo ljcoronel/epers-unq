@@ -29,8 +29,8 @@ import java.util.Optional;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Where(clause = "deleted = null")
 @SQLDelete(sql = "update medium set deleted = current_timestamp where id =?")
+@Where(clause = "deleted is null")
 public class Medium implements Serializable {
 
     @Id

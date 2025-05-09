@@ -37,7 +37,7 @@ import java.util.Optional;
 //tuvimos que setear las referencias de un espiritu borrado a null, por el soft delete
 // tambien seteamos el update_at para tener la fecha en que se borro
 @SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
-@Where(clause = "deleted = null")
+@Where(clause = "deleted is null")
 public abstract class Espiritu implements Serializable {
 
     @Id
@@ -52,11 +52,10 @@ public abstract class Espiritu implements Serializable {
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Ubicacion ubicacion;
 
-    @Column(nullable = false)
     private Date deleted =  null;
 
     @CreatedDate

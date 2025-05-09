@@ -16,10 +16,10 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
 
     @Modifying
     @Query(
-            "update Medium m set m.nombre=:nombre, m.manaMax=:manaMax,m.mana=:mana where m.id = :id"
+            "update Medium m set m.nombre=:nombre, m.manaMax=:manaMax,m.mana=:mana, m.updatedAt = current_timestamp where m.id = :id"
     )
     void actualizar(@Param("nombre")String nombre, @Param("manaMax")int manaMax,@Param("mana")int mana, @Param("id")Long id);
 
-    @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted = false GROUP BY m.id ORDER BY SUM(CASE WHEN e.dtype = 'Demonio' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
+    @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted is null GROUP BY m.id ORDER BY SUM(CASE WHEN e.dtype = 'Demonio' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
     Long mediumConMasDemoniosEn(@Param("ubicacionId") Long ubicacionId);
 }

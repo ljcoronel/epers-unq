@@ -5,6 +5,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +20,7 @@ import java.util.List;
 
 @Entity
 @SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
-@Where(clause = "deleted = null")
+@Where(clause = "deleted is null")
 public class Santuario extends Ubicacion {
 
     public Santuario(String nombre, int energia) {

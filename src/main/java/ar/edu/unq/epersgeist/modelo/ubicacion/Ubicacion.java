@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
@@ -20,7 +22,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
 @SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
-@Where(clause = "deleted = null")
+@Where(clause = "deleted is null")
 public abstract class Ubicacion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +33,15 @@ public abstract class Ubicacion {
     @Column(nullable = false)
     private int energia;
 
-    private Date deleted;
+    private Date deleted = null;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
 
     public Ubicacion(String nombre, int energia) {
 
