@@ -48,10 +48,10 @@ public class Medium implements Serializable {
     @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Angel> angeles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Demonio> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
@@ -156,8 +156,11 @@ public class Medium implements Serializable {
 
     public void setUbicacion(Ubicacion unaUbicacion) {
         this.ubicacion = unaUbicacion;
-        this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
-        this.demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+        List<Angel> angeles=  new ArrayList<>(this.getAngeles());
+        List<Demonio> demonios = new ArrayList<>(this.getDemonios());
+
+        angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
+        demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
     }
 
     public void agregarAAngeles(Angel angel) {

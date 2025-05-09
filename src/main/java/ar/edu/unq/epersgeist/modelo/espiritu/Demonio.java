@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
 @Where(clause = "deleted is null")
-public class Demonio extends Espiritu {
+public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
     }
@@ -62,4 +63,8 @@ public class Demonio extends Espiritu {
     }
 
 
+    @Override
+    public void recibirEfectoDe(Santuario ubicacion) {
+        this.reducirNivelDeConexionEn(10);
+    }
 }

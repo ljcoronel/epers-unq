@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class EstadisticaServiceImpl implements EstadisticaService {
 
-    private UbicacionDAO ubicacionDAO;
-    private EspirituDAO espirituDAO;
-    private MediumDAO mediumDAO;
+    private final UbicacionDAO ubicacionDAO;
+    private final EspirituDAO espirituDAO;
+    private final MediumDAO mediumDAO;
 
     public EstadisticaServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
         this.ubicacionDAO = ubicacionDAO;
@@ -28,7 +28,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     public ReporteSantuarioMasCorrupto santuarioCorrupto() {
         ReporteSantuarioMasCorrupto reporte = new ReporteSantuarioMasCorrupto();
         Long idSantuario = this.espirituDAO.santuarioCorrupto();
-        if (idSantuario == null || this.ubicacionDAO.findById(idSantuario).isEmpty()) return reporte;
+        if (idSantuario == null) return reporte;
 
         Ubicacion ubicacion = this.ubicacionDAO.findById(idSantuario).get();
 

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -17,7 +18,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
 @Where(clause = "deleted is null")
-public class Angel extends Espiritu {
+public class Angel extends Espiritu implements EfectosDeUbicacion {
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);
     }
@@ -51,5 +52,12 @@ public class Angel extends Espiritu {
 
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {}
+
+    @Override
+    public void recibirEfectoDe(Cementerio ubicacion) {
+
+        this.reducirNivelDeConexionEn(5);
+
+    }
 
 }

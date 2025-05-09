@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.ubicacion;
-
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.UbicacionesRecibidoras;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -46,7 +47,12 @@ public class Cementerio extends Ubicacion {
         medium.aumentarMana(this.getEnergiaParaRecuperarMedium());
     }
 
-    private int getEnergiaParaRecuperarMedium() {
-        return (int) (this.getEnergia()*0.5);
+    public void recibir(EfectosDeUbicacion espiritu) {
+        espiritu.recibirEfectoDe(this);
     }
+
+    private int getEnergiaParaRecuperarMedium() {
+            return (int) (this.getEnergia() * 0.5);
+        }
+
 }
