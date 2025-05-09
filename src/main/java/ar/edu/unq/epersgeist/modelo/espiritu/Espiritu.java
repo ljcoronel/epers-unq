@@ -23,7 +23,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,8 +32,12 @@ import java.util.Optional;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "update espiritu set deleted = true where id =?")
-@Where(clause = "deleted=false")
+// agregamos una constraint compuesta para validar que no alla nombres de espiritus "activos" repetidos
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
+//tuvimos que setear las referencias de un espiritu borrado a null, por el soft delete
+// tambien seteamos el update_at para tener la fecha en que se borro
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted = null")
 public abstract class Espiritu implements Serializable {
 
     @Id
@@ -43,7 +46,9 @@ public abstract class Espiritu implements Serializable {
     @Column(nullable = false)
     @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(unique = true, length = 50, nullable = false)
+    //como usamos soft delete, la validacion de nombre unico la hacemos con una query para verificar
+    // que no haya un nombre existente que pertenezca a un espiritu que NO fue borrado
+    @Column(length = 50, nullable = false)
     private String nombre;
     @ManyToOne
     private Medium medium;
@@ -52,7 +57,7 @@ public abstract class Espiritu implements Serializable {
     private Ubicacion ubicacion;
 
     @Column(nullable = false)
-    private boolean deleted =  Boolean.FALSE;
+    private Date deleted =  null;
 
     @CreatedDate
     @Column(updatable = false)

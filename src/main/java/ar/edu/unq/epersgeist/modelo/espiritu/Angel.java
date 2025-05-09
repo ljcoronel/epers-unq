@@ -15,8 +15,8 @@ import org.hibernate.annotations.Where;
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
-@SQLDelete(sql = "update espiritu set deleted = true where id =?")
-@Where(clause = "deleted=false")
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted = null")
 public class Angel extends Espiritu {
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);
