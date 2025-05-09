@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Entity
 // singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Espiritu implements Serializable {
+public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +73,8 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void setNivelDeConexion(int i) {
-        if (i < 0) {
+        if (i <= 0) {
+            this.desvincularseDeMedium();
             this.nivelDeConexion = 0;
         } else if (i > 100) {
             this.nivelDeConexion = 100;
@@ -115,9 +117,9 @@ public abstract class Espiritu implements Serializable {
     }
 
     public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
-        if (this.getMedium() == medium) {
+
+            ubicacion.recibir(this);
             this.ubicacion = ubicacion;
-        }
     }
 
     public void conectarConMedium(Optional<Medium> optionalMedium) {
@@ -156,4 +158,12 @@ public abstract class Espiritu implements Serializable {
     public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium);
 
     public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium);
-}
+
+    @Override
+    public void recibirEfectoDe(Cementerio ubicacion) {}
+
+    @Override
+    public void recibirEfectoDe(Santuario ubicacion) {}
+
+
+    }

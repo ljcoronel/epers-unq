@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.ubicacion;
 
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.UbicacionesRecibidoras;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -31,6 +33,12 @@ public class Santuario extends Ubicacion {
         for(Angel angel : angeles){
             angel.aumentarNivelDeConexionEn(this.getEnergia());
         }
+
+    }
+
+    @Override
+    public void recibir (EfectosDeUbicacion espiritu) {
+        espiritu.recibirEfectoDe(this);
     }
 
     @Override

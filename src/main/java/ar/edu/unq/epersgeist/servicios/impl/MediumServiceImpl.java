@@ -136,4 +136,18 @@ public class MediumServiceImpl implements MediumService {
         return espiritu;
     }
 
+    @Override
+    public void mover(Long mediumId, Long ubicacionId) {
+        Medium medium = mediumDao.findById(mediumId)
+                .orElse(null);
+
+        Ubicacion ubicacion = ubicacionDao.findById(ubicacionId)
+                .orElse(null);
+
+        medium.setUbicacion(ubicacion);
+
+        mediumDao.save(medium);
+
+    }
+
 }

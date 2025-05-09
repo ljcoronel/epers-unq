@@ -106,4 +106,11 @@ public class MediumControllerREST {
 
         return ResponseEntity.ok().body(EspirituDTOResponse.desdeModelo(espiritu));
     }
+    @PatchMapping("/{mediumId}/mover-a/{espirituId}")
+    public ResponseEntity<EspirituDTOResponse> moverMediumConEspiritu(@PathVariable Long mediumId,@PathVariable Long espirituId){
+
+        mediumService.mover(mediumId, espirituId);
+
+        return ResponseEntity.ok().build();
+    }
 }

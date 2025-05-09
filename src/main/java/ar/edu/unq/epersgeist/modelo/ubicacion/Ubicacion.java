@@ -1,11 +1,14 @@
 package ar.edu.unq.epersgeist.modelo.ubicacion;
 
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.UbicacionesRecibidoras;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
 
@@ -14,7 +17,7 @@ import java.util.List;
 @Entity
 // singletable, por el momento tiene sentido porque ambos tipos de ubicación solo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Ubicacion {
+public abstract class Ubicacion implements UbicacionesRecibidoras  {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -38,7 +41,11 @@ public abstract class Ubicacion {
         } else {
             this.energia = i;
         }
+    }
 
+    @Override
+    public void recibir(EfectosDeUbicacion espiritu) {
+        throw new NotImplementedException("recibir no implementado");
     }
 
     public abstract void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium);
