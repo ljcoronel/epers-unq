@@ -22,4 +22,7 @@ public interface MediumDAO extends JpaRepository<Medium, Long> {
 
     @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted is null GROUP BY m.id ORDER BY SUM(CASE WHEN e.dtype = 'Demonio' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
     Long mediumConMasDemoniosEn(@Param("ubicacionId") Long ubicacionId);
+
+    @Query("select count(e) > 0 from Medium m join Espiritu e on e.medium.id = :unaId")
+    boolean esReferenciado(@Param("unaId") Long id);
 }

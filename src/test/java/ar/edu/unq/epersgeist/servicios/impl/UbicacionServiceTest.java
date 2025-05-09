@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,6 +126,14 @@ public class UbicacionServiceTest {
         this.ubicacionService.eliminar(this.ubicacionUno.getId());
 
         assertFalse(this.ubicacionService.recuperar(this.ubicacionUno.getId()).isPresent());
+    }
+
+    @Test
+    public void noSePuedeEliminarUnaUbicacionTodaviaReferenciada() {
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.mediumService.crear(mediumUno);
+
+        assertThrows(EntidadTodaviaReferenciadaException.class, () -> this.ubicacionService.eliminar(this.ubicacionUno.getId()));
     }
 
     @Test

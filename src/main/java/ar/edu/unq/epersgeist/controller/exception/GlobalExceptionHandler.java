@@ -26,8 +26,14 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ParametroIncorrectoException.class)
-    public DTOResponseError badRequestHandler(ParametroIncorrectoException pie) {
+    public DTOResponseError badParameterHandler(ParametroIncorrectoException pie) {
         return new DTOResponseError(pie.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EntidadTodaviaReferenciadaException.class)
+    public DTOResponseError todaviaReferenciada(EntidadTodaviaReferenciadaException tre) {
+        return new DTOResponseError(tre.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)

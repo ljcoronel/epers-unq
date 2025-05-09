@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia;
 
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,4 +43,5 @@ public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
 
     @Query("select count(e) from Espiritu e where type(e) = Demonio and e.ubicacion.id = :unaUbicacion")
     int cantidadTotalDeDemonios(@Param("unaUbicacion") Long id);
+
 }

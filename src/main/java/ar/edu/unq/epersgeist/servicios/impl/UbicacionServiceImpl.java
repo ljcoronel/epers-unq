@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
@@ -51,6 +51,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void eliminar(Long id) {
+        if (this.ubicacionDAO.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
         this.ubicacionDAO.deleteById(id);
     }
 

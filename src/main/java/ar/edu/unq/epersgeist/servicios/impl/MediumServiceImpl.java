@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -63,7 +64,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void eliminar(Long idDelMedium) {
-
+        if (this.mediumDao.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
         mediumDao.deleteById(idDelMedium);
     }
 
