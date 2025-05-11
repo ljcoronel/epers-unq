@@ -5,9 +5,9 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
-import ar.edu.unq.epersgeist.persistencia.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
