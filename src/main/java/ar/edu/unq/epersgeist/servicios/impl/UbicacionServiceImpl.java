@@ -5,9 +5,11 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
-import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.Neo4j.UbicacionDAONeo4j;
+import ar.edu.unq.epersgeist.persistencia.repositories.DTO.UbicacionRepositoryDTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +24,21 @@ public class UbicacionServiceImpl implements UbicacionService {
     private final UbicacionDAO ubicacionDAO;
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
+    private final UbicacionDAONeo4j ubicacionDAONeo4J;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
+    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO, UbicacionDAONeo4j ubicacionDAONeo4J) {
         this.ubicacionDAO = ubicacionDAO;
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDAO;
+        this.ubicacionDAONeo4J = ubicacionDAONeo4J;
     }
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
+        UbicacionRepositoryDTO dto = UbicacionRepositoryDTO.desdeModelo(ubicacion);
         if (this.ubicacionDAO.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        return this.ubicacionDAO.save(ubicacion);
+        this.ubicacionDAONeo4J.save(dto); //Neo 4j, idealmente iría en repository
+        return this.ubicacionDAO.save(ubicacion); // sql
     }
 
     @Override

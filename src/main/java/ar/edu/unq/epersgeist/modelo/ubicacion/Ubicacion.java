@@ -1,7 +1,5 @@
 package ar.edu.unq.epersgeist.modelo.ubicacion;
 
-import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
-import ar.edu.unq.epersgeist.modelo.UbicacionesRecibidoras;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -14,6 +12,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Date;
 import java.util.List;
@@ -26,11 +26,14 @@ import java.util.List;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
 @SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
 @Where(clause = "deleted is null")
+@Node()
 public abstract class Ubicacion implements UbicacionesRecibidoras {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @org.springframework.data.neo4j.core.schema.Id
     private Long id;
 
     @Column(nullable = false)
+//    @Property(name="nombre")
     private String nombre;
 
     @Column(nullable = false)
