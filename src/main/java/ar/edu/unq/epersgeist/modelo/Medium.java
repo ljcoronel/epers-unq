@@ -152,8 +152,9 @@ public class Medium implements Serializable {
         }
     }
 
-    public void setUbicacion(Ubicacion unaUbicacion) {
-        this.ubicacion = unaUbicacion;
+    public void mover(Optional<Ubicacion> ubicacionOptional) {
+        Ubicacion unaUbicacion = ubicacionOptional.orElseThrow(() -> new EntidadInexistenteException("la ubicacion a mover no existe"));
+        this.setUbicacion(unaUbicacion);
         List<Angel> angeles=  new ArrayList<>(this.getAngeles());
         List<Demonio> demonios = new ArrayList<>(this.getDemonios());
 

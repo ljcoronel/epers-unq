@@ -139,13 +139,11 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void mover(Long mediumId, Long ubicacionId) {
-        Medium medium = mediumDao.findById(mediumId)
-                .orElse(null);
+        Medium medium = mediumDao.findById(mediumId).orElseThrow(() -> new EntidadInexistenteException("El medium con id: " + mediumId + " no existe."));
 
-        Ubicacion ubicacion = ubicacionDao.findById(ubicacionId)
-                .orElse(null);
+        Optional<Ubicacion> ubicacion = ubicacionDao.findById(ubicacionId);
 
-        medium.setUbicacion(ubicacion);
+        medium.mover(ubicacion);
 
         mediumDao.save(medium);
 

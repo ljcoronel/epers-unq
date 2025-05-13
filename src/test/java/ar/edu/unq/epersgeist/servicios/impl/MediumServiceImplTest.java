@@ -732,6 +732,18 @@ public class MediumServiceImplTest {
 
     }
 
+    @Test
+    public void unMediumSeMueveAUnaUbicacionInexistenteEntoncesSeLanzaUnaExcepcion() {
+        this.mediumService.crear(this.medium);
+
+        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(this.medium.getId(), 100L));
+    }
+
+    @Test
+    public void unMediumNoPersistidoSeMueveAUnaUbicacionEntoncesSeLanzaUnaExcepcion() {
+        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(-1L, 100L));
+    }
+
 
     @AfterEach
     void eliminarModelo() {
