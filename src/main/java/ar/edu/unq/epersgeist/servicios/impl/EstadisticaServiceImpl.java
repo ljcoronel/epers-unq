@@ -3,9 +3,10 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJpa;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,12 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class EstadisticaServiceImpl implements EstadisticaService {
 
-    private final UbicacionDAO ubicacionDAO;
+    private final UbicacionRepository ubicacionRepository;
     private final EspirituDAO espirituDAO;
     private final MediumDAO mediumDAO;
 
-    public EstadisticaServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
-        this.ubicacionDAO = ubicacionDAO;
+    public EstadisticaServiceImpl(UbicacionRepository ubicacionRepository, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
+        this.ubicacionRepository = ubicacionRepository;
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDAO;
     }
@@ -30,7 +31,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         Long idSantuario = this.espirituDAO.santuarioCorrupto();
         if (idSantuario == null) return reporte;
 
-        Ubicacion ubicacion = this.ubicacionDAO.findById(idSantuario).get();
+        Ubicacion ubicacion = this.ubicacionRepository.recuperar(idSantuario).get();
 
         Long idMedium = this.mediumDAO.mediumConMasDemoniosEn(idSantuario);
 

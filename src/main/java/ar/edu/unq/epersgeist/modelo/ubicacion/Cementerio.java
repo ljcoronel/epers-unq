@@ -15,9 +15,6 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
-@Entity
-@SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
-@Where(clause = "deleted is null")
 public class Cementerio extends Ubicacion {
 
 

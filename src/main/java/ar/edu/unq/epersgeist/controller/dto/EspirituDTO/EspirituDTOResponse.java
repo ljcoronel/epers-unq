@@ -14,7 +14,7 @@ public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int
                 espiritu.getNivelDeConexion(),
                 espiritu.estaLibre(),
                 espiritu.getMedium() != null ? espiritu.getMedium().getId() : null,
-                UbicacionDTOResponse.desdeModelo(espiritu.getUbicacion())
+                UbicacionDTOResponse.desdeModelo(espiritu.getUbicacion().aModelo()) //TODO sacar el DTO
         );
     }
 }

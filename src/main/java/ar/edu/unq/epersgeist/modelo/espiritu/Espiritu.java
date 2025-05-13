@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
@@ -156,7 +157,7 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
-        if (!(this.getUbicacion() == medium.getUbicacion())){
+        if (!(Objects.equals(this.getUbicacion().getId(), medium.getUbicacion().getId()))){
             throw new UbicacionDistintaException(this, medium);
         }
     }

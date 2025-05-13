@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.DAO.Jpa;
+package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.jpa.repository.JpaRepository;

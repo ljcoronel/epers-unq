@@ -16,7 +16,7 @@ public class TestService {
     }
 
     public void eliminarUbicaciones() {
-        entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM ubicacionsqldto").executeUpdate();
     }
 
     public void eliminarMediums() {

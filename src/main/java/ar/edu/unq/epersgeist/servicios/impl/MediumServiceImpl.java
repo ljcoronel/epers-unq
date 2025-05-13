@@ -5,10 +5,11 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJpa;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +23,19 @@ public class MediumServiceImpl implements MediumService {
 
     private final MediumDAO mediumDao;
     private final EspirituDAO espirituDao;
-    private final UbicacionDAO ubicacionDao;
+    private final UbicacionRepository ubicacionRepository;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao,UbicacionDAO ubicacionDao) {
+    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao, UbicacionRepository ubicacionRepository) {
         this.mediumDao = mediumDao;
         this.espirituDao = espirituDao;
-        this.ubicacionDao = ubicacionDao;
+        this.ubicacionRepository = ubicacionRepository;
     }
 
     @Override
     public Medium crear(Medium medium) {
 
-        Ubicacion ubicacion =  ubicacionDao.findById(medium.getUbicacion().getId())
+        Ubicacion ubicacion =  ubicacionRepository.recuperar(medium.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("La Ubicacion no existe"));
 
         medium.setUbicacion(ubicacion);
@@ -142,7 +143,7 @@ public class MediumServiceImpl implements MediumService {
         Medium medium = mediumDao.findById(mediumId)
                 .orElse(null);
 
-        Ubicacion ubicacion = ubicacionDao.findById(ubicacionId)
+        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
                 .orElse(null);
 
         medium.setUbicacion(ubicacion);

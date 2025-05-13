@@ -7,9 +7,10 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.Jpa.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJpa;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Example;
@@ -28,12 +29,12 @@ public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituDAO espirituDao;
     private final MediumDAO mediumDao;
-    private final UbicacionDAO ubicacionDao;
+    private final UbicacionRepository ubicacionRepository;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionDAO ubicacionDao) {
+    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
         this.espirituDao = espirituDao;
         this.mediumDao = mediumDAO;
-        this.ubicacionDao = ubicacionDao;
+        this.ubicacionRepository = ubicacionRepository;
     }
 
 
@@ -42,7 +43,7 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        Ubicacion ubicacion = ubicacionDao.findById(espiritu.getUbicacion().getId())
+        Ubicacion ubicacion = ubicacionRepository.recuperar(espiritu.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
         espiritu.setUbicacion(ubicacion);
 
