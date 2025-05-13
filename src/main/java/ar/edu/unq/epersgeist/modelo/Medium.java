@@ -97,10 +97,9 @@ public class Medium implements Serializable {
     }
     public void exorcizarA(Optional<Medium> optionalMedium){
 
-        if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium a exorcizar no existe");
-        Medium medium = optionalMedium.get();
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
 
-        if (medium.getUbicacion() != this.ubicacion) throw new MediumEnDistintaUbicacionException("los Mediums estan en ubicaciones ditintas");
+        if (!(medium.getUbicacion().getId().equals(this.ubicacion.getId()))) throw new MediumEnDistintaUbicacionException("los Mediums estan en ubicaciones ditintas");
 
         this.verificarSiPuedeExorcizar();
 
