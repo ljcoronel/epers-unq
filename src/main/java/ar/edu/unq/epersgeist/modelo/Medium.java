@@ -3,11 +3,7 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
-import ar.edu.unq.epersgeist.modelo.exception.InvalidFieldsException;
-import ar.edu.unq.epersgeist.modelo.exception.NullRequiredFieldsException;
-import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
@@ -103,6 +99,8 @@ public class Medium implements Serializable {
 
         if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium a exorcizar no existe");
         Medium medium = optionalMedium.get();
+
+        if (medium.getUbicacion() != this.ubicacion) throw new MediumEnDistintaUbicacionException("los Mediums estan en ubicaciones ditintas");
 
         this.verificarSiPuedeExorcizar();
 

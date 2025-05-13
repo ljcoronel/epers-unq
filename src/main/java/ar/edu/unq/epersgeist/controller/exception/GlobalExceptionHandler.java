@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MediumEnDistintaUbicacionException.class)
+    public DTOResponseError MediumsEnDistintaUbicacion(MediumEnDistintaUbicacionException pie) {
+        return new DTOResponseError(pie.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EntidadTodaviaReferenciadaException.class)
     public DTOResponseError todaviaReferenciada(EntidadTodaviaReferenciadaException tre) {
         return new DTOResponseError(tre.getMessage());
