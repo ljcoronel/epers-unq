@@ -8,6 +8,6 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
 @Configuration
 @EnableJpaAuditing
-@EnableNeo4jRepositories(basePackages = "ar.edu.unq.epersgeist.persistencia.DAO.Neo4j")
-@EnableJpaRepositories(basePackages = "ar.edu.unq.epersgeist.persistencia.DAO.Jpa")
+//@EnableNeo4jRepositories(basePackages = "ar.edu.unq.epersgeist.persistencia.DAO.Neo4j")
+//@EnableJpaRepositories(basePackages = "ar.edu.unq.epersgeist.persistencia.DAO.Jpa")
 public class AppConfiguration { }

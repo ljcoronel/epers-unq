@@ -14,10 +14,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor @ToString
-
-@Entity
-@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
-@Where(clause = "deleted is null")
 public class Angel extends Espiritu implements EfectosDeUbicacion {
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);

@@ -6,7 +6,6 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJpa;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;

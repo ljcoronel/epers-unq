@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJpa;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import jakarta.transaction.Transactional;

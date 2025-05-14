@@ -15,10 +15,6 @@ import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
-
-@Entity
-@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
-@Where(clause = "deleted is null")
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
