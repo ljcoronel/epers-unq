@@ -139,6 +139,9 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
             ubicacion.recibir(this);
             this.ubicacion = ubicacion;
+            if(nivelDeConexion == 0){
+                this.desvincularseDeMedium();
+            }
 
     }
 
