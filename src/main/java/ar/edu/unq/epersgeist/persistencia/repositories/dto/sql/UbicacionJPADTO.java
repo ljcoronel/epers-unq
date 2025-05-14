@@ -14,7 +14,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Date;
 
-@Entity
+@Entity(name = "ubicacion")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @EntityListeners(AuditingEntityListener.class)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
@@ -22,7 +22,7 @@ import java.util.Date;
 @Where(clause = "deleted is null")
 @Setter
 @Getter
-public class UbicacionSQLDTO{
+public class UbicacionJPADTO {
         @Column(updatable = false)
         TipoUbicacion tipoUbicacion;
 
@@ -45,45 +45,23 @@ public class UbicacionSQLDTO{
         @LastModifiedDate
         Date updatedAt;
 
-
-
-    public UbicacionSQLDTO(TipoUbicacion tipoUbicacion, Long id, String nombre, int energia, Date deleted, Date createdAt, Date updatedAt) {
-        this.tipoUbicacion = tipoUbicacion;
-        this.id = id;
-        this.nombre = nombre;
-        this.energia = energia;
-        this.deleted = deleted;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-
-    }
-
-    public static UbicacionSQLDTO desdeModelo(Ubicacion ubicacion) {
-        return new UbicacionSQLDTO(
-                TipoUbicacion.obtenerTipoUbicacion(ubicacion),
-                ubicacion.getId(),
-                ubicacion.getNombre(),
-                ubicacion.getEnergia(),
-                ubicacion.getDeleted(),
-                ubicacion.getCreatedAt(),
-                ubicacion.getUpdatedAt());
+    public static UbicacionJPADTO desdeModelo(Ubicacion ubicacion) {
+        UbicacionJPADTO dto = new UbicacionJPADTO();
+        dto.tipoUbicacion = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
+        dto.id = ubicacion.getId();
+        dto.nombre = ubicacion.getNombre();
+        dto.energia = ubicacion.getEnergia();
+        return dto;
     }
 
     public Ubicacion aModelo() {
         Ubicacion ubicacion = this.tipoUbicacion.getUbicacionInstance(this.nombre, this.energia);
         ubicacion.setId(this.id);
-        ubicacion.setDeleted(this.deleted);
-        ubicacion.setCreatedAt(this.createdAt);
-        ubicacion.setUpdatedAt(this.updatedAt);
         return ubicacion;
-
     }
 
     public Ubicacion aModelo(Ubicacion ubicacion) {
         ubicacion.setId(this.id);
-        ubicacion.setDeleted(this.deleted);
-        ubicacion.setCreatedAt(this.createdAt);
-        ubicacion.setUpdatedAt(this.updatedAt);
         return ubicacion;
 
     }

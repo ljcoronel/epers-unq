@@ -7,8 +7,6 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONeo4j;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNeo4jDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        // TODO los throws van en repository o en service? sino haríamos "crear" en repository con la función de arriba
         return this.ubicacionRepository.guardar(ubicacion);
     }
 
@@ -45,12 +42,13 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
+        if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         this.ubicacionRepository.actualizar(ubicacion);
     }
 
     @Override
     public void eliminar(Long id) {
-
+        if (ubicacionRepository.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
         this.ubicacionRepository.eliminar(id);
     }
 

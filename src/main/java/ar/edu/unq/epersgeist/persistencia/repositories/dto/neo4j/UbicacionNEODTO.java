@@ -7,8 +7,8 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Date;
 
-@Node()
-public record UbicacionNeo4jDTO(
+@Node(labels = "ubicacion")
+public record UbicacionNEODTO(
         @Id
         Long id,
 
@@ -23,8 +23,8 @@ public record UbicacionNeo4jDTO(
 
         Date updatedAt) {
 
-    public static UbicacionNeo4jDTO desdeModelo(Ubicacion ubicacion) {
-        return new UbicacionNeo4jDTO(ubicacion.getId(), ubicacion.getNombre(), ubicacion.getEnergia(), ubicacion.getDeleted(), ubicacion.getCreatedAt(), ubicacion.getUpdatedAt());
+    public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
+        return new UbicacionNEODTO(ubicacion.getId(), ubicacion.getNombre(), ubicacion.getEnergia(), ubicacion.getDeleted(), ubicacion.getCreatedAt(), ubicacion.getUpdatedAt());
     }
 
     public Ubicacion aModelo() {

@@ -10,7 +10,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.NotImplementedException;
 
 
-import java.util.Date;
 import java.util.List;
 @Setter @Getter @NoArgsConstructor
 
@@ -20,13 +19,6 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     private String nombre;
 
     private int energia;
-
-    private Date deleted = null;
-
-    private Date createdAt;
-
-    private Date updatedAt;
-
 
     public Ubicacion(String nombre, int energia) {
 
