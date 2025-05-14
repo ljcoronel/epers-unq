@@ -41,7 +41,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public Ubicacion guardar(Ubicacion ubicacion) {
         UbicacionNEODTO ubicacionNeo = UbicacionNEODTO.desdeModelo(ubicacion);
         UbicacionJPADTO ubicacionJpa = UbicacionJPADTO.desdeModelo(ubicacion);
-        //this.ubicacionDaoNeo.save(ubicacionNeo);
+        this.ubicacionDaoNeo.save(ubicacionNeo);
         return this.ubicacionDaoJpa.save(ubicacionJpa).aModelo(ubicacion);
     }
 

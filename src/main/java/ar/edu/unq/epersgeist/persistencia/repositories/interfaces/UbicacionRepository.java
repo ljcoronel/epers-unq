@@ -1,13 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

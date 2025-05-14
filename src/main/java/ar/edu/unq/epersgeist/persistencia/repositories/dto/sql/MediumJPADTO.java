@@ -69,10 +69,10 @@ public class MediumJPADTO {
         dto.mana = medium.getMana();
         dto.ubicacion = UbicacionJPADTO.desdeModelo(medium.getUbicacion());
         dto.angeles = medium.getAngeles().stream()
-                .map(EspirituJPADTO::desdeModelo)
+                .map(angel -> EspirituJPADTO.desdeModelo(angel, dto))
                 .collect(Collectors.toList());
         dto.demonios = medium.getDemonios().stream()
-                .map(EspirituJPADTO::desdeModelo)
+                .map(demonio -> EspirituJPADTO.desdeModelo(demonio, dto))
                 .collect(Collectors.toList());
         return dto;
     }

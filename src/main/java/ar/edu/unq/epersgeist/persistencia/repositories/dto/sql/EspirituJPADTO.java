@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -59,6 +60,8 @@ public class EspirituJPADTO {
     @Column(updatable = false)
     private TipoEspiritu tipo;
 
+    // tipar... con sobrecarga?
+
     public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
         EspirituJPADTO dto = new EspirituJPADTO();
         dto.tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
@@ -66,6 +69,17 @@ public class EspirituJPADTO {
         dto.nivelDeConexion = espiritu.getNivelDeConexion();
         dto.nombre = espiritu.getNombre();
         dto.medium = MediumJPADTO.desdeModelo(espiritu.getMedium());
+        dto.ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
+        return dto;
+    }
+
+    public static EspirituJPADTO desdeModelo(Espiritu espiritu, MediumJPADTO mediumDTO) {
+        EspirituJPADTO dto = new EspirituJPADTO();
+        dto.tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
+        dto.id = espiritu.getId();
+        dto.nivelDeConexion = espiritu.getNivelDeConexion();
+        dto.nombre = espiritu.getNombre();
+        dto.medium = mediumDTO;
         dto.ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
         return dto;
     }

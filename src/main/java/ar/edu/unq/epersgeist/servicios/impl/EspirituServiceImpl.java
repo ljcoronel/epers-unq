@@ -7,13 +7,12 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +25,12 @@ import java.util.Optional;
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    private final EspirituDAO espirituDao;
+    private final EspirituRepository espirituRepository;
     private final MediumDAO mediumDao;
     private final UbicacionRepository ubicacionRepository;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
-        this.espirituDao = espirituDao;
+    public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
+        this.espirituRepository = espirituRepository;
         this.mediumDao = mediumDAO;
         this.ubicacionRepository = ubicacionRepository;
     }
@@ -46,7 +45,7 @@ public class EspirituServiceImpl implements EspirituService {
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
         espiritu.setUbicacion(ubicacion);
 
-        return getEspirituDao().save(espiritu);
+        return getEspirituRepository().guardar(espiritu);
 
     }
 
@@ -56,13 +55,13 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return getEspirituDao().findById(espirituId);
+        return getEspirituRepository().recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
 
-        return espirituDao.findAll();
+        return getEspirituRepository().recuperarTodos();
     }
 
     @Override
@@ -70,20 +69,19 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        getEspirituDao().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
+        getEspirituRepository().actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        getEspirituDao().deleteById(espirituId);
+        getEspirituRepository().eliminar(espirituId);
     }
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
         if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
         if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
-
-        return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
+        return getEspirituRepository().espiritusDemoniacos(direccion, pagina, cantidadPorPagina);
     }
 
     @Override
@@ -91,7 +89,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
 
-            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+            Optional<Espiritu> optionalEspiritu = getEspirituRepository().recuperar(espirituId);
 
             if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
@@ -109,7 +107,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public boolean existeConNombre(Espiritu espiritu) {
-        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId());
+        return this.getEspirituRepository().espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
 
 }
