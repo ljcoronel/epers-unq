@@ -75,8 +75,6 @@ public final class EspirituControllerREST {
     public ResponseEntity<MediumDTOResponse> conectar(@PathVariable Long id, @PathVariable Long mediumId) {
         Medium medium = espirituService.conectar(id, mediumId);
 
-        if (medium == null) return ResponseEntity.status(404).body(null);
-
         return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium));
     }
 }

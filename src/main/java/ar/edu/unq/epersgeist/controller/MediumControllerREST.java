@@ -106,8 +106,6 @@ public class MediumControllerREST {
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 
-        if (espiritu == null) return ResponseEntity.status(404).body(EspirituDTOResponse.desdeModelo(espiritu));
-
         return ResponseEntity.ok().body(EspirituDTOResponse.desdeModelo(espiritu));
     }
     @PatchMapping("/{mediumId}/mover-a/{espirituId}")

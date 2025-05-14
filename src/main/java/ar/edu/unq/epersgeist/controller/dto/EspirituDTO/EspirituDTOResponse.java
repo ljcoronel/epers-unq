@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTOResponse ubicacion) {
     public static EspirituDTOResponse desdeModelo(Espiritu espiritu) {
+        if (espiritu == null) return null;
         return new EspirituDTOResponse(
                 espiritu.getId(),
                 TipoEspiritu.getValueOfEspiritu(espiritu),

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public record MediumDTOResponse(Long id, String nombre, int manaMax, int mana, List<EspirituDTOResponse> angeles, List<EspirituDTOResponse> demonios, UbicacionDTOResponse ubicacion) {
 
     public static MediumDTOResponse desdeModelo(Medium medium) {
-        if(medium == null)return null;
+        if(medium == null) return null;
 
         return new MediumDTOResponse(
                 medium.getId(),
