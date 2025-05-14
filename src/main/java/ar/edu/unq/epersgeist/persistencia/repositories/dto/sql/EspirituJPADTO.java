@@ -1,8 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -60,7 +60,6 @@ public class EspirituJPADTO {
     @Column(updatable = false)
     private TipoEspiritu tipo;
 
-    // tipar... con sobrecarga?
 
     public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
         EspirituJPADTO dto = new EspirituJPADTO();

@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
@@ -68,6 +67,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                                        pagina
                                        ,cantidadPorPagina,
                                        direccion, "nivelDeConexion"))
-               .map(dto -> dto.aModelo()).toList();
+               .map(dto -> (Demonio) dto.aModelo()).toList();
     }
 }

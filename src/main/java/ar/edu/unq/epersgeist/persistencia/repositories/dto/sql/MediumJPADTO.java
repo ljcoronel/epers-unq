@@ -3,7 +3,6 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -45,10 +44,10 @@ public class MediumJPADTO {
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO> angeles = new ArrayList<>();
+    private List<EspirituJPADTO<T>> angeles = new ArrayList<>();
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO> demonios = new ArrayList<>();
+    private List<EspirituJPADTO<T>> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     private UbicacionJPADTO ubicacion;
