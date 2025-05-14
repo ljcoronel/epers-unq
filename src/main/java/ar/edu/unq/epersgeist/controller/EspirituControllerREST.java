@@ -57,7 +57,7 @@ public final class EspirituControllerREST {
     public ResponseEntity<EspirituDTOResponse> getEspirituById(@PathVariable Long id) {
         Optional<Espiritu> espiritu = espirituService.recuperar(id);
 
-        if (espiritu.isEmpty()) return ResponseEntity.ok().body(null);
+        if (espiritu.isEmpty()) return ResponseEntity.status(404).body(null);
 
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu.get()));
     }
@@ -74,6 +74,8 @@ public final class EspirituControllerREST {
     @PatchMapping("/{id}/conectar/{mediumId}")
     public ResponseEntity<MediumDTOResponse> conectar(@PathVariable Long id, @PathVariable Long mediumId) {
         Medium medium = espirituService.conectar(id, mediumId);
+
+        if (medium == null) return ResponseEntity.status(404).body(null);
 
         return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium));
     }

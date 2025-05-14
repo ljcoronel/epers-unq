@@ -51,7 +51,7 @@ public class MediumControllerREST {
     public ResponseEntity<MediumDTOResponse> getMediumById(@PathVariable Long id) {
         Optional <Medium> medium = mediumService.recuperar(id);
 
-        if(medium.isEmpty()) return ResponseEntity.ok().body(null);
+        if(medium.isEmpty()) return ResponseEntity.status(404).body(null);
 
         return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium.get()));
     }
@@ -96,6 +96,8 @@ public class MediumControllerREST {
 
         List<Espiritu> espiritus = mediumService.espiritus(mediumId);
 
+        if (espiritus == null) return ResponseEntity.status(404).body(null);
+
         return ResponseEntity.ok().body(espiritus.stream().map(EspirituDTOResponse::desdeModelo).collect(Collectors.toSet()));
     }
 
@@ -104,10 +106,12 @@ public class MediumControllerREST {
 
         Espiritu espiritu = mediumService.invocar(mediumId, espirituId);
 
+        if (espiritu == null) return ResponseEntity.status(404).body(EspirituDTOResponse.desdeModelo(espiritu));
+
         return ResponseEntity.ok().body(EspirituDTOResponse.desdeModelo(espiritu));
     }
     @PatchMapping("/{mediumId}/mover-a/{espirituId}")
-    public ResponseEntity<EspirituDTOResponse> moverMediumConEspiritu(@PathVariable Long mediumId,@PathVariable Long espirituId){
+    public ResponseEntity<DTOResponseError> moverMediumConEspiritu(@PathVariable Long mediumId,@PathVariable Long espirituId){
 
         mediumService.mover(mediumId, espirituId);
 

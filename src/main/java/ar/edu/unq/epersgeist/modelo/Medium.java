@@ -99,9 +99,7 @@ public class Medium implements Serializable {
 
         Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
 
-        if (!(medium.getUbicacion().getId().equals(this.ubicacion.getId()))) throw new MediumEnDistintaUbicacionException("los Mediums estan en ubicaciones ditintas");
-
-        this.verificarSiPuedeExorcizar();
+        this.verificarSiPuedeExorcizarAMedium(medium);
 
         for (Angel angel : angeles){
 
@@ -117,10 +115,12 @@ public class Medium implements Serializable {
         }
     }
 
-    private void verificarSiPuedeExorcizar(){
+    private void verificarSiPuedeExorcizarAMedium(Medium medium){
         if (this.angeles.isEmpty()){
             throw new ExorcistaSinAngelesException(this);
         }
+        if (!(medium.getUbicacion().getId().equals(this.ubicacion.getId())))
+            throw new MediumEnDistintaUbicacionException("Los médiums están en ubicaciones distintas");
     }
 
     public void desvincularseDeEspiritu(Espiritu espiritu){
@@ -157,8 +157,8 @@ public class Medium implements Serializable {
         List<Angel> angeles=  new ArrayList<>(this.getAngeles());
         List<Demonio> demonios = new ArrayList<>(this.getDemonios());
 
-        angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
-        demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+        angeles.forEach(angel -> angel.moverConMediumHacia(unaUbicacion));
+        demonios.forEach(demonio -> demonio.moverConMediumHacia(unaUbicacion));
     }
 
     public void agregarAAngeles(Angel angel) {

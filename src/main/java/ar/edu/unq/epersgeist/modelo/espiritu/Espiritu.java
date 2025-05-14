@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
@@ -92,11 +93,11 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
     public void reducirNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
         setNivelDeConexion(nivel - i);
+        if (this.getNivelDeConexion() == 0) this.desvincularseDeMedium();
     }
 
     public void setNivelDeConexion(int i) {
         if (i <= 0) {
-            this.desvincularseDeMedium();
             this.nivelDeConexion = 0;
         } else if (i > 100) {
             this.nivelDeConexion = 100;
@@ -116,9 +117,7 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
     }
 
     private void desvincularseDeMedium(){
-
         medium.desvincularseDeEspiritu(this);
-
         this.setMedium(null);
     }
 
@@ -135,13 +134,13 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
         if (this.estaLibre()) this.ubicacion = ubicacion;
     }
 
-    public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
+    public void moverConMediumHacia(Ubicacion ubicacion) {
 
             ubicacion.recibir(this);
             this.ubicacion = ubicacion;
-            if(nivelDeConexion == 0){
-                this.desvincularseDeMedium();
-            }
+//            if(nivelDeConexion == 0){ TODO
+//                this.desvincularseDeMedium();
+//            }
 
     }
 
@@ -159,7 +158,7 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
-        if (!(this.getUbicacion() == medium.getUbicacion())){
+        if (!(Objects.equals(this.getUbicacion().getId(), medium.getUbicacion().getId()))){
             throw new UbicacionDistintaException(this, medium);
         }
     }

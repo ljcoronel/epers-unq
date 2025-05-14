@@ -105,7 +105,7 @@ public class MediumServiceImpl implements MediumService {
     public List<Espiritu> espiritus(Long mediumId) {
 
         Optional<Medium> medium = mediumDao.findById(mediumId);
-        List<Espiritu> espiritus = new ArrayList<>();
+        List<Espiritu> espiritus;
 
         if(medium.isEmpty()) return null;
         Medium currentMedium = medium.get();
@@ -139,7 +139,11 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void mover(Long mediumId, Long ubicacionId) {
-        Medium medium = mediumDao.findById(mediumId).orElseThrow(() -> new EntidadInexistenteException("El medium con id: " + mediumId + " no existe."));
+        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+
+        if (optionalMedium.isEmpty()) return;
+
+        Medium medium = optionalMedium.get();
 
         Optional<Ubicacion> ubicacion = ubicacionDao.findById(ubicacionId);
 

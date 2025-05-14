@@ -741,13 +741,10 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    public void unMediumNoPersistidoSeMueveAUnaUbicacionEntoncesSeLanzaUnaExcepcion() {
-        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(-1L, 100L));
-    }
-
-    @Test
     public void unMediumIntentaExorcisarAOtroMediumQueEstaEnOtraUbicacionEntoncesSeLanzaUnaExcepcion() {
         this.mediumService.crear(this.medium);
+        this.espirituService.crear(angelDebil);
+        this.espirituService.conectar(angelDebil.getId(), medium.getId());
         this.mediumService.crear(this.medium3);
 
         assertThrows(MediumEnDistintaUbicacionException.class, () -> this.mediumService.exorcisar(this.medium.getId(), this.medium3.getId()));
