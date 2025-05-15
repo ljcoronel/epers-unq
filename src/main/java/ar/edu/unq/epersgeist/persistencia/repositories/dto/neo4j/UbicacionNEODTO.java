@@ -5,7 +5,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 
-import java.util.Date;
 
 @Node(labels = "ubicacion")
 public record UbicacionNEODTO(
@@ -15,16 +14,17 @@ public record UbicacionNEODTO(
         @Property(name="nombre")
         String nombre,
 
-        int energia,
-
-        Date deleted,
-
-        Date createdAt,
-
-        Date updatedAt) {
+        int energia
+//
+//        Date deleted,
+//
+//        Date createdAt,
+//
+//        Date updatedAt
+        ) {
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
-        return new UbicacionNEODTO(ubicacion.getId(), ubicacion.getNombre(), ubicacion.getEnergia(), ubicacion.getDeleted(), ubicacion.getCreatedAt(), ubicacion.getUpdatedAt());
+        return new UbicacionNEODTO(ubicacion.getId(), ubicacion.getNombre(), ubicacion.getEnergia());
     }
 
     public Ubicacion aModelo() {

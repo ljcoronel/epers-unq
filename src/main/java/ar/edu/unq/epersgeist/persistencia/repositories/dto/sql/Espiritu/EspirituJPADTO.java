@@ -1,9 +1,12 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.UbicacionJPADTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -61,32 +64,49 @@ public class EspirituJPADTO {
     private TipoEspiritu tipo;
 
 
-    public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
-        EspirituJPADTO dto = new EspirituJPADTO();
-        dto.tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
-        dto.id = espiritu.getId();
-        dto.nivelDeConexion = espiritu.getNivelDeConexion();
-        dto.nombre = espiritu.getNombre();
-        dto.medium = MediumJPADTO.desdeModelo(espiritu.getMedium());
-        dto.ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
-        return dto;
+    public EspirituJPADTO (Espiritu espiritu) {
+        id = espiritu.getId();
+        nivelDeConexion = espiritu.getNivelDeConexion();
+        nombre = espiritu.getNombre();
+        medium = MediumJPADTO.desdeModelo(espiritu.getMedium());
+        ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
+        tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
     }
 
-    public static EspirituJPADTO desdeModelo(Espiritu espiritu, MediumJPADTO mediumDTO) {
-        EspirituJPADTO dto = new EspirituJPADTO();
-        dto.tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
-        dto.id = espiritu.getId();
-        dto.nivelDeConexion = espiritu.getNivelDeConexion();
-        dto.nombre = espiritu.getNombre();
-        dto.medium = mediumDTO;
-        dto.ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
-        return dto;
+
+    public EspirituJPADTO(Espiritu espiritu, MediumJPADTO mediumDTO) {
+        id = espiritu.getId();
+        nivelDeConexion = espiritu.getNivelDeConexion();
+        nombre = espiritu.getNombre();
+        medium = mediumDTO;
+        ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
+        tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
     }
+
+//    public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
+//        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
+//        return tipo.getDto(espiritu);
+//    }
+//
+//    public Espiritu aModelo(Espiritu espiritu) {
+//    }
 
     public Espiritu aModelo() {
         Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, this.ubicacion.aModelo());
         espiritu.setId(this.id);
-        espiritu.setMedium(this.medium.aModelo());
+        espiritu.setMedium(this.medium != null ? this.medium.aModelo(): null);
+        return espiritu;
+    }
+
+    public Espiritu aModelo(Medium medium) {
+        Espiritu espiritu = this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, this.ubicacion.aModelo());
+        espiritu.setId(this.id);
+        espiritu.setMedium(medium);
+        return espiritu;
+    }
+
+    public Espiritu aModelo(Espiritu espiritu) {
+        espiritu.setId(this.id);
         return espiritu;
     }
 }

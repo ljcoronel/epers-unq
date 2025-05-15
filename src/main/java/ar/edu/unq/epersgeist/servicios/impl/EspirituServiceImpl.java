@@ -10,6 +10,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
@@ -26,12 +27,12 @@ import java.util.Optional;
 public class EspirituServiceImpl implements EspirituService {
 
     private final EspirituRepository espirituRepository;
-    private final MediumDAO mediumDao;
+    private final MediumRepository mediumRepository;
     private final UbicacionRepository ubicacionRepository;
 
-    public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumDAO mediumDAO, UbicacionRepository ubicacionRepository) {
+    public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumRepository mediumRepository, UbicacionRepository ubicacionRepository) {
         this.espirituRepository = espirituRepository;
-        this.mediumDao = mediumDAO;
+        this.mediumRepository = mediumRepository;
         this.ubicacionRepository = ubicacionRepository;
     }
 
@@ -87,7 +88,7 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
 
-            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+            Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
             Optional<Espiritu> optionalEspiritu = getEspirituRepository().recuperar(espirituId);
 
@@ -98,7 +99,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             Medium medium = optionalMedium.get();
 
-            mediumDao.save(medium);
+            mediumRepository.guardar(medium);
 
             return medium;
 

@@ -182,7 +182,7 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void alEliminarUnEspirituQueNoFueCreadoNoHaceNada() { // está de más testear esto?
+    void alEliminarUnEspirituQueNoFueCreadoNoHaceNada() {
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
         assertDoesNotThrow( () -> {

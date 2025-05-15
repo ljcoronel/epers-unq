@@ -17,8 +17,8 @@ public interface UbicacionDAOJPA extends JpaRepository<UbicacionJPADTO, Long> {
     @Query("update ubicacion u set u.nombre = :unNombre, u.energia = :cantEnergia, u.updatedAt = current_timestamp where u.id = :unaId")
     void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia); // TODO va el dto?
 
-    @Query("select (exists (select 1 from Medium m where m.ubicacion.id = u.id) " +
-            "or exists (select 1 from Espiritu e where e.ubicacion.id = u.id)) from ubicacion u where u.id = :unaId") // TODO va el dto?
+    @Query("select (exists (select 1 from medium m where m.ubicacion.id = u.id) " +
+            "or exists (select 1 from espiritu e where e.ubicacion.id = u.id)) from ubicacion u where u.id = :unaId") // TODO va el dto?
     boolean esReferenciado(@Param("unaId") Long id);
 
 }

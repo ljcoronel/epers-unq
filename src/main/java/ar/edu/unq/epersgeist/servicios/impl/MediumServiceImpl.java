@@ -5,14 +5,13 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +19,14 @@ import java.util.Optional;
 @Transactional
 public class MediumServiceImpl implements MediumService {
 
-    private final MediumDAO mediumDao;
-    private final EspirituDAO espirituDao;
+    private final MediumRepository mediumRepository;
+    private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao, UbicacionRepository ubicacionRepository) {
-        this.mediumDao = mediumDao;
-        this.espirituDao = espirituDao;
+    public MediumServiceImpl (MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository) {
+        this.mediumRepository = mediumRepository;
+        this.espirituRepository = espirituRepository;
         this.ubicacionRepository = ubicacionRepository;
     }
 
@@ -39,54 +38,51 @@ public class MediumServiceImpl implements MediumService {
 
         medium.setUbicacion(ubicacion);
 
-        return mediumDao.save(medium);
+        return mediumRepository.guardar(medium);
 
     }
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) throws EntidadInexistenteException {
-        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
-
-        return mediumDao.findById(mediumId);
+        return mediumRepository.recuperar(mediumId);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-
-        return mediumDao.findAll();
+        return mediumRepository.recuperarTodos();
     }
 
     @Override
     public void actualizar(Medium medium) {
+        mediumRepository.actualizar(medium);
 
-        mediumDao.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override
     public void eliminar(Long idDelMedium) {
-        if (this.mediumDao.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
-        mediumDao.deleteById(idDelMedium);
+        if (this.mediumRepository.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
+        mediumRepository.eliminar(idDelMedium);
     }
 
     @Override
     public void descansar(Long mediumId) {
 
-        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+        Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
         if (optionalMedium.isEmpty()) return;
 
         Medium medium = optionalMedium.get();
         medium.descansar();
 
-        mediumDao.save(medium);
+        mediumRepository.guardar(medium);
 
     }
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
 
-        Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
-        Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
+        Optional<Medium> optionalExorcista = mediumRepository.recuperar(idMediumExorcista);
+        Optional<Medium> optionalPoseido = mediumRepository.recuperar(idMediumAExorcisar);
 
         if (optionalExorcista.isEmpty()) return;
 
@@ -96,21 +92,21 @@ public class MediumServiceImpl implements MediumService {
 
         Medium exorcizado = optionalPoseido.get();
 
-        mediumDao.save(exorcista);
-        mediumDao.save(exorcizado);
+        mediumRepository.guardar(exorcista);
+        mediumRepository.guardar(exorcizado);
 
     }
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
 
-        Optional<Medium> medium = mediumDao.findById(mediumId);
-        List<Espiritu> espiritus = new ArrayList<>();
+        Optional<Medium> medium = mediumRepository.recuperar(mediumId);
+        List<Espiritu> espiritus;
 
         if(medium.isEmpty()) return null;
         Medium currentMedium = medium.get();
 
-        espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+        espiritus = espirituRepository.todosLosEspiritusDeMedium(currentMedium.getId());
 
         return espiritus;
 
@@ -121,8 +117,8 @@ public class MediumServiceImpl implements MediumService {
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
 
-        Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
-        Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+        Optional<Medium> optionalMedium =  mediumRepository.recuperar(mediumId);
+        Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
@@ -132,14 +128,14 @@ public class MediumServiceImpl implements MediumService {
 
         Espiritu espiritu = optionalEspiritu.get();
 
-        mediumDao.save(medium);
-        espirituDao.save(espiritu);
+        mediumRepository.guardar(medium);
+        espirituRepository.guardar(espiritu);
         return espiritu;
     }
 
     @Override
     public void mover(Long mediumId, Long ubicacionId) {
-        Medium medium = mediumDao.findById(mediumId)
+        Medium medium = mediumRepository.recuperar(mediumId)
                 .orElse(null);
 
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
@@ -147,7 +143,7 @@ public class MediumServiceImpl implements MediumService {
 
         medium.setUbicacion(ubicacion);
 
-        mediumDao.save(medium);
+        mediumRepository.guardar(medium);
 
     }
 

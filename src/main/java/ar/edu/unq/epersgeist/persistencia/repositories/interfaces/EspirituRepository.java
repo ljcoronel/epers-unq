@@ -17,4 +17,14 @@ public interface EspirituRepository {
     boolean espirituConNombre(String nombre, Long id);
 
     List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina);
+
+    List<Espiritu> todosLosEspiritusDeMedium(Long id);
+
+    List<Espiritu> espiritusEn(Long ubicacionId);
+
+    Long santuarioCorrupto();
+
+    int cantidadTotalDeDemonios(Long idSantuario);
+
+    int cantidadDeDemoniosLibresEn(Long idSantuario);
 }

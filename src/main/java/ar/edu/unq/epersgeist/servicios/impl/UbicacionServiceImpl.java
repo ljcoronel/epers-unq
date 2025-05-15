@@ -5,8 +5,8 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import java.util.Optional;
 public class UbicacionServiceImpl implements UbicacionService {
 
     private final UbicacionRepository ubicacionRepository;
-    private final EspirituDAO espirituDAO;
-    private final MediumDAO mediumDAO;
+    private final EspirituRepository espirituRepository;
+    private final MediumRepository mediumRepository;
 
-    public UbicacionServiceImpl(UbicacionRepository ubicacionRepository, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
+    public UbicacionServiceImpl(UbicacionRepository ubicacionRepository, EspirituRepository espirituRepository, MediumRepository mediumRepository) {
         this.ubicacionRepository = ubicacionRepository;
-        this.espirituDAO = espirituDAO;
-        this.mediumDAO = mediumDAO;
+        this.espirituRepository = espirituRepository;
+        this.mediumRepository = mediumRepository;
     }
 
     @Override
@@ -59,11 +59,11 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return this.espirituDAO.espiritusEn(ubicacionId);
+        return this.espirituRepository.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
+        return this.mediumRepository.mediumsSinEspiritusEn(ubicacionId);
     }
 }

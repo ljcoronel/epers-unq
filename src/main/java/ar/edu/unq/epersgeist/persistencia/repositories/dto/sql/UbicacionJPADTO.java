@@ -46,8 +46,10 @@ public class UbicacionJPADTO {
         Date updatedAt;
 
     public static UbicacionJPADTO desdeModelo(Ubicacion ubicacion) {
+        if (ubicacion == null) return null;
+
         UbicacionJPADTO dto = new UbicacionJPADTO();
-        dto.tipoUbicacion = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
+        dto.tipoUbicacion = TipoUbicacion.obtenerTipoUbicacion(ubicacion) ;
         dto.id = ubicacion.getId();
         dto.nombre = ubicacion.getNombre();
         dto.energia = ubicacion.getEnergia();

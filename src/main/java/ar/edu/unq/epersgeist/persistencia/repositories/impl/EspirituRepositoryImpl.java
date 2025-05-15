@@ -1,19 +1,23 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
+import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.AngelJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 @Setter @Getter
+@Repository
 public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAO espirituDAO;
@@ -29,9 +33,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public Espiritu guardar(Espiritu espiritu) {
-        EspirituJPADTO espirituJPADTO = EspirituJPADTO.desdeModelo(espiritu);
+        EspirituJPADTO espirituJPADTO = new EspirituJPADTO(espiritu);
 
-        return getEspirituDAO().save(espirituJPADTO).aModelo();
+        return getEspirituDAO().save(espirituJPADTO).aModelo(espiritu);
     }
 
     @Override
@@ -62,11 +66,36 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
        return getEspirituDAO().findAll
                        (Example.of
-                               (EspirituJPADTO.desdeModelo(new Demonio()))
+                               (new EspirituJPADTO(new Demonio()))
                                , PageRequest.of(
                                        pagina
                                        ,cantidadPorPagina,
                                        direccion, "nivelDeConexion"))
                .map(dto -> (Demonio) dto.aModelo()).toList();
+    }
+
+    @Override
+    public List<Espiritu> todosLosEspiritusDeMedium(Long id) {
+        return getEspirituDAO().todosLosEspiritusDeMedium(id);
+    }
+
+    @Override
+    public List<Espiritu> espiritusEn(Long ubicacionId) {
+        return getEspirituDAO().espiritusEn(ubicacionId);
+    }
+
+    @Override
+    public Long santuarioCorrupto() {
+        return getEspirituDAO().santuarioCorrupto();
+    }
+
+    @Override
+    public int cantidadTotalDeDemonios(Long idSantuario) {
+        return getEspirituDAO().cantidadTotalDeDemonios(idSantuario);
+    }
+
+    @Override
+    public int cantidadDeDemoniosLibresEn(Long idSantuario) {
+        return getEspirituDAO().cantidadDeDemoniosLibresEn(idSantuario);
     }
 }

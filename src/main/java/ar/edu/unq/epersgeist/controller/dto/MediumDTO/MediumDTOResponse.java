@@ -25,7 +25,7 @@ public record MediumDTOResponse(Long id, String nombre, int manaMax, int mana, L
                 medium.getDemonios().stream()
                         .map(EspirituDTOResponse::desdeModelo)
                         .collect(Collectors.toList()),
-                UbicacionDTOResponse.desdeModelo(medium.getUbicacion().aModelo()) //TODO sacar el DTO
+                UbicacionDTOResponse.desdeModelo(medium.getUbicacion()) //TODO sacar el DTO
         );
     }
 

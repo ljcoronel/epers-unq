@@ -3,6 +3,9 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.AngelJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.DemonioJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.EspirituJPADTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -44,10 +47,10 @@ public class MediumJPADTO {
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO<T>> angeles = new ArrayList<>();
+    private List<EspirituJPADTO> angeles = new ArrayList<>();
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO<T>> demonios = new ArrayList<>();
+    private List<EspirituJPADTO> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     private UbicacionJPADTO ubicacion;
@@ -61,6 +64,7 @@ public class MediumJPADTO {
     private Date deleted;
 
     public static MediumJPADTO desdeModelo(Medium medium) {
+        if (medium == null) return null;
         MediumJPADTO dto = new MediumJPADTO();
         dto.id = medium.getId();
         dto.nombre = medium.getNombre();
@@ -68,16 +72,27 @@ public class MediumJPADTO {
         dto.mana = medium.getMana();
         dto.ubicacion = UbicacionJPADTO.desdeModelo(medium.getUbicacion());
         dto.angeles = medium.getAngeles().stream()
-                .map(angel -> EspirituJPADTO.desdeModelo(angel, dto))
+                .map(angel -> new AngelJPADTO(angel, dto))
                 .collect(Collectors.toList());
         dto.demonios = medium.getDemonios().stream()
-                .map(demonio -> EspirituJPADTO.desdeModelo(demonio, dto))
+                .map(demonio -> new DemonioJPADTO(demonio, dto))
                 .collect(Collectors.toList());
         return dto;
     }
 
     public Medium aModelo() {
         Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo());
+        medium.setId(this.id);
+        medium.setAngeles(this.angeles.stream()
+                .map(dto -> (Angel) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        medium.setDemonios(this.demonios.stream()
+                .map(dto -> (Demonio) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        return medium;
+    }
+
+    public Medium aModelo(Medium medium) {
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo())
