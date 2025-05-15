@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
-import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,15 +15,15 @@ public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
     @Query(
             "From espiritu e where e.medium.id= :MediumId "
     )
-    List<Espiritu> todosLosEspiritusDeMedium(@Param("MediumId") Long mediumId);
+    List<EspirituJPADTO> todosLosEspiritusDeMedium(@Param("MediumId") Long mediumId);
 
     @Query(
             "from espiritu e where e.ubicacion.id = :unaUbicacion order by e.nombre asc"
     )
-    List<Espiritu> espiritusEn(@Param("unaUbicacion") Long ubicacionId);
+    List<EspirituJPADTO> espiritusEn(@Param("unaUbicacion") Long ubicacionId);
 
     @Query(
-            "select count(e) from espiritu e where e.ubicacion.id = :ubicacionID and e.tipo = 'DEMONIO' and e.medium is null"
+            "select count(e) from espiritu e where e.ubicacion.id = :ubicacionID and TYPE(e) = demonio and e.medium is null"
     )
     int cantidadDeDemoniosLibresEn(@Param("ubicacionID") Long ubicacionId);
 
@@ -39,10 +38,10 @@ public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
     )
     void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 
-    @Query(value = "SELECT u.id FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id WHERE u.tipo = 'SANTUARIO' AND e.deleted is null GROUP BY u.id ORDER BY SUM(CASE WHEN e.tipo = 'DEMONIO' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.tipo = 'ANGEL' THEN 1 ELSE 0 END) DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT u.id FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id WHERE u.dtype = 'santuario' AND e.deleted is null GROUP BY u.id ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.dtype = 'angel' THEN 1 ELSE 0 END) DESC LIMIT 1", nativeQuery = true)
     Long santuarioCorrupto();
 
-    @Query("select count(e) from espiritu e where e.tipo = 'DEMONIO' and e.ubicacion.id = :unaUbicacion")
+    @Query("select count(e) from espiritu e where TYPE(e) = demonio and e.ubicacion.id = :unaUbicacion")
     int cantidadTotalDeDemonios(@Param("unaUbicacion") Long id);
 
 }

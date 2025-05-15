@@ -1,11 +1,9 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.AngelJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +31,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public Espiritu guardar(Espiritu espiritu) {
-        EspirituJPADTO espirituJPADTO = new EspirituJPADTO(espiritu);
+        EspirituJPADTO espirituJPADTO = EspirituJPADTO.desdeModelo(espiritu);
 
         return getEspirituDAO().save(espirituJPADTO).aModelo(espiritu);
     }
@@ -66,7 +64,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
        return getEspirituDAO().findAll
                        (Example.of
-                               (new EspirituJPADTO(new Demonio()))
+                               (EspirituJPADTO.desdeModelo(new Demonio()))
                                , PageRequest.of(
                                        pagina
                                        ,cantidadPorPagina,
@@ -76,12 +74,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Espiritu> todosLosEspiritusDeMedium(Long id) {
-        return getEspirituDAO().todosLosEspiritusDeMedium(id);
+        return getEspirituDAO().todosLosEspiritusDeMedium(id).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return getEspirituDAO().espiritusEn(ubicacionId);
+        return getEspirituDAO().espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override

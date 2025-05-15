@@ -3,9 +3,9 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.AngelJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.DemonioJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.Espiritu.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -47,10 +47,10 @@ public class MediumJPADTO {
     private Integer mana;
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO> angeles = new ArrayList<>();
+    private List<AngelJPADTO> angeles = new ArrayList<>();
 
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EspirituJPADTO> demonios = new ArrayList<>();
+    private List<DemonioJPADTO> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)
     private UbicacionJPADTO ubicacion;
@@ -92,14 +92,40 @@ public class MediumJPADTO {
         return medium;
     }
 
+//    public Medium aModelo(Medium medium) { // TODO revisar cuál es mejor
+//        medium.setId(this.id);
+//        medium.setAngeles(this.angeles.stream()
+//                .map(dto -> (Angel) dto.aModelo(medium))
+//                .collect(Collectors.toList()));
+//        medium.setDemonios(this.demonios.stream()
+//                .map(dto -> (Demonio) dto.aModelo(medium))
+//                .collect(Collectors.toList()));
+//        return medium;
+//    }
+
     public Medium aModelo(Medium medium) {
         medium.setId(this.id);
-        medium.setAngeles(this.angeles.stream()
-                .map(dto -> (Angel) dto.aModelo())
-                .collect(Collectors.toList()));
-        medium.setDemonios(this.demonios.stream()
-                .map(dto -> (Demonio) dto.aModelo())
-                .collect(Collectors.toList()));
+
+        List<Angel> angeles = new ArrayList<>();
+        for (int i = 0; i < this.angeles.size(); i++) {
+
+            AngelJPADTO dto = this.angeles.get(i);
+            Angel angel = medium.getAngeles().get(i);
+            angeles.add( (Angel) dto.aModelo(medium, angel));
+
+        }
+        medium.setAngeles(angeles);
+
+        List<Demonio> demonios = new ArrayList<>();
+        for (int i = 0; i < this.demonios.size(); i++) {
+
+            DemonioJPADTO dto = this.demonios.get(i);
+            Demonio demonio = medium.getDemonios().get(i);
+            demonios.add( (Demonio) dto.aModelo(medium, demonio));
+        }
+
+        medium.setDemonios(demonios);
+
         return medium;
     }
 }

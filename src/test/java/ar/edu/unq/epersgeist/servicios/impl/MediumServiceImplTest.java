@@ -500,7 +500,7 @@ public class MediumServiceImplTest {
 
         Espiritu espirituRecuperado = espirituService.recuperar(amon.getId()).get();
 
-        assertEquals(espirituRecuperado.getNivelDeConexion(), 0);
+        assertEquals(0, espirituRecuperado.getNivelDeConexion());
         assertTrue(espirituRecuperado.estaLibre());
 
     }

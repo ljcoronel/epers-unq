@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.UbicacionJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

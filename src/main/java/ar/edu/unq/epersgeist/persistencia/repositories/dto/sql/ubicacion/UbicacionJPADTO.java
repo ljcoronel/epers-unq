@@ -1,10 +1,12 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion;
 
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,12 +22,12 @@ import java.util.Date;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
 @SQLDelete(sql = "update ubicacion set deleted = current_timestamp where id =?")
 @Where(clause = "deleted is null")
-@Setter
-@Getter
-public class UbicacionJPADTO {
-        @Column(updatable = false)
-        TipoUbicacion tipoUbicacion;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+public abstract class UbicacionJPADTO {
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         Long id;
 
@@ -45,28 +47,22 @@ public class UbicacionJPADTO {
         @LastModifiedDate
         Date updatedAt;
 
+
+    public UbicacionJPADTO(Ubicacion ubicacion) {
+        id = ubicacion.getId();
+        nombre = ubicacion.getNombre();
+        energia = ubicacion.getEnergia();
+    }
+
     public static UbicacionJPADTO desdeModelo(Ubicacion ubicacion) {
         if (ubicacion == null) return null;
-
-        UbicacionJPADTO dto = new UbicacionJPADTO();
-        dto.tipoUbicacion = TipoUbicacion.obtenerTipoUbicacion(ubicacion) ;
-        dto.id = ubicacion.getId();
-        dto.nombre = ubicacion.getNombre();
-        dto.energia = ubicacion.getEnergia();
-        return dto;
+        TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
+        return tipo.getDto(ubicacion);
     }
 
-    public Ubicacion aModelo() {
-        Ubicacion ubicacion = this.tipoUbicacion.getUbicacionInstance(this.nombre, this.energia);
-        ubicacion.setId(this.id);
-        return ubicacion;
-    }
+    public abstract Ubicacion aModelo();
 
-    public Ubicacion aModelo(Ubicacion ubicacion) {
-        ubicacion.setId(this.id);
-        return ubicacion;
-
-    }
+    public abstract Ubicacion aModelo(Ubicacion ubicacion);
 
 }
 

@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface MediumDAO extends JpaRepository<MediumJPADTO, Long> {
     @Query("from medium m where m.ubicacion.id = :unaUbicacion and m.angeles is empty and m.demonios is empty order by m.nombre asc")
-    List<Medium> mediumsSinEspiritusEn(@Param("unaUbicacion") Long ubicacionId);
+    List<MediumJPADTO> mediumsSinEspiritusEn(@Param("unaUbicacion") Long ubicacionId);
 
     @Modifying
     @Query(
@@ -21,7 +21,7 @@ public interface MediumDAO extends JpaRepository<MediumJPADTO, Long> {
     )
     void actualizar(@Param("nombre")String nombre, @Param("manaMax")int manaMax,@Param("mana")int mana, @Param("id")Long id);
 
-    @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted is null GROUP BY m.id ORDER BY SUM(CASE WHEN e.tipo = 'DEMONIO' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
+    @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted is null GROUP BY m.id ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
     Long mediumConMasDemoniosEn(@Param("ubicacionId") Long ubicacionId);
 
     @Query("select count(e) > 0 from medium m join espiritu e on e.medium.id = :unaId")

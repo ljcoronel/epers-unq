@@ -60,7 +60,7 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return getMediumDAO().mediumsSinEspiritusEn(ubicacionId);
+        return getMediumDAO().mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
