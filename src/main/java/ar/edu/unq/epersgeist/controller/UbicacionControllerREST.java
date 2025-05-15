@@ -31,7 +31,7 @@ public final class UbicacionControllerREST {
 
     @GetMapping("/{id}")
     public ResponseEntity<UbicacionDTOResponse> getUbicacionById(@PathVariable Long id) {
-        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.ok(null);
+        if (this.ubicacionService.recuperar(id).isEmpty()) return ResponseEntity.status(404).body(null);
         Ubicacion ubicacion = this.ubicacionService.recuperar(id).get();
         return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }

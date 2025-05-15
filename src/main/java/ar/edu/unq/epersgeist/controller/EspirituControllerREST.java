@@ -57,7 +57,7 @@ public final class EspirituControllerREST {
     public ResponseEntity<EspirituDTOResponse> getEspirituById(@PathVariable Long id) {
         Optional<Espiritu> espiritu = espirituService.recuperar(id);
 
-        if (espiritu.isEmpty()) return ResponseEntity.ok().body(null);
+        if (espiritu.isEmpty()) return ResponseEntity.status(404).body(null);
 
         return ResponseEntity.ok(EspirituDTOResponse.desdeModelo(espiritu.get()));
     }

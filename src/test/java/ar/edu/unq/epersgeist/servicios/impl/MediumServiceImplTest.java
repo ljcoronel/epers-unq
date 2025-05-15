@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
@@ -730,6 +731,23 @@ public class MediumServiceImplTest {
             mediumService.descansar(-1L);
         });
 
+    }
+
+    @Test
+    public void unMediumSeMueveAUnaUbicacionInexistenteEntoncesSeLanzaUnaExcepcion() {
+        this.mediumService.crear(this.medium);
+
+        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(this.medium.getId(), 100L));
+    }
+
+    @Test
+    public void unMediumIntentaExorcisarAOtroMediumQueEstaEnOtraUbicacionEntoncesSeLanzaUnaExcepcion() {
+        this.mediumService.crear(this.medium);
+        this.espirituService.crear(angelDebil);
+        this.espirituService.conectar(angelDebil.getId(), medium.getId());
+        this.mediumService.crear(this.medium3);
+
+        assertThrows(MediumEnDistintaUbicacionException.class, () -> this.mediumService.exorcisar(this.medium.getId(), this.medium3.getId()));
     }
 
 
