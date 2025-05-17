@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.*;
 
@@ -68,10 +69,9 @@ public class Medium implements Serializable {
     }
     public void exorcizarA(Optional<Medium> optionalMedium){
 
-        if (optionalMedium.isEmpty()) throw new EntidadInexistenteException("el Medium a exorcizar no existe");
-        Medium medium = optionalMedium.get();
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
 
-        this.verificarSiPuedeExorcizar();
+        this.verificarSiPuedeExorcizarAMedium(medium);
 
         for (Angel angel : angeles){
 
@@ -87,10 +87,12 @@ public class Medium implements Serializable {
         }
     }
 
-    private void verificarSiPuedeExorcizar(){
+    private void verificarSiPuedeExorcizarAMedium(Medium medium){
         if (this.angeles.isEmpty()){
             throw new ExorcistaSinAngelesException(this);
         }
+        if (!(medium.getUbicacion().getId().equals(this.ubicacion.getId())))
+            throw new MediumEnDistintaUbicacionException("Los médiums están en ubicaciones distintas");
     }
 
     public void desvincularseDeEspiritu(Espiritu espiritu){
@@ -121,13 +123,14 @@ public class Medium implements Serializable {
         }
     }
 
-    public void mover(Ubicacion unaUbicacion) {
-        setUbicacion(ubicacion);
+    public void mover(Optional<Ubicacion> ubicacionOptional) {
+        Ubicacion unaUbicacion = ubicacionOptional.orElseThrow(() -> new EntidadInexistenteException("la ubicacion a mover no existe"));
+        this.setUbicacion(unaUbicacion);
         List<Angel> angeles=  new ArrayList<>(this.getAngeles());
         List<Demonio> demonios = new ArrayList<>(this.getDemonios());
 
-        angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
-        demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+        angeles.forEach(angel -> angel.moverConMediumHacia(unaUbicacion));
+        demonios.forEach(demonio -> demonio.moverConMediumHacia(unaUbicacion));
     }
 
     public void agregarAAngeles(Angel angel) {

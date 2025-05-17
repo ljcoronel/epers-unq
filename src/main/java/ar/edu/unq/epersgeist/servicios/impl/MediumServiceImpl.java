@@ -161,11 +161,13 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void mover(Long mediumId, Long ubicacionId) {
-        Medium medium = mediumRepository.recuperar(mediumId)
-                .orElse(null);
+        Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
-        Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
-                .orElse(null);
+        if (optionalMedium.isEmpty()) return;
+
+        Medium medium = optionalMedium.get();
+
+        Optional<Ubicacion> ubicacion = ubicacionRepository.recuperar(ubicacionId);
 
         // ------------------------------------- // TODO quitar cuando esté fixeado el desvincular
         ArrayList<Angel> angeles = new ArrayList<>(medium.getAngeles());

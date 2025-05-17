@@ -1,7 +1,7 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
-import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -10,27 +10,61 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
+
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@EntityListeners(AuditingEntityListener.class)
+// agregamos una constraint compuesta para validar que no alla nombres de espiritus "activos" repetidos
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted is null")
 public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
+    @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-
+    //como usamos soft delete, la validacion de nombre unico la hacemos con una query para verificar
+    // que no haya un nombre existente que pertenezca a un espiritu que NO fue borrado
+    @Column(length = 50, nullable = false)
     private String nombre;
-
+    @ManyToOne
     private Medium medium;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Ubicacion ubicacion;
+
+    private Date deleted =  null;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
@@ -59,11 +93,11 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
     public void reducirNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
         setNivelDeConexion(nivel - i);
+        if (this.getNivelDeConexion() == 0) this.desvincularseDeMedium();
     }
 
     public void setNivelDeConexion(int i) {
         if (i <= 0) {
-            this.desvincularseDeMedium();
             this.nivelDeConexion = 0;
         } else if (i > 100) {
             this.nivelDeConexion = 100;
@@ -103,7 +137,7 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
         if (this.estaLibre()) this.setUbicacion(ubicacion);
     }
 
-    public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
+    public void moverConMediumHacia(Ubicacion ubicacion) {
 
             ubicacion.recibir(this);
             this.ubicacion = ubicacion;

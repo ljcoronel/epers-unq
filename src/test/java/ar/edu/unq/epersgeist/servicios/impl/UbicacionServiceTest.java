@@ -167,9 +167,9 @@ public class UbicacionServiceTest {
         this.mediumService.crear(this.mediumDos);
         this.mediumService.crear(this.mediumTres);
 
-        this.mediumUno.mover(this.ubicacionUno);
-        this.mediumDos.mover(this.ubicacionUno);
-        this.mediumTres.mover(this.ubicacionUno);
+        this.mediumService.mover(mediumUno.getId(), ubicacionUno.getId());
+        this.mediumService.mover(mediumDos.getId(), ubicacionUno.getId());
+        this.mediumService.mover(mediumTres.getId(), ubicacionUno.getId());
 
         espirituService.crear(this.angelUno);
         espirituService.crear(this.demonioUno);
