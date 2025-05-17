@@ -96,4 +96,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public int cantidadDeDemoniosLibresEn(Long idSantuario) {
         return getEspirituDAO().cantidadDeDemoniosLibresEn(idSantuario);
     }
+
+    @Override
+    public void desvincular(Long id) {
+        getEspirituDAO().desvincular(id);
+    }
 }

@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
@@ -21,7 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity(name = "demonio")
 @EntityListeners(AuditingEntityListener.class)
 @Where(clause = "deleted is null")
-public class DemonioJPADTO extends EspirituJPADTO{
+public class DemonioJPADTO extends EspirituJPADTO {
 
     public DemonioJPADTO(Espiritu espiritu) {
         super(espiritu);

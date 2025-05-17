@@ -121,8 +121,8 @@ public class Medium implements Serializable {
         }
     }
 
-    public void setUbicacion(Ubicacion unaUbicacion) {
-        this.ubicacion = unaUbicacion;
+    public void mover(Ubicacion unaUbicacion) {
+        setUbicacion(ubicacion);
         List<Angel> angeles=  new ArrayList<>(this.getAngeles());
         List<Demonio> demonios = new ArrayList<>(this.getDemonios());
 

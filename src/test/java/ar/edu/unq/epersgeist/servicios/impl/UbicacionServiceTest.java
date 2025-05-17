@@ -167,9 +167,9 @@ public class UbicacionServiceTest {
         this.mediumService.crear(this.mediumDos);
         this.mediumService.crear(this.mediumTres);
 
-        this.mediumUno.setUbicacion(this.ubicacionUno);
-        this.mediumDos.setUbicacion(this.ubicacionUno);
-        this.mediumTres.setUbicacion(this.ubicacionUno);
+        this.mediumUno.mover(this.ubicacionUno);
+        this.mediumDos.mover(this.ubicacionUno);
+        this.mediumTres.mover(this.ubicacionUno);
 
         espirituService.crear(this.angelUno);
         espirituService.crear(this.demonioUno);
@@ -199,7 +199,7 @@ public class UbicacionServiceTest {
         mediumService.crear(medium);
 
         espirituService.conectar(espiritu.getId(), medium.getId());
-        espiritu.setUbicacion(ubicacion2);
+        espiritu.mover(ubicacion2);
 
         assertNotEquals(espiritu.getUbicacion().getNombre(), ubicacion1.getNombre());
     }

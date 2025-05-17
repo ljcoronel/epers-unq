@@ -84,8 +84,9 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
     private void desvincularseDeMedium(){
 
-        medium.desvincularseDeEspiritu(this);
+        if (medium == null) return;
 
+        medium.desvincularseDeEspiritu(this);
         this.setMedium(null);
     }
 
@@ -98,8 +99,8 @@ public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
         return RandomGenerator.getInstance().getRandom(1, 100);
     }
 
-    public void setUbicacion(Ubicacion ubicacion) {
-        if (this.estaLibre()) this.ubicacion = ubicacion;
+    public void mover(Ubicacion ubicacion) {
+        if (this.estaLibre()) this.setUbicacion(ubicacion);
     }
 
     public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {

@@ -1,5 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -12,6 +14,8 @@ import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +40,7 @@ public class MediumServiceImpl implements MediumService {
         Ubicacion ubicacion =  ubicacionRepository.recuperar(medium.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("La Ubicacion no existe"));
 
-        medium.setUbicacion(ubicacion);
+        medium.mover(ubicacion);
 
         return mediumRepository.guardar(medium);
 
@@ -88,6 +92,20 @@ public class MediumServiceImpl implements MediumService {
 
         Medium exorcista = optionalExorcista.get();
 
+
+        // -------------------------------------
+        ArrayList<Angel> angelesEx = new ArrayList<>(exorcista.getAngeles()); // TODO quitar cuando se fixee desvincular
+        ArrayList<Demonio> demoniosEx = new ArrayList<>(exorcista.getDemonios());
+
+        ArrayList<Angel> angelesPos = new ArrayList<>();
+        ArrayList<Demonio> demoniosPos = new ArrayList<>();
+
+        if (optionalPoseido.isPresent()) {
+            angelesPos = new ArrayList<>(optionalPoseido.get().getAngeles());
+            demoniosPos = new ArrayList<>(optionalPoseido.get().getDemonios());
+        }
+        // -------------------------------------
+
         exorcista.exorcizarA(optionalPoseido);
 
         Medium exorcizado = optionalPoseido.get();
@@ -95,6 +113,14 @@ public class MediumServiceImpl implements MediumService {
         mediumRepository.guardar(exorcista);
         mediumRepository.guardar(exorcizado);
 
+
+        // -------------------------------------
+        angelesEx.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());}); // TODO quitar cuando se fixee desvincular
+        demoniosEx.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
+
+        angelesPos.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
+        demoniosPos.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
+        // -------------------------------------
     }
 
     @Override
@@ -141,9 +167,19 @@ public class MediumServiceImpl implements MediumService {
         Ubicacion ubicacion = ubicacionRepository.recuperar(ubicacionId)
                 .orElse(null);
 
-        medium.setUbicacion(ubicacion);
+        // ------------------------------------- // TODO quitar cuando esté fixeado el desvincular
+        ArrayList<Angel> angeles = new ArrayList<>(medium.getAngeles());
+        ArrayList<Demonio> demonios = new ArrayList<>(medium.getDemonios());
+        // -------------------------------------
+
+        medium.mover(ubicacion);
 
         mediumRepository.guardar(medium);
+
+        // -------------------------------------
+        angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
+        demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
+        // -------------------------------------
 
     }
 

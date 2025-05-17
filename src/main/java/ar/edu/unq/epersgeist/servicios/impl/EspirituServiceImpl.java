@@ -7,7 +7,6 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
@@ -44,7 +43,7 @@ public class EspirituServiceImpl implements EspirituService {
 
         Ubicacion ubicacion = ubicacionRepository.recuperar(espiritu.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
-        espiritu.setUbicacion(ubicacion);
+        espiritu.mover(ubicacion);
 
         return getEspirituRepository().guardar(espiritu);
 

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
+
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,4 +45,7 @@ public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
     @Query("select count(e) from espiritu e where TYPE(e) = demonio and e.ubicacion.id = :unaUbicacion")
     int cantidadTotalDeDemonios(@Param("unaUbicacion") Long id);
 
+    @Modifying
+    @Query(value = "UPDATE espiritu SET nivel_de_conexion = 0, medium_id = null WHERE id = :unId", nativeQuery = true)
+    void desvincular(Long unId);
 }

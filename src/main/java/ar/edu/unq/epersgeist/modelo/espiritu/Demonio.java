@@ -5,13 +5,10 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
@@ -55,7 +52,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
         medium.usarManaParaInvocar();
-        this.setUbicacion(cementerio);
+        this.mover(cementerio);
     }
 
 
