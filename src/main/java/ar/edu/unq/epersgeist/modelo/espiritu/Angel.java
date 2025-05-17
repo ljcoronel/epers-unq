@@ -1,23 +1,16 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor @ToString
-
-@Entity
-@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
-@Where(clause = "deleted is null")
 public class Angel extends Espiritu implements EfectosDeUbicacion {
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);
@@ -47,7 +40,7 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
     @Override
     public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {
         medium.usarManaParaInvocar();
-        this.setUbicacion(santuario);
+        this.mover(santuario);
     }
 
     @Override
