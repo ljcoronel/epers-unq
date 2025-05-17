@@ -30,7 +30,7 @@ import java.util.Date;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
 @SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
 @Where(clause = "deleted is null")
-public abstract class EspirituJPADTOdto {
+public abstract class EspirituJPADTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,12 +59,12 @@ public abstract class EspirituJPADTOdto {
     private Date updatedAt;
 
 
-    public static EspirituJPADTOdto desdeModelo(Espiritu espiritu) {
+    public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
         TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu); //TODO esto es válido? hay otra manera de dar el dto del tipo correcto?
         return tipo.getDto(espiritu);
     }
 
-    public EspirituJPADTOdto(Espiritu espiritu) {
+    public EspirituJPADTO(Espiritu espiritu) {
         id = espiritu.getId();
         nivelDeConexion = espiritu.getNivelDeConexion();
         nombre = espiritu.getNombre();
@@ -73,7 +73,7 @@ public abstract class EspirituJPADTOdto {
     }
 
 
-    public EspirituJPADTOdto(Espiritu espiritu, MediumJPADTO mediumDTO) {
+    public EspirituJPADTO(Espiritu espiritu, MediumJPADTO mediumDTO) {
         id = espiritu.getId();
         nivelDeConexion = espiritu.getNivelDeConexion();
         nombre = espiritu.getNombre();

@@ -37,8 +37,7 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Medium crear(Medium medium) {
 
-        Ubicacion ubicacion =  ubicacionRepository.recuperar(medium.getUbicacion().getId())
-                .orElseThrow(()-> new EntidadInexistenteException("La Ubicacion no existe"));
+        Optional<Ubicacion> ubicacion =  ubicacionRepository.recuperar(medium.getUbicacion().getId());
 
         medium.mover(ubicacion);
 
