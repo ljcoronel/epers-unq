@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.neo4j.EspirituDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.EspirituNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import lombok.Getter;
@@ -18,51 +20,60 @@ import java.util.Optional;
 @Repository
 public class EspirituRepositoryImpl implements EspirituRepository {
 
-    private final EspirituDAO espirituDAO;
+    private final EspirituDAO espirituDAOJPA;
+    private final EspirituDAONEO espirituDAONEO;
 
-    public EspirituRepositoryImpl(EspirituDAO espirituDAO) {
-        this.espirituDAO = espirituDAO;
+    public EspirituRepositoryImpl(EspirituDAO espirituDAOJPA, EspirituDAONEO espirituDAONEO) {
+        this.espirituDAOJPA = espirituDAOJPA;
+        this.espirituDAONEO = espirituDAONEO;
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        getEspirituDAO().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
+        getEspirituDAOJPA().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
+
+        espirituDAONEO.actualizar(
+                espiritu.getId(),
+                espiritu.getNombre());
     }
 
     @Override
     public Espiritu guardar(Espiritu espiritu) {
-        EspirituJPADTO espirituJPADTO = EspirituJPADTO.desdeModelo(espiritu);
+        EspirituJPADTO espirituJpa = EspirituJPADTO.desdeModelo(espiritu);
+        Espiritu espirituConId = this.espirituDAOJPA.save(espirituJpa).aModelo(espiritu);
 
-        return getEspirituDAO().save(espirituJPADTO).aModelo(espiritu);
+        EspirituNEODTO espirituNeo = EspirituNEODTO.desdeModelo(espirituConId);
+        this.espirituDAONEO.save(espirituNeo);
+
+        return espirituConId;
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long id) {
-        Optional<EspirituJPADTO> optionalEspirituJPADTO = getEspirituDAO().findById(id);
+        Optional<EspirituJPADTO> optionalEspirituJPADTO = getEspirituDAOJPA().findById(id);
 
-        if (optionalEspirituJPADTO.isEmpty()) return Optional.empty();
-
-        return Optional.of(optionalEspirituJPADTO.get().aModelo());
+        return optionalEspirituJPADTO.map(EspirituJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-        getEspirituDAO().deleteById(id);
+        espirituDAONEO.deleteById(id);
+        espirituDAOJPA.deleteById(id);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return getEspirituDAO().findAll().stream().map(EspirituJPADTO::aModelo).toList();
+        return getEspirituDAOJPA().findAll().stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
     public boolean espirituConNombre(String nombre, Long id) {
-        return getEspirituDAO().espirituConNombre(nombre, id);
+        return getEspirituDAOJPA().espirituConNombre(nombre, id);
     }
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-       return getEspirituDAO().findAll
+       return getEspirituDAOJPA().findAll
                        (Example.of
                                (EspirituJPADTO.desdeModelo(new Demonio()))
                                , PageRequest.of(
@@ -74,31 +85,31 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Espiritu> todosLosEspiritusDeMedium(Long id) {
-        return getEspirituDAO().todosLosEspiritusDeMedium(id).stream().map(EspirituJPADTO::aModelo).toList();
+        return getEspirituDAOJPA().todosLosEspiritusDeMedium(id).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return getEspirituDAO().espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
+        return getEspirituDAOJPA().espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
     public Long santuarioCorrupto() {
-        return getEspirituDAO().santuarioCorrupto();
+        return getEspirituDAOJPA().santuarioCorrupto();
     }
 
     @Override
     public int cantidadTotalDeDemonios(Long idSantuario) {
-        return getEspirituDAO().cantidadTotalDeDemonios(idSantuario);
+        return getEspirituDAOJPA().cantidadTotalDeDemonios(idSantuario);
     }
 
     @Override
     public int cantidadDeDemoniosLibresEn(Long idSantuario) {
-        return getEspirituDAO().cantidadDeDemoniosLibresEn(idSantuario);
+        return getEspirituDAOJPA().cantidadDeDemoniosLibresEn(idSantuario);
     }
 
     @Override
     public void desvincular(Long id) {
-        getEspirituDAO().desvincular(id);
+        getEspirituDAOJPA().desvincular(id);
     }
 }
