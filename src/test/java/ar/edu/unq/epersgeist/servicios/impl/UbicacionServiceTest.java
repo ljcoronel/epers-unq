@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -22,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +44,8 @@ public class UbicacionServiceTest {
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
     private Ubicacion ubicacionTres;
+
+    private Santuario ubicacionCuatro;
 
     private Angel angelUno;
     private Angel angelDos;
@@ -73,6 +75,8 @@ public class UbicacionServiceTest {
         this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
         this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
         this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
+
+        this.ubicacionCuatro = new Santuario("Chocolandia", 75);
     }
 
     @Test
@@ -245,10 +249,87 @@ public class UbicacionServiceTest {
 
     @Test
     public void unaUbicacionPersisteSuEnergia() {
-        Ubicacion ubicacion = this.ubicacionService.crear(new Santuario("Chocolandia", 75));
+
+        Ubicacion ubicacion = this.ubicacionService.crear(ubicacionCuatro);
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion.getId()).get();
 
         assertEquals(75, ubicacionRecuperada.getEnergia());
+    }
+
+    @Test
+    public void unaUbicacionPersisteSuConexionAOtra() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+
+        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        )));
+
+    }
+
+    @Test
+    public void unaUbicacionPersisteVariasConexiones() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion4 = this.ubicacionService.crear(ubicacionCuatro);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion4.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+
+        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        )));
+        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion4.getId()
+                        )));
+    }
+
+    @Test
+    public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+
+        assertEquals(1, (long) ubicacionRecuperada.getUbicacionesConectadas().size());
+    }
+
+    @Test
+    public void unaUbicacionPersisteConexionesBidireccionales() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion2.getId(), ubicacion1.getId());
+
+        Ubicacion ubicacion1Recuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+        Ubicacion ubicacion2Recuperada = ubicacionService.recuperar(ubicacion2.getId()).get();
+
+        assertTrue(ubicacion1Recuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        )));
+        assertTrue(ubicacion2Recuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion1.getId()
+                        )));
     }
 
     @AfterEach
@@ -256,6 +337,5 @@ public class UbicacionServiceTest {
         this.limpiador.eliminarEspiritus();
         this.limpiador.eliminarMediums();
         this.limpiador.eliminarUbicaciones();
-        this.limpiador.eliminarUbicacionesNeo();
     }
 }

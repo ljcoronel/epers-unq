@@ -66,4 +66,19 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         return this.mediumRepository.mediumsSinEspiritusEn(ubicacionId);
     }
+
+    @Override
+    public void conectar(Long idOrigen, Long idDestino) {
+        Optional<Ubicacion> optionalUbicacionOrigen = this.ubicacionRepository.recuperar(idOrigen);
+        Optional<Ubicacion> optionalUbicacionDestino = this.ubicacionRepository.recuperar(idDestino);
+
+        if(optionalUbicacionOrigen.isEmpty()) return;
+
+        Ubicacion origen = optionalUbicacionOrigen.get();
+
+        origen.conectarCon(optionalUbicacionDestino);
+
+        ubicacionRepository.guardar(origen);
+
+    }
 }

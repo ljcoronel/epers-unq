@@ -22,7 +22,7 @@ public interface MediumDAO extends JpaRepository<MediumJPADTO, Long> {
     void actualizar(@Param("nombre")String nombre, @Param("manaMax")int manaMax,@Param("mana")int mana, @Param("id")Long id);
 
     @Query(value = "SELECT m.id FROM medium m JOIN espiritu e ON m.id = e.medium_id WHERE m.ubicacion_id = :ubicacionId AND e.deleted is null GROUP BY m.id ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) desc limit 1", nativeQuery = true)
-    Long mediumConMasDemoniosEn(@Param("ubicacionId") Long ubicacionId);
+    Long mediumConMasDemoniosEn(@Param("ubicacionId") Long ubicacionId); // TODO Neo4j
 
     @Query("select count(e) > 0 from medium m join espiritu e on e.medium.id = :unaId")
     boolean esReferenciado(@Param("unaId") Long id);

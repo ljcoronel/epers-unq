@@ -7,10 +7,10 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
@@ -58,8 +58,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
         Optional<UbicacionJPADTO> optionalUbicacionJpa = this.ubicacionDaoJpa.findById(id);
+        UbicacionNEODTO ubicacionNEODTO = this.ubicacionDaoNeo.findById(id).get();
 
-        return optionalUbicacionJpa.map(UbicacionJPADTO::aModelo);
+        return optionalUbicacionJpa.map(jpaDto -> jpaDto.aModelo(ubicacionNEODTO));
     }
 
     @Override
@@ -77,3 +78,4 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 }
+

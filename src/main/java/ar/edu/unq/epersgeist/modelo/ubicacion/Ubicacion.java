@@ -4,13 +4,15 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.NotImplementedException;
 
 
-import java.util.List;
+import java.util.*;
+
 @Setter @Getter @NoArgsConstructor
 
 public abstract class Ubicacion implements UbicacionesRecibidoras {
@@ -19,6 +21,8 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     private String nombre;
 
     private int energia;
+
+    private Set<Ubicacion> ubicacionesConectadas = new HashSet<>();
 
     public Ubicacion(String nombre, int energia) {
 
@@ -48,4 +52,15 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     public abstract void recuperarConexionParaDemonios(List<Demonio> demonios);
 
     public abstract void recuperarManaParaMedium(Medium medium);
+
+    public void conectarCon(Optional<Ubicacion> optionalUbicacionDestino) {
+        Ubicacion destino = optionalUbicacionDestino.orElseThrow
+                (() -> new EntidadInexistenteException("La ubicación destino no existe."));
+        addUbicacionConectada(destino);
+    }
+
+    private void addUbicacionConectada(Ubicacion destino) {
+        getUbicacionesConectadas().add(destino);
+    }
+
 }

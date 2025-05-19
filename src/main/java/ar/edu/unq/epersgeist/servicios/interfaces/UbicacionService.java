@@ -15,4 +15,5 @@ public interface UbicacionService  {
     void eliminar(Long ubicacionId);
     List<Espiritu> espiritusEn(Long ubicacionId);
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
+    void conectar(Long idOrigen, Long idDestino);
 }
