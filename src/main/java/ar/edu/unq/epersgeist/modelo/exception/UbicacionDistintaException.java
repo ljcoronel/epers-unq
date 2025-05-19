@@ -10,12 +10,12 @@ public class UbicacionDistintaException extends RuntimeException{
     private Medium medium;
 
     public UbicacionDistintaException(Espiritu espiritu, Medium medium) {
-        this.espiritu= espiritu;
+        this.espiritu = espiritu;
+        this.medium = medium;
     }
 
     @Override
     public String getMessage() {
-        return "El Espiritu: [" + espiritu.getNombre() + "] y el Medium [" + medium.getNombre() + "] no se encuentra en la misma ubicacion";
-
+        return "El espíritu: [" + espiritu.getNombre() + "] y el médium [" + medium.getNombre() + "] no se encuentran en la misma ubicación";
     }
 }

@@ -3,40 +3,35 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
-import jakarta.persistence.*;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.MediumEnDistintaUbicacionException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.*;
-import org.hibernate.annotations.Check;
-import org.hibernate.grammars.hql.HqlParser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode
 @ToString
-
-@Entity
 public class Medium implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String nombre;
-    @Column(nullable = false)
-    @Check(constraints = "manaMax > 0")
-    private Integer manaMax;
-    @Column(nullable = false)
-    @Check(constraints = "mana BETWEEN 0 AND manaMax")
-    private Integer mana;
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Angel> angeles = new ArrayList<>();
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Demonio> demonios = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Ubicacion ubicacion;
 
+    private String nombre;
+
+    private Integer manaMax;
+
+    private Integer mana;
+
+    private List<Angel> angeles = new ArrayList<>();
+
+    private List<Demonio> demonios = new ArrayList<>();
+
+    private Ubicacion ubicacion;
 
     public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
         this.nombre = nombre;
@@ -52,20 +47,14 @@ public class Medium implements Serializable {
     }
 
     public void descansar(){
-        this.aumentarMana(15);
-        this.recuperarConexion(angeles);
-        this.recuperarConexion(demonios);
+        getUbicacion().recuperarManaParaMedium(this);
+        getUbicacion().recuperarConexionParaAngeles(getAngeles());
+        getUbicacion().recuperarConexionParaDemonios(getDemonios());
     }
 
-    private void recuperarConexion(List<? extends Espiritu> espiritus){
-        for(Espiritu espiritu : espiritus){
-            espiritu.aumentarNivelDeConexionEn(5);
-        }
-    }
-
-    private void aumentarMana(int i) {
-        int manaActual = getMana();
-        setMana(i + manaActual);
+    public void aumentarMana(int cantidad) {
+        int mana = this.getMana();
+        setMana(mana + cantidad);
     }
 
     public void setMana(int i) {
@@ -78,9 +67,11 @@ public class Medium implements Serializable {
         }
 
     }
-    public void exorcizarA(Medium medium){
+    public void exorcizarA(Optional<Medium> optionalMedium){
 
-        this.verificarSiPuedeExorcizar();
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
+
+        this.verificarSiPuedeExorcizarAMedium(medium);
 
         for (Angel angel : angeles){
 
@@ -96,10 +87,12 @@ public class Medium implements Serializable {
         }
     }
 
-    private void verificarSiPuedeExorcizar(){
+    private void verificarSiPuedeExorcizarAMedium(Medium medium){
         if (this.angeles.isEmpty()){
             throw new ExorcistaSinAngelesException(this);
         }
+        if (!(medium.getUbicacion().getId().equals(this.ubicacion.getId())))
+            throw new MediumEnDistintaUbicacionException("Los médiums están en ubicaciones distintas");
     }
 
     public void desvincularseDeEspiritu(Espiritu espiritu){
@@ -111,25 +104,33 @@ public class Medium implements Serializable {
         return (!demonios.isEmpty());
     }
 
-    public void invocar(Espiritu espiritu) {
+    public void invocar(Optional<Espiritu> opcionalEspiritu) {
+
+        if(opcionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe");
+
+        Espiritu espiritu = opcionalEspiritu.get();
 
         verificarSiEstaLibre(espiritu);
-        if (this.mana >= 10) {
-            espiritu.setUbicacion(this.ubicacion);
-            this.mana -= 10;
+
+        if (this.getMana() >= 10) {
+            this.getUbicacion().invocarAEspirituParaMedium(espiritu, this);
         }
     }
 
     private void verificarSiEstaLibre(Espiritu espiritu) {
         if(!espiritu.estaLibre()){
-            throw new RuntimeException("El espiritu no esta libre");
+            throw new EspirituLibreException(espiritu);
         }
     }
 
-    public void setUbicacion(Ubicacion unaUbicacion) {
-        this.ubicacion = unaUbicacion;
-        this.angeles.forEach(angel -> angel.moverConMediumHacia(this, unaUbicacion));
-        this.demonios.forEach(demonio -> demonio.moverConMediumHacia(this, unaUbicacion));
+    public void mover(Optional<Ubicacion> ubicacionOptional) {
+        Ubicacion unaUbicacion = ubicacionOptional.orElseThrow(() -> new EntidadInexistenteException("la ubicacion a mover no existe"));
+        this.setUbicacion(unaUbicacion);
+        List<Angel> angeles=  new ArrayList<>(this.getAngeles());
+        List<Demonio> demonios = new ArrayList<>(this.getDemonios());
+
+        angeles.forEach(angel -> angel.moverConMediumHacia(unaUbicacion));
+        demonios.forEach(demonio -> demonio.moverConMediumHacia(unaUbicacion));
     }
 
     public void agregarAAngeles(Angel angel) {
@@ -146,5 +147,9 @@ public class Medium implements Serializable {
 
     public void quitarDeDemonios(Demonio demonio) {
         this.getDemonios().remove(demonio);
+    }
+
+    public void usarManaParaInvocar() {
+        this.setMana(this.getMana() - 10);
     }
 }

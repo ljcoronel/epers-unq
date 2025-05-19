@@ -1,104 +1,113 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
-import ar.edu.unq.epersgeist.persistencia.dao.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.MediumDAO;
-import ar.edu.unq.epersgeist.servicios.EspirituService;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryImpl;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
-import org.hibernate.query.SortDirection;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Getter
+@Service
+@Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    private EspirituDAO espirituDao;
-    private MediumDAO mediumDao;
+    private final EspirituRepository espirituRepository;
+    private final MediumRepository mediumRepository;
+    private final UbicacionRepository ubicacionRepository;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao,MediumDAO mediumDAO) {
-        setEspirituDao(espirituDao);
-        this.mediumDao = mediumDAO;
+    public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumRepository mediumRepository, UbicacionRepository ubicacionRepository) {
+        this.espirituRepository = espirituRepository;
+        this.mediumRepository = mediumRepository;
+        this.ubicacionRepository = ubicacionRepository;
     }
+
 
     @Override
     public Espiritu crear(Espiritu espiritu) {
-        return HibernateTransactionRunner.runTrx(() -> {
-            getEspirituDao().crear(espiritu);
-            return null;
-        });
+
+        verificarNombreRepetido(espiritu);
+
+        Ubicacion ubicacion = ubicacionRepository.recuperar(espiritu.getUbicacion().getId())
+                .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
+        espiritu.mover(ubicacion);
+
+        return getEspirituRepository().guardar(espiritu);
+
+    }
+
+    private void verificarNombreRepetido(Espiritu espiritu) {
+        if (this.existeConNombre(espiritu)) throw new NombreRepetidoException("Ya existe un espíritu con el nombre: " + espiritu.getNombre());
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return HibernateTransactionRunner.runTrx(() -> this.espirituDao.recuperar(espirituId));
+        return getEspirituRepository().recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(() -> espirituDao.recuperarTodos());
+
+        return getEspirituRepository().recuperarTodos();
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
-        HibernateTransactionRunner.runTrx(() -> {
-            getEspirituDao().actualizar(espiritu);
-            return null;
-        });
+
+        verificarNombreRepetido(espiritu);
+
+        getEspirituRepository().actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        HibernateTransactionRunner.runTrx(() -> {
-            getEspirituDao().eliminar(espirituId);
-            return null;
-        });
+        getEspirituRepository().eliminar(espirituId);
     }
 
     @Override
-    public List<Demonio> espiritusDemoniacos(SortDirection direccion, int pagina, int cantidadPorPagina) {
-        if (pagina < 0) throw new IllegalArgumentException("El valor página debe ser positivo o 0.");
-        if (cantidadPorPagina <= 0) throw new IllegalArgumentException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
-        return HibernateTransactionRunner.runTrx(() -> getEspirituDao().espiritusDeTipo(direccion, pagina, cantidadPorPagina, Demonio.class));
+    public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
+        if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
+        if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
+        return getEspirituRepository().espiritusDemoniacos(direccion, pagina, cantidadPorPagina);
     }
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
-         return HibernateTransactionRunner.runTrx(() -> {
 
-            Optional<Medium> optionalMedium = mediumDao.recuperar(mediumId);
-            Optional<Espiritu> optionalEspiritu = espirituDao.recuperar(espirituId);
+            Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
-            verificarSiExisteMedium(optionalMedium);
-            Medium medium = optionalMedium.get();
+            Optional<Espiritu> optionalEspiritu = getEspirituRepository().recuperar(espirituId);
 
-            if (optionalEspiritu.isEmpty()) return medium;
+            if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
 
+            espiritu.conectarConMedium(optionalMedium);
 
-            espiritu.conectarConMedium(medium);
+            Medium medium = optionalMedium.get();
 
-            mediumDao.actualizar(medium);
+            mediumRepository.guardar(medium);
 
             return medium;
-        });
 
     }
 
 
-    private void verificarSiExisteMedium(Optional<Medium> medium){
-        if (medium.isEmpty()) {
-            throw new NoSuchElementException("No se encontró al Medium");
-        }
+    @Override
+    public boolean existeConNombre(Espiritu espiritu) {
+        return this.getEspirituRepository().espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
 
-    private void setEspirituDao(EspirituDAO espirituDao) {
-        this.espirituDao = espirituDao;
-    }
 }

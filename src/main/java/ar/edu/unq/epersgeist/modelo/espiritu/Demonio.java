@@ -1,9 +1,10 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import jakarta.persistence.Entity;
+import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +12,11 @@ import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
-
-@Entity
-public class Demonio extends Espiritu {
+public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
     }
+
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion, nombre, ubicacion);
     }
@@ -24,9 +24,9 @@ public class Demonio extends Espiritu {
 
     public void defender(Angel angel,int ataque) {
 
-        int procentajeDeDefensa = this.porcentajeDefensaRandom();
+        int porcentajeDeDefensa = this.porcentajeDefensaRandom();
 
-        if(ataque>procentajeDeDefensa){
+        if(ataque>porcentajeDeDefensa){
 
            int daño = angel.getNivelDeConexion()/2;
            this.recibirDamage(daño);
@@ -46,5 +46,18 @@ public class Demonio extends Espiritu {
         medium.quitarDeDemonios(this);
     }
 
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {}
 
+    @Override
+    public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.mover(cementerio);
+    }
+
+
+    @Override
+    public void recibirEfectoDe(Santuario ubicacion) {
+        this.reducirNivelDeConexionEn(10);
+    }
 }
