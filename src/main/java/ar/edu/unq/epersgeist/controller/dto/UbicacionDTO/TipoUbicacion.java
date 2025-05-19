@@ -3,6 +3,9 @@ package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.CementerioNEODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.SantuarioNEODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.CementerioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.SantuarioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
@@ -21,6 +24,12 @@ public enum TipoUbicacion {
         @Override
         public UbicacionJPADTO getDto(Ubicacion ubicacion) {
             return new SantuarioJPADTO(ubicacion);
+
+        }
+
+        @Override
+        public SantuarioNEODTO getDtoNEO(Ubicacion ubicacion) {
+            return new SantuarioNEODTO(ubicacion);
         }
 
     },CEMENTERIO{
@@ -32,6 +41,11 @@ public enum TipoUbicacion {
         @Override
         public UbicacionJPADTO getDto(Ubicacion ubicacion) {
             return new CementerioJPADTO(ubicacion);
+        }
+
+        @Override
+        public CementerioNEODTO getDtoNEO(Ubicacion ubicacion) {
+            return new CementerioNEODTO(ubicacion);
         }
     };
 
@@ -50,4 +64,5 @@ public enum TipoUbicacion {
     }
 
     public abstract UbicacionJPADTO getDto(Ubicacion ubicacion);
+    public abstract UbicacionNEODTO getDtoNEO(Ubicacion ubicacion);
 }
