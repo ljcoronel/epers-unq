@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
+
         this.ubicacionDaoJpa.actualizar(
+                ubicacion.getId(),
+                ubicacion.getNombre(),
+                ubicacion.getEnergia());
+
+        ubicacionDaoNeo.actualizar(
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia());
@@ -39,10 +46,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Ubicacion guardar(Ubicacion ubicacion) {
-        UbicacionNEODTO ubicacionNeo = UbicacionNEODTO.desdeModelo(ubicacion);
         UbicacionJPADTO ubicacionJpa = UbicacionJPADTO.desdeModelo(ubicacion);
+        Ubicacion ubicacionConId = this.ubicacionDaoJpa.save(ubicacionJpa).aModelo(ubicacion);
+
+        UbicacionNEODTO ubicacionNeo = UbicacionNEODTO.desdeModelo(ubicacionConId);
         this.ubicacionDaoNeo.save(ubicacionNeo);
-        return this.ubicacionDaoJpa.save(ubicacionJpa).aModelo(ubicacion);
+
+        return ubicacionConId;
     }
 
     @Override
@@ -54,6 +64,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public void eliminar(Long id) {
+        ubicacionDaoNeo.deleteById(id);
         this.ubicacionDaoJpa.deleteById(id);
     }
 

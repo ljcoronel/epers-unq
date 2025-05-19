@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -35,6 +37,9 @@ public class UbicacionServiceTest {
 
     @Autowired
     private MediumService mediumService;
+
+    @Autowired
+    private UbicacionDAONEO ubicacionDAONEO;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -73,9 +78,9 @@ public class UbicacionServiceTest {
     @Test
     public void sePersisteUnaUbicacionEnLaBaseDeDatos() {
         Ubicacion ubicacionPersistida = this.ubicacionService.crear(ubicacionUno);
-
         assertEquals(this.ubicacionUno.getId(), ubicacionPersistida.getId());
         assertEquals(this.ubicacionUno.getNombre(), ubicacionPersistida.getNombre());
+
     }
 
     @Test
@@ -189,7 +194,7 @@ public class UbicacionServiceTest {
 
     @Test
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Santuario("Magical",50);
+        Ubicacion ubicacion1 = new Santuario("ElClerigo",50);
         Ubicacion ubicacion2 = new Santuario("Masedonia",50);
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
@@ -251,5 +256,6 @@ public class UbicacionServiceTest {
         this.limpiador.eliminarEspiritus();
         this.limpiador.eliminarMediums();
         this.limpiador.eliminarUbicaciones();
+        this.limpiador.eliminarUbicacionesNeo();
     }
 }
