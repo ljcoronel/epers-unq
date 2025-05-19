@@ -194,7 +194,7 @@ public class UbicacionServiceTest {
 
     @Test
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Santuario("Magical",50);
+        Ubicacion ubicacion1 = new Santuario("ElClerigo",50);
         Ubicacion ubicacion2 = new Santuario("Masedonia",50);
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
@@ -251,10 +251,11 @@ public class UbicacionServiceTest {
         assertEquals(75, ubicacionRecuperada.getEnergia());
     }
 
-//    @AfterEach
+    @AfterEach
     public void tearDown() {
         this.limpiador.eliminarEspiritus();
         this.limpiador.eliminarMediums();
         this.limpiador.eliminarUbicaciones();
+        this.limpiador.eliminarUbicacionesNeo();
     }
 }

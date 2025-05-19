@@ -483,5 +483,6 @@ public class EspirituServiceImplTest {
         testService.eliminarEspiritus();
         testService.eliminarMediums();
         testService.eliminarUbicaciones();
+        testService.eliminarUbicacionesNeo();
     }
 }

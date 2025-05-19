@@ -23,10 +23,13 @@ public class TestService {
 
     public void eliminarUbicaciones() {
         entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
-        ubicacionDAONEO.deleteAll();
+
     }
 
     public void eliminarMediums() {
         entityManager.createNativeQuery("DELETE FROM medium").executeUpdate();
+    }
+    public  void eliminarUbicacionesNeo(){
+        ubicacionDAONEO.deleteAll();
     }
 }
