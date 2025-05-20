@@ -32,6 +32,11 @@ public enum TipoUbicacion {
             return new SantuarioNEODTO(ubicacion);
         }
 
+        @Override
+        public UbicacionNEODTO getDtoNEO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
+            return new SantuarioNEODTO(ubicacion, dtoUbicacionYaCreada);
+        }
+
     },CEMENTERIO{
         @Override
         public Ubicacion getUbicacionInstance(String nombre, int energia) {
@@ -46,6 +51,11 @@ public enum TipoUbicacion {
         @Override
         public CementerioNEODTO getDtoNEO(Ubicacion ubicacion) {
             return new CementerioNEODTO(ubicacion);
+        }
+
+        @Override
+        public UbicacionNEODTO getDtoNEO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
+            return new CementerioNEODTO(ubicacion, dtoUbicacionYaCreada);
         }
     };
 
@@ -65,4 +75,5 @@ public enum TipoUbicacion {
 
     public abstract UbicacionJPADTO getDto(Ubicacion ubicacion);
     public abstract UbicacionNEODTO getDtoNEO(Ubicacion ubicacion);
+    public abstract UbicacionNEODTO getDtoNEO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada);
 }

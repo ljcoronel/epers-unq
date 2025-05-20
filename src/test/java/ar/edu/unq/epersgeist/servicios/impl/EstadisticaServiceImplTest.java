@@ -119,7 +119,6 @@ public class EstadisticaServiceImplTest {
         testService.eliminarEspiritus();
         testService.eliminarMediums();
         testService.eliminarUbicaciones();
-        testService.eliminarUbicacionesNeo();
     }
 
 }
