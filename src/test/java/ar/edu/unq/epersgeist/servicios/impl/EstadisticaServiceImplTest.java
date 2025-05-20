@@ -114,6 +114,39 @@ public class EstadisticaServiceImplTest {
         assertEquals(0,reporte.getCantidadDeDemoniosLibres());
     }
 
+    @Test
+    public void seObtieneUnReporteCuandoNoHaySantuario() {
+        ReporteSantuarioMasCorrupto reporte = this.estadisticaService.santuarioCorrupto();
+
+        assertTrue(reporte.getNombreSantuario().isEmpty());
+        assertNull(reporte.getMedium());
+        assertEquals(0,reporte.getCantidadDeDemonios());
+        assertEquals(0,reporte.getCantidadDeDemoniosLibres());
+    }
+
+    @Test
+    public void seObtieneUnReporteDeUnSantuarioQueNoTieneEspiritus() {
+        this.ubicacionService.crear(ubicacion);
+        ReporteSantuarioMasCorrupto reporte = this.estadisticaService.santuarioCorrupto();
+
+        assertEquals("Bernal",reporte.getNombreSantuario());
+        assertNull(reporte.getMedium());
+        assertEquals(0,reporte.getCantidadDeDemonios());
+        assertEquals(0,reporte.getCantidadDeDemoniosLibres());
+    }
+
+//    @Test
+//    public void seObtieneUnReporteDeUnSantuarioQueTieneUnMediumSinDemoniosConectados() {
+//        this.ubicacionService.crear(ubicacion);
+//        this.mediumService.crear(medium);
+//        ReporteSantuarioMasCorrupto reporte = this.estadisticaService.santuarioCorrupto();
+//
+//        assertEquals("Bernal",reporte.getNombreSantuario());
+//        assertEquals(this.medium.getId(),reporte.getMedium().getId());
+//        assertEquals(0,reporte.getCantidadDeDemonios());
+//        assertEquals(0,reporte.getCantidadDeDemoniosLibres());
+//    }
+
     @AfterEach
     void eliminarModelo() {
         testService.eliminarEspiritus();

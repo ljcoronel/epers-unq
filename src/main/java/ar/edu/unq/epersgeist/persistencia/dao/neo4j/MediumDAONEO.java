@@ -7,7 +7,8 @@ import org.springframework.data.neo4j.repository.query.Query;
 public interface MediumDAONEO extends Neo4jRepository<EspirituNEODTO, Long> {
 
     @Query("""
-            MATCH (d:ESPIRITU:DEMONIO)-[:CONECTADO_CON]->(m:MEDIUM)-[:TIENE_UBICACION]->(u:UBICACION {id: $unaId})
+            MATCH (m:MEDIUM)-[:TIENE_UBICACION]->(u:UBICACION:SANTUARIO {id: $unaId})
+            OPTIONAL MATCH (d:ESPIRITU:DEMONIO)-[:CONECTADO_CON]->(m)
             WITH m, COUNT(d) AS cantidadDeDemonios
             ORDER BY cantidadDeDemonios DESC
             LIMIT 1
