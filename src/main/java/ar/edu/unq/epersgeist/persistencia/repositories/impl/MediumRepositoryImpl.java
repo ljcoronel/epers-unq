@@ -1,11 +1,9 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Repository;
@@ -17,52 +15,52 @@ import java.util.Optional;
 @Repository
 
 public class MediumRepositoryImpl implements MediumRepository {
-    private final MediumDAO mediumDAO;
+    private final MediumDAOJPA mediumDAOJPA;
 
-    public MediumRepositoryImpl(MediumDAO mediumDAO) {
-        this.mediumDAO = mediumDAO;
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
+        this.mediumDAOJPA = mediumDAOJPA;
     }
 
     @Override
     public void actualizar(Medium medium) {
-        getMediumDAO().actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        getMediumDAOJPA().actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPADTO = MediumJPADTO.desdeModelo(medium);
-        getMediumDAO().save(mediumJPADTO);
+        getMediumDAOJPA().save(mediumJPADTO);
         return mediumJPADTO.aModelo(medium);
     }
 
     @Override
     public Optional<Medium> recuperar(Long id) {
-        Optional<MediumJPADTO> optionalMediumJPADTO = getMediumDAO().findById(id);
+        Optional<MediumJPADTO> optionalMediumJPADTO = getMediumDAOJPA().findById(id);
         return optionalMediumJPADTO.map(MediumJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-        getMediumDAO().deleteById(id);
+        getMediumDAOJPA().deleteById(id);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-        return getMediumDAO().findAll().stream().map(MediumJPADTO::aModelo).toList();
+        return getMediumDAOJPA().findAll().stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
     public boolean esReferenciado(Long idDelMedium) {
-        return getMediumDAO().esReferenciado(idDelMedium);
+        return getMediumDAOJPA().esReferenciado(idDelMedium);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return getMediumDAO().mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
+        return getMediumDAOJPA().mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
     public Long mediumConMasDemoniosEn(Long idSantuario) {
-        return getMediumDAO().mediumConMasDemoniosEn(idSantuario);
+        return getMediumDAOJPA().mediumConMasDemoniosEn(idSantuario);
     }
 }
