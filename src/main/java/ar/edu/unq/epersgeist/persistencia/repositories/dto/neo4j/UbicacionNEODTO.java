@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j;
 
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -40,7 +41,7 @@ public abstract class UbicacionNEODTO{
         ubicacionesConectadas = ubicacion
                                 .getUbicacionesConectadas()
                                 .stream()
-                                .map(dto -> desdeModelo(dto)).toList(); // TODO chequear recursión
+                                .map(dto -> desdeModelo(dto)).toList();
     }
 
     public UbicacionNEODTO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
@@ -59,21 +60,13 @@ public abstract class UbicacionNEODTO{
     }
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
-        if (ubicacion == null) return null;
-        return switch (ubicacion){
-            case Santuario ignored -> new SantuarioNEODTO(ubicacion);
-            case Cementerio ignored -> new CementerioNEODTO(ubicacion);
-            default -> throw new IllegalStateException("Unexpected value: " + ubicacion.getClass().getSimpleName());
-        };
+        TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
+        return tipo.getDtoNEO(ubicacion);
     }
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
-        if (ubicacion == null) return null;
-        return switch (ubicacion){
-            case Santuario ignored -> new SantuarioNEODTO(ubicacion, dtoUbicacionYaCreada);
-            case Cementerio ignored -> new CementerioNEODTO(ubicacion, dtoUbicacionYaCreada);
-            default -> throw new IllegalStateException("Unexpected value: " + ubicacion.getClass().getSimpleName());
-        };
+        TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
+        return tipo.getDtoNEO(ubicacion);
     }
 
 
