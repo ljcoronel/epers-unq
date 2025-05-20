@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
@@ -58,7 +59,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public Optional<Ubicacion> recuperar(Long id) {
         Optional<UbicacionJPADTO> optionalUbicacionJpa = this.ubicacionDaoJpa.findById(id);
 
-        return optionalUbicacionJpa.map(UbicacionJPADTO::aModelo);
+        if (optionalUbicacionJpa.isEmpty()) return Optional.empty();
+
+        UbicacionNEODTO ubicacionNEODTO = this.ubicacionDaoNeo.findById(id).get();
+
+        return optionalUbicacionJpa.map(jpaDto -> jpaDto.aModelo(ubicacionNEODTO));
     }
 
     @Override
@@ -72,7 +77,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
+    public boolean estanConectadas(Long idOrigen, Long idDestino) {
+        return ubicacionDaoNeo.estanConectadas(idOrigen, idDestino);
+    }
+
+    @Override
     public List<Ubicacion> recuperarTodos() {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 }
+

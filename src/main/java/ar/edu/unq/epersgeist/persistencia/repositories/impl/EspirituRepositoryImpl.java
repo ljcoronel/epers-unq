@@ -73,12 +73,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
        return this.espirituDAOJPA.findAll
                        (Example.of
-                               (EspirituJPADTO.desdeModelo(new Demonio()))
-                               , PageRequest.of(
-                                       pagina
-                                       ,cantidadPorPagina,
-                                       direccion, "nivelDeConexion"))
-               .map(dto -> (Demonio) dto.aModelo()).toList();
+                               (EspirituJPADTO.desdeModelo(new Demonio())),
+                               PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
+                                .map(dto -> (Demonio) dto.aModelo()).toList();
     }
 
     @Override

@@ -14,4 +14,6 @@ public interface UbicacionRepository {
     boolean existeNombre(String nombre, Long id);
 
     boolean esReferenciado(Long id);
+
+    boolean estanConectadas(Long idOrigen, Long idDestino);
 }
