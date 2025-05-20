@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.neo4j.MediumDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.stereotype.Repository;
@@ -9,23 +11,32 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+
 @Repository
+
 public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
+    private final MediumDAONEO mediumDaoNeo;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAONEO mediumDaoNeo) {
         this.mediumDAOJPA = mediumDAOJPA;
+        this.mediumDaoNeo = mediumDaoNeo;
     }
 
     @Override
     public void actualizar(Medium medium) {
-        this.mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        mediumDaoNeo.save(MediumNEODTO.desdeModelo(medium));
     }
 
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPADTO = MediumJPADTO.desdeModelo(medium);
-        this.mediumDAOJPA.save(mediumJPADTO);
+        mediumDAOJPA.save(mediumJPADTO);
+
+        MediumNEODTO mediumNEODTO = MediumNEODTO.desdeModelo(medium);
+        mediumDaoNeo.save(mediumNEODTO);
+
         return mediumJPADTO.aModelo(medium);
     }
 
@@ -38,6 +49,7 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public void eliminar(Long id) {
         this.mediumDAOJPA.deleteById(id);
+        this.mediumDaoNeo.deleteById(id);
     }
 
     @Override

@@ -1,10 +1,13 @@
 package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.EspirituNEODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.stereotype.Repository;
 
-public interface MediumDAONEO extends Neo4jRepository<EspirituNEODTO, Long> {
+
+@Repository
+public interface MediumDAONEO extends Neo4jRepository<MediumNEODTO, Long> {
 
     @Query("""
         MATCH (m:MEDIUM)-[:TIENE_UBICACION]->(u:UBICACION:SANTUARIO {id: $unaId})

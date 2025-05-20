@@ -755,6 +755,8 @@ public class MediumServiceImplTest {
         testService.eliminarEspiritus();
         testService.eliminarMediums();
         testService.eliminarUbicaciones();
+        testService.eliminarUbicacionesNeo();
+        testService.eliminarMediumNeo();
         fakeRandomStrategy.cleanUp();
     }
 
