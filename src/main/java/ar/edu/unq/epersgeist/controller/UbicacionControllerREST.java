@@ -5,12 +5,14 @@ import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,5 +83,17 @@ public final class UbicacionControllerREST {
     public ResponseEntity<Boolean> estanConectadas(@PathVariable Long idOrigen, @PathVariable Long idDestino) {
         Boolean estanConectadas = this.ubicacionService.estanConectadas(idOrigen, idDestino);
         return ResponseEntity.ok(estanConectadas);
+    }
+
+    @GetMapping("/{idOrigen}/CaminoMasCorto/{idDestino}")
+    public ResponseEntity<Set<UbicacionDTOResponse>> CaminoMasCorto(@PathVariable Long idOrigen, @PathVariable Long idDestino){
+
+        List<Ubicacion> camino = ubicacionService.caminoMasCorto(idOrigen,idDestino);
+
+        if (camino == null) return ResponseEntity.status(404).body(null);
+
+        return ResponseEntity.ok(camino.stream()
+                .map(UbicacionDTOResponse::desdeModelo)
+                .collect(Collectors.toSet()));
     }
 }
