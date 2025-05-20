@@ -66,7 +66,7 @@ public abstract class UbicacionNEODTO{
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
         TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
-        return tipo.getDtoNEO(ubicacion);
+        return tipo.getDtoNEO(ubicacion, dtoUbicacionYaCreada);
     }
 
 
