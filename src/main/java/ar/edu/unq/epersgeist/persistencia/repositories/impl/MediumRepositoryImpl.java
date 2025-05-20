@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.neo4j.MediumDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import lombok.Getter;
@@ -16,32 +18,41 @@ import java.util.Optional;
 
 public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
+    private final MediumDAONEO mediumDaoNeo;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAONEO mediumDaoNeo) {
         this.mediumDAOJPA = mediumDAOJPA;
+        this.mediumDaoNeo = mediumDaoNeo;
     }
 
     @Override
     public void actualizar(Medium medium) {
-        getMediumDAOJPA().actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        mediumDaoNeo.save(MediumNEODTO.desdeModelo(medium));
     }
 
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPADTO = MediumJPADTO.desdeModelo(medium);
-        getMediumDAOJPA().save(mediumJPADTO);
+        mediumDAOJPA.save(mediumJPADTO);
+
+        MediumNEODTO mediumNEODTO = MediumNEODTO.desdeModelo(medium);
+        mediumDaoNeo.save(mediumNEODTO);
+
         return mediumJPADTO.aModelo(medium);
     }
 
     @Override
     public Optional<Medium> recuperar(Long id) {
-        Optional<MediumJPADTO> optionalMediumJPADTO = getMediumDAOJPA().findById(id);
+        Optional<MediumJPADTO> optionalMediumJPADTO = mediumDAOJPA.findById(id);
         return optionalMediumJPADTO.map(MediumJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-        getMediumDAOJPA().deleteById(id);
+
+        mediumDAOJPA.deleteById(id);
+        mediumDaoNeo.deleteById(id);
     }
 
     @Override
