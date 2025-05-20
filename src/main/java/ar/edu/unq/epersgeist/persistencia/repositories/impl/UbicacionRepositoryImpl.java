@@ -95,5 +95,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .collect(Collectors.toList());
 
     }
+
+    public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
+        return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
+    }
 }
 

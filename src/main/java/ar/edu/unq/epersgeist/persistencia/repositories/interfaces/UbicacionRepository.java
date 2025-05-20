@@ -18,4 +18,6 @@ public interface UbicacionRepository {
     boolean estanConectadas(Long idOrigen, Long idDestino);
 
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
+
+    boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
 }

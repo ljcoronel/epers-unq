@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
@@ -423,7 +424,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void alBuscarElCaminoMasCortoAUnaYUbicacionRetornaUnaListaDelCaminoMasCortoDeUbicaciones(){
+    public void alBuscarElCaminoMasCortoAUnaUbicacionRetornaUnaListaDelCaminoMasCortoDeUbicaciones(){
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
         Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
@@ -440,6 +441,38 @@ public class UbicacionServiceTest {
         List<Ubicacion> camino = ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion4.getId());
 
         assertEquals(2,camino.size());//no contamos al nodo origen
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoEntreDosUbicacionesQueNoEstanConectadasDeNingunaFormaRetornaUnaExepcion(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+
+        assertThrows(UbicacionesNoConectadasException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion2.getId()));
+    }
+    @Test
+    public void alBuscarElCaminoMasCortoSiendoDestinoYOrigenLaMismaUbicacionRetornaUnaListaVacia(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        List<Ubicacion> camino = ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion1.getId());
+
+        assertEquals(0,camino.size());//no contamos al nodo origen
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoConUnaUBicacionOrigenQueNoExisteRetornaNull(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertNull(ubicacionService.caminoMasCorto(-1L,ubicacion1.getId()));
+
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoConUnaUBicacionDestinoQueNoExisteRetornaExeption(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),-1L));
+
     }
 
     @AfterEach

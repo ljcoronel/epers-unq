@@ -86,6 +86,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
         if(optionalUbicacionOrigen.isEmpty()) return null;
 
+
         this.verificarSiLasUbicacionesEstanConectadas(idOrigen, idDestino);
 
         List<Ubicacion> camino = ubicacionRepository.caminoMasCorto(idOrigen, idDestino);
@@ -98,6 +99,10 @@ public class UbicacionServiceImpl implements UbicacionService {
         return Boolean.valueOf(ubicacionRepository.estanConectadas(idOrigen, idDestino));
     }
 
+    private Boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
+        return Boolean.valueOf(ubicacionRepository.estanConectadasDeAlgunModo(idOrigen, idDestino));
+    }
+
     private void verificarSiLasUbicacionesEstanConectadas(Long idOrigen, Long idDestino){
 
         Optional<Ubicacion> optionalUbicacionDestino = this.ubicacionRepository.recuperar(idDestino);
@@ -105,10 +110,10 @@ public class UbicacionServiceImpl implements UbicacionService {
         if (optionalUbicacionDestino.isEmpty()){
             throw new EntidadInexistenteException("La ubicación destino no existe.");
         }
-/*
-        if (!this.estanConectadas(idOrigen,idDestino)){
+
+        if (!this.estanConectadasDeAlgunModo(idOrigen,idDestino)){
             throw new UbicacionesNoConectadasException();
-        }*/
+        }
     }
 
 
