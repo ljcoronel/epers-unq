@@ -1,17 +1,21 @@
 package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.DemonioNEODTO;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
 @Repository
 public interface MediumDAONEO extends Neo4jRepository<MediumNEODTO, Long> {
 
+    @Query("""
+            MATCH (m:MEDIUM)-[:TIENE_UBICACION]->(u:UBICACION:SANTUARIO {id: $unaId})
+            OPTIONAL MATCH (d:ESPIRITU:DEMONIO)-[:CONECTADO_CON]->(m)
+            WITH m, COUNT(d) AS cantidadDeDemonios
+            ORDER BY cantidadDeDemonios DESC
+            LIMIT 1
+            RETURN m.id
+           """)
+    Long mediumConMasDemonios(Long id);
 }

@@ -6,14 +6,12 @@ import ar.edu.unq.epersgeist.persistencia.dao.neo4j.MediumDAONEO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Setter @Getter
+
 @Repository
 
 public class MediumRepositoryImpl implements MediumRepository {
@@ -44,34 +42,28 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public Optional<Medium> recuperar(Long id) {
-        Optional<MediumJPADTO> optionalMediumJPADTO = mediumDAOJPA.findById(id);
+        Optional<MediumJPADTO> optionalMediumJPADTO = this.mediumDAOJPA.findById(id);
         return optionalMediumJPADTO.map(MediumJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-
-        mediumDAOJPA.deleteById(id);
-        mediumDaoNeo.deleteById(id);
+        this.mediumDAOJPA.deleteById(id);
+        this.mediumDaoNeo.deleteById(id);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-        return getMediumDAOJPA().findAll().stream().map(MediumJPADTO::aModelo).toList();
-    }
-
-    @Override
-    public boolean esReferenciado(Long idDelMedium) {
-        return getMediumDAOJPA().esReferenciado(idDelMedium);
+        return this.mediumDAOJPA.findAll().stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return getMediumDAOJPA().mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
+        return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
     public Long mediumConMasDemoniosEn(Long idSantuario) {
-        return getMediumDAOJPA().mediumConMasDemoniosEn(idSantuario);
+        return this.mediumDAOJPA.mediumConMasDemoniosEn(idSantuario);
     }
 }

@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -9,6 +9,5 @@ public class CementerioNEODTO extends UbicacionNEODTO{
     public CementerioNEODTO(Ubicacion ubicacion) {
         super(ubicacion);
     }
-
 
 }

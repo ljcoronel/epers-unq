@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
-
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
+public interface EspirituDAOJPA extends JpaRepository<EspirituJPADTO, Long> {
 
     @Query(
             "From espiritu e where e.medium.id= :MediumId "
@@ -39,7 +38,13 @@ public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
     )
     void actualizar(@Param("nombre")String nombre, @Param("nivelDeConexion")int nivelDeConexion, @Param("id")Long id);
 
-    @Query(value = "SELECT u.id FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id WHERE u.dtype = 'santuario' AND e.deleted is null GROUP BY u.id ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.dtype = 'angel' THEN 1 ELSE 0 END) DESC LIMIT 1", nativeQuery = true)
+    @Query(value = """
+        SELECT u.id 
+        FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id 
+        WHERE u.dtype = 'santuario' AND e.deleted is null 
+        GROUP BY u.id 
+        ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.dtype = 'angel' THEN 1 ELSE 0 END) DESC LIMIT 1
+    """, nativeQuery = true)
     Long santuarioCorrupto();
 
     @Query("select count(e) from espiritu e where TYPE(e) = demonio and e.ubicacion.id = :unaUbicacion")
@@ -48,4 +53,7 @@ public interface EspirituDAO extends JpaRepository<EspirituJPADTO, Long> {
     @Modifying
     @Query(value = "UPDATE espiritu SET nivel_de_conexion = 0, medium_id = null WHERE id = :unId", nativeQuery = true)
     void desvincular(Long unId);
+
+    @Query("select count(e) > 0 from espiritu e where e.medium.id = :unaId")
+    boolean referencia(@Param("unaId") Long id);
 }
