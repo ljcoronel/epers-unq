@@ -16,4 +16,6 @@ public interface UbicacionRepository {
     boolean esReferenciado(Long id);
 
     boolean estanConectadas(Long idOrigen, Long idDestino);
+
+    List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
 }
