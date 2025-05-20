@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion.UbicacionNEODTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +22,14 @@ public abstract class EspirituNEODTO {
     @Id
     private Long id;
 
-    private String nombre;
-
     @Relationship(type = "TIENE_UBICACION")
     private UbicacionNEODTO ubicacion;
 
+    @Relationship(type = "CONECTADO_CON")
+    private MediumNEODTO medium;
+
     public EspirituNEODTO(Espiritu espiritu) {
         this.id = espiritu.getId();
-        this.nombre = espiritu.getNombre();
         this.ubicacion = UbicacionNEODTO.desdeModelo(espiritu.getUbicacion());
     }
 

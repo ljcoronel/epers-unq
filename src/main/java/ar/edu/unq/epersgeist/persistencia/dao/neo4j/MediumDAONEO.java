@@ -3,8 +3,8 @@ package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 
 @Repository
 public interface MediumDAONEO extends Neo4jRepository<MediumNEODTO, Long> {
@@ -17,5 +17,5 @@ public interface MediumDAONEO extends Neo4jRepository<MediumNEODTO, Long> {
         LIMIT 1
         RETURN m.id
     """)
-    Long mediumConMasDemonios(Long id);
+    Long mediumConMasDemonios(@Param("unaId") Long id);
 }

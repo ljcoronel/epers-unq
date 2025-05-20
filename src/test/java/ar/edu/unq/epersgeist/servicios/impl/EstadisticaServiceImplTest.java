@@ -135,7 +135,7 @@ public class EstadisticaServiceImplTest {
         assertEquals(0,reporte.getCantidadDeDemoniosLibres());
     }
 
-//    @Test
+    @Test
     public void seObtieneUnReporteDeUnSantuarioQueTieneUnMediumSinDemoniosConectados() {
         this.ubicacionService.crear(ubicacion);
         this.mediumService.crear(medium);

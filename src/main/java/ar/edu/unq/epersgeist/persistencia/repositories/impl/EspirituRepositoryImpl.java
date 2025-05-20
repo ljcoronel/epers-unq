@@ -30,9 +30,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public void actualizar(Espiritu espiritu) {
         this.espirituDAOJPA.actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
 
-        espirituDAONEO.actualizar(
-                espiritu.getId(),
-                espiritu.getNombre());
+        this.espirituDAONEO.save(EspirituNEODTO.desdeModelo(espiritu));
     }
 
     @Override

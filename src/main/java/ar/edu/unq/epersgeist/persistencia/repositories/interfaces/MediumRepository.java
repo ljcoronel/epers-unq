@@ -13,5 +13,5 @@ public interface MediumRepository {
     List<Medium> recuperarTodos();
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
 
-    Long mediumConMasDemoniosEn(Long idSantuario);
+    Long mediumConMasDemonios(Long idSantuario);
 }

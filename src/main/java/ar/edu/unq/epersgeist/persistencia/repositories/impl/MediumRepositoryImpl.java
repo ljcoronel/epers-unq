@@ -11,33 +11,31 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
-
 public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
-    private final MediumDAONEO mediumDaoNeo;
+    private final MediumDAONEO mediumDAONEO;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAONEO mediumDaoNeo) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAONEO mediumDAONEO) {
         this.mediumDAOJPA = mediumDAOJPA;
-        this.mediumDaoNeo = mediumDaoNeo;
+        this.mediumDAONEO = mediumDAONEO;
     }
 
     @Override
     public void actualizar(Medium medium) {
         mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
-        mediumDaoNeo.save(MediumNEODTO.desdeModelo(medium));
+        mediumDAONEO.save(MediumNEODTO.desdeModelo(medium));
     }
 
     @Override
     public Medium guardar(Medium medium) {
-        MediumJPADTO mediumJPADTO = MediumJPADTO.desdeModelo(medium);
-        mediumDAOJPA.save(mediumJPADTO);
+        MediumJPADTO mediumJPA = MediumJPADTO.desdeModelo(medium);
+        Medium mediumConId = this.mediumDAOJPA.save(mediumJPA).aModelo(medium);
 
-        MediumNEODTO mediumNEODTO = MediumNEODTO.desdeModelo(medium);
-        mediumDaoNeo.save(mediumNEODTO);
+        MediumNEODTO mediumNEO = MediumNEODTO.desdeModelo(mediumConId);
+        mediumDAONEO.save(mediumNEO);
 
-        return mediumJPADTO.aModelo(medium);
+        return mediumConId;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public void eliminar(Long id) {
         this.mediumDAOJPA.deleteById(id);
-        this.mediumDaoNeo.deleteById(id);
+        this.mediumDAONEO.deleteById(id);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     @Override
-    public Long mediumConMasDemoniosEn(Long idSantuario) {
-        return this.mediumDAOJPA.mediumConMasDemoniosEn(idSantuario);
+    public Long mediumConMasDemonios(Long idSantuario) {
+        return this.mediumDAONEO.mediumConMasDemonios(idSantuario);
     }
 }
