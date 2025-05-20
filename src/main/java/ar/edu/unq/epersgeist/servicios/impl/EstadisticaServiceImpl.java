@@ -3,7 +3,6 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -33,7 +32,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
         Ubicacion ubicacion = this.ubicacionRepository.recuperar(idSantuario).get();
 
-        Long idMedium = this.mediumRepository.mediumConMasDemoniosEn(idSantuario);
+        Long idMedium = this.mediumRepository.mediumConMasDemonios(idSantuario);
 
         Medium medium = (idMedium != null) ? mediumRepository.recuperar(idMedium).orElse(null) : null;
 

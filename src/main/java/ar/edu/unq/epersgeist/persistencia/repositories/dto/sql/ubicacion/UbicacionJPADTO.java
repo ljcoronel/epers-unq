@@ -2,7 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion;
 
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion.UbicacionNEODTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Entity(name = "ubicacion")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

@@ -11,10 +11,7 @@ public interface MediumRepository {
     Optional<Medium> recuperar(Long id);
     void eliminar(Long id);
     List<Medium> recuperarTodos();
-
-    boolean esReferenciado(Long idDelMedium);
-
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
 
-    Long mediumConMasDemoniosEn(Long idSantuario);
+    Long mediumConMasDemonios(Long idSantuario);
 }
