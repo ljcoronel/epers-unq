@@ -3,7 +3,6 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -28,14 +27,14 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     @Override
     public ReporteSantuarioMasCorrupto santuarioCorrupto() {
         ReporteSantuarioMasCorrupto reporte = new ReporteSantuarioMasCorrupto();
-        Long idSantuario = this.espirituRepository.santuarioCorrupto();
+        Long idSantuario = this.espirituRepository.santuarioCorrupto(); //devolver una ubicacion en lugar de una id
         if (idSantuario == null) return reporte;
 
-        Ubicacion ubicacion = this.ubicacionRepository.recuperar(idSantuario).get();
+        Ubicacion ubicacion = this.ubicacionRepository.recuperar(idSantuario).get();    //evitar pegarle a la base de datos
 
-        Long idMedium = this.mediumRepository.mediumConMasDemoniosEn(idSantuario);
+        Long idMedium = this.mediumRepository.mediumConMasDemoniosEn(idSantuario);  //devolver un medium en lugar de una id
 
-        Medium medium = (idMedium != null) ? mediumRepository.recuperar(idMedium).orElse(null) : null;
+        Medium medium = (idMedium != null) ? mediumRepository.recuperar(idMedium).orElse(null) : null;  //evitar pegarle a la base de datos
 
         reporte.setNombreSantuario(ubicacion.getNombre());
         reporte.setMedium(medium);

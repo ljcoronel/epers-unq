@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,6 @@ public class MediumServiceImpl implements MediumService {
     private final MediumRepository mediumRepository;
     private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
-
 
     public MediumServiceImpl (MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository) {
         this.mediumRepository = mediumRepository;
@@ -63,7 +61,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void eliminar(Long idDelMedium) {
-        if (this.mediumRepository.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
+        if (this.espirituRepository.referencia(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
         mediumRepository.eliminar(idDelMedium);
     }
 

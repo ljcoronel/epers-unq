@@ -29,4 +29,6 @@ public interface EspirituRepository {
     int cantidadDeDemoniosLibresEn(Long idSantuario);
 
     void desvincular(Long id);
+
+    boolean referencia(Long idDelMedium);
 }

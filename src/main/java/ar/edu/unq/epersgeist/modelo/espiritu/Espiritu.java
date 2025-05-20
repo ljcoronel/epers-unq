@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -10,37 +9,24 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
-
-
 public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer nivelDeConexion;
     private String nombre;
 
     private Medium medium;
     private Ubicacion ubicacion;
-
-    private Date deleted =  null;
-
-    private Date createdAt;
-
-    private Date updatedAt;
-
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
