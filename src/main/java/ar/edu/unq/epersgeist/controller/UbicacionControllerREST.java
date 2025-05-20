@@ -70,4 +70,16 @@ public final class UbicacionControllerREST {
                 .map(MediumDTOResponse::desdeModelo)
                 .collect(Collectors.toSet()));
     }
+
+    @PatchMapping("/{idOrigen}/conectar/{idDestino}")
+    public ResponseEntity<ResponseEntity.BodyBuilder> conectar(@PathVariable Long idOrigen, @PathVariable Long idDestino) {
+        this.ubicacionService.conectar(idOrigen, idDestino);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{idOrigen}/estanConectadas/{idDestino}")
+    public ResponseEntity<Boolean> estanConectadas(@PathVariable Long idOrigen, @PathVariable Long idDestino) {
+        Boolean estanConectadas = this.ubicacionService.estanConectadas(idOrigen, idDestino);
+        return ResponseEntity.ok(estanConectadas);
+    }
 }

@@ -19,6 +19,10 @@ public class SantuarioNEODTO extends UbicacionNEODTO{
         super(ubicacion);
     }
 
+    public SantuarioNEODTO(Ubicacion ubicacion, UbicacionNEODTO ubicacionNEODTO) {
+        super(ubicacion, ubicacionNEODTO);
+    }
+
     @Override
     public Ubicacion aModelo() {
         Santuario santuario = new Santuario(this.getNombre(), this.getEnergia());

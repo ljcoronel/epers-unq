@@ -19,6 +19,10 @@ public class CementerioNEODTO extends UbicacionNEODTO{
         super(ubicacion);
     }
 
+    public CementerioNEODTO(Ubicacion ubicacion, UbicacionNEODTO ubicacionNEODTO) {
+        super(ubicacion, ubicacionNEODTO);
+    }
+
     @Override
     public Ubicacion aModelo() {
         Cementerio cementerio = new Cementerio(this.getNombre(), this.getEnergia());

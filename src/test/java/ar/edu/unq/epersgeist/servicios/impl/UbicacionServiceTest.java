@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -259,16 +260,16 @@ public class UbicacionServiceTest {
     @Test
     public void unaUbicacionPersisteSuConexionAOtra() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
 
         assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
                 .stream()
                 .anyMatch(ub ->
-                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        Objects.equals(ub.getId(), ubicacion3.getId()
                         )));
 
     }
@@ -276,10 +277,10 @@ public class UbicacionServiceTest {
     @Test
     public void unaUbicacionPersisteVariasConexiones() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
         Ubicacion ubicacion4 = this.ubicacionService.crear(ubicacionCuatro);
 
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
         ubicacionService.conectar(ubicacion1.getId(), ubicacion4.getId());
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
@@ -287,7 +288,7 @@ public class UbicacionServiceTest {
         assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
                 .stream()
                 .anyMatch(ub ->
-                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        Objects.equals(ub.getId(), ubicacion3.getId()
                         )));
         assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
                 .stream()
@@ -299,10 +300,10 @@ public class UbicacionServiceTest {
     @Test
     public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
 
@@ -312,24 +313,110 @@ public class UbicacionServiceTest {
     @Test
     public void unaUbicacionPersisteConexionesBidireccionales() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
-        ubicacionService.conectar(ubicacion2.getId(), ubicacion1.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion3.getId(), ubicacion1.getId());
 
         Ubicacion ubicacion1Recuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-        Ubicacion ubicacion2Recuperada = ubicacionService.recuperar(ubicacion2.getId()).get();
+        Ubicacion ubicacion3Recuperada = ubicacionService.recuperar(ubicacion3.getId()).get();
 
         assertTrue(ubicacion1Recuperada.getUbicacionesConectadas()
                 .stream()
                 .anyMatch(ub ->
-                        Objects.equals(ub.getId(), ubicacion2.getId()
+                        Objects.equals(ub.getId(), ubicacion3.getId()
                         )));
-        assertTrue(ubicacion2Recuperada.getUbicacionesConectadas()
+        assertTrue(ubicacion3Recuperada.getUbicacionesConectadas()
                 .stream()
                 .anyMatch(ub ->
                         Objects.equals(ub.getId(), ubicacion1.getId()
                         )));
+    }
+
+    @Test
+    public void unaUbicacionPersisteConexionesBidireccionalesEntreVariasUbicaciones() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion4 = this.ubicacionService.crear(ubicacionCuatro);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion4.getId());
+
+        ubicacionService.conectar(ubicacion3.getId(), ubicacion1.getId());
+        ubicacionService.conectar(ubicacion3.getId(), ubicacion4.getId());
+
+        ubicacionService.conectar(ubicacion4.getId(), ubicacion1.getId());
+        ubicacionService.conectar(ubicacion4.getId(), ubicacion3.getId());
+
+        Ubicacion ubicacion1Recuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+        Ubicacion ubicacion3Recuperada = ubicacionService.recuperar(ubicacion3.getId()).get();
+        Ubicacion ubicacion4Recuperada = ubicacionService.recuperar(ubicacion4.getId()).get();
+
+        assertTrue(ubicacion1Recuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion3.getId()) || Objects.equals(ub.getId(), ubicacion4.getId())
+                ));
+        assertTrue(ubicacion3Recuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion1.getId()) || Objects.equals(ub.getId(), ubicacion4.getId())
+                ));
+        assertTrue(ubicacion4Recuperada.getUbicacionesConectadas()
+                .stream()
+                .anyMatch(ub ->
+                        Objects.equals(ub.getId(), ubicacion1.getId()) || Objects.equals(ub.getId(), ubicacion3.getId())
+                ));
+
+    }
+
+    @Test
+    public void unaUbicacionNoPuedeConectarseASiMisma() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion1.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+
+        assertEquals(0, (long) ubicacionRecuperada.getUbicacionesConectadas().size());
+        assertEquals(0, (long) ubicacion1.getUbicacionesConectadas().size());
+    }
+
+    @Test
+    public void unaUbicacionNoPuedeConectarseAOtraQueNoExiste() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.conectar(ubicacion1.getId(), -80L));
+    }
+
+    @Test
+    public void seCompruebaQueUnaUbicacionEstaConectadaConOtra() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+    }
+
+    @Test
+    public void seCompruebaQueUnaUbicacionConectadaBidireccionalmenteEstanConectadasEntreSi() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion3.getId(), ubicacion1.getId());
+
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+        assertTrue(ubicacionService.estanConectadas(ubicacion3.getId(), ubicacion1.getId()));
+    }
+
+    @Test
+    public void seCompruebaQueUnaUbicacionNoEstaConectadaConOtra() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        assertFalse(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
     }
 
     @AfterEach
@@ -339,3 +426,4 @@ public class UbicacionServiceTest {
         this.limpiador.eliminarUbicaciones();
     }
 }
+

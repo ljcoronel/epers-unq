@@ -12,6 +12,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -39,7 +40,22 @@ public abstract class UbicacionNEODTO{
         ubicacionesConectadas = ubicacion
                                 .getUbicacionesConectadas()
                                 .stream()
-                                .map(UbicacionNEODTO::desdeModelo).toList(); // TODO chequear recursión
+                                .map(dto -> desdeModelo(dto)).toList(); // TODO chequear recursión
+    }
+
+    public UbicacionNEODTO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
+        id = ubicacion.getId();
+        nombre = ubicacion.getNombre();
+        energia = ubicacion.getEnergia();
+        ubicacionesConectadas = ubicacion
+                .getUbicacionesConectadas()
+                .stream()
+                .map(dto -> mappearDtoConYaCreada(dtoUbicacionYaCreada, dto)).toList();
+    }
+
+    private static UbicacionNEODTO mappearDtoConYaCreada(UbicacionNEODTO dtoUbicacionYaCreada, Ubicacion dto) { // para evitar recursión
+        if (Objects.equals(dto.getId(), dtoUbicacionYaCreada.getId())) return dtoUbicacionYaCreada;
+        return desdeModelo(dto);
     }
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
@@ -49,7 +65,15 @@ public abstract class UbicacionNEODTO{
             case Cementerio ignored -> new CementerioNEODTO(ubicacion);
             default -> throw new IllegalStateException("Unexpected value: " + ubicacion.getClass().getSimpleName());
         };
+    }
 
+    public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
+        if (ubicacion == null) return null;
+        return switch (ubicacion){
+            case Santuario ignored -> new SantuarioNEODTO(ubicacion, dtoUbicacionYaCreada);
+            case Cementerio ignored -> new CementerioNEODTO(ubicacion, dtoUbicacionYaCreada);
+            default -> throw new IllegalStateException("Unexpected value: " + ubicacion.getClass().getSimpleName());
+        };
     }
 
 

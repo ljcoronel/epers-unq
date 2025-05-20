@@ -54,8 +54,12 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     public abstract void recuperarManaParaMedium(Medium medium);
 
     public void conectarCon(Optional<Ubicacion> optionalUbicacionDestino) {
+
         Ubicacion destino = optionalUbicacionDestino.orElseThrow
                 (() -> new EntidadInexistenteException("La ubicación destino no existe."));
+
+        if (Objects.equals(destino.getId(), this.getId())) return; // no pueden estar conectadas consigo mismas
+
         addUbicacionConectada(destino);
     }
 

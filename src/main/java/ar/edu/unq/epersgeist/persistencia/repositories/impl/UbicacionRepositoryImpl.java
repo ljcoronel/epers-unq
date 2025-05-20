@@ -58,6 +58,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
         Optional<UbicacionJPADTO> optionalUbicacionJpa = this.ubicacionDaoJpa.findById(id);
+
+        if (optionalUbicacionJpa.isEmpty()) return Optional.empty();
+
         UbicacionNEODTO ubicacionNEODTO = this.ubicacionDaoNeo.findById(id).get();
 
         return optionalUbicacionJpa.map(jpaDto -> jpaDto.aModelo(ubicacionNEODTO));
@@ -71,6 +74,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     public boolean esReferenciado(Long id) {
         return this.ubicacionDaoJpa.esReferenciado(id);
+    }
+
+    @Override
+    public boolean estanConectadas(Long idOrigen, Long idDestino) {
+        return ubicacionDaoNeo.estanConectadas(idOrigen, idDestino);
     }
 
     @Override

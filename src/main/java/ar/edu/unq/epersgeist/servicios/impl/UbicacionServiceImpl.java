@@ -81,4 +81,9 @@ public class UbicacionServiceImpl implements UbicacionService {
         ubicacionRepository.guardar(origen);
 
     }
+
+    @Override
+    public Boolean estanConectadas(Long idOrigen, Long idDestino) {
+        return Boolean.valueOf(ubicacionRepository.estanConectadas(idOrigen, idDestino));
+    }
 }
