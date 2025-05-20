@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionRepositoryImpl implements UbicacionRepository {
@@ -84,6 +85,19 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<Ubicacion> recuperarTodos() {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
+    }
+
+    public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
+        List<Long> caminoIDs = ubicacionDaoNeo.caminoMasCortoIds(idOrigen, idDestino);
+
+        return caminoIDs.stream()
+                .map(id -> this.recuperar(id).get())
+                .collect(Collectors.toList());
+
+    }
+
+    public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
+        return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
     }
 }
 

@@ -1,10 +1,9 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -82,8 +81,40 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     }
 
+    public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
+        Optional<Ubicacion> optionalUbicacionOrigen = this.ubicacionRepository.recuperar(idOrigen);
+
+        if(optionalUbicacionOrigen.isEmpty()) return null;
+
+
+        this.verificarSiLasUbicacionesEstanConectadas(idOrigen, idDestino);
+
+        List<Ubicacion> camino = ubicacionRepository.caminoMasCorto(idOrigen, idDestino);
+
+        return camino;
+    }
+
     @Override
     public Boolean estanConectadas(Long idOrigen, Long idDestino) {
         return Boolean.valueOf(ubicacionRepository.estanConectadas(idOrigen, idDestino));
     }
+
+    private Boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
+        return Boolean.valueOf(ubicacionRepository.estanConectadasDeAlgunModo(idOrigen, idDestino));
+    }
+
+    private void verificarSiLasUbicacionesEstanConectadas(Long idOrigen, Long idDestino){
+
+        Optional<Ubicacion> optionalUbicacionDestino = this.ubicacionRepository.recuperar(idDestino);
+
+        if (optionalUbicacionDestino.isEmpty()){
+            throw new EntidadInexistenteException("La ubicación destino no existe.");
+        }
+
+        if (!this.estanConectadasDeAlgunModo(idOrigen,idDestino)){
+            throw new UbicacionesNoConectadasException();
+        }
+    }
+
+
 }

@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
@@ -47,6 +48,7 @@ public class UbicacionServiceTest {
     private Ubicacion ubicacionTres;
 
     private Santuario ubicacionCuatro;
+    private Santuario ubicacionCinco;
 
     private Angel angelUno;
     private Angel angelDos;
@@ -64,7 +66,7 @@ public class UbicacionServiceTest {
     @BeforeEach
     void prepare() {
         this.ubicacionUno = new Santuario("Bernal", 50);
-        this.ubicacionDos = new Santuario("Bernal", 50);
+        this.ubicacionDos = new Santuario("Quilmes", 50);
         this.ubicacionTres = new Santuario("Avellaneda", 50);
 
         this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
@@ -78,6 +80,7 @@ public class UbicacionServiceTest {
         this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
 
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
+        this.ubicacionCinco = new Santuario("MiCasa", 30);
     }
 
     @Test
@@ -90,6 +93,7 @@ public class UbicacionServiceTest {
 
     @Test
     public void sePersisteDosUbicacionesConElMismoNombreEntoncesNoSePuedePersistir() {
+        ubicacionDos.setNombre("Bernal");
         this.ubicacionService.crear(this.ubicacionUno);
 
         assertThrows(NombreRepetidoException.class, () -> this.ubicacionService.crear(this.ubicacionDos));
@@ -417,6 +421,58 @@ public class UbicacionServiceTest {
         Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
         assertFalse(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoAUnaUbicacionRetornaUnaListaDelCaminoMasCortoDeUbicaciones(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+        Ubicacion ubicacion4 = this.ubicacionService.crear(ubicacionCuatro);
+        Ubicacion ubicacion5 = this.ubicacionService.crear(ubicacionCinco);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion2.getId());
+        ubicacionService.conectar(ubicacion2.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion3.getId(), ubicacion4.getId());
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion5.getId());
+        ubicacionService.conectar(ubicacion5.getId(), ubicacion4.getId());
+
+        List<Ubicacion> camino = ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion4.getId());
+
+        assertEquals(2,camino.size());//no contamos al nodo origen
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoEntreDosUbicacionesQueNoEstanConectadasDeNingunaFormaRetornaUnaExepcion(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+
+        assertThrows(UbicacionesNoConectadasException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion2.getId()));
+    }
+    @Test
+    public void alBuscarElCaminoMasCortoSiendoDestinoYOrigenLaMismaUbicacionRetornaUnaListaVacia(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        List<Ubicacion> camino = ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion1.getId());
+
+        assertEquals(0,camino.size());//no contamos al nodo origen
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoConUnaUBicacionOrigenQueNoExisteRetornaNull(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertNull(ubicacionService.caminoMasCorto(-1L,ubicacion1.getId()));
+
+    }
+
+    @Test
+    public void alBuscarElCaminoMasCortoConUnaUBicacionDestinoQueNoExisteRetornaExeption(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),-1L));
+
     }
 
     @AfterEach

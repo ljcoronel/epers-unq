@@ -72,4 +72,10 @@ public class GlobalExceptionHandler {
         return new DTOResponseError( ude.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UbicacionesNoConectadasException.class)
+    public DTOResponseError ubicacionesNoConectadas(UbicacionesNoConectadasException ude) {
+        return new DTOResponseError( ude.getMessage());
+    }
+
 }
