@@ -10,6 +10,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,6 +165,8 @@ public class MediumServiceImpl implements MediumService {
 
         Medium medium = optionalMedium.get();
 
+        this.validarUbicacionLejana(medium, ubicacionId);
+
         Optional<Ubicacion> ubicacion = ubicacionRepository.recuperar(ubicacionId);
 
         // ------------------------------------- // TODO quitar cuando esté fixeado el desvincular
@@ -179,6 +182,16 @@ public class MediumServiceImpl implements MediumService {
         angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
         demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
         // -------------------------------------
+
+    }
+
+    private void validarUbicacionLejana(Medium medium, Long nuevaUbicacionId) {
+
+        boolean estanConectadas = ubicacionRepository.estanConectadas(medium.getIdDeUbicacion(), nuevaUbicacionId);
+
+        if(!estanConectadas) {
+            throw new UbicacionLejanaException("La ubicacion dada es lejana a la ubicacion del medium");
+        }
 
     }
 

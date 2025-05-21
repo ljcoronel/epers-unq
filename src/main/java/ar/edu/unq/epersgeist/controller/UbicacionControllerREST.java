@@ -96,4 +96,14 @@ public final class UbicacionControllerREST {
                 .map(UbicacionDTOResponse::desdeModelo)
                 .collect(Collectors.toSet()));
     }
+
+    @GetMapping("sobrecargadas/{umbralDeEnergia}")
+    public ResponseEntity<List<UbicacionDTOResponse>> ubicacionesSobrecargadas(@PathVariable int umbralDeEnergia) {
+
+        List<Ubicacion> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(umbralDeEnergia);
+
+        return ResponseEntity.ok(ubicacionesSobrecargadas.stream()
+                .map(UbicacionDTOResponse::desdeModelo)
+                .collect(Collectors.toList()));
+    }
 }
