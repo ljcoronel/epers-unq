@@ -476,6 +476,16 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    public void alBuscarElCaminMasCortoDondeSoloDestinoEstaConectadaConOrigenRetornaUnaExeption(){
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+
+        ubicacionService.conectar(ubicacion2.getId(), ubicacion1.getId());
+
+        assertThrows(UbicacionesNoConectadasException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),ubicacion2.getId()));
+    }
+
+    @Test
     public void alRecuperarUbicacionesSobracargadasSeObtieneUnaListaDeUbicacionesQueSobrepasanElUmbralDado() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);

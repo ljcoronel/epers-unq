@@ -11,7 +11,7 @@ public interface MediumDAONEO extends Neo4jRepository<MediumNEODTO, Long> {
 
     @Query("""
         MATCH (m:MEDIUM)-[:TIENE_UBICACION]->(u:UBICACION:SANTUARIO {id: $unaId})
-        OPTIONAL MATCH (d:ESPIRITU:DEMONIO)-[:CONECTADO_CON]->(m)
+        OPTIONAL MATCH (m)-[:CONECTADO_CON]->(d:ESPIRITU:DEMONIO)
         WITH m, COUNT(d) AS cantidadDeDemonios
         ORDER BY cantidadDeDemonios DESC
         LIMIT 1

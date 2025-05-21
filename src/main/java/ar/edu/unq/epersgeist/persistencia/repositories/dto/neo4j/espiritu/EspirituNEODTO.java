@@ -33,8 +33,19 @@ public abstract class EspirituNEODTO {
         this.ubicacion = UbicacionNEODTO.desdeModelo(espiritu.getUbicacion());
     }
 
+    public EspirituNEODTO(Espiritu espiritu,MediumNEODTO dtoMediumExistente) {
+        this.id = espiritu.getId();
+        this.ubicacion = UbicacionNEODTO.desdeModelo(espiritu.getUbicacion());
+        this.medium = dtoMediumExistente;
+    }
+
     public static EspirituNEODTO desdeModelo(Espiritu espiritu) {
         TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
         return tipo.getDtoNEO(espiritu);
+    }
+
+    public static EspirituNEODTO desdeModelo(Espiritu espiritu,MediumNEODTO dtoMediumExistente) {
+        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
+        return tipo.getDtoNEO(espiritu,dtoMediumExistente);
     }
 }
