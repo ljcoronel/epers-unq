@@ -88,11 +88,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
-        List<Long> caminoIDs = ubicacionDaoNeo.caminoMasCortoIds(idOrigen, idDestino);
+        List<UbicacionNEODTO> caminoDTO = ubicacionDaoNeo.caminoMasCorto(idOrigen, idDestino);
 
-        return caminoIDs.stream()
-                .map(id -> this.recuperar(id).get())
-                .collect(Collectors.toList());
+        return caminoDTO.stream()
+                .map(UbicacionNEODTO::aModelo)
+                .toList();
 
     }
 
