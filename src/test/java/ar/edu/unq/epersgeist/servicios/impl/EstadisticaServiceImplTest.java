@@ -150,7 +150,6 @@ public class EstadisticaServiceImplTest {
     @AfterEach
     void eliminarModelo() {
         testService.eliminarEspiritus();
-        testService.eliminarEspiritusNeo();
         testService.eliminarMediums();
         testService.eliminarUbicaciones();
     }
