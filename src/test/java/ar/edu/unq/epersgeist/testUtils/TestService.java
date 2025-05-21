@@ -27,6 +27,8 @@ public class TestService {
 
     public void eliminarEspiritus() {
         entityManager.createNativeQuery("DELETE FROM espiritu").executeUpdate();
+        espirituDAONEO.deleteAll();
+
     }
 
     public void eliminarUbicaciones() {
@@ -37,13 +39,6 @@ public class TestService {
 
     public void eliminarMediums() {
         entityManager.createNativeQuery("DELETE FROM medium").executeUpdate();
+        mediumDAONEO.deleteAll();
     }
-    public  void eliminarUbicacionesNeo(){
-        ubicacionDAONEO.deleteAll();
-    }
-
-    public void eliminarEspiritusNeo() {
-        this.espirituDAONEO.deleteAll();
-    }
-    public void eliminarMediumNeo(){mediumDAONEO.deleteAll();}
 }
