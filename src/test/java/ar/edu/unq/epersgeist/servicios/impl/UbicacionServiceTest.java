@@ -475,6 +475,60 @@ public class UbicacionServiceTest {
 
     }
 
+    @Test
+    public void alRecuperarUbicacionesSobracargadasSeObtieneUnaListaDeUbicacionesQueSobrepasanElUmbralDado() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacion1.setEnergia(20);
+        ubicacion2.setEnergia(30);
+        ubicacion3.setEnergia(40);
+
+        ubicacionService.actualizar(ubicacion1);
+        ubicacionService.actualizar(ubicacion2);
+        ubicacionService.actualizar(ubicacion3);
+
+        int umbralDeEnrgia = 25;
+
+        List<Ubicacion> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(umbralDeEnrgia);
+
+        assertEquals(2,ubicacionesSobrecargadas.size());
+        assertTrue(ubicacionesSobrecargadas.stream()
+                    .allMatch(u -> u.getEnergia() > umbralDeEnrgia));
+    }
+
+    @Test
+    public void siSePidenUbicacionesSobreCargadasYNoHayUbicacionesSeDevuelveUnaListaVacia() {
+        int umbralDeEnrgia = 25;
+
+        List<Ubicacion> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(umbralDeEnrgia);
+
+        assertTrue(ubicacionesSobrecargadas.isEmpty());
+    }
+
+    @Test
+    public void siSePideUbicacionesSobreCargadasYNingunaTieneEnergiaMayorAlUmbralSeDevuelveUnaListaVacia() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacion1.setEnergia(20);
+        ubicacion2.setEnergia(30);
+        ubicacion3.setEnergia(40);
+
+        ubicacionService.actualizar(ubicacion1);
+        ubicacionService.actualizar(ubicacion2);
+        ubicacionService.actualizar(ubicacion3);
+
+        int umbralDeEnrgia = 70;
+
+        List<Ubicacion> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(umbralDeEnrgia);
+
+        assertTrue(ubicacionesSobrecargadas.isEmpty());
+    }
+
+
     @AfterEach
     public void tearDown() {
         this.limpiador.eliminarEspiritus();

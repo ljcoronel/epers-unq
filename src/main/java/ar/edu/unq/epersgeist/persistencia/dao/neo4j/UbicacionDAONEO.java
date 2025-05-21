@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion.UbicacionNEODTO;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -37,5 +38,6 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
     boolean estanConectadasDeAlgunModo(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
 
 
-
+    @Query("MATCH (u:UBICACION) WHERE u.energia > $umbralDeEnergia RETURN u")
+    List<UbicacionNEODTO> ubicacionesConEnergiaSueriorAUmbral(int umbralDeEnergia);
 }

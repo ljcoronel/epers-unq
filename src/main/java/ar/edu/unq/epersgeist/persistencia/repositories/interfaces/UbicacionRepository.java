@@ -20,4 +20,6 @@ public interface UbicacionRepository {
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
 
     boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
+
+    List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
 }

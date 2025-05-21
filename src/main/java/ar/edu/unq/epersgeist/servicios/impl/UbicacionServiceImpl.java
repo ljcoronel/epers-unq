@@ -95,6 +95,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
+    public List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia) {
+        return ubicacionRepository.ubicacionesSobrecargadas(umbralDeEnergia);
+    }
+
+    @Override
     public Boolean estanConectadas(Long idOrigen, Long idDestino) {
         return Boolean.valueOf(ubicacionRepository.estanConectadas(idOrigen, idDestino));
     }

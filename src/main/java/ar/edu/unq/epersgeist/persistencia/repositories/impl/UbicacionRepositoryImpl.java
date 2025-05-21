@@ -99,5 +99,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
         return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
     }
+
+    @Override
+    public List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia) {
+        return ubicacionDaoNeo.ubicacionesConEnergiaSueriorAUmbral(umbralDeEnergia)
+                .stream()
+                .map(UbicacionNEODTO::aModelo).collect(Collectors.toList());
+    }
 }
 
