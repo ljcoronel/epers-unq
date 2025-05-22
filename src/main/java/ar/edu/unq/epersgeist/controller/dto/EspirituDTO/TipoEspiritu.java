@@ -4,10 +4,6 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.AngelNEODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.DemonioNEODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.EspirituNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
@@ -26,17 +22,6 @@ public enum TipoEspiritu {
         public EspirituJPADTO getDto(Espiritu espiritu) {
             return new AngelJPADTO(espiritu);
         }
-
-        @Override
-        public EspirituNEODTO getDtoNEO(Espiritu espiritu) {
-            return new AngelNEODTO(espiritu);
-        }
-
-        @Override
-        public EspirituNEODTO getDtoNEO(Espiritu espiritu, MediumNEODTO dtoMediumExistente) {
-            return new AngelNEODTO(espiritu,dtoMediumExistente);
-        }
-
     },
     DEMONIO {
         @Override
@@ -48,16 +33,6 @@ public enum TipoEspiritu {
         public EspirituJPADTO getDto(Espiritu espiritu) {
             return new DemonioJPADTO(espiritu);
         }
-
-        @Override
-        public EspirituNEODTO getDtoNEO(Espiritu espiritu) {
-            return new DemonioNEODTO(espiritu);
-        }
-
-        @Override
-        public EspirituNEODTO getDtoNEO(Espiritu espiritu, MediumNEODTO dtoMediumExistente) {
-            return new DemonioNEODTO(espiritu,dtoMediumExistente);
-        }
     };
 
     public static String getNombreTipos() {
@@ -66,8 +41,6 @@ public enum TipoEspiritu {
 
     public abstract Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Ubicacion ubicacion);
     public abstract EspirituJPADTO getDto(Espiritu espiritu);
-    public abstract EspirituNEODTO getDtoNEO(Espiritu espiritu);
-    public abstract EspirituNEODTO getDtoNEO(Espiritu espiritu, MediumNEODTO dtoMediumExistente);
 
     public static TipoEspiritu getValueOfEspiritu(Espiritu espiritu) {
         return switch(espiritu) {

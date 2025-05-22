@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j;
 
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -9,7 +9,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
