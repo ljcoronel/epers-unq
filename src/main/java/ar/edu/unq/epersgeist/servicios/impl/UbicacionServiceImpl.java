@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -116,5 +117,8 @@ public class UbicacionServiceImpl implements UbicacionService {
         }
     }
 
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        return this.ubicacionRepository.closenessOf(ids);
+    }
 
 }

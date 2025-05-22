@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion.UbicacionNEODTO;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -87,6 +87,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 
+    @Override
+    public Ubicacion santuarioCorrupto() {
+        if (this.ubicacionDaoNeo.santuarioCorrupto() == null) return null;
+        return this.ubicacionDaoNeo.santuarioCorrupto().aModelo();
+    }
+
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
         List<Long> caminoIDs = ubicacionDaoNeo.caminoMasCortoIds(idOrigen, idDestino);
 
@@ -99,5 +105,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
         return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
     }
-}
 
+    @Override
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.closenessOf(ids);
+    }
+}

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
 @Service
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
@@ -45,7 +44,7 @@ public class EspirituServiceImpl implements EspirituService {
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
         espiritu.mover(ubicacion);
 
-        return getEspirituRepository().guardar(espiritu);
+        return this.espirituRepository.guardar(espiritu);
 
     }
 
@@ -55,13 +54,13 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return getEspirituRepository().recuperar(espirituId);
+        return this.espirituRepository.recuperar(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
 
-        return getEspirituRepository().recuperarTodos();
+        return this.espirituRepository.recuperarTodos();
     }
 
     @Override
@@ -69,19 +68,19 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        getEspirituRepository().actualizar(espiritu);
+        this.espirituRepository.actualizar(espiritu);
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        getEspirituRepository().eliminar(espirituId);
+        this.espirituRepository.eliminar(espirituId);
     }
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
         if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
         if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
-        return getEspirituRepository().espiritusDemoniacos(direccion, pagina, cantidadPorPagina);
+        return this.espirituRepository.espiritusDemoniacos(direccion, pagina, cantidadPorPagina);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
-            Optional<Espiritu> optionalEspiritu = getEspirituRepository().recuperar(espirituId);
+            Optional<Espiritu> optionalEspiritu = this.espirituRepository.recuperar(espirituId);
 
             if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
@@ -107,7 +106,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public boolean existeConNombre(Espiritu espiritu) {
-        return this.getEspirituRepository().espirituConNombre(espiritu.getNombre(), espiritu.getId());
+        return this.espirituRepository.espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
 
 }

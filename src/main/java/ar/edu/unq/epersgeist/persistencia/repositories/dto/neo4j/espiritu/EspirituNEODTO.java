@@ -31,6 +31,7 @@ public abstract class EspirituNEODTO {
     public EspirituNEODTO(Espiritu espiritu) {
         this.id = espiritu.getId();
         this.ubicacion = UbicacionNEODTO.desdeModelo(espiritu.getUbicacion());
+        this.medium = MediumNEODTO.desdeModelo(espiritu.getMedium());
     }
 
     public static EspirituNEODTO desdeModelo(Espiritu espiritu) {

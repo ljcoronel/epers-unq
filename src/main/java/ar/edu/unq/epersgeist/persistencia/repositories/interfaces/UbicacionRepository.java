@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +22,8 @@ public interface UbicacionRepository {
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
 
     boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
+
+    Ubicacion santuarioCorrupto();
+
+    List<ClosenessResult> closenessOf(List<Long> ids);
 }

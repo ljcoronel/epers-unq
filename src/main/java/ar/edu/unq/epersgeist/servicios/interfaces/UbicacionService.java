@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.interfaces;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,6 @@ public interface UbicacionService  {
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
 
     Boolean estanConectadas(Long idOrigen, Long idDestino);
+
+    List<ClosenessResult> closenessOf(List<Long> ids);
 }

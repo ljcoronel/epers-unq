@@ -87,11 +87,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public Long santuarioCorrupto() {
-        return this.espirituDAONEO.santuarioCorrupto();
-    }
-
-    @Override
     public int cantidadTotalDeDemonios(Long idSantuario) {
         return this.espirituDAOJPA.cantidadTotalDeDemonios(idSantuario);
     }

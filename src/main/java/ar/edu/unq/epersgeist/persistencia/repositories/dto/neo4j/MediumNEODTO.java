@@ -20,6 +20,7 @@ public class MediumNEODTO {
     }
 
     public static MediumNEODTO desdeModelo(Medium medium) {
+        if(medium == null) return null;
         return new MediumNEODTO(medium);
     }
 
