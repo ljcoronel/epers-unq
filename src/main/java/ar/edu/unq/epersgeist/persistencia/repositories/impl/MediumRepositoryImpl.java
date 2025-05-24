@@ -2,8 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
-import ar.edu.unq.epersgeist.persistencia.dao.neo4j.MediumDAONEO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.MediumNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.stereotype.Repository;
@@ -14,27 +12,20 @@ import java.util.Optional;
 @Repository
 public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
-    private final MediumDAONEO mediumDAONEO;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAONEO mediumDAONEO) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
         this.mediumDAOJPA = mediumDAOJPA;
-        this.mediumDAONEO = mediumDAONEO;
     }
 
     @Override
     public void actualizar(Medium medium) {
         mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
-        mediumDAONEO.save(MediumNEODTO.desdeModelo(medium));
     }
 
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPA = MediumJPADTO.desdeModelo(medium);
         Medium mediumConId = this.mediumDAOJPA.save(mediumJPA).aModelo(medium);
-
-        MediumNEODTO mediumNEO = MediumNEODTO.desdeModelo(mediumConId);
-        mediumDAONEO.save(mediumNEO);
-
         return mediumConId;
     }
 
@@ -47,7 +38,6 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public void eliminar(Long id) {
         this.mediumDAOJPA.deleteById(id);
-        this.mediumDAONEO.deleteById(id);
     }
 
     @Override
@@ -62,6 +52,6 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     @Override
     public Long mediumConMasDemonios(Long idSantuario) {
-        return this.mediumDAONEO.mediumConMasDemonios(idSantuario);
+        return this.mediumDAOJPA.mediumConMasDemonios(idSantuario);
     }
 }
