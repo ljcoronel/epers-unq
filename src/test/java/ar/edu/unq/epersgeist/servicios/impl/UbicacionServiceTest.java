@@ -21,7 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.neo4j.core.Neo4jClient;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +65,9 @@ public class UbicacionServiceTest {
 
     @Autowired
     private TestService limpiador;
+
+    @Autowired
+    private Neo4jClient neo4jClient;
 
     @BeforeEach
     void prepare() {
@@ -536,6 +542,18 @@ public class UbicacionServiceTest {
         List<Ubicacion> ubicacionesSobrecargadas = ubicacionService.ubicacionesSobrecargadas(umbralDeEnrgia);
 
         assertTrue(ubicacionesSobrecargadas.isEmpty());
+    }
+
+    @Test
+    void bootstrap() throws IOException {
+        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/nodeConnector.cypher");
+
+        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+
+        neo4jClient.query(cypherNodeGen).run();
+        neo4jClient.query(cypherNodeCon).run();
     }
 
 
