@@ -60,7 +60,7 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
               size(collect(a.id)) AS cantidad_conectados,
               count(a) AS cantidad_conexiones,
               total_nodos
-            ORDER BY cantidad_conectados desc
+            ORDER BY cantidad_conectados asc
             RETURN
               origen,
               toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
@@ -79,7 +79,7 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
               size(collect(a.id)) AS cantidad_conectados,
               count(a) AS cantidad_conexiones,
               total_nodos
-            ORDER BY cantidad_conectados desc
+            ORDER BY cantidad_conectados asc
             RETURN
               origen,
               toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree

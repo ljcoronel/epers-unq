@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -25,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -542,15 +544,70 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    void alNoHaberUbicacionesEnNeoDevuelveVacio(){
+        List<Long> ids = new ArrayList<>();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alHaberUbicacionesEnNeoPeroNoPedirNingunaEnDegreeIncomingDevuelveVacio(){
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+        List<Long> ids = new ArrayList<>();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void elCalculoDeDegreeCentralityIncomingEsCorrectoConVariosNodos(){
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+        List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
+        assertEquals(2.0/3,results.getFirst().closeness());
+        assertEquals(0,results.get(1).closeness());
+        assertEquals(0,results.get(2).closeness());
+
+    }
+
+    @Test
+    void elCalculoDeDegreeCentralityOutgoingEsCorrectoConVariosNodos(){
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+        List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
+        assertEquals(0,results.getFirst().closeness());
+        assertEquals(1.0/3,results.get(1).closeness());
+        assertEquals(1.0,results.get(2).closeness());
+
+    }
+
+
+    @Test
     void bootstrap() throws IOException {
-        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
-        ClassPathResource nodeConPath = new ClassPathResource("cypher/nodeConnector.cypher");
+//        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
+//        ClassPathResource nodeConPath = new ClassPathResource("cypher/nodeConnector.cypher");
+//
+//        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+//        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+//
+//        neo4jClient.query(cypherNodeGen).run();
+//        neo4jClient.query(cypherNodeCon).run();
+//
+        List<Long> ids = new ArrayList<>();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+        assertTrue(results.isEmpty());
 
-        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
-        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
-
-        neo4jClient.query(cypherNodeGen).run();
-        neo4jClient.query(cypherNodeCon).run();
     }
 
     @Test
