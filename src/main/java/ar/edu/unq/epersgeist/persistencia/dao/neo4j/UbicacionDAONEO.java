@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -31,4 +32,41 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
 
     @Query("MATCH (u:UBICACION) WHERE u.energia > $umbralDeEnergia RETURN u")
     List<UbicacionNEODTO> ubicacionesConEnergiaSueriorAUmbral(int umbralDeEnergia);
+
+    @Query("""
+            MATCH (n:UBICACION)
+            WITH count(n) AS total_nodos
+            MATCH (u:UBICACION) where u.id in $ids
+            OPTIONAL MATCH (u)-[:CONECTADA_A]->(a:UBICACION)
+            WITH
+              u AS origen,
+              collect(a.id) AS conectados,
+              size(collect(a.id)) AS cantidad_conectados,
+              count(a) AS cantidad_conexiones,
+              total_nodos
+            ORDER BY cantidad_conectados desc
+            RETURN
+              origen,
+              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
+            """)
+    List<DegreeResultDTO> outgoingDegreeOf(@Param("ids") List<Long> ids);
+
+
+    @Query("""
+            MATCH (n:UBICACION)
+            WITH count(n) AS total_nodos
+            MATCH (u:UBICACION) where u.id in $ids
+            OPTIONAL MATCH (u)<-[:CONECTADA_A]-(a:UBICACION)
+            WITH
+              u AS origen,
+              collect(a.id) AS conectados,
+              size(collect(a.id)) AS cantidad_conectados,
+              count(a) AS cantidad_conexiones,
+              total_nodos
+            ORDER BY cantidad_conectados desc
+            RETURN
+              origen,
+              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
+            """)
+    List<DegreeResultDTO> incomingDegreeOf();
 }
