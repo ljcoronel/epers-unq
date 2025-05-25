@@ -25,7 +25,5 @@ public interface UbicacionRepository {
 
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
 
-    Ubicacion santuarioCorrupto();
-
     List<ClosenessResult> closenessOf(List<Long> ids);
 }

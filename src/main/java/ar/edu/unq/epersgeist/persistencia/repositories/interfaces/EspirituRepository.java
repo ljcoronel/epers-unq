@@ -22,6 +22,8 @@ public interface EspirituRepository {
 
     List<Espiritu> espiritusEn(Long ubicacionId);
 
+    Long santuarioCorrupto();
+
     int cantidadTotalDeDemonios(Long idSantuario);
 
     int cantidadDeDemoniosLibresEn(Long idSantuario);
