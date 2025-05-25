@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ClosenessResultDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,5 +26,5 @@ public interface UbicacionRepository {
 
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
 
-    List<ClosenessResult> closenessOf(List<Long> ids);
+    List<ClosenessResultDTO> closenessOf(List<Long> ids);
 }
