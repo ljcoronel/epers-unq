@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -11,8 +12,10 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -121,5 +124,12 @@ public class UbicacionServiceImpl implements UbicacionService {
         }
     }
 
+    @Override
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        return this.ubicacionRepository.closenessOf(ids).stream()
+                .map(ClosenessResult::registrar)
+                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
+                .collect(Collectors.toList());
+    }
 
 }

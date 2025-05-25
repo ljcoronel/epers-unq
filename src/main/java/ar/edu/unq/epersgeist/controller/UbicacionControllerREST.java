@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,5 +96,10 @@ public final class UbicacionControllerREST {
         return ResponseEntity.ok(camino.stream()
                 .map(UbicacionDTOResponse::desdeModelo)
                 .collect(Collectors.toSet()));
+    }
+
+    @GetMapping("/closenessOf")
+    public ResponseEntity<List<ClosenessResult>> closenessOf(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.closenessOf(ids));
     }
 }
