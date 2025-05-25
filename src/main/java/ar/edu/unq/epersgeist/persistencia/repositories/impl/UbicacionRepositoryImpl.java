@@ -85,7 +85,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
+        return List.copyOf(this.ubicacionDaoNeo.findAll().stream().map(UbicacionNEODTO::aModelo).toList());
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
