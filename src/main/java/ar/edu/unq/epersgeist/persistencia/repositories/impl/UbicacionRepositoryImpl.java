@@ -4,7 +4,7 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion.UbicacionNEODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.stereotype.Repository;
@@ -87,23 +87,24 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 
-    @Override
-    public Ubicacion santuarioCorrupto() {
-        if (this.ubicacionDaoNeo.santuarioCorrupto() == null) return null;
-        return this.ubicacionDaoNeo.santuarioCorrupto().aModelo();
-    }
-
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
-        List<Long> caminoIDs = ubicacionDaoNeo.caminoMasCortoIds(idOrigen, idDestino);
+        List<UbicacionNEODTO> caminoDTO = ubicacionDaoNeo.caminoMasCorto(idOrigen, idDestino);
 
-        return caminoIDs.stream()
-                .map(id -> this.recuperar(id).get())
-                .collect(Collectors.toList());
+        return caminoDTO.stream()
+                .map(UbicacionNEODTO::aModelo)
+                .toList();
 
     }
 
     public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
         return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
+    }
+
+    @Override
+    public List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia) {
+        return ubicacionDaoNeo.ubicacionesConEnergiaSueriorAUmbral(umbralDeEnergia)
+                .stream()
+                .map(UbicacionNEODTO::aModelo).collect(Collectors.toList());
     }
 
     @Override

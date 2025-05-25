@@ -3,8 +3,6 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
-import ar.edu.unq.epersgeist.persistencia.dao.neo4j.EspirituDAONEO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.espiritu.EspirituNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;
@@ -19,28 +17,20 @@ import java.util.Optional;
 public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAOJPA espirituDAOJPA;
-    private final EspirituDAONEO espirituDAONEO;
 
-    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAONEO espirituDAONEO) {
+    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA) {
         this.espirituDAOJPA = espirituDAOJPA;
-        this.espirituDAONEO = espirituDAONEO;
     }
 
     @Override
     public void actualizar(Espiritu espiritu) {
         this.espirituDAOJPA.actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
-
-        this.espirituDAONEO.save(EspirituNEODTO.desdeModelo(espiritu));
     }
 
     @Override
     public Espiritu guardar(Espiritu espiritu) {
         EspirituJPADTO espirituJpa = EspirituJPADTO.desdeModelo(espiritu);
         Espiritu espirituConId = this.espirituDAOJPA.save(espirituJpa).aModelo(espiritu);
-
-        EspirituNEODTO espirituNeo = EspirituNEODTO.desdeModelo(espirituConId);
-        this.espirituDAONEO.save(espirituNeo);
-
         return espirituConId;
     }
 
@@ -53,7 +43,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public void eliminar(Long id) {
-        espirituDAONEO.deleteById(id);
         espirituDAOJPA.deleteById(id);
     }
 
@@ -84,6 +73,11 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
         return this.espirituDAOJPA.espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
+    }
+
+    @Override
+    public Long santuarioCorrupto() {
+        return this.espirituDAOJPA.santuarioCorrupto();
     }
 
     @Override

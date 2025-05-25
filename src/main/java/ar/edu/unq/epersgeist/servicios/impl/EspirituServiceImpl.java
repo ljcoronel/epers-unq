@@ -99,6 +99,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             mediumRepository.guardar(medium);
 
+
             return medium;
 
     }

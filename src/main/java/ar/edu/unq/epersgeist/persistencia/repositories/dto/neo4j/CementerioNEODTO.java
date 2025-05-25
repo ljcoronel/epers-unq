@@ -1,7 +1,6 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ubicacion;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

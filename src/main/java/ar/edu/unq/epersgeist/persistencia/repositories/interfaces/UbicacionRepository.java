@@ -23,6 +23,8 @@ public interface UbicacionRepository {
 
     boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
 
+    List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
+
     Ubicacion santuarioCorrupto();
 
     List<ClosenessResult> closenessOf(List<Long> ids);

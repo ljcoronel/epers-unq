@@ -46,10 +46,10 @@ public class MediumJPADTO {
     @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AngelJPADTO> angeles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DemonioJPADTO> demonios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // usamos eager ya que solo es una ubicación, que tiene atributos simples (y no más objetos dentro)

@@ -47,4 +47,14 @@ public interface EspirituDAOJPA extends JpaRepository<EspirituJPADTO, Long> {
 
     @Query("select count(e) > 0 from espiritu e where e.medium.id = :unaId")
     boolean referencia(@Param("unaId") Long id);
+
+    @Query(value = """
+        SELECT u.id 
+        FROM espiritu e JOIN ubicacion u ON e.ubicacion_id = u.id 
+        WHERE u.dtype = 'santuario' AND e.deleted is null 
+        GROUP BY u.id 
+        ORDER BY SUM(CASE WHEN e.dtype = 'demonio' THEN 1 ELSE 0 END) - SUM(CASE WHEN e.dtype = 'angel' THEN 1 ELSE 0 END) DESC
+        LIMIT 1
+    """, nativeQuery = true)
+    Long santuarioCorrupto();
 }
