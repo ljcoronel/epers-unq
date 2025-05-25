@@ -5,7 +5,6 @@ import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
-import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -99,7 +98,7 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/closenessOf")
-    public ResponseEntity<List<ClosenessResult>> closenessOf(@RequestBody List<Long> ids) {
+    public ResponseEntity<List<ClosenessResult>> closenessOf(@RequestParam(required = false) List<Long> ids) {
         return ResponseEntity.ok(this.ubicacionService.closenessOf(ids));
     }
 }
