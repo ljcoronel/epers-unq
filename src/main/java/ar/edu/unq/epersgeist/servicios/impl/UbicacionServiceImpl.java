@@ -128,7 +128,6 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<ClosenessResult> closenessOf(List<Long> ids) {
         return this.ubicacionRepository.closenessOf(ids).stream()
                 .map(ClosenessResult::registrar)
-                .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
                 .collect(Collectors.toList());
     }
 
