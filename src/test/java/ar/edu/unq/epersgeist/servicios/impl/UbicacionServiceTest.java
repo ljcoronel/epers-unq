@@ -5,7 +5,7 @@ import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
-import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -39,9 +39,6 @@ public class UbicacionServiceTest {
 
     @Autowired
     private MediumService mediumService;
-
-    @Autowired
-    private UbicacionDAONEO ubicacionDAONEO;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -538,6 +535,60 @@ public class UbicacionServiceTest {
         assertTrue(ubicacionesSobrecargadas.isEmpty());
     }
 
+    @Test
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityACincoUbicacionesDiferentes() {
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.crear(this.ubicacionCuatro);
+        this.ubicacionService.crear(this.ubicacionCinco);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionDos.getId(),this.ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionTres.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionTres.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCuatro.getId());
+        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCinco.getId());
+        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionCuatro.getId());
+        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionTres.getId());
+        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
+        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionCuatro.getId());
+        List<Long> ids = List.of(this.ubicacionUno.getId(), this.ubicacionDos.getId(), this.ubicacionTres.getId(), this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
+
+        List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
+
+        assertEquals(this.ubicacionDos.getId(), resultados.get(0).ubicacion().getId());
+        assertEquals(0.25, resultados.get(0).closeness());
+        assertEquals(0.2, resultados.get(1).closeness());
+        assertEquals(0.2, resultados.get(2).closeness());
+        assertEquals(1.0/6, resultados.get(3).closeness());
+        assertEquals(1.0/6, resultados.get(4).closeness());
+    }
+
+    @Test
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityAUnaUbicacionConectadaAOtraNoConsiderada() {
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionDos.getId(),this.ubicacionUno.getId());
+        List<Long> ids = List.of(this.ubicacionUno.getId());
+
+        List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
+
+        assertTrue(resultados.isEmpty());
+    }
+
+    @Test
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityAUnaListaDeUbicacionesQueNoExisten() {
+        List<Long> ids = List.of(-1L, -2L, -3L, -4L, -5L);
+
+        List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
+
+        assertTrue(resultados.isEmpty());
+    }
 
     @AfterEach
     public void tearDown() {
