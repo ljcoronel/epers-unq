@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -130,6 +131,17 @@ public class UbicacionServiceImpl implements UbicacionService {
                 .map(ClosenessResult::registrar)
                 .sorted(Comparator.comparing(ClosenessResult::closeness).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DegreeResult> incomingDegreeOf(List<Long> ids) {
+        return this.ubicacionRepository.incomingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar).toList();
+    }
+
+    @Override
+    public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
+        return null;
     }
 
 }

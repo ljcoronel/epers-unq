@@ -84,7 +84,7 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
               origen,
               toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
             """)
-    List<DegreeResultDTO> incomingDegreeOf();
+    List<DegreeResultDTO> incomingDegreeOf(@Param("ids") List<Long> ids);
 
 
 

@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ClosenessResultDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -112,5 +113,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<ClosenessResultDTO> closenessOf(List<Long> ids) {
         return this.ubicacionDaoNeo.closenessOf(ids);
+    }
+
+    @Override
+    public List<DegreeResultDTO> outgoingDegreeOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.outgoingDegreeOf(ids);
+    }
+
+    @Override
+    public List<DegreeResultDTO> incomingDegreeOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.incomingDegreeOf(ids);
     }
 }
