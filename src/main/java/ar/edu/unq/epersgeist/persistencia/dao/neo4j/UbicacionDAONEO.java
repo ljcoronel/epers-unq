@@ -53,14 +53,14 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
             MATCH (n:UBICACION)
             WITH count(n) AS total_nodos
             MATCH (u:UBICACION) where u.id in $ids
-            OPTIONAL MATCH (u)-[:CONECTADA_A]->(a:UBICACION)
+            OPTIONAL MATCH (u)-[:CONECTADA]->(a:UBICACION)
             WITH
               u AS origen,
               collect(a.id) AS conectados,
               size(collect(a.id)) AS cantidad_conectados,
               count(a) AS cantidad_conexiones,
               total_nodos
-            ORDER BY cantidad_conectados asc
+            ORDER BY cantidad_conectados desc
             RETURN
               origen,
               toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
@@ -72,14 +72,14 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
             MATCH (n:UBICACION)
             WITH count(n) AS total_nodos
             MATCH (u:UBICACION) where u.id in $ids
-            OPTIONAL MATCH (u)<-[:CONECTADA_A]-(a:UBICACION)
+            OPTIONAL MATCH (u)<-[:CONECTADA]-(a:UBICACION)
             WITH
               u AS origen,
               collect(a.id) AS conectados,
               size(collect(a.id)) AS cantidad_conectados,
               count(a) AS cantidad_conexiones,
               total_nodos
-            ORDER BY cantidad_conectados asc
+            ORDER BY cantidad_conectados desc
             RETURN
               origen,
               toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree

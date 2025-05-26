@@ -141,7 +141,8 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
-        return null;
+        return this.ubicacionRepository.outgoingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar).toList();
     }
 
 }

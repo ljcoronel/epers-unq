@@ -563,32 +563,54 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void elCalculoDeDegreeCentralityIncomingEsCorrectoConVariosNodos(){
+    void elCalculoDeDegreeCentralityIncomingVariaSiVariosSeConectan(){
+        //OUTCOMING
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionUno.getId());
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionDos.getId());
+        List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
+        assertEquals(1,results.getFirst().closeness()); // hay 3 nodos, tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0.5,results.get(1).closeness());   // hay 3 nodos, tiene conectado 1 saliente nodos => 1 / 3 - 1 => 0.5
+        assertEquals(0.5,results.get(2).closeness());   // hay 3 nodos, tiene conectado 0 entrates nodos => 1 / 3 -1 => 0.5
+    }
+
+    @Test
+    void elCalculoDeDegreeCentralityIncomingEsCorrectoConVariosNodos(){
+        //INCOMING
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionUno.getId());
         List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
         List<DegreeResult> results = ubicacionService.incomingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
-        assertEquals(2.0/3,results.getFirst().closeness());
-        assertEquals(0,results.get(1).closeness());
-        assertEquals(0,results.get(2).closeness());
-
+        assertEquals(1,results.getFirst().closeness()); // hay 3 nodos,  tiene conectado 2 entrates nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0,results.get(1).closeness()); // hay 3 nodos, ubicacion2 tiene conectado 0 entrates nodos => 0 / 3 -1 => 0
+        assertEquals(0,results.get(2).closeness());// hay 3 nodos, ubicacion3 tiene conectado 0 entrates nodos => 0 / 3 -1 => 0
     }
 
     @Test
     void elCalculoDeDegreeCentralityOutgoingEsCorrectoConVariosNodos(){
+        // OUTGOING
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
         this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
         List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
-        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
-        assertEquals(0,results.getFirst().closeness());
-        assertEquals(1.0/3,results.get(1).closeness());
-        assertEquals(1.0,results.get(2).closeness());
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.
+                stream().
+                map(Ubicacion::getId).toList());
+
+
+        assertEquals(1,results.getFirst().closeness());// hay 3 nodos, ubicacion1 tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0.0,results.get(1).closeness());  // hay 3 nodos, ubicacion2 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
+        assertEquals(0.0,results.get(2).closeness());  // hay 3 nodos, ubicacion3 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
 
     }
 
