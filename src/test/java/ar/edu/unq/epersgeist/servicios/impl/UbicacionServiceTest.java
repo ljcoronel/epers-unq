@@ -608,9 +608,9 @@ public class UbicacionServiceTest {
                 stream().
                 map(Ubicacion::getId).toList());
 
-        assertEquals(1,results.getFirst().closeness());// hay 3 nodos, ubicacion1 tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
-        assertEquals(0.0,results.get(1).closeness());  // hay 3 nodos, ubicacion2 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
-        assertEquals(0.0,results.get(2).closeness());  // hay 3 nodos, ubicacion3 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
+        assertEquals(1,results.getFirst().closeness());// hay 3 nodos, el mayor tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0.0,results.get(1).closeness());  // hay 3 nodos, el segundo tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
+        assertEquals(0.0,results.get(2).closeness());  // hay 3 nodos, el tercero tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
 
     }
 
@@ -630,6 +630,8 @@ public class UbicacionServiceTest {
         List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
         List<DegreeResult> conDegree = results.stream().
                 filter(degree -> degree.closeness() > 0.0).toList();
+
+
         assertFalse(conDegree.isEmpty());
 
     }
