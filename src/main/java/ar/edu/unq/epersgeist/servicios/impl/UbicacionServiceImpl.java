@@ -79,10 +79,6 @@ public class UbicacionServiceImpl implements UbicacionService {
 
         ubicacionRepository.conectar(idOrigen, idDestino);
 
-//        origen.conectarCon(optionalUbicacionDestino);
-
-//        ubicacionRepository.guardar(origen);
-
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){

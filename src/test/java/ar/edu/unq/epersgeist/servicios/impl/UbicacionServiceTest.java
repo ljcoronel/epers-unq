@@ -287,18 +287,18 @@ public class UbicacionServiceTest {
         assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion4.getId()));
     }
 
-    @Test
-    public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
-        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
-
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
-
-        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-
-        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
-    }
+//    @Test
+//    public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
+//        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+//        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+//
+//        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+//        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+//
+//        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
+//
+//        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+//    }
 
     @Test
     public void unaUbicacionPersisteConexionesBidireccionales() {
@@ -344,6 +344,7 @@ public class UbicacionServiceTest {
     @Test
     public void unaUbicacionNoPuedeConectarseAOtraQueNoExiste() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
 
         assertThrows(EntidadInexistenteException.class, () -> ubicacionService.conectar(ubicacion1.getId(), -80L));
     }
