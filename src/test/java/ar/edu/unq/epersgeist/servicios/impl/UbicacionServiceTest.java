@@ -267,11 +267,7 @@ public class UbicacionServiceTest {
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
 
-//        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
-//                .stream()
-//                .anyMatch(ub ->
-//                        Objects.equals(ub.getId(), ubicacion3.getId()
-//                        )));
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
 
     }
 
@@ -286,16 +282,9 @@ public class UbicacionServiceTest {
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
 
-//        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
-//                .stream()
-//                .anyMatch(ub ->
-//                        Objects.equals(ub.getId(), ubicacion3.getId()
-//                        )));
-//        assertTrue(ubicacionRecuperada.getUbicacionesConectadas()
-//                .stream()
-//                .anyMatch(ub ->
-//                        Objects.equals(ub.getId(), ubicacion4.getId()
-//                        )));
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion4.getId()));
     }
 
     @Test
@@ -308,7 +297,7 @@ public class UbicacionServiceTest {
 
         Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
 
-//        assertEquals(1, (long) ubicacionRecuperada.getUbicacionesConectadas().size());
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
     }
 
     @Test
@@ -351,17 +340,6 @@ public class UbicacionServiceTest {
 
     }
 
-    @Test
-    public void unaUbicacionNoPuedeConectarseASiMisma() {
-        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-
-        ubicacionService.conectar(ubicacion1.getId(), ubicacion1.getId());
-
-        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-
-//        assertEquals(0, (long) ubicacionRecuperada.getUbicacionesConectadas().size());
-//        assertEquals(0, (long) ubicacion1.getUbicacionesConectadas().size());
-    }
 
     @Test
     public void unaUbicacionNoPuedeConectarseAOtraQueNoExiste() {
