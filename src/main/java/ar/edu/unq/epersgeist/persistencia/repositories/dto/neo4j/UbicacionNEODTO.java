@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public abstract class UbicacionNEODTO{
         ubicacionesConectadas = ubicacion
                                 .getUbicacionesConectadas()
                                 .stream()
-                                .map(dto -> desdeModelo(dto)).toList();
+                                .map(ubi -> desdeModelo(ubi, this)).toList();
     }
 
     public UbicacionNEODTO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
@@ -68,21 +69,31 @@ public abstract class UbicacionNEODTO{
 
 
     public Ubicacion aModelo(){
+        List<Ubicacion> ubicacionesYaCreadas = new ArrayList<Ubicacion>();
+
         Ubicacion ubicacion = instanciarUbicacion();
+        ubicacionesYaCreadas.add(ubicacion);
+
         ubicacion.setId(this.getId());
         ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
-                .map(dto -> dto.aModeloConUbicacionYaCreada(ubicacion))
+                .map(dto -> dto.aModeloConUbicacionesYaCreadas(ubicacionesYaCreadas))
                 .collect(Collectors.toSet()));
         return ubicacion;
     }
 
-    private Ubicacion aModeloConUbicacionYaCreada(Ubicacion ubicacionYaCreada) {
+    private Ubicacion aModeloConUbicacionesYaCreadas(List<Ubicacion> ubicacionesYaCreadas) {
+
         Ubicacion ubicacion = instanciarUbicacion();
+
+        ubicacionesYaCreadas.add(ubicacion); // añado la siguiente ubicación, para que todas las de abajo sepan
         ubicacion.setId(this.getId());
+        List<Long> idsDeUbicacionesYaCreadas = ubicacionesYaCreadas.stream().map(Ubicacion::getId).toList();
+
         ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
                 .map(dto -> {
-                    if (Objects.equals(dto.getId(), ubicacionYaCreada.getId())) return ubicacionYaCreada; // si ya existe, no la crees de nuevo
-                    return dto.aModeloConUbicacionYaCreada(ubicacion);
+                    if (idsDeUbicacionesYaCreadas.contains(dto.getId()))  // TODO chequear si está buena la solución
+                        return ubicacionesYaCreadas.get(idsDeUbicacionesYaCreadas.indexOf(dto.id)); // si ya existe, no la crees de nuevo
+                    return dto.aModeloConUbicacionesYaCreadas(ubicacionesYaCreadas);
                 })
                 .collect(Collectors.toSet()));
         return ubicacion;
