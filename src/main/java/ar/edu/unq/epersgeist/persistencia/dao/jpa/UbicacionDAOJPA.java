@@ -11,14 +11,14 @@ import org.springframework.stereotype.Repository;
 public interface UbicacionDAOJPA extends JpaRepository<UbicacionJPADTO, Long> {
 
     @Query("select count(u) > 0 from ubicacion u where u.nombre = :unaUbicacion and (u.id != :unId or :unId is null)")
-    boolean existeNombre(@Param("unaUbicacion") String nombre, @Param("unId") Long unId); // TODO va el dto?
+    boolean existeNombre(@Param("unaUbicacion") String nombre, @Param("unId") Long unId);
 
     @Modifying
     @Query("update ubicacion u set u.nombre = :unNombre, u.energia = :cantEnergia, u.updatedAt = current_timestamp where u.id = :unaId")
-    void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia); // TODO va el dto?
+    void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia);
 
     @Query("select (exists (select 1 from medium m where m.ubicacion.id = u.id) " +
-            "or exists (select 1 from espiritu e where e.ubicacion.id = u.id)) from ubicacion u where u.id = :unaId") // TODO va el dto?
+            "or exists (select 1 from espiritu e where e.ubicacion.id = u.id)) from ubicacion u where u.id = :unaId")
     boolean esReferenciado(@Param("unaId") Long id);
 
 }

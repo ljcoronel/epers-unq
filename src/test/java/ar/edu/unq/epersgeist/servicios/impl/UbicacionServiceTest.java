@@ -20,15 +20,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.neo4j.driver.summary.ResultSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -274,8 +273,6 @@ public class UbicacionServiceTest {
 
         ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
 
-        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-
         assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
 
     }
@@ -289,25 +286,25 @@ public class UbicacionServiceTest {
         ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
         ubicacionService.conectar(ubicacion1.getId(), ubicacion4.getId());
 
-        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-
         assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
 
         assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion4.getId()));
     }
 
-//    @Test
-//    public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
-//        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
-//        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
-//
-//        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
-//        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
-//
-//        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacion1.getId()).get();
-//
-//        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
-//    }
+    @Test
+    public void unaUbicacionNoPuedeConectarseDosVecesALaMismaUbicacion() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
+
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+        ubicacionService.conectar(ubicacion1.getId(), ubicacion3.getId());
+
+        String query = """
+                RETURN COUNT {(ub1:UBICACION) -[r:CONECTADA]-> (ub2:UBICACION)}
+                """;
+        Map<String, Object> result = neo4jClient.query(query).fetch().first().get();
+        assertEquals(1L, result.values().stream().findFirst().get());
+    }
 
     @Test
     public void unaUbicacionPersisteConexionesBidireccionales() {
@@ -354,12 +351,11 @@ public class UbicacionServiceTest {
     public void unaUbicacionNoPuedeConectarseAOtraQueNoExiste() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
 
-
         assertThrows(EntidadInexistenteException.class, () -> ubicacionService.conectar(ubicacion1.getId(), -80L));
     }
 
     @Test
-    public void seCompruebaQueUnaUbicacionEstaConectadaConOtra() {
+    public void unaUbicacionEstaConectadaConOtra() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
@@ -369,7 +365,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seCompruebaQueUnaUbicacionConectadaBidireccionalmenteEstanConectadasEntreSi() {
+    public void unaUbicacionConectadaBidireccionalmenteEstanConectadasEntreSi() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
@@ -381,11 +377,18 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seCompruebaQueUnaUbicacionNoEstaConectadaConOtra() {
+    public void unaUbicacionNoEstaConectadaConOtra() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion3 = this.ubicacionService.crear(ubicacionTres);
 
         assertFalse(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion3.getId()));
+    }
+
+    @Test
+    public void unaUbicacionEstaConectadaConsigoMisma() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion1.getId()));
     }
 
     @Test
