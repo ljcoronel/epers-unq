@@ -44,10 +44,6 @@ public abstract class UbicacionNEODTO{
         energia = ubicacion.getEnergia();
     }
 
-//    private static UbicacionNEODTO mappearDtoConYaCreada(UbicacionNEODTO dtoUbicacionYaCreada, Ubicacion dto) { // para evitar recursión
-//        if (Objects.equals(dto.getId(), dtoUbicacionYaCreada.getId())) return dtoUbicacionYaCreada;
-//        return desdeModelo(dto);
-//    } // TODO borrar esto
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
         TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);

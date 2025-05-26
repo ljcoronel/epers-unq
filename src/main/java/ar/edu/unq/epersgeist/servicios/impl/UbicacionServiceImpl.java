@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -12,6 +13,7 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -127,5 +129,18 @@ public class UbicacionServiceImpl implements UbicacionService {
                 .map(ClosenessResult::registrar)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<DegreeResult> incomingDegreeOf(List<Long> ids) {
+        return this.ubicacionRepository.incomingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar).toList();
+    }
+
+    @Override
+    public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
+        return this.ubicacionRepository.outgoingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar).toList();
+    }
+
 
 }
