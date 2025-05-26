@@ -36,26 +36,18 @@ public abstract class UbicacionNEODTO{
         id = ubicacion.getId();
         nombre = ubicacion.getNombre();
         energia = ubicacion.getEnergia();
-        ubicacionesConectadas = ubicacion
-                                .getUbicacionesConectadas()
-                                .stream()
-                                .map(ubi -> desdeModelo(ubi, this)).toList();
     }
 
     public UbicacionNEODTO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
         id = ubicacion.getId();
         nombre = ubicacion.getNombre();
         energia = ubicacion.getEnergia();
-        ubicacionesConectadas = ubicacion
-                .getUbicacionesConectadas()
-                .stream()
-                .map(dto -> mappearDtoConYaCreada(dtoUbicacionYaCreada, dto)).toList();
     }
 
-    private static UbicacionNEODTO mappearDtoConYaCreada(UbicacionNEODTO dtoUbicacionYaCreada, Ubicacion dto) { // para evitar recursión
-        if (Objects.equals(dto.getId(), dtoUbicacionYaCreada.getId())) return dtoUbicacionYaCreada;
-        return desdeModelo(dto);
-    }
+//    private static UbicacionNEODTO mappearDtoConYaCreada(UbicacionNEODTO dtoUbicacionYaCreada, Ubicacion dto) { // para evitar recursión
+//        if (Objects.equals(dto.getId(), dtoUbicacionYaCreada.getId())) return dtoUbicacionYaCreada;
+//        return desdeModelo(dto);
+//    } // TODO borrar esto
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
         TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
@@ -69,46 +61,13 @@ public abstract class UbicacionNEODTO{
 
 
     public Ubicacion aModelo(){
-        List<Ubicacion> ubicacionesYaCreadas = new ArrayList<Ubicacion>();
-
         Ubicacion ubicacion = instanciarUbicacion();
-        ubicacionesYaCreadas.add(ubicacion);
-
         ubicacion.setId(this.getId());
-        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
-                .map(dto -> dto.aModeloConUbicacionesYaCreadas(ubicacionesYaCreadas))
-                .collect(Collectors.toSet()));
         return ubicacion;
     }
-
-    private Ubicacion aModeloConUbicacionesYaCreadas(List<Ubicacion> ubicacionesYaCreadas) {
-
-        Ubicacion ubicacion = instanciarUbicacion();
-
-        ubicacionesYaCreadas.add(ubicacion); // añado la siguiente ubicación, para que todas las de abajo sepan
-        ubicacion.setId(this.getId());
-        List<Long> idsDeUbicacionesYaCreadas = ubicacionesYaCreadas.stream().map(Ubicacion::getId).toList();
-
-        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
-                .map(dto -> {
-                    if (idsDeUbicacionesYaCreadas.contains(dto.getId()))  // TODO chequear si está buena la solución
-                        return ubicacionesYaCreadas.get(idsDeUbicacionesYaCreadas.indexOf(dto.id)); // si ya existe, no la crees de nuevo
-                    return dto.aModeloConUbicacionesYaCreadas(ubicacionesYaCreadas);
-                })
-                .collect(Collectors.toSet()));
-        return ubicacion;
-    }
-
 
     public abstract Ubicacion instanciarUbicacion();
 
-    public Ubicacion aModelo(Ubicacion ubicacion) {
-        ubicacion.setUbicacionesConectadas
-                (this.ubicacionesConectadas.stream()
-                        .map(UbicacionNEODTO::aModelo)
-                        .collect(Collectors.toSet()));
-        return ubicacion;
-    }
 }
 
 

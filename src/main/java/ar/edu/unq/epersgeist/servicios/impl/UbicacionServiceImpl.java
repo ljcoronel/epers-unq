@@ -75,12 +75,13 @@ public class UbicacionServiceImpl implements UbicacionService {
         Optional<Ubicacion> optionalUbicacionDestino = this.ubicacionRepository.recuperar(idDestino);
 
         if(optionalUbicacionOrigen.isEmpty()) return;
+        if(optionalUbicacionDestino.isEmpty()) return;
 
-        Ubicacion origen = optionalUbicacionOrigen.get();
+        ubicacionRepository.conectar(idOrigen, idDestino);
 
-        origen.conectarCon(optionalUbicacionDestino);
+//        origen.conectarCon(optionalUbicacionDestino);
 
-        ubicacionRepository.guardar(origen);
+//        ubicacionRepository.guardar(origen);
 
     }
 

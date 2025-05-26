@@ -1,9 +1,8 @@
 package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import java.util.List;
 
-public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String nombre, int energia, List<UbicacionDTOResponseAcotado> ubicacionesConectadas) {
+public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String nombre, int energia) {
 
 
     public static UbicacionDTOResponse desdeModelo(Ubicacion ubicacion) {
@@ -11,9 +10,7 @@ public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String 
                 TipoUbicacion.obtenerTipoUbicacion(ubicacion),
                 ubicacion.getId(),
                 ubicacion.getNombre(),
-                ubicacion.getEnergia(),
-                ubicacion.getUbicacionesConectadas().stream()
-                        .map(UbicacionDTOResponseAcotado::desdeModelo).toList()
+                ubicacion.getEnergia()
         );
     }
 

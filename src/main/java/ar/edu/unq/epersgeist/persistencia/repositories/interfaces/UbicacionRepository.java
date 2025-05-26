@@ -14,16 +14,17 @@ public interface UbicacionRepository {
     List<Ubicacion> recuperarTodos();
 
     boolean existeNombre(String nombre, Long id);
-
     boolean esReferenciado(Long id);
 
     boolean estanConectadas(Long idOrigen, Long idDestino);
+    void conectar(Long idOrigen, Long idDestino);
 
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
-
     boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
 
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
 
     List<ClosenessResultDTO> closenessOf(List<Long> ids);
+
+
 }

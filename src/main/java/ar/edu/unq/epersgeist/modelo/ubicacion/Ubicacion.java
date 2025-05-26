@@ -23,8 +23,6 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
 
     private int energia;
 
-    private Set<Ubicacion> ubicacionesConectadas = new HashSet<>();
-
     public Ubicacion(String nombre, int energia) {
 
         this.nombre = nombre;
@@ -53,19 +51,5 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     public abstract void recuperarConexionParaDemonios(List<Demonio> demonios);
 
     public abstract void recuperarManaParaMedium(Medium medium);
-
-    public void conectarCon(Optional<Ubicacion> optionalUbicacionDestino) {
-
-        Ubicacion destino = optionalUbicacionDestino.orElseThrow
-                (() -> new EntidadInexistenteException("La ubicación destino no existe."));
-
-        if (Objects.equals(destino.getId(), this.getId())) return; // no pueden estar conectadas consigo mismas
-
-        addUbicacionConectada(destino);
-    }
-
-    private void addUbicacionConectada(Ubicacion destino) {
-        getUbicacionesConectadas().add(destino);
-    }
 
 }
