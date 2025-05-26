@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ClosenessResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

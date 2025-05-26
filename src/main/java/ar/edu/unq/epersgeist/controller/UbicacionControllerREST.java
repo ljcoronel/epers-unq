@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,8 +99,20 @@ public final class UbicacionControllerREST {
                 .collect(Collectors.toSet()));
     }
 
-    @GetMapping("/closenessOf")
+    @GetMapping("/centrality/closenessOf")
     public ResponseEntity<List<ClosenessResult>> closenessOf(@RequestBody List<Long> ids) {
         return ResponseEntity.ok(this.ubicacionService.closenessOf(ids));
     }
+
+    @GetMapping("/centrality/DegreeOf/incoming")
+    public ResponseEntity<List<DegreeResult>> incomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.incomingDegreeOf(ids));
+    }
+
+    @GetMapping("/centrality/DegreeOf/outcoming")
+    public ResponseEntity<List<DegreeResult>> outcomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.outgoingDegreeOf(ids));
+    }
+
+
 }

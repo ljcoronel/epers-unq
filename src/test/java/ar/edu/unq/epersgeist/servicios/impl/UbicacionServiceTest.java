@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -607,7 +608,6 @@ public class UbicacionServiceTest {
                 stream().
                 map(Ubicacion::getId).toList());
 
-
         assertEquals(1,results.getFirst().closeness());// hay 3 nodos, ubicacion1 tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
         assertEquals(0.0,results.get(1).closeness());  // hay 3 nodos, ubicacion2 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
         assertEquals(0.0,results.get(2).closeness());  // hay 3 nodos, ubicacion3 tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
@@ -616,19 +616,21 @@ public class UbicacionServiceTest {
 
 
     @Test
-    void bootstrap() throws IOException {
-//        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
-//        ClassPathResource nodeConPath = new ClassPathResource("cypher/nodeConnector.cypher");
-//
-//        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
-//        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
-//
-//        neo4jClient.query(cypherNodeGen).run();
-//        neo4jClient.query(cypherNodeCon).run();
-//
-        List<Long> ids = new ArrayList<>();
-        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
-        assertTrue(results.isEmpty());
+    void alCargarMuchosDatosAleatoriosAlgunoTieneDegreeMayorACero() throws IOException {
+        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/randomMatcherNeo4J.cypher");
+
+        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+
+        neo4jClient.query(cypherNodeGen).run();
+        neo4jClient.query(cypherNodeCon).run();
+
+        List<Long> ids = LongStream.rangeClosed(1,100).boxed().toList();
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
+        List<DegreeResult> conDegree = results.stream().
+                filter(degree -> degree.closeness() > 0.0).toList();
+        assertFalse(conDegree.isEmpty());
 
     }
 

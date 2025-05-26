@@ -13,6 +13,7 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -144,5 +145,6 @@ public class UbicacionServiceImpl implements UbicacionService {
         return this.ubicacionRepository.outgoingDegreeOf(ids).stream()
                 .map(DegreeResult::registrar).toList();
     }
+
 
 }

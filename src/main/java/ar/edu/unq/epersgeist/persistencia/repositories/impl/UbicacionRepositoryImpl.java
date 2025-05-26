@@ -9,8 +9,13 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.neo4j.driver.summary.ResultSummary;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +26,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
+    @Autowired
+    private final Neo4jClient neo4jClient;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo,Neo4jClient neo4jClient) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
+        this.neo4jClient = neo4jClient;
     }
 
     @Override
@@ -124,4 +132,5 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     public List<DegreeResultDTO> incomingDegreeOf(List<Long> ids) {
         return this.ubicacionDaoNeo.incomingDegreeOf(ids);
     }
+
 }
