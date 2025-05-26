@@ -30,29 +30,9 @@ public class AngelJPADTO extends EspirituJPADTO {
         super(espiritu, mediumDTO);
     }
 
-    public Espiritu aModelo() {
-        Espiritu espiritu = new Angel(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
-        espiritu.setId(this.getId());
-        espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
-        return espiritu;
-    }
-
-    public Espiritu aModelo(Medium medium) {
-        Espiritu espiritu = new Angel(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
-        espiritu.setId(this.getId());
-        espiritu.setMedium(medium);
-        return espiritu;
-    }
-
-    public Espiritu aModelo(Espiritu espiritu) {
-        espiritu.setId(this.getId());
-        return espiritu;
-    }
-
     @Override
-    public Espiritu aModelo(Medium medium, Espiritu espiritu) {
-        espiritu.setId(this.getId());
-        espiritu.setMedium(medium);
-        return espiritu;
+    public Espiritu instanciarEspiritu() {
+        return new Angel(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
     }
+
 }

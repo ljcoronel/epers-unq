@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
@@ -81,11 +82,29 @@ public abstract class EspirituJPADTO {
         ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
     }
 
-    public abstract Espiritu aModelo();
+    public Espiritu aModelo() {
+        Espiritu espiritu = instanciarEspiritu();
+        espiritu.setId(this.getId());
+        espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
+        return espiritu;
+    }
 
-    public abstract Espiritu aModelo(Medium medium);
+    public abstract Espiritu instanciarEspiritu();
 
-    public abstract Espiritu aModelo(Espiritu espiritu);
+    public Espiritu aModelo(Medium medium) {
+        Espiritu espiritu = aModelo();
+        espiritu.setMedium(medium);
+        return espiritu;
+    };
 
-    public abstract Espiritu aModelo(Medium medium, Espiritu espiritu);
+    public Espiritu aModelo(Espiritu espiritu) {
+        espiritu.setId(this.getId());
+        return espiritu;
+    };
+
+    public Espiritu aModelo(Medium medium, Espiritu espiritu) {
+        espiritu.setId(this.getId());
+        espiritu.setMedium(medium);
+        return espiritu;
+    };
 }

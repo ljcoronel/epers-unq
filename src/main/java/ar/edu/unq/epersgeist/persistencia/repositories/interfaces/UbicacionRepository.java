@@ -2,10 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.CentralityResultDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ClosenessResultDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

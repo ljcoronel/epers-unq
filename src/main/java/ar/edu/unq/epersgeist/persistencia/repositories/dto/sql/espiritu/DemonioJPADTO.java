@@ -37,22 +37,10 @@ public class DemonioJPADTO extends EspirituJPADTO {
         return espiritu;
     }
 
-    public Espiritu aModelo(Medium medium) {
-        Espiritu espiritu = new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
-        espiritu.setId(this.getId()); // TODO no repetir esto por subclase
-        espiritu.setMedium(medium);
-        return espiritu;
-    }
-
-    public Espiritu aModelo(Espiritu espiritu) {
-        espiritu.setId(this.getId());
-        return espiritu;
-    }
-
     @Override
-    public Espiritu aModelo(Medium medium, Espiritu espiritu) {
-        espiritu.setId(this.getId()); // TODO no repetir esto por subclase
-        espiritu.setMedium(medium);
-        return espiritu;
+    public Espiritu instanciarEspiritu() {
+        return new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
     }
+
+
 }
