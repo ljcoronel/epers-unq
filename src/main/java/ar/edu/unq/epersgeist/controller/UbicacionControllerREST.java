@@ -7,8 +7,6 @@ import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
-import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
