@@ -12,7 +12,8 @@ public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String 
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia(),
-                ubicacion.getUbicacionesConectadas().stream().map(UbicacionDTOResponseAcotado::desdeModelo).toList()
+                ubicacion.getUbicacionesConectadas().stream()
+                        .map(UbicacionDTOResponseAcotado::desdeModelo).toList()
         );
     }
 

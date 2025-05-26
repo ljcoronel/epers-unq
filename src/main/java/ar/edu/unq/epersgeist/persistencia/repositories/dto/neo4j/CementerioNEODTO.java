@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +25,8 @@ public class CementerioNEODTO extends UbicacionNEODTO{
     }
 
     @Override
-    public Ubicacion aModelo() {
-        Cementerio cementerio = new Cementerio(this.getNombre(), this.getEnergia());
-        cementerio.setId(this.getId());
-        return cementerio;
+    public Ubicacion instanciarUbicacion() {
+        return new Cementerio(this.getNombre(), this.getEnergia());
     }
 
 

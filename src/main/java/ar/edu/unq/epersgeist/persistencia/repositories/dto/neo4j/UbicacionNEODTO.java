@@ -67,7 +67,29 @@ public abstract class UbicacionNEODTO{
     }
 
 
-    public abstract Ubicacion aModelo();
+    public Ubicacion aModelo(){
+        Ubicacion ubicacion = instanciarUbicacion();
+        ubicacion.setId(this.getId());
+        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
+                .map(dto -> dto.aModeloConUbicacionYaCreada(ubicacion))
+                .collect(Collectors.toSet()));
+        return ubicacion;
+    }
+
+    private Ubicacion aModeloConUbicacionYaCreada(Ubicacion ubicacionYaCreada) {
+        Ubicacion ubicacion = instanciarUbicacion();
+        ubicacion.setId(this.getId());
+        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
+                .map(dto -> {
+                    if (Objects.equals(dto.getId(), ubicacionYaCreada.getId())) return ubicacionYaCreada; // si ya existe, no la crees de nuevo
+                    return dto.aModeloConUbicacionYaCreada(ubicacion);
+                })
+                .collect(Collectors.toSet()));
+        return ubicacion;
+    }
+
+
+    public abstract Ubicacion instanciarUbicacion();
 
     public Ubicacion aModelo(Ubicacion ubicacion) {
         ubicacion.setUbicacionesConectadas

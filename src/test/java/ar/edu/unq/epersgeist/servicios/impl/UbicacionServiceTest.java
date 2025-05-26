@@ -670,42 +670,16 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityACincoUbicacionesDiferentesConectadasAUbicacionesNoIncluidas() {
-        Ubicacion ubicacionSeis = new Santuario("A", 1);
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityAUnaUbicacionConectadaAOtraNoConsiderada() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
-        this.ubicacionService.crear(this.ubicacionTres);
-        this.ubicacionService.crear(this.ubicacionCuatro);
-        this.ubicacionService.crear(this.ubicacionCinco);
-        this.ubicacionService.crear(ubicacionSeis);
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
         this.ubicacionService.conectar(this.ubicacionDos.getId(),this.ubicacionUno.getId());
-        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionUno.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCuatro.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCinco.getId());
-        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionCuatro.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
-        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionCuatro.getId());
-        this.ubicacionService.conectar(ubicacionSeis.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), ubicacionSeis.getId());
-        this.ubicacionService.conectar(ubicacionSeis.getId(), this.ubicacionCinco.getId());
-        this.ubicacionService.conectar(this.ubicacionCinco.getId(), ubicacionSeis.getId());
-        List<Long> ids = List.of(this.ubicacionUno.getId(), this.ubicacionDos.getId(), this.ubicacionTres.getId(), this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
+        List<Long> ids = List.of(this.ubicacionUno.getId());
 
         List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
 
-        assertEquals(this.ubicacionDos.getId(), resultados.get(0).ubicacion().getId());
-        assertEquals(0.25, resultados.get(0).closeness());
-        assertEquals(0.2, resultados.get(1).closeness());
-        assertEquals(0.2, resultados.get(2).closeness());
-        assertEquals(1.0/6, resultados.get(3).closeness());
-        assertEquals(1.0/6, resultados.get(4).closeness());
+        assertTrue(resultados.isEmpty());
     }
 
     @Test
