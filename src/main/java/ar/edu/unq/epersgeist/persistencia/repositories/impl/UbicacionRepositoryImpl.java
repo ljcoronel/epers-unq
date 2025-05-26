@@ -68,13 +68,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        Optional<UbicacionJPADTO> optionalUbicacionJpa = this.ubicacionDaoJpa.findById(id);
-
-        if (optionalUbicacionJpa.isEmpty()) return Optional.empty();
-
-        UbicacionNEODTO ubicacionNEODTO = this.ubicacionDaoNeo.findById(id).get();
-
-        return optionalUbicacionJpa.map(jpaDto -> jpaDto.aModelo(ubicacionNEODTO));
+        return ubicacionDaoNeo.findById(id).map(UbicacionNEODTO::aModelo);
     }
 
     @Override
@@ -90,6 +84,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public boolean estanConectadas(Long idOrigen, Long idDestino) {
         return ubicacionDaoNeo.estanConectadas(idOrigen, idDestino);
+    }
+
+    @Override
+    public void conectar(Long idOrigen, Long idDestino) {
+        ubicacionDaoNeo.conectar(idOrigen, idDestino);
     }
 
     @Override

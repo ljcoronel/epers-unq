@@ -65,10 +65,6 @@ public abstract class UbicacionJPADTO {
 
     public abstract Ubicacion aModelo(Ubicacion ubicacion);
 
-    public Ubicacion aModelo(UbicacionNEODTO ubicacionNEODTO) {
-        Ubicacion ubicacion = this.aModelo();
-        return ubicacionNEODTO.aModelo(ubicacion);
-    }
 }
 
 

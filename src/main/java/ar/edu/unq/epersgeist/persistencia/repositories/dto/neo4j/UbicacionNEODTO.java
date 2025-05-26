@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,26 +36,14 @@ public abstract class UbicacionNEODTO{
         id = ubicacion.getId();
         nombre = ubicacion.getNombre();
         energia = ubicacion.getEnergia();
-        ubicacionesConectadas = ubicacion
-                                .getUbicacionesConectadas()
-                                .stream()
-                                .map(dto -> desdeModelo(dto)).toList();
     }
 
     public UbicacionNEODTO(Ubicacion ubicacion, UbicacionNEODTO dtoUbicacionYaCreada) {
         id = ubicacion.getId();
         nombre = ubicacion.getNombre();
         energia = ubicacion.getEnergia();
-        ubicacionesConectadas = ubicacion
-                .getUbicacionesConectadas()
-                .stream()
-                .map(dto -> mappearDtoConYaCreada(dtoUbicacionYaCreada, dto)).toList();
     }
 
-    private static UbicacionNEODTO mappearDtoConYaCreada(UbicacionNEODTO dtoUbicacionYaCreada, Ubicacion dto) { // para evitar recursión
-        if (Objects.equals(dto.getId(), dtoUbicacionYaCreada.getId())) return dtoUbicacionYaCreada;
-        return desdeModelo(dto);
-    }
 
     public static UbicacionNEODTO desdeModelo(Ubicacion ubicacion) {
         TipoUbicacion tipo = TipoUbicacion.obtenerTipoUbicacion(ubicacion);
@@ -70,34 +59,11 @@ public abstract class UbicacionNEODTO{
     public Ubicacion aModelo(){
         Ubicacion ubicacion = instanciarUbicacion();
         ubicacion.setId(this.getId());
-        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
-                .map(dto -> dto.aModeloConUbicacionYaCreada(ubicacion))
-                .collect(Collectors.toSet()));
         return ubicacion;
     }
-
-    private Ubicacion aModeloConUbicacionYaCreada(Ubicacion ubicacionYaCreada) {
-        Ubicacion ubicacion = instanciarUbicacion();
-        ubicacion.setId(this.getId());
-        ubicacion.setUbicacionesConectadas(this.getUbicacionesConectadas().stream()
-                .map(dto -> {
-                    if (Objects.equals(dto.getId(), ubicacionYaCreada.getId())) return ubicacionYaCreada; // si ya existe, no la crees de nuevo
-                    return dto.aModeloConUbicacionYaCreada(ubicacion);
-                })
-                .collect(Collectors.toSet()));
-        return ubicacion;
-    }
-
 
     public abstract Ubicacion instanciarUbicacion();
 
-    public Ubicacion aModelo(Ubicacion ubicacion) {
-        ubicacion.setUbicacionesConectadas
-                (this.ubicacionesConectadas.stream()
-                        .map(UbicacionNEODTO::aModelo)
-                        .collect(Collectors.toSet()));
-        return ubicacion;
-    }
 }
 
 

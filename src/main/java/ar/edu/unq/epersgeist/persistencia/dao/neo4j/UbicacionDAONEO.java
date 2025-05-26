@@ -20,6 +20,13 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
    @Query("MATCH (origen:UBICACION {id: $idOrigen})   MATCH (destino:UBICACION {id: $idDestino})   RETURN exists( (origen) -[:CONECTADA*1]-> (destino) )")
    boolean estanConectadas(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
 
+   @Query("""
+           MATCH (origen:UBICACION{id:$idOrigen})
+           MATCH (destino:UBICACION{id:$idDestino})
+           MERGE (origen)-[:CONECTADA]->(destino)
+           """)
+   void conectar(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
+
     @Query("MATCH (origen:UBICACION {id: $idOrigen}), (destino:UBICACION {id: $idDestino}), p = shortestPath((origen)-[*]-(destino)) WHERE $idOrigen <> $idDestino WITH nodes(p)[1..] AS nodos UNWIND nodos AS n RETURN n")
     List<UbicacionNEODTO> caminoMasCorto(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
 //no incluye al nodo origen
