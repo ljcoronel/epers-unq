@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.neo4j;
 
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.CentralityResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.ClosenessResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.DegreeResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
@@ -49,11 +50,11 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
         WHERE origen.id <> destino.id
         MATCH p = shortestPath((origen)-[:CONECTADA*]->(destino))
         WITH origen, SUM(length(p)) AS sumatoria
-        WITH origen, CASE WHEN sumatoria > 0 THEN 1.0/sumatoria ELSE 0 END AS closeness
-        ORDER BY closeness DESC
-        RETURN origen, closeness
+        WITH origen, CASE WHEN sumatoria > 0 THEN 1.0/sumatoria ELSE 0 END AS centrality
+        ORDER BY centrality DESC
+        RETURN origen, centrality
     """)
-    List<ClosenessResultDTO> closenessOf(@Param("ids") List<Long> ids);
+    List<CentralityResultDTO> closenessOf(@Param("ids") List<Long> ids);
 
     @Query("""
             MATCH (n:UBICACION)
@@ -69,10 +70,9 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
             ORDER BY cantidad_conectados desc
             RETURN
               origen,
-              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
+              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS centrality
             """)
-    List<DegreeResultDTO> outgoingDegreeOf(@Param("ids") List<Long> ids);
-
+    List<CentralityResultDTO> outgoingDegreeOf(@Param("ids") List<Long> ids);
 
     @Query("""
             MATCH (n:UBICACION)
@@ -88,10 +88,8 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
             ORDER BY cantidad_conectados desc
             RETURN
               origen,
-              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS degree
+              toFloat(cantidad_conectados) / toFloat(total_nodos - 1) AS centrality
             """)
-    List<DegreeResultDTO> incomingDegreeOf(@Param("ids") List<Long> ids);
-
-
+    List<CentralityResultDTO> incomingDegreeOf(@Param("ids") List<Long> ids);
 
 }

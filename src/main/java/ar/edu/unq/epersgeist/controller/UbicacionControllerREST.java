@@ -2,12 +2,11 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
+import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.CentralityResponseDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
-import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,18 +98,24 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/centrality/closenessOf")
-    public ResponseEntity<List<ClosenessResult>> closenessOf(@RequestBody List<Long> ids) {
-        return ResponseEntity.ok(this.ubicacionService.closenessOf(ids));
+    public ResponseEntity<List<CentralityResponseDTO>> closenessOf(@RequestParam(required = false) List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.closenessOf(ids).stream()
+                .map(CentralityResponseDTO::resultadoCloseness)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/centrality/DegreeOf/incoming")
-    public ResponseEntity<List<DegreeResult>> incomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
-        return ResponseEntity.ok(this.ubicacionService.incomingDegreeOf(ids));
+    public ResponseEntity<List<CentralityResponseDTO>> incomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.incomingDegreeOf(ids).stream()
+                .map(CentralityResponseDTO::resultadoDegree)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/centrality/DegreeOf/outcoming")
-    public ResponseEntity<List<DegreeResult>> outcomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
-        return ResponseEntity.ok(this.ubicacionService.outgoingDegreeOf(ids));
+    public ResponseEntity<List<CentralityResponseDTO>> outcomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
+        return ResponseEntity.ok(this.ubicacionService.outgoingDegreeOf(ids).stream()
+                .map(CentralityResponseDTO::resultadoDegree)
+                .collect(Collectors.toList()));
     }
 
 
