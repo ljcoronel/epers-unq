@@ -63,7 +63,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return ubicacionDaoNeo.findById(id).map(UbicacionNEODTO::aModelo);
+        return ubicacionDaoJpa.findById(id).map(UbicacionJPADTO::aModelo);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDaoNeo.findAll().stream().map(UbicacionNEODTO::aModelo).toList());
+        return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
