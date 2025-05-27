@@ -5,7 +5,7 @@ import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPost;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTORequestPut;
-import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
+import ar.edu.unq.epersgeist.controller.exception.DTOResponseError;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
