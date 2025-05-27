@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.exception.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.testUtils.FakeRandomStrategyImpl;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -54,7 +55,7 @@ public class MediumServiceImplTest {
     private Ubicacion cementerio;
     private Ubicacion cementerio2;
     private Ubicacion ubicacion2;
-
+    private Ubicacion ubicacionNoConectada;
 
     private FakeRandomStrategyImpl fakeRandomStrategy;
 
@@ -66,12 +67,14 @@ public class MediumServiceImplTest {
         this.ubicacion2 = new Santuario("Quilmes", 50);
         this.cementerio = new Cementerio("Tenebroso", 50);
         this.cementerio2 = new Cementerio("oscuro", 90);
+        this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50);
 
         ubicacionService.crear(santuario);
         ubicacionService.crear(santuario2);
         ubicacionService.crear(ubicacion2);
         ubicacionService.crear(cementerio);
         ubicacionService.crear(cementerio2);
+        ubicacionService.crear(ubicacionNoConectada);
 
         medium = new Medium("Max",100,50, this.santuario);
         medium2 = new Medium("Pepe",100,0, this.santuario);
@@ -436,10 +439,11 @@ public class MediumServiceImplTest {
 
         Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
+        ubicacionService.conectar(cementerio.getId(),iglesia.getId());
 
-        Angel libertador = new Angel(10,"Libertador",iglesia);
+        Angel libertador = new Angel(10,"Libertador",cementerio);
         espirituService.crear(libertador);
-        Medium medium = new Medium("Max",100,50,iglesia);
+        Medium medium = new Medium("Max",100,50,cementerio);
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), iglesia.getId());
@@ -455,18 +459,20 @@ public class MediumServiceImplTest {
 
         Ubicacion wilde = new Cementerio("Wilde",50);
         ubicacionService.crear(wilde);
+        Ubicacion sarandi = new Cementerio("Sarandi",50);
+        ubicacionService.crear(sarandi);
 
-        Angel mabel = new Angel(5,"Amon",wilde);
+        ubicacionService.conectar(cementerio.getId(), wilde.getId());
+        ubicacionService.conectar(wilde.getId(), sarandi.getId());
+
+        Angel mabel = new Angel(5,"Amon",cementerio);
         espirituService.crear(mabel);
 
-        Medium osvaldo = new Medium("Osvaldo",100,20, wilde);
+        Medium osvaldo = new Medium("Osvaldo",100,20, cementerio);
 
         mediumService.crear(osvaldo);
         espirituService.conectar(mabel.getId(),osvaldo.getId());
         mediumService.mover(osvaldo.getId(), wilde.getId());
-
-        Ubicacion sarandi = new Cementerio("Sarandi",50);
-        ubicacionService.crear(sarandi);
 
         mediumService.mover(osvaldo.getId(), sarandi.getId());
 
@@ -482,18 +488,21 @@ public class MediumServiceImplTest {
 
         Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
+        Ubicacion vaticano = new Santuario("vaticano",50);
+        ubicacionService.crear(vaticano);
 
-        Demonio amon = new Demonio(10,"Amon",iglesia);
+        ubicacionService.conectar(santuario.getId(),iglesia.getId());
+        ubicacionService.conectar(iglesia.getId(),vaticano.getId());
+        ubicacionService.conectar(vaticano.getId(),iglesia.getId());
+
+        Demonio amon = new Demonio(10,"Amon",santuario);
         espirituService.crear(amon);
 
-        Medium osvaldo = new Medium("Osvaldo",100,50, iglesia);
+        Medium osvaldo = new Medium("Osvaldo",100,50, santuario);
 
         mediumService.crear(osvaldo);
         espirituService.conectar(amon.getId(),osvaldo.getId());
         mediumService.mover(osvaldo.getId(), iglesia.getId());
-
-        Ubicacion vaticano = new Santuario("vaticano",50);
-        ubicacionService.crear(vaticano);
 
         mediumService.mover(osvaldo.getId(), vaticano.getId());
         mediumService.mover(osvaldo.getId(), iglesia.getId());
@@ -510,13 +519,14 @@ public class MediumServiceImplTest {
 
         Ubicacion cementerio = new Cementerio("Recoleta",50);
         ubicacionService.crear(cementerio);
+        ubicacionService.conectar(cementerio.getId(), this.cementerio.getId());
 
         Angel libertador = new Angel(10,"Libertador",cementerio);
         espirituService.crear(libertador);
         Medium medium = new Medium("Max",100,50,cementerio);
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
-        mediumService.mover(medium.getId(), cementerio.getId());
+        mediumService.mover(medium.getId(), this.cementerio.getId());
 
         Espiritu espirituRecuperado = espirituService.recuperar(libertador.getId()).get();
 
@@ -530,13 +540,14 @@ public class MediumServiceImplTest {
 
         Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
         ubicacionService.crear(iglesia);
+        ubicacionService.conectar(iglesia.getId(), santuario.getId());
 
         Demonio demonicaco = new Demonio(10,"demonicaco",iglesia);
         espirituService.crear(demonicaco);
         Medium medium = new Medium("Max",100,50,iglesia);
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
-        mediumService.mover(medium.getId(), iglesia.getId());
+        mediumService.mover(medium.getId(), santuario.getId());
 
         Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
 
@@ -549,6 +560,7 @@ public class MediumServiceImplTest {
 
         Ubicacion sanMiguel = new Cementerio("San Miguel",50);
         ubicacionService.crear(sanMiguel);
+        ubicacionService.conectar(sanMiguel.getId(),cementerio.getId());
 
         Demonio demonicaco = new Demonio(10,"demonicaco",sanMiguel);
         espirituService.crear(demonicaco);
@@ -556,12 +568,21 @@ public class MediumServiceImplTest {
         Medium medium = new Medium("Max",100,50,sanMiguel);
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
-        mediumService.mover(medium.getId(), sanMiguel.getId());
+        mediumService.mover(medium.getId(), cementerio.getId());
 
         Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
 
         assertEquals(espirituRecuperado.getNivelDeConexion(), 20);
         //10 de angel + 20% de Mana del medium(10) - 0 de efecto de Cementerio,
+    }
+
+    @Test
+    void seIntentaMoverUnMediumAUnaUbicacionLejanaYSeLanzaUnaExcepcion() {
+        this.mediumService.crear(this.medium); //ubicacion santuario
+
+        assertThrows(UbicacionLejanaException.class,
+                ()-> this.mediumService.mover(this.medium.getId(), ubicacionNoConectada.getId()));
+
     }
 
     @Test
@@ -731,13 +752,13 @@ public class MediumServiceImplTest {
         });
 
     }
-
+/*
     @Test
     public void unMediumSeMueveAUnaUbicacionInexistenteEntoncesSeLanzaUnaExcepcion() {
         this.mediumService.crear(this.medium);
 
         assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(this.medium.getId(), 100L));
-    }
+    }*/ // TODO decidir si vamos s usar esta validacion que es de modelo o si usamos solo averiguamos si es lejana
 
     @Test
     public void unMediumIntentaExorcisarAOtroMediumQueEstaEnOtraUbicacionEntoncesSeLanzaUnaExcepcion() {

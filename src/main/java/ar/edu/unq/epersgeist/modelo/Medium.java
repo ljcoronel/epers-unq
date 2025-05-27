@@ -152,4 +152,8 @@ public class Medium implements Serializable {
     public void usarManaParaInvocar() {
         this.setMana(this.getMana() - 10);
     }
+
+    public Long getIdDeUbicacion() {
+        return this.ubicacion.getId();
+    }
 }
