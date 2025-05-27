@@ -29,9 +29,6 @@ public abstract class UbicacionNEODTO{
 
     private int energia;
 
-    @Relationship(type = "CONECTADA")
-    private List<UbicacionNEODTO> ubicacionesConectadas;
-
     public UbicacionNEODTO(Ubicacion ubicacion) {
         id = ubicacion.getId();
         nombre = ubicacion.getNombre();
