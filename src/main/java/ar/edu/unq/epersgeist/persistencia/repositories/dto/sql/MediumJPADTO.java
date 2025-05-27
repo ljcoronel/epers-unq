@@ -92,40 +92,8 @@ public class MediumJPADTO {
         return medium;
     }
 
-//    public Medium aModelo(Medium medium) { // TODO revisar cuál es mejor
-//        medium.setId(this.id);
-//        medium.setAngeles(this.angeles.stream()
-//                .map(dto -> (Angel) dto.aModelo(medium))
-//                .collect(Collectors.toList()));
-//        medium.setDemonios(this.demonios.stream()
-//                .map(dto -> (Demonio) dto.aModelo(medium))
-//                .collect(Collectors.toList()));
-//        return medium;
-//    }
-
     public Medium aModelo(Medium medium) {
         medium.setId(this.id);
-
-        List<Angel> angeles = new ArrayList<>();
-        for (int i = 0; i < this.angeles.size(); i++) {
-
-            AngelJPADTO dto = this.angeles.get(i);
-            Angel angel = medium.getAngeles().get(i);
-            angeles.add( (Angel) dto.aModelo(medium, angel));
-
-        }
-        medium.setAngeles(angeles);
-
-        List<Demonio> demonios = new ArrayList<>();
-        for (int i = 0; i < this.demonios.size(); i++) {
-
-            DemonioJPADTO dto = this.demonios.get(i);
-            Demonio demonio = medium.getDemonios().get(i);
-            demonios.add( (Demonio) dto.aModelo(medium, demonio));
-        }
-
-        medium.setDemonios(demonios);
-
         return medium;
     }
 }
