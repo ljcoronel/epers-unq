@@ -752,13 +752,13 @@ public class MediumServiceImplTest {
         });
 
     }
-/*
+
     @Test
     public void unMediumSeMueveAUnaUbicacionInexistenteEntoncesSeLanzaUnaExcepcion() {
         this.mediumService.crear(this.medium);
 
         assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(this.medium.getId(), 100L));
-    }*/ // TODO decidir si vamos s usar esta validacion que es de modelo o si usamos solo averiguamos si es lejana
+    }
 
     @Test
     public void unMediumIntentaExorcisarAOtroMediumQueEstaEnOtraUbicacionEntoncesSeLanzaUnaExcepcion() {
