@@ -20,13 +20,10 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
-    @Autowired
-    private final Neo4jClient neo4jClient;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo,Neo4jClient neo4jClient) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
-        this.neo4jClient = neo4jClient;
     }
 
     @Override
