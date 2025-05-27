@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.controller.exception;
 
-import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.exception.*;
