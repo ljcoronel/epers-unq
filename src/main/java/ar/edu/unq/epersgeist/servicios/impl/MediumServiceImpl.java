@@ -10,6 +10,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,14 +165,16 @@ public class MediumServiceImpl implements MediumService {
 
         Medium medium = optionalMedium.get();
 
-        Optional<Ubicacion> ubicacion = ubicacionRepository.recuperar(ubicacionId);
+        Optional<Ubicacion> ubicacionOpcional = ubicacionRepository.recuperar(ubicacionId);
+
+        this.validarCercaniaDeUbicacion(medium.getUbicacion(),ubicacionOpcional);
 
         // ------------------------------------- // TODO quitar cuando esté fixeado el desvincular
         ArrayList<Angel> angeles = new ArrayList<>(medium.getAngeles());
         ArrayList<Demonio> demonios = new ArrayList<>(medium.getDemonios());
         // -------------------------------------
 
-        medium.mover(ubicacion);
+        medium.mover(ubicacionOpcional);
 
         mediumRepository.guardar(medium);
 
@@ -179,6 +182,14 @@ public class MediumServiceImpl implements MediumService {
         angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
         demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
         // -------------------------------------
+
+    }
+
+    private void validarCercaniaDeUbicacion(Ubicacion ubicacionOrigen,Optional<Ubicacion> ubicacionDestino) {
+        if (ubicacionDestino.isPresent() &&
+                !ubicacionRepository.estanConectadas(ubicacionOrigen.getId(), ubicacionDestino.get().getId())) {
+            throw new UbicacionLejanaException("La ubicacion de destino es lejana a la ubicacion actual");
+        }
 
     }
 

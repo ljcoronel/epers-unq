@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.controller.dto.DTOResponseError;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -76,6 +77,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UbicacionesNoConectadasException.class)
     public DTOResponseError ubicacionesNoConectadas(UbicacionesNoConectadasException ude) {
         return new DTOResponseError( ude.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UbicacionLejanaException.class)
+    public DTOResponseError ubicacionLejana(UbicacionLejanaException ule) {
+        return new DTOResponseError( ule.getMessage());
     }
 
 }
