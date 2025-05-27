@@ -92,7 +92,8 @@ public abstract class EspirituJPADTO {
     public abstract Espiritu instanciarEspiritu();
 
     public Espiritu aModelo(Medium medium) {
-        Espiritu espiritu = aModelo();
+        Espiritu espiritu = instanciarEspiritu();
+        espiritu.setId(this.getId());
         espiritu.setMedium(medium);
         return espiritu;
     };

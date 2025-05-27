@@ -20,7 +20,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.neo4j.driver.summary.ResultSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -53,10 +52,8 @@ public class UbicacionServiceTest {
     private Santuario ubicacionCinco;
 
     private Angel angelUno;
-    private Angel angelDos;
 
     private Demonio demonioUno;
-    private Demonio demonioDos;
 
     private Medium mediumUno;
     private Medium mediumDos;
@@ -75,10 +72,8 @@ public class UbicacionServiceTest {
         this.ubicacionTres = new Santuario("Avellaneda", 50);
 
         this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
-        this.angelDos = new Angel(20, "angel", this.ubicacionUno);
 
         this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
-        this.demonioDos = new Demonio(20, "demoni",this.ubicacionUno);
 
         this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
         this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
@@ -469,7 +464,7 @@ public class UbicacionServiceTest {
 
         assertEquals(2,ubicacionesSobrecargadas.size());
         assertTrue(ubicacionesSobrecargadas.stream()
-                    .allMatch(u -> u.getEnergia() > umbralDeEnrgia));
+                .allMatch(u -> u.getEnergia() > umbralDeEnrgia));
     }
 
     @Test
@@ -503,9 +498,30 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void alNoHaberUbicacionesEnNeoDevuelveVacio(){
+    void alNoHaberUbicacionesEnNeoIncomingDegreeDevuelveVacio(){
         List<Long> ids = new ArrayList<>();
         List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alNoHaberUbicacionesEnNeoOutgoingDegreeDevuelveVacio(){
+        List<Long> ids = new ArrayList<>();
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alUsarUbicacionesInexistentesIncomingDegreeDevuelveVacio(){
+        List<Long> ids = Arrays.asList(1L,2L,3L);
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alUsarUbicacionesInexistentesOutgoingDegreeDevuelveVacio(){
+        List<Long> ids = Arrays.asList(1L,2L,3L);
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
         assertTrue(results.isEmpty());
     }
 
@@ -522,20 +538,72 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void elCalculoDeDegreeCentralityIncomingVariaSiVariosSeConectan(){
-        //OUTCOMING
+    void alHaberUbicacionesEnNeoPeroNoPedirNingunaEnDegreeOutgoingDevuelveVacio(){
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+        List<Long> ids = new ArrayList<>();
+        List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void elCalculoDeDegreeCentralityIncomingVariaSiVariosSeConectan(){
+        //INCOMING
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+
         this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionUno.getId());
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
         this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionUno.getId());
         this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionDos.getId());
+
+        List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
+
+        // el primero es ubicacionUno o ubicacionDos por tener más nodos apuntándole
+        assertTrue(Objects.equals(ubicacionDos.getId(), results.getFirst().ubicacion().getId())
+                || Objects.equals(ubicacionUno.getId(), results.getFirst().ubicacion().getId()));
+        assertTrue(Objects.equals(ubicacionUno.getId(), results.get(1).ubicacion().getId())
+                || Objects.equals(ubicacionDos.getId(), results.get(1).ubicacion().getId()));
+        assertEquals(ubicacionTres.getId(), results.get(2).ubicacion().getId());
+
+        assertEquals(1,results.getFirst().degree()); // hay 3 nodos, tiene conectado 2 nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(1,results.get(1).degree());   // hay 3 nodos, tiene conectado 2 nodos => 2 / 3 -1 => 1
+        assertEquals(0,results.get(2).degree());   // hay 3 nodos, tiene conectado 0 nodos => 0 / 3 -1 => 0
+
+
+    }
+
+    @Test
+    void elCalculoDeDegreeCentralityOutgoingVariaSiVariosSeConectan(){
+        //OUTGOING
+        this.ubicacionService.crear(this.ubicacionUno);
+        this.ubicacionService.crear(this.ubicacionDos);
+        this.ubicacionService.crear(this.ubicacionTres);
+
+        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionUno.getId());
+        this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionDos.getId());
+
         List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
         List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
-        assertEquals(1,results.getFirst().degree()); // hay 3 nodos, tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
-        assertEquals(0.5,results.get(1).degree());   // hay 3 nodos, tiene conectado 1 saliente nodos => 1 / 3 - 1 => 0.5
-        assertEquals(0.5,results.get(2).degree());   // hay 3 nodos, tiene conectado 0 entrates nodos => 1 / 3 -1 => 0.5
+
+
+        // el primero es ubicacionTres por apuntar a más nodos
+        assertEquals(ubicacionTres.getId(), results.getFirst().ubicacion().getId());
+        assertTrue(Objects.equals(ubicacionDos.getId(), results.get(1).ubicacion().getId())
+                || Objects.equals(ubicacionUno.getId(), results.get(1).ubicacion().getId()));
+        assertTrue(Objects.equals(ubicacionUno.getId(), results.get(2).ubicacion().getId())
+                || Objects.equals(ubicacionDos.getId(), results.get(2).ubicacion().getId()));
+
+        assertEquals(1 ,results.getFirst().degree()); // hay 3 nodos, conecta con 2 nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0.5,results.get(1).degree());   // hay 3 nodos, conecta 1 nodo => 1 / 3 - 1 => 0.5
+        assertEquals(0.5,results.get(2).degree());   // hay 3 nodos, conecta 1 nodo => 1 / 3 -1 => 0.5
     }
 
     @Test
@@ -544,13 +612,22 @@ public class UbicacionServiceTest {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
+
         this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionUno.getId());
         this.ubicacionService.conectar(this.ubicacionTres.getId(),ubicacionUno.getId());
+
         List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
         List<DegreeResult> results = ubicacionService.incomingDegreeOf(ubicaciones.stream().map(Ubicacion::getId).toList());
-        assertEquals(1,results.getFirst().degree()); // hay 3 nodos,  tiene conectado 2 entrates nodos => 2 / 3 -1 => 2 / 2 = 1
-        assertEquals(0,results.get(1).degree()); // hay 3 nodos, ubicacion2 tiene conectado 0 entrates nodos => 0 / 3 -1 => 0
-        assertEquals(0,results.get(2).degree());// hay 3 nodos, ubicacion3 tiene conectado 0 entrates nodos => 0 / 3 -1 => 0
+
+        assertEquals(ubicacionUno.getId(), results.getFirst().ubicacion().getId());
+        assertTrue(Objects.equals(ubicacionDos.getId(), results.get(1).ubicacion().getId())
+                || Objects.equals(ubicacionTres.getId(), results.get(1).ubicacion().getId()));
+        assertTrue(Objects.equals(ubicacionTres.getId(), results.get(2).ubicacion().getId())
+                || Objects.equals(ubicacionDos.getId(), results.get(2).ubicacion().getId()));
+
+        assertEquals(1,results.getFirst().degree()); // hay 3 nodos, tiene conectado 2 entrantes nodos => 2 / 3 -1 => 2 / 2 = 1
+        assertEquals(0,results.get(1).degree()); // hay 3 nodos, tiene conectado 0 entrantes nodos => 0 / 3 -1 => 0
+        assertEquals(0,results.get(2).degree());// hay 3 nodos, tiene conectado 0 entrantes nodos => 0 / 3 -1 => 0
     }
 
     @Test
@@ -559,12 +636,20 @@ public class UbicacionServiceTest {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
+
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
         this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+
         List<Ubicacion> ubicaciones = ubicacionService.recuperarTodos();
         List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ubicaciones.
                 stream().
                 map(Ubicacion::getId).toList());
+
+        assertEquals(ubicacionUno.getId(), results.getFirst().ubicacion().getId());
+        assertTrue(Objects.equals(ubicacionDos.getId(), results.get(1).ubicacion().getId())
+                || Objects.equals(ubicacionTres.getId(), results.get(1).ubicacion().getId()));
+        assertTrue(Objects.equals(ubicacionTres.getId(), results.get(2).ubicacion().getId())
+                || Objects.equals(ubicacionDos.getId(), results.get(2).ubicacion().getId()));
 
         assertEquals(1,results.getFirst().degree());// hay 3 nodos, el mayor tiene conectado 2 salientes nodos => 2 / 3 -1 => 2 / 2 = 1
         assertEquals(0.0,results.get(1).degree());  // hay 3 nodos, el segundo tiene conectado 0 salientes nodos => 0 / 3 -1 => 0
@@ -574,9 +659,9 @@ public class UbicacionServiceTest {
 
 
     @Test
-    void alCargarMuchosDatosAleatoriosAlgunoTieneDegreeMayorACero() throws IOException {
+    void alCargarMuchosDatosAleatoriosConConexionesAlgunoTieneOutgoingDegreeMayorACero() throws IOException {
         ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
-        ClassPathResource nodeConPath = new ClassPathResource("cypher/randomMatcherNeo4J.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/randomConnect.cypher");
 
         String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
         String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
@@ -586,40 +671,75 @@ public class UbicacionServiceTest {
 
         List<Long> ids = LongStream.rangeClosed(1,100).boxed().toList();
         List<DegreeResult> results = ubicacionService.outgoingDegreeOf(ids);
-        List<DegreeResult> conDegree = results.stream().
-                filter(degree -> degree.degree() > 0.0).toList();
 
-
-        assertFalse(conDegree.isEmpty());
+        assertTrue(results.stream().anyMatch(r -> r.degree() > 0.0));
 
     }
 
     @Test
-    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityACincoUbicacionesDiferentes() {
+    void alCargarMuchosDatosAleatoriosConConexionesAlgunoTieneIncomingDegreeMayorACero() throws IOException {
+        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/randomConnect.cypher");
+
+        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+
+        neo4jClient.query(cypherNodeGen).run();
+        neo4jClient.query(cypherNodeCon).run();
+
+        List<Long> ids = LongStream.rangeClosed(1,100).boxed().toList();
+        List<DegreeResult> results = ubicacionService.incomingDegreeOf(ids);
+
+        assertTrue(results.stream().anyMatch(r -> r.degree() > 0.0));
+
+    }
+
+    @Test
+    void alNoHaberUbicacionesEnNeoClosenessCentralityDevuelveVacio(){
+        List<Long> ids = new ArrayList<>();
+        List<ClosenessResult> results = ubicacionService.closenessOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alUsarUbicacionesInexistentesClosenessCentralityDevuelveVacio(){
+        List<Long> ids = Arrays.asList(1L,2L,3L);
+        List<ClosenessResult> results = ubicacionService.closenessOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void alHaberUbicacionesEnNeoPeroNoPedirNingunaEnClosenessCentralityDevuelveVacio(){
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.crear(this.ubicacionTres);
-        this.ubicacionService.crear(this.ubicacionCuatro);
-        this.ubicacionService.crear(this.ubicacionCinco);
+
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(),this.ubicacionUno.getId());
-        this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionUno.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCuatro.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionDos.getId(), this.ubicacionCinco.getId());
-        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionDos.getId());
-        this.ubicacionService.conectar(this.ubicacionTres.getId(), this.ubicacionCuatro.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionTres.getId());
-        this.ubicacionService.conectar(this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
-        this.ubicacionService.conectar(this.ubicacionCinco.getId(), this.ubicacionCuatro.getId());
-        List<Long> ids = List.of(this.ubicacionUno.getId(), this.ubicacionDos.getId(), this.ubicacionTres.getId(), this.ubicacionCuatro.getId(), this.ubicacionCinco.getId());
+        this.ubicacionService.conectar(this.ubicacionUno.getId(),this.ubicacionTres.getId());
+
+        List<Long> ids = new ArrayList<>();
+        List<ClosenessResult> results = ubicacionService.closenessOf(ids);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentralityACincoUbicacionesDiferentes() throws IOException {
+
+        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGeneratorOf5.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/connectOf5.cypher");
+
+        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+
+        neo4jClient.query(cypherNodeGen).run();
+        neo4jClient.query(cypherNodeCon).run();
+
+        List<Long> ids = List.of(1L,2L,3L,4L,5L);
 
         List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
 
-        assertEquals(this.ubicacionDos.getId(), resultados.get(0).ubicacion().getId());
+        assertEquals(2, resultados.get(0).ubicacion().getId());
+
         assertEquals(0.25, resultados.get(0).closeness());
         assertEquals(0.2, resultados.get(1).closeness());
         assertEquals(0.2, resultados.get(2).closeness());
@@ -628,7 +748,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentrailityAUnaUbicacionConectadaAOtraNoConsiderada() {
+    public void seObtieneLosResultadosDeAplicarElAlgoritmoDeClosenessCentralityAUnaUbicacionConectadaAOtraNoConsiderada() {
         this.ubicacionService.crear(this.ubicacionUno);
         this.ubicacionService.crear(this.ubicacionDos);
         this.ubicacionService.conectar(this.ubicacionUno.getId(), this.ubicacionDos.getId());
@@ -647,6 +767,24 @@ public class UbicacionServiceTest {
         List<ClosenessResult> resultados = this.ubicacionService.closenessOf(ids);
 
         assertTrue(resultados.isEmpty());
+    }
+
+    @Test
+    void alCargarMuchosDatosAleatoriosConConexionesAlgunoTieneClosenessCentralityMayorACero() throws IOException {
+        ClassPathResource nodeGenPath = new ClassPathResource("cypher/nodeGenerator.cypher");
+        ClassPathResource nodeConPath = new ClassPathResource("cypher/randomConnect.cypher");
+
+        String cypherNodeGen = new String(nodeGenPath.getInputStream().readAllBytes());
+        String cypherNodeCon = new String(nodeConPath.getInputStream().readAllBytes());
+
+        neo4jClient.query(cypherNodeGen).run();
+        neo4jClient.query(cypherNodeCon).run();
+
+        List<Long> ids = LongStream.rangeClosed(1,100).boxed().toList();
+        List<ClosenessResult> results = ubicacionService.closenessOf(ids);
+
+        assertTrue(results.stream().anyMatch(r -> r.closeness() > 0.0));
+
     }
 
     @AfterEach
