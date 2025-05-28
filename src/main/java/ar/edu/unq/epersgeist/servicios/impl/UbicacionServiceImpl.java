@@ -74,7 +74,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         Optional<Ubicacion> optionalUbicacionDestino = this.ubicacionRepository.recuperar(idDestino);
 
         if(optionalUbicacionOrigen.isEmpty()) return;
-        if(optionalUbicacionDestino.isEmpty()) throw new EntidadInexistenteException("La ubicación destino no existe.");;
+        if(optionalUbicacionDestino.isEmpty()) throw new EntidadInexistenteException("La ubicación destino no existe.");
 
         ubicacionRepository.conectar(idOrigen, idDestino);
 
