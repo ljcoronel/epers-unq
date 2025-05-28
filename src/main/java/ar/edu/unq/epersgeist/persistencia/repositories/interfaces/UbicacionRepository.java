@@ -1,7 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.CentralityResultDTO;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,8 @@ public interface UbicacionRepository {
 
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
 
-    List<CentralityResultDTO> closenessOf(List<Long> ids);
-    List<CentralityResultDTO> outgoingDegreeOf(List<Long> ids);
-    List<CentralityResultDTO> incomingDegreeOf(List<Long> ids);
+    List<ClosenessResult> closenessOf(List<Long> ids);
+    List<DegreeResult> outgoingDegreeOf(List<Long> ids);
+    List<DegreeResult> incomingDegreeOf(List<Long> ids);
 
 }
