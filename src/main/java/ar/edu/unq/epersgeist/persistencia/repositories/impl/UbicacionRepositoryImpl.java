@@ -1,14 +1,13 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
+import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.CentralityResultDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -109,18 +108,24 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public List<CentralityResultDTO> closenessOf(List<Long> ids) {
-        return this.ubicacionDaoNeo.closenessOf(ids);
+    public List<ClosenessResult> closenessOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.closenessOf(ids).stream()
+                .map(ClosenessResult::registrar)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<CentralityResultDTO> outgoingDegreeOf(List<Long> ids) {
-        return this.ubicacionDaoNeo.outgoingDegreeOf(ids);
+    public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.outgoingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<CentralityResultDTO> incomingDegreeOf(List<Long> ids) {
-        return this.ubicacionDaoNeo.incomingDegreeOf(ids);
+    public List<DegreeResult> incomingDegreeOf(List<Long> ids) {
+        return this.ubicacionDaoNeo.incomingDegreeOf(ids).stream()
+                .map(DegreeResult::registrar)
+                .collect(Collectors.toList());
     }
 
 }

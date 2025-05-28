@@ -13,11 +13,8 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -125,22 +122,16 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public List<ClosenessResult> closenessOf(List<Long> ids) {
-        return this.ubicacionRepository.closenessOf(ids).stream()
-                .map(ClosenessResult::registrar)
-                .collect(Collectors.toList());
+        return this.ubicacionRepository.closenessOf(ids);
     }
 
     @Override
     public List<DegreeResult> incomingDegreeOf(List<Long> ids) {
-        return this.ubicacionRepository.incomingDegreeOf(ids).stream()
-                .map(DegreeResult::registrar).toList();
+        return this.ubicacionRepository.incomingDegreeOf(ids);
     }
 
     @Override
     public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
-        return this.ubicacionRepository.outgoingDegreeOf(ids).stream()
-                .map(DegreeResult::registrar).toList();
+        return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
-
-
 }
