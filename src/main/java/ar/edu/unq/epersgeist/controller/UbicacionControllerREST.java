@@ -111,7 +111,7 @@ public final class UbicacionControllerREST {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/centrality/DegreeOf/outcoming")
+    @GetMapping("/centrality/DegreeOf/outgoing")
     public ResponseEntity<List<CentralityResponseDTO>> outcomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
         return ResponseEntity.ok(this.ubicacionService.outgoingDegreeOf(ids).stream()
                 .map(CentralityResponseDTO::resultadoDegree)
