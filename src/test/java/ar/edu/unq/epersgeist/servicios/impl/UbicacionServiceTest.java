@@ -376,10 +376,30 @@ public class UbicacionServiceTest {
     }
 
     @Test
+    public void unaUbicacionOrigenNoEstaConectadaConOtraInexistenteDestino() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertFalse(ubicacionService.estanConectadas(ubicacion1.getId(), -1L));
+    }
+
+    @Test
+    public void unaUbicacionDestinoNoEstaConectadaConOtraInexistenteOrigen() {
+        Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
+
+        assertFalse(ubicacionService.estanConectadas(-1L, ubicacion1.getId()));
+    }
+
+    @Test
     public void unaUbicacionEstaConectadaConsigoMisma() {
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
 
         assertTrue(ubicacionService.estanConectadas(ubicacion1.getId(), ubicacion1.getId()));
+    }
+
+    @Test
+    public void unaUbicacionQueNoExisteNoEstaConectadaConLaMismaQueNoExiste() {
+
+        assertFalse(ubicacionService.estanConectadas(-1L, -1L));
     }
 
     @Test
@@ -403,7 +423,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void alBuscarElCaminoMasCortoEntreDosUbicacionesQueNoEstanConectadasDeNingunaFormaRetornaUnaExepcion(){
+    public void alBuscarElCaminoMasCortoEntreDosUbicacionesQueNoEstanConectadasDeNingunaFormaRetornaUnaExcepcion(){
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
         Ubicacion ubicacion2 = this.ubicacionService.crear(ubicacionDos);
 
@@ -419,7 +439,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void alBuscarElCaminoMasCortoConUnaUBicacionOrigenQueNoExisteRetornaNull(){
+    public void alBuscarElCaminoMasCortoConUnaUbicacionOrigenQueNoExisteRetornaNull(){
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
 
         assertNull(ubicacionService.caminoMasCorto(-1L,ubicacion1.getId()));
@@ -427,7 +447,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void alBuscarElCaminoMasCortoConUnaUBicacionDestinoQueNoExisteRetornaExeption(){
+    public void alBuscarElCaminoMasCortoConUnaUbicacionDestinoQueNoExisteRetornaException(){
         Ubicacion ubicacion1 = this.ubicacionService.crear(ubicacionUno);
 
         assertThrows(EntidadInexistenteException.class, () -> ubicacionService.caminoMasCorto(ubicacion1.getId(),-1L));
