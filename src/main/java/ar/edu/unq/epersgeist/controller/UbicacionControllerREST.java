@@ -97,7 +97,7 @@ public final class UbicacionControllerREST {
                 .collect(Collectors.toSet()));
     }
 
-    @GetMapping("/centrality/closenessOf")
+    @GetMapping("/centrality/ClosenessOf")
     public ResponseEntity<List<CentralityResponseDTO>> closenessOf(@RequestParam(required = false) List<Long> ids) {
         return ResponseEntity.ok(this.ubicacionService.closenessOf(ids).stream()
                 .map(CentralityResponseDTO::resultadoCloseness)
@@ -111,7 +111,7 @@ public final class UbicacionControllerREST {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/centrality/DegreeOf/outcoming")
+    @GetMapping("/centrality/DegreeOf/outgoing")
     public ResponseEntity<List<CentralityResponseDTO>> outcomingDegreeOf(@RequestParam(required = false) List<Long> ids) {
         return ResponseEntity.ok(this.ubicacionService.outgoingDegreeOf(ids).stream()
                 .map(CentralityResponseDTO::resultadoDegree)

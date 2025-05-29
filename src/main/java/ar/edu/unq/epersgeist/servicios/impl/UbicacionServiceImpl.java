@@ -100,11 +100,11 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Boolean estanConectadas(Long idOrigen, Long idDestino) {
-        return Boolean.valueOf(ubicacionRepository.estanConectadas(idOrigen, idDestino));
+        return ubicacionRepository.estanConectadas(idOrigen, idDestino);
     }
 
     private Boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
-        return Boolean.valueOf(ubicacionRepository.estanConectadasDeAlgunModo(idOrigen, idDestino));
+        return ubicacionRepository.estanConectadasDeAlgunModo(idOrigen, idDestino);
     }
 
     private void verificarSiLasUbicacionesEstanConectadas(Long idOrigen, Long idDestino){
