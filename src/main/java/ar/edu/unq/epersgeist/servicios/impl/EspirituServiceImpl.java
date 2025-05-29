@@ -12,7 +12,6 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituReposi
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
-import lombok.Getter;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +77,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-        if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
+        if (pagina < 1) throw new ParametroIncorrectoException("El valor página debe ser positivo o 1.");
         if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
         return this.espirituRepository.espiritusDemoniacos(direccion, pagina, cantidadPorPagina);
     }

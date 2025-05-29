@@ -32,7 +32,7 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        if (this.ubicacionRepository.ubicacionConNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         return this.ubicacionRepository.guardar(ubicacion);
     }
 
@@ -43,14 +43,18 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        if (this.ubicacionRepository.ubicacionConNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         this.ubicacionRepository.actualizar(ubicacion);
     }
 
     @Override
     public void eliminar(Long id) {
-        if (ubicacionRepository.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
+        if (this.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
         this.ubicacionRepository.eliminar(id);
+    }
+
+    private boolean esReferenciado(Long id) {
+        return this.espirituRepository.referenciaAUbicacion(id) || this.mediumRepository.referenciaAUbicacion(id);
     }
 
     @Override

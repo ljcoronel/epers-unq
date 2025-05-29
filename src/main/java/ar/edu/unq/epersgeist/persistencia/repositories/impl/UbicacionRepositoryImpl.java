@@ -26,8 +26,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public boolean existeNombre(String nombre, Long unId) {
-        return this.ubicacionDaoJpa.existeNombre(nombre, unId);
+    public boolean ubicacionConNombre(String nombre, Long unId) {
+        return this.ubicacionDaoJpa.ubicacionConNombre(nombre, unId);
     }
 
 
@@ -49,7 +49,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Ubicacion guardar(Ubicacion ubicacion) {
         UbicacionJPADTO ubicacionJpa = UbicacionJPADTO.desdeModelo(ubicacion);
-        Ubicacion ubicacionConId = this.ubicacionDaoJpa.save(ubicacionJpa).aModelo(ubicacion);
+        Ubicacion ubicacionConId = this.ubicacionDaoJpa.crear(ubicacionJpa).aModelo(ubicacion);
 
         UbicacionNEODTO ubicacionNeo = UbicacionNEODTO.desdeModelo(ubicacionConId);
         this.ubicacionDaoNeo.save(ubicacionNeo);
@@ -59,17 +59,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return ubicacionDaoJpa.findById(id).map(UbicacionJPADTO::aModelo);
+        return ubicacionDaoJpa.recuperar(id).map(UbicacionJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
         ubicacionDaoNeo.deleteById(id);
-        this.ubicacionDaoJpa.deleteById(id);
-    }
-
-    public boolean esReferenciado(Long id) {
-        return this.ubicacionDaoJpa.esReferenciado(id);
+        this.ubicacionDaoJpa.eliminar(id);
     }
 
     @Override
@@ -84,7 +80,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
+        return List.copyOf(this.ubicacionDaoJpa.recuperarTodos().stream().map(UbicacionJPADTO::aModelo).toList());
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
@@ -98,6 +94,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     public boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino) {
         return ubicacionDaoNeo.estanConectadasDeAlgunModo(idOrigen, idDestino);
+    }
+
+    @Override
+    public Ubicacion santuarioCorrupto() {
+        if(this.ubicacionDaoJpa.santuarioCorrupto() == null) return null;
+        return this.ubicacionDaoJpa.santuarioCorrupto().aModelo();
     }
 
     @Override

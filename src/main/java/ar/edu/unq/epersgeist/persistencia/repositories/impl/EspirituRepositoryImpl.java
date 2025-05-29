@@ -5,8 +5,6 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
@@ -30,25 +28,25 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     @Override
     public Espiritu guardar(Espiritu espiritu) {
         EspirituJPADTO espirituJpa = EspirituJPADTO.desdeModelo(espiritu);
-        Espiritu espirituConId = this.espirituDAOJPA.save(espirituJpa).aModelo(espiritu);
+        Espiritu espirituConId = this.espirituDAOJPA.crear(espirituJpa).aModelo(espiritu);
         return espirituConId;
     }
 
     @Override
     public Optional<Espiritu> recuperar(Long id) {
-        Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
+        Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.recuperar(id);
 
         return optionalEspirituJPADTO.map(EspirituJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-        espirituDAOJPA.deleteById(id);
+        espirituDAOJPA.eliminar(id);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return this.espirituDAOJPA.findAll().stream().map(EspirituJPADTO::aModelo).toList();
+        return this.espirituDAOJPA.recuperarTodos().stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
@@ -58,11 +56,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-       return this.espirituDAOJPA.findAll
-                       (Example.of
-                               (EspirituJPADTO.desdeModelo(new Demonio())),
-                               PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
-                                .map(dto -> (Demonio) dto.aModelo()).toList();
+       return this.espirituDAOJPA.espiritusDemoniacos(direccion, pagina, cantidadPorPagina).stream()
+               .map(dto -> (Demonio) dto.aModelo()).toList();
     }
 
     @Override
@@ -76,13 +71,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public Long santuarioCorrupto() {
-        return this.espirituDAOJPA.santuarioCorrupto();
-    }
-
-    @Override
     public int cantidadTotalDeDemonios(Long idSantuario) {
-        return this.espirituDAOJPA.cantidadTotalDeDemonios(idSantuario);
+        return this.espirituDAOJPA.cantidadTotalDeDemoniosEn(idSantuario);
     }
 
     @Override
@@ -96,7 +86,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public boolean referencia(Long id) {
-        return this.espirituDAOJPA.referencia(id);
+    public boolean referenciaAMedium(Long id) {
+        return this.espirituDAOJPA.referenciaAMedium(id);
+    }
+
+    @Override
+    public boolean referenciaAUbicacion(Long id) {
+        return this.espirituDAOJPA.referenciaAUbicacion(id);
     }
 }

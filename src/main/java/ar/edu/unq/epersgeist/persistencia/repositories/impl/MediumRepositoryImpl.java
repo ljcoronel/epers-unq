@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public class MediumRepositoryImpl implements MediumRepository {
+
     private final MediumDAOJPA mediumDAOJPA;
 
     public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
@@ -25,24 +26,24 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPA = MediumJPADTO.desdeModelo(medium);
-        Medium mediumConId = this.mediumDAOJPA.save(mediumJPA).aModelo(medium);
+        Medium mediumConId = this.mediumDAOJPA.crear(mediumJPA).aModelo(medium);
         return mediumConId;
     }
 
     @Override
     public Optional<Medium> recuperar(Long id) {
-        Optional<MediumJPADTO> optionalMediumJPADTO = this.mediumDAOJPA.findById(id);
+        Optional<MediumJPADTO> optionalMediumJPADTO = this.mediumDAOJPA.recuperar(id);
         return optionalMediumJPADTO.map(MediumJPADTO::aModelo);
     }
 
     @Override
     public void eliminar(Long id) {
-        this.mediumDAOJPA.deleteById(id);
+        this.mediumDAOJPA.eliminar(id);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
-        return this.mediumDAOJPA.findAll().stream().map(MediumJPADTO::aModelo).toList();
+        return this.mediumDAOJPA.recuperarTodos().stream().map(MediumJPADTO::aModelo).toList();
     }
 
     @Override
@@ -51,7 +52,13 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     @Override
-    public Long mediumConMasDemonios(Long idSantuario) {
-        return this.mediumDAOJPA.mediumConMasDemonios(idSantuario);
+    public Medium mediumConMasDemoniosEn(Long idSantuario) {
+        if (this.mediumDAOJPA.mediumConMasDemoniosEn(idSantuario) == null) return null;
+        return this.mediumDAOJPA.mediumConMasDemoniosEn(idSantuario).aModelo();
+    }
+
+    @Override
+    public boolean referenciaAUbicacion(Long ubicacionId) {
+        return this.mediumDAOJPA.referenciaAUbicacion(ubicacionId);
     }
 }

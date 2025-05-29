@@ -13,20 +13,14 @@ public interface UbicacionRepository {
     Optional<Ubicacion> recuperar(Long id);
     void eliminar(Long id);
     List<Ubicacion> recuperarTodos();
-
-    boolean existeNombre(String nombre, Long id);
-    boolean esReferenciado(Long id);
-
+    boolean ubicacionConNombre(String nombre, Long id);
+    Ubicacion santuarioCorrupto();
     boolean estanConectadas(Long idOrigen, Long idDestino);
     void conectar(Long idOrigen, Long idDestino);
-
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
     boolean estanConectadasDeAlgunModo(Long idOrigen, Long idDestino);
-
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
-
     List<ClosenessResult> closenessOf(List<Long> ids);
     List<DegreeResult> outgoingDegreeOf(List<Long> ids);
     List<DegreeResult> incomingDegreeOf(List<Long> ids);
-
 }

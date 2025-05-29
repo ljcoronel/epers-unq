@@ -282,7 +282,7 @@ public class EspirituServiceImplTest {
 
         // hay 3 en total, 2 son ángeles y 1 es demonio
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
 
         assertEquals(2, demonios.size());
 
@@ -293,7 +293,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         espirituService.crear(angel1);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 2);// agarro sólo los demonios
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 1, 2);// agarro sólo los demonios
 
         assertTrue(demonios.isEmpty());
 
@@ -310,7 +310,7 @@ public class EspirituServiceImplTest {
         //  2 3 1
 
         List<Long> demoniosIds =
-                espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
+                espirituService.espiritusDemoniacos(Sort.Direction.DESC, 1, 3)
                 .stream().map(Espiritu::getId).toList();
 
 
@@ -331,7 +331,7 @@ public class EspirituServiceImplTest {
         List<Long> expected = Arrays.asList(demonio1.getId(), demonio3.getId(), demonio2.getId());
         //  1 3 2
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 3)
                                     .stream().map(Espiritu::getId).toList();
 
         assertEquals(expected, demoniosIds);
@@ -366,7 +366,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
 
         assertEquals(2, demonios.size());
 
@@ -379,7 +379,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 2, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -396,7 +396,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 5);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 2, 5);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -414,7 +414,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.crear(demonio3);
 
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 2);
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 2, 2);
 
         //dem 1 -> pag 0
         //dem 2 -> pag 0
@@ -440,7 +440,7 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 1, 3)
                                     .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio2.getId(), demonio3.getId());
@@ -466,7 +466,7 @@ public class EspirituServiceImplTest {
 
         // el orden por inserción es: 1, 2, 3, 4
 
-        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 3)
+        List<Long> demoniosIds = espirituService.espiritusDemoniacos(Sort.Direction.ASC, 1, 3)
                                     .stream().map((Demonio::getId)).toList();
 
         List<Long> demoniosIdsEsperados = Arrays.asList(demonio4.getId(), demonio1.getId(), demonio3.getId());

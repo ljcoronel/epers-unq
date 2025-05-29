@@ -62,7 +62,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public void eliminar(Long idDelMedium) {
-        if (this.espirituRepository.referencia(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
+        if (this.espirituRepository.referenciaAMedium(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
         mediumRepository.eliminar(idDelMedium);
     }
 

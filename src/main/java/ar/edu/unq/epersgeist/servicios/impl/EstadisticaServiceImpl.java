@@ -27,19 +27,15 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     @Override
     public ReporteSantuarioMasCorrupto santuarioCorrupto() {
         ReporteSantuarioMasCorrupto reporte = new ReporteSantuarioMasCorrupto();
-        Long idSantuario = this.espirituRepository.santuarioCorrupto();
-        if (idSantuario == null) return reporte;
+        Ubicacion santuario = this.ubicacionRepository.santuarioCorrupto();
+        if (santuario == null) return reporte;
 
-        Ubicacion ubicacion = this.ubicacionRepository.recuperar(idSantuario).get();
+        Medium medium = this.mediumRepository.mediumConMasDemoniosEn(santuario.getId());
 
-        Long idMedium = this.mediumRepository.mediumConMasDemonios(idSantuario);
-
-        Medium medium = (idMedium != null) ? mediumRepository.recuperar(idMedium).orElse(null) : null;
-
-        reporte.setNombreSantuario(ubicacion.getNombre());
+        reporte.setNombreSantuario(santuario.getNombre());
         reporte.setMedium(medium);
-        reporte.setCantidadDeDemonios(this.espirituRepository.cantidadTotalDeDemonios(idSantuario));
-        reporte.setCantidadDeDemoniosLibres(this.espirituRepository.cantidadDeDemoniosLibresEn(idSantuario));
+        reporte.setCantidadDeDemonios(this.espirituRepository.cantidadTotalDeDemonios(santuario.getId()));
+        reporte.setCantidadDeDemoniosLibres(this.espirituRepository.cantidadDeDemoniosLibresEn(santuario.getId()));
         return reporte;
     }
 

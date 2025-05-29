@@ -124,6 +124,18 @@ public class EstadisticaServiceImplTest {
         assertEquals(0,reporte.getCantidadDeDemoniosLibres());
     }
 
+    @Test
+    public void seObtieneUnReporteCuandoNoHayMediums() {
+        this.ubicacionService.crear(this.ubicacion);
+        this.espirituService.crear(this.demonio1);
+        ReporteSantuarioMasCorrupto reporte = this.estadisticaService.santuarioCorrupto();
+
+        assertEquals("Bernal",reporte.getNombreSantuario());
+        assertNull(reporte.getMedium());
+        assertEquals(1,reporte.getCantidadDeDemonios());
+        assertEquals(1,reporte.getCantidadDeDemoniosLibres());
+    }
+
     @AfterEach
     void eliminarModelo() {
         testService.eliminarEspiritus();

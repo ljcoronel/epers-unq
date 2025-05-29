@@ -12,6 +12,6 @@ public interface MediumRepository {
     void eliminar(Long id);
     List<Medium> recuperarTodos();
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
-
-    Long mediumConMasDemonios(Long idSantuario);
+    Medium mediumConMasDemoniosEn(Long idSantuario);
+    boolean referenciaAUbicacion(Long id);
 }
