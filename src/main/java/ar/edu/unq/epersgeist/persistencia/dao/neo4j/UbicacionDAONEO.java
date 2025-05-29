@@ -17,13 +17,15 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
    void actualizar(@Param("unaId") Long id, @Param("unNombre") String nombre, @Param("cantEnergia") int energia);
 
    @Query("""
-           RETURN EXISTS {((origen:UBICACION {id: $idOrigen}) -[:CONECTADA]-> (destino:UBICACION {id: $idDestino}))}
+           OPTIONAL MATCH (origen:UBICACION {id: $idOrigen}), (destino:UBICACION {id: $idDestino})
+           RETURN EXISTS { MATCH (origen)-[:CONECTADA]->(destino) }
+           OR (origen IS NOT NULL AND destino IS NOT NULL AND origen = destino)
            """)
    boolean estanConectadas(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
 
    @Query("""
-           MATCH (origen:UBICACION{id:$idOrigen})
-           MATCH (destino:UBICACION) WHERE destino.id = $idDestino AND destino.id <> origen.id
+           MATCH (origen:UBICACION{id:$idOrigen}),
+           (destino:UBICACION) WHERE destino.id = $idDestino AND destino.id <> origen.id
            MERGE (origen)-[:CONECTADA]->(destino)
            """)
    void conectar(@Param("idOrigen") Long idOrigen, @Param("idDestino") Long idDestino);
