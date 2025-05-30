@@ -1,24 +1,29 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateEspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateMediumDAO;
-import ar.edu.unq.epersgeist.persistencia.dao.impl.HibernateUbicacionDAO;
-import ar.edu.unq.epersgeist.servicios.UbicacionService;
-import ar.edu.unq.epersgeist.servicios.runner.HibernateTransactionRunner;
+import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
+import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
+import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
-    private final HibernateUbicacionDAO ubicacionDAO;
-    private final HibernateEspirituDAO espirituDAO;
-    private final HibernateMediumDAO mediumDAO;
+    private final UbicacionDAO ubicacionDAO;
+    private final EspirituDAO espirituDAO;
+    private final MediumDAO mediumDAO;
 
-    public UbicacionServiceImpl(HibernateUbicacionDAO ubicacionDAO, HibernateEspirituDAO espirituDAO, HibernateMediumDAO mediumDAO) {
+    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
         this.ubicacionDAO = ubicacionDAO;
         this.espirituDAO = espirituDAO;
         this.mediumDAO = mediumDAO;
@@ -26,42 +31,42 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        return HibernateTransactionRunner.runTrx(() -> this.ubicacionDAO.crear(ubicacion));
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        return this.ubicacionDAO.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return HibernateTransactionRunner.runTrx(() -> this.ubicacionDAO.recuperar(id));
+        return this.ubicacionDAO.findById(id);
     }
 
     @Override
-    public void actualizar(Ubicacion ubicacionUno) {
-        HibernateTransactionRunner.runTrx(() -> {
-            this.ubicacionDAO.actualizar(ubicacionUno);
-            return null;
-        });
+    public void actualizar(Ubicacion ubicacion) {
+        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        this.ubicacionDAO.actualizar(
+                ubicacion.getId(),
+                ubicacion.getNombre(),
+                ubicacion.getEnergia());
     }
 
     @Override
     public void eliminar(Long id) {
-        HibernateTransactionRunner.runTrx(() -> {
-            this.ubicacionDAO.eliminar(id);
-            return null;
-        });
+        if (this.ubicacionDAO.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
+        this.ubicacionDAO.deleteById(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return HibernateTransactionRunner.runTrx(this.ubicacionDAO::recuperarTodos);
+        return List.copyOf(this.ubicacionDAO.findAll());
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return HibernateTransactionRunner.runTrx(() -> this.espirituDAO.espiritusEn(ubicacionId));
+        return this.espirituDAO.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return HibernateTransactionRunner.runTrx(() -> this.mediumDAO.mediumsSinEspiritusEn(ubicacionId));
+        return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
     }
 }

@@ -1,40 +1,70 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
 
 @Entity
-// singletable, por el momento tiene sentido porque ambos tipos de espíritu sólo cambian en comportamiento, se mantiene la misma estructura.
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Espiritu implements Serializable {
+@EntityListeners(AuditingEntityListener.class)
+// agregamos una constraint compuesta para validar que no alla nombres de espiritus "activos" repetidos
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "nombre", "deleted" }) })
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted is null")
+public abstract class Espiritu implements Serializable,EfectosDeUbicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    @Check(name = "valoresValidosDeConexion", constraints = "nivelDeConexion BETWEEN 0 AND 100")
+    @Check(name = "valoresValidosDeConexion", constraints = "nivel_de_conexion BETWEEN 0 AND 100")
     private Integer nivelDeConexion;
-    @Column(nullable = false, unique = true, length = 50)
+    //como usamos soft delete, la validacion de nombre unico la hacemos con una query para verificar
+    // que no haya un nombre existente que pertenezca a un espiritu que NO fue borrado
+    @Column(length = 50, nullable = false)
     private String nombre;
     @ManyToOne
     private Medium medium;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Ubicacion ubicacion;
+
+    private Date deleted =  null;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
@@ -50,6 +80,11 @@ public abstract class Espiritu implements Serializable {
         this.ubicacion = ubicacion;
     }
 
+    public Espiritu(int nivelDeConexion, String nombre) {
+        this.nombre = nombre;
+        setNivelDeConexion(nivelDeConexion);
+    }
+
 
     public void aumentarNivelDeConexionEn(int cantConexion) {
         this.setNivelDeConexion(this.getNivelDeConexion() + cantConexion);
@@ -58,10 +93,11 @@ public abstract class Espiritu implements Serializable {
     public void reducirNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
         setNivelDeConexion(nivel - i);
+        if (this.getNivelDeConexion() == 0) this.desvincularseDeMedium();
     }
 
-    private void setNivelDeConexion(int i) {
-        if (i < 0) {
+    public void setNivelDeConexion(int i) {
+        if (i <= 0) {
             this.nivelDeConexion = 0;
         } else if (i > 100) {
             this.nivelDeConexion = 100;
@@ -77,16 +113,11 @@ public abstract class Espiritu implements Serializable {
 
     protected void recibirDamage(int ataque){
         this.reducirNivelDeConexionEn(ataque);
-        if(this.getNivelDeConexion()==0){
-            this.desvincularseDeMedium();
-        }
 
     }
 
     private void desvincularseDeMedium(){
-
         medium.desvincularseDeEspiritu(this);
-
         this.setMedium(null);
     }
 
@@ -103,13 +134,16 @@ public abstract class Espiritu implements Serializable {
         if (this.estaLibre()) this.ubicacion = ubicacion;
     }
 
-    public void moverConMediumHacia(Medium medium, Ubicacion ubicacion) {
-        if (this.getMedium() == medium) {
+    public void moverConMediumHacia(Ubicacion ubicacion) {
+
+            ubicacion.recibir(this);
             this.ubicacion = ubicacion;
-        }
+
     }
 
-    public void conectarConMedium(Medium medium) {
+    public void conectarConMedium(Optional<Medium> optionalMedium) {
+        Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("No se encontró al Médium"));
+
         verificarMediumEnMismaUbicacion(medium);
         verificarEspirituLibre();
 
@@ -121,7 +155,7 @@ public abstract class Espiritu implements Serializable {
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
-        if (!(this.getUbicacion() == medium.getUbicacion())){
+        if (!(Objects.equals(this.getUbicacion().getId(), medium.getUbicacion().getId()))){
             throw new UbicacionDistintaException(this, medium);
         }
     }
@@ -140,4 +174,15 @@ public abstract class Espiritu implements Serializable {
 
     abstract public void desconectarDeMedium(Medium medium);
 
-}
+    public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium);
+
+    public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium);
+
+    @Override
+    public void recibirEfectoDe(Cementerio ubicacion) {}
+
+    @Override
+    public void recibirEfectoDe(Santuario ubicacion) {}
+
+
+    }

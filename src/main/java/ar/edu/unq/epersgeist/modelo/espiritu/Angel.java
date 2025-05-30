@@ -1,27 +1,31 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.Ubicacion;
-import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
+import ar.edu.unq.epersgeist.modelo.EfectosDeUbicacion;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter @Setter @NoArgsConstructor @ToString
 
 @Entity
-public class Angel extends Espiritu {
-    public Angel(String nombre, Ubicacion ubicacion) {
-        super(nombre, ubicacion);
-    }
-
+@SQLDelete(sql = "update espiritu set deleted = current_timestamp  where id =?")
+@Where(clause = "deleted is null")
+public class Angel extends Espiritu implements EfectosDeUbicacion {
     public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, ubicacion);
     }
 
-
+    public Angel(int nivelDeConexion, String nombre) {
+        super(nivelDeConexion, nombre);
+    }
 
     public void atacar(Demonio demonio) {
 
@@ -38,6 +42,22 @@ public class Angel extends Espiritu {
     @Override
     public void desconectarDeMedium(Medium medium) {
         medium.quitarDeAngeles(this);
+    }
+
+    @Override
+    public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(santuario);
+    }
+
+    @Override
+    public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {}
+
+    @Override
+    public void recibirEfectoDe(Cementerio ubicacion) {
+
+        this.reducirNivelDeConexionEn(5);
+
     }
 
 }
