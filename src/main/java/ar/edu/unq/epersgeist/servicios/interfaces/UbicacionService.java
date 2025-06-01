@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.UbicacionMONGODTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,5 +28,12 @@ public interface UbicacionService  {
     List<DegreeResult>incomingDegreeOf(List<Long> ids);
     List<DegreeResult>outgoingDegreeOf(List<Long> ids);
 
+
+    //-------------------------------------------------------------------------------------
+    //----------------prueba de creacion mongo
+
+    public UbicacionMONGODTO guardarEnMongo(UbicacionMONGODTO ubicacion);
+
+    public UbicacionMONGODTO seRecuperarEnMongo(String ubicacionConId);
 
 }

@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -23,6 +24,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
@@ -806,6 +809,29 @@ public class UbicacionServiceTest {
         assertTrue(results.stream().anyMatch(r -> r.closeness() > 0.0));
 
     }
+
+
+//------------------------------------------test para experimentar con mongo ----------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+
+    @Test
+    void seInstancianTresUbicacionesEnMongo() {
+        List <Point> points = List.of(new Point(0,0),new Point(0,50),new Point(50,50),new Point(50,0));
+
+        GeoJsonPolygon territorio =  new GeoJsonPolygon(points);
+
+        UbicacionMONGODTO ubi1 = new UbicacionMONGODTO("Bariloche", territorio);
+
+        UbicacionMONGODTO ubiGuardada = ubicacionService.guardarEnMongo(ubi1);
+
+        UbicacionMONGODTO ubiRecuperada = ubicacionService.seRecuperarEnMongo(ubi1.getId());
+
+        assertEquals(ubiGuardada.getId(), ubiRecuperada.getId());
+    }
+
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+
 
     @AfterEach
     public void tearDown() {

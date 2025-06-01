@@ -4,7 +4,9 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.mongo.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -19,10 +21,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
+    private final UbicacionDAOMongo ubicacionDaoMongo;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMongo ubicacionDaoMongo) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
+        this.ubicacionDaoMongo = ubicacionDaoMongo;
     }
 
     @Override
@@ -126,6 +130,17 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return this.ubicacionDaoNeo.incomingDegreeOf(ids).stream()
                 .map(DegreeResult::registrar)
                 .collect(Collectors.toList());
+    }
+
+    //-------------------------------------------------------------------------------------
+    //----------------prueba de creacion mongo
+
+    public UbicacionMONGODTO guardarUbicacionEnMongo(UbicacionMONGODTO ubicacion){
+        return this.ubicacionDaoMongo.save(ubicacion);
+    }
+
+    public UbicacionMONGODTO seRecuperaUnaUbicacionEnMongo(String ubicacionConId){
+        return this.ubicacionDaoMongo.findById(ubicacionConId).orElse(null);
     }
 
 }

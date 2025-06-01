@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -133,5 +134,16 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
+    }
+
+    //-------------------------------------------------------------------------------------
+    //----------------prueba de creacion mongo
+
+    public UbicacionMONGODTO guardarEnMongo(UbicacionMONGODTO ubicacion){
+        return this.ubicacionRepository.guardarUbicacionEnMongo(ubicacion);
+    }
+
+    public UbicacionMONGODTO seRecuperarEnMongo(String ubicacionConId){
+        return this.ubicacionRepository.seRecuperaUnaUbicacionEnMongo(ubicacionConId);
     }
 }
