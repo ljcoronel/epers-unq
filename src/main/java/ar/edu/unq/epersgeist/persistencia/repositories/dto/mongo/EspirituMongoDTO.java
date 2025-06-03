@@ -34,5 +34,9 @@ public class EspirituMongoDTO {
         return tipo.getMongo(espiritu);
     }
 
+    public Espiritu aModelo(Espiritu espiritu){
+        espiritu.setCoordenada(this.getCoordenada());
+        return espiritu;
+    }
 
 }
