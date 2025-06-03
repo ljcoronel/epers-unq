@@ -77,4 +77,11 @@ public final class EspirituControllerREST {
 
         return ResponseEntity.ok().body(MediumDTOResponse.desdeModelo(medium));
     }
+
+    @PatchMapping("/{espirituDominanteId}/dominar/{espirituADominarId}")
+    public ResponseEntity<Void> dominar(@PathVariable Long espirituDominanteId, @PathVariable Long espirituADominarId) {
+        espirituService.dominar(espirituDominanteId, espirituADominarId);
+
+        return ResponseEntity.ok().body(null);
+    }
 }

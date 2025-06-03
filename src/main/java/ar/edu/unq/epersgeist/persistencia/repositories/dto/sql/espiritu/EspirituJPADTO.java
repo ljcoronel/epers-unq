@@ -59,9 +59,13 @@ public abstract class EspirituJPADTO {
     @LastModifiedDate
     private Date updatedAt;
 
+    @ManyToOne
+    EspirituJPADTO espirituDominante;
+
 
     public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
-        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu); //TODO esto es válido? hay otra manera de dar el dto del tipo correcto?
+        if (espiritu == null) return null;
+        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
         return tipo.getDto(espiritu);
     }
 
@@ -71,8 +75,8 @@ public abstract class EspirituJPADTO {
         nombre = espiritu.getNombre();
         medium = MediumJPADTO.desdeModelo(espiritu.getMedium());
         ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
+        espirituDominante = EspirituJPADTO.desdeModelo(espiritu.getEspirituDominante());
     }
-
 
     public EspirituJPADTO(Espiritu espiritu, MediumJPADTO mediumDTO) {
         id = espiritu.getId();
@@ -80,12 +84,14 @@ public abstract class EspirituJPADTO {
         nombre = espiritu.getNombre();
         medium = mediumDTO;
         ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
+        espirituDominante = EspirituJPADTO.desdeModelo(espiritu.getEspirituDominante());
     }
 
     public Espiritu aModelo() {
         Espiritu espiritu = instanciarEspiritu();
         espiritu.setId(this.getId());
         espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
+        espiritu.setEspirituDominante(this.getEspirituDominante() != null ? getEspirituDominante().aModelo() : null);
         return espiritu;
     }
 
@@ -95,17 +101,12 @@ public abstract class EspirituJPADTO {
         Espiritu espiritu = instanciarEspiritu();
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
+        espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);
         return espiritu;
     };
 
     public Espiritu aModelo(Espiritu espiritu) {
         espiritu.setId(this.getId());
-        return espiritu;
-    };
-
-    public Espiritu aModelo(Medium medium, Espiritu espiritu) {
-        espiritu.setId(this.getId());
-        espiritu.setMedium(medium);
         return espiritu;
     };
 }

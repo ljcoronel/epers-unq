@@ -37,7 +37,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     @Override
     public Optional<Espiritu> recuperar(Long id) {
         Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
-
         return optionalEspirituJPADTO.map(EspirituJPADTO::aModelo);
     }
 

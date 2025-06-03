@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion, boolean estaLibre, Long mediumId, UbicacionDTOResponse ubicacion) {
+public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion
+        , boolean estaLibre, Long mediumId, UbicacionDTOResponse ubicacion, EspirituDTOResponseAcotado dominadoPor) {
     public static EspirituDTOResponse desdeModelo(Espiritu espiritu) {
         if (espiritu == null) return null;
         return new EspirituDTOResponse(
@@ -17,7 +18,8 @@ public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int
                 espiritu.getNivelDeConexion(),
                 espiritu.estaLibre(),
                 espiritu.getMedium() != null ? espiritu.getMedium().getId() : null,
-                UbicacionDTOResponse.desdeModelo(espiritu.getUbicacion())
+                UbicacionDTOResponse.desdeModelo(espiritu.getUbicacion()),
+                EspirituDTOResponseAcotado.desdeModelo(espiritu.getEspirituDominante())
         );
     }
 

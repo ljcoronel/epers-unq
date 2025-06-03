@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -9,8 +10,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -118,7 +119,7 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void SiUnEspirituaNoEstaLibreDaErrorEspirituLibreException(){
+    void SiUnEspiritusNoEstaLibreDaErrorEspirituLibreException(){
         ubicacionService.crear(this.ubicacion);
         Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion);
         Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion);
@@ -475,6 +476,152 @@ public class EspirituServiceImplTest {
 
         assertEquals(demoniosIdsEsperados, demoniosIds);
 
+    }
+
+    @Test
+    void noSePuedeDominarAUnEspirituQueNoExiste() {
+        ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio1);
+
+        espirituService.dominar(demonio1.getId(), -1L);
+        Espiritu dominado = espirituService.recuperar(demonio1.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+
+    @Test
+    void noPuedeOcurrirUnaDominacionEntreElMismoEspiritu() {
+        ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio2.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituNoLibre() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(10);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.conectar(demonio2.getId(), medium.getId()); // ya no es libre el demonio
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituCon50DeEnergia() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(50);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituConMasDe50DeEnergia() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(70);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noSePuedeDominarAUnEspirituSiDominadoQuiereDominarAlQueLoDominaYArrojaException() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+
+        assertThrows(EspirituDominadoException.class,
+                () -> espirituService.dominar(demonio2.getId(), demonio1.getId()));
+    }
+
+    @Test
+    void cumpliendoTodasLasCondicionesSePuedeDominarAOtroEspiritu() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unEspirituDominaAVariosEspiritus() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30);
+        demonio3.setNivelDeConexion(30);
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        espirituService.dominar(demonio1.getId(), demonio3.getId());
+        Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
+        Espiritu dominado3 = espirituService.recuperar(demonio3.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
+        assertEquals(demonio1.getId(), dominado3.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unEspirituNoPuedeSerDominadoCuandoYaEstaDominado() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30);
+        demonio3.setNivelDeConexion(30);
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        espirituService.dominar(demonio3.getId(), demonio2.getId());
+        Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
     }
 
 
