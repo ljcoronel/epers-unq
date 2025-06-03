@@ -20,6 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -108,4 +109,6 @@ public abstract class EspirituJPADTO {
         espiritu.setMedium(medium);
         return espiritu;
     };
+
+
 }

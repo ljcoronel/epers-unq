@@ -13,8 +13,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,13 +29,24 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     private Medium medium;
     private Ubicacion ubicacion;
+    private Point coordenada;
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
+
+        this.setNivelDeConexion(nivelDeConexion);
+        this.nombre = nombre;
+        this.ubicacion = ubicacion;
+        this.coordenada = new Point(33,24);
+    }
+
+    public Espiritu(Integer nivelDeConexion, String nombre, Point coordenada) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
         this.ubicacion = ubicacion;
+        this.coordenada = coordenada;
     }
+
 
     public Espiritu(String nombre, Ubicacion ubicacion) {
 
