@@ -9,18 +9,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     public Demonio(String nombre, Ubicacion ubicacion) {
         super(nombre, ubicacion);
-    }
+    }//TODO borrar a la mierda
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
         super(nivelDeConexion, nombre, ubicacion);
     }
 
+    public Demonio(String nombre, Point coordenada) {
+        super(nombre, coordenada);
+    }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada) {
+        super(nivelDeConexion,nombre, coordenada);
+    }
 
     public void defender(Angel angel,int ataque) {
 

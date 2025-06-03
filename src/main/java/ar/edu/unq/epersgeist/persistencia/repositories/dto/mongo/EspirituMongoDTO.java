@@ -24,7 +24,7 @@ public class EspirituMongoDTO {
 
     public EspirituMongoDTO(Espiritu espiritu) {
         this.id = espiritu.getId();
-        this.nombre = espiritu.getNombre();
+        this.nombre = espiritu.getNombre();//TODO borrar al terminar de testear
         this.coordenada = new GeoJsonPoint(espiritu.getCoordenada().getX(), espiritu.getCoordenada().getY());
         this.idUbicacion = espiritu.getUbicacion().getId();
     }
