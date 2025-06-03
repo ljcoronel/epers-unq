@@ -4,9 +4,12 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.AngelMongoDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.EspirituMongoDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -22,6 +25,10 @@ public enum TipoEspiritu {
         public EspirituJPADTO getDto(Espiritu espiritu) {
             return new AngelJPADTO(espiritu);
         }
+
+        @Override
+        public AngelMongoDTO getMongo(Espiritu espiritu) {return new AngelMongoDTO(espiritu);
+        }
     },
     DEMONIO {
         @Override
@@ -33,6 +40,9 @@ public enum TipoEspiritu {
         public EspirituJPADTO getDto(Espiritu espiritu) {
             return new DemonioJPADTO(espiritu);
         }
+
+        @Override
+        public AngelMongoDTO getMongo(Espiritu espiritu) {return new AngelMongoDTO(espiritu);}
     };
 
     public static String getNombreTipos() {
@@ -50,7 +60,7 @@ public enum TipoEspiritu {
         };
     }
 
-
+    public abstract EspirituMongoDTO getMongo(Espiritu espiritu);
 
 }
 
