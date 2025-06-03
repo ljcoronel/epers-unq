@@ -57,7 +57,7 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-
+//TODO cambiar ubicaciones de constructores de espiritus y mediums por coordenadas.
 
     @BeforeEach
     void crearInstancias() {
@@ -480,7 +480,7 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void testMongo(){
+    void testMongo(){//TODO borrar test al teminar
         ubicacionService.crear((ubicacion));
 
         espirituService.crear(demonio1);

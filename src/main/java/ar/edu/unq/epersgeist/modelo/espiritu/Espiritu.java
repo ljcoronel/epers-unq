@@ -43,12 +43,18 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
-        this.ubicacion = ubicacion;
+        this.coordenada = coordenada;
+    }
+
+    public Espiritu(String nombre, Point coordenada) {
+
+        this.setNivelDeConexion(0); //default es 0
+        this.nombre = nombre;
         this.coordenada = coordenada;
     }
 
 
-    public Espiritu(String nombre, Ubicacion ubicacion) {
+    public Espiritu(String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
 
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
