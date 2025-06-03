@@ -47,11 +47,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public Optional<Espiritu> recuperar(Long id) {
         Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
 
-        return espirituDAOJPA.findById(id).map(jpaDTO->{
-            Espiritu espiritu = jpaDTO.aModelo();
-            EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(id).get();
-            return espirituMongo.aModelo(espiritu);
-        });
+        return optionalEspirituJPADTO.map(EspirituJPADTO::aModelo);
     }
 
     @Override
@@ -62,11 +58,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return this.espirituDAOJPA.findAll().stream().map(jpaDTO-> {
-            Espiritu espiritu = jpaDTO.aModelo();
-            EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
-            return espirituMongo.aModelo(espiritu);
-        }).toList();
+        return this.espirituDAOJPA.findAll().stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
@@ -76,25 +68,21 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina) {
-       return this.espirituDAOJPA.findAll
-                       (Example.of
-                               (EspirituJPADTO.desdeModelo(new Demonio())),
-                               PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
-                                .map(jpaDTO-> {
-                                    Demonio espiritu = (Demonio) jpaDTO.aModelo();
-                                    EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
-                                    return (Demonio) espirituMongo.aModelo(espiritu);
-                                }).toList();
+        return this.espirituDAOJPA.findAll
+                        (Example.of
+                                        (EspirituJPADTO.desdeModelo(new Demonio())),
+                                PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
+                .map(dto -> (Demonio) dto.aModelo()).toList();
     }
 
     @Override
     public List<Espiritu> todosLosEspiritusDeMedium(Long id) {
-        return this.espirituDAOJPA.todosLosEspiritusDeMedium(id).stream().map(this::mappearEspiritu).toList();
+        return this.espirituDAOJPA.todosLosEspiritusDeMedium(id).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return this.espirituDAOJPA.espiritusEn(ubicacionId).stream().map(this::mappearEspiritu).toList();
+        return this.espirituDAOJPA.espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
     }
 
     @Override
@@ -122,10 +110,4 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         return this.espirituDAOJPA.referencia(id);
     }
 
-    private Espiritu mappearEspiritu(EspirituJPADTO espirituJPADTO){
-
-        Espiritu espiritu = espirituJPADTO.aModelo();
-        EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
-        return espirituMongo.aModelo(espiritu);
-    }
 }
