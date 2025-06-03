@@ -522,8 +522,6 @@ public class EspirituServiceImplTest {
     void noPuedeOcurrirUnaDominacionAUnEspirituCon50DeEnergia() {
         ubicacionService.crear(ubicacion);
 
-        mediumService.crear(medium);
-
         demonio2.setNivelDeConexion(50);
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
@@ -537,8 +535,6 @@ public class EspirituServiceImplTest {
     @Test
     void noPuedeOcurrirUnaDominacionAUnEspirituConMasDe50DeEnergia() {
         ubicacionService.crear(ubicacion);
-
-        mediumService.crear(medium);
 
         demonio2.setNivelDeConexion(70);
         espirituService.crear(demonio1);
@@ -554,8 +550,6 @@ public class EspirituServiceImplTest {
     void noSePuedeDominarAUnEspirituSiDominadoQuiereDominarAlQueLoDominaYArrojaException() {
         ubicacionService.crear(ubicacion);
 
-        mediumService.crear(medium);
-
         demonio2.setNivelDeConexion(30); // energía menor a 50
         espirituService.crear(demonio1);
         espirituService.crear(demonio2); // es libre
@@ -570,8 +564,6 @@ public class EspirituServiceImplTest {
     void cumpliendoTodasLasCondicionesSePuedeDominarAOtroEspiritu() {
         ubicacionService.crear(ubicacion);
 
-        mediumService.crear(medium);
-
         demonio2.setNivelDeConexion(30); // energía menor a 50
         espirituService.crear(demonio1);
         espirituService.crear(demonio2); // es libre
@@ -585,8 +577,6 @@ public class EspirituServiceImplTest {
     @Test
     void unEspirituDominaAVariosEspiritus() {
         ubicacionService.crear(ubicacion);
-
-        mediumService.crear(medium);
 
         demonio2.setNivelDeConexion(30);
         demonio3.setNivelDeConexion(30);
@@ -608,8 +598,6 @@ public class EspirituServiceImplTest {
     void unEspirituNoPuedeSerDominadoCuandoYaEstaDominado() {
         ubicacionService.crear(ubicacion);
 
-        mediumService.crear(medium);
-
         demonio2.setNivelDeConexion(30);
         demonio3.setNivelDeConexion(30);
 
@@ -622,6 +610,23 @@ public class EspirituServiceImplTest {
         Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
 
         assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unMediumNoPuedeConectarseConUnEspirituDominado() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+
+        assertThrows(EspirituDominadoException.class,
+                () -> espirituService.conectar(demonio2.getId(), medium.getId()));
+
     }
 
 

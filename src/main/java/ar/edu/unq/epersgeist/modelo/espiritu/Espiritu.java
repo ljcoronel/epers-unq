@@ -112,14 +112,23 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void conectarConMedium(Optional<Medium> optionalMedium) {
         Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("No se encontró al Médium"));
 
-        verificarMediumEnMismaUbicacion(medium);
-        verificarEspirituLibre();
+        verificarSePuedeConectar(medium);
 
         int conexionAAumentar =(int) Math.round(medium.getMana()* getPorcentajeDeMana()) ;
         this.aumentarNivelDeConexionEn(conexionAAumentar);
         this.setMedium(medium);
 
         medium.realizarConexion(this);
+    }
+
+    private void verificarSePuedeConectar(Medium medium) {
+        verificarMediumEnMismaUbicacion(medium);
+        verificarEspirituLibre();
+        verificarNoEstaDominado();
+    }
+
+    private void verificarNoEstaDominado() {
+        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu ya está siendo dominado.");
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
