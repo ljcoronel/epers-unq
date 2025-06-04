@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 
@@ -76,9 +77,9 @@ public class MediumServiceImplTest {
         ubicacionService.crear(cementerio2);
         ubicacionService.crear(ubicacionNoConectada);
 
-        medium = new Medium("Max",100,50, this.santuario);
-        medium2 = new Medium("Pepe",100,0, this.santuario);
-        medium3 = new Medium("Sabrina",100,60, this.cementerio);
+        medium = new Medium("Max",100,50, this.santuario, new Point(1,1));
+        medium2 = new Medium("Pepe",100,0, this.santuario, new Point(1,1));
+        medium3 = new Medium("Sabrina",100,60, this.cementerio, new Point(1,1));
 
         angelDebil = new Angel(10,"gabriel",this.santuario);
         angelDebil2 = new Angel(10,"fernando",this.santuario2);
@@ -146,6 +147,8 @@ public class MediumServiceImplTest {
         assertEquals(medium.getMana(),mediumRecuperado.getMana());
         assertEquals(medium.getManaMax(), mediumRecuperado.getManaMax());
         assertEquals(medium.getNombre(), mediumRecuperado.getNombre());
+        assertEquals(this.medium.getCoordenada().getX(), mediumRecuperado.getCoordenada().getX());
+        assertEquals(this.medium.getCoordenada().getY(), mediumRecuperado.getCoordenada().getY());
     }
 
     @Test
@@ -443,7 +446,7 @@ public class MediumServiceImplTest {
 
         Angel libertador = new Angel(10,"Libertador",cementerio);
         espirituService.crear(libertador);
-        Medium medium = new Medium("Max",100,50,cementerio);
+        Medium medium = new Medium("Max",100,50,cementerio, new Point(1,1));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), iglesia.getId());
@@ -468,7 +471,7 @@ public class MediumServiceImplTest {
         Angel mabel = new Angel(5,"Amon",cementerio);
         espirituService.crear(mabel);
 
-        Medium osvaldo = new Medium("Osvaldo",100,20, cementerio);
+        Medium osvaldo = new Medium("Osvaldo",100,20, cementerio, new Point(1,1));
 
         mediumService.crear(osvaldo);
         espirituService.conectar(mabel.getId(),osvaldo.getId());
@@ -498,7 +501,7 @@ public class MediumServiceImplTest {
         Demonio amon = new Demonio(10,"Amon",santuario);
         espirituService.crear(amon);
 
-        Medium osvaldo = new Medium("Osvaldo",100,50, santuario);
+        Medium osvaldo = new Medium("Osvaldo",100,50, santuario, new Point(1,1));
 
         mediumService.crear(osvaldo);
         espirituService.conectar(amon.getId(),osvaldo.getId());
@@ -523,7 +526,7 @@ public class MediumServiceImplTest {
 
         Angel libertador = new Angel(10,"Libertador",cementerio);
         espirituService.crear(libertador);
-        Medium medium = new Medium("Max",100,50,cementerio);
+        Medium medium = new Medium("Max",100,50,cementerio, new Point(1,1));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), this.cementerio.getId());
@@ -544,7 +547,7 @@ public class MediumServiceImplTest {
 
         Demonio demonicaco = new Demonio(10,"demonicaco",iglesia);
         espirituService.crear(demonicaco);
-        Medium medium = new Medium("Max",100,50,iglesia);
+        Medium medium = new Medium("Max",100,50,iglesia, new Point(1,1));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), santuario.getId());
@@ -565,7 +568,7 @@ public class MediumServiceImplTest {
         Demonio demonicaco = new Demonio(10,"demonicaco",sanMiguel);
         espirituService.crear(demonicaco);
 
-        Medium medium = new Medium("Max",100,50,sanMiguel);
+        Medium medium = new Medium("Max",100,50,sanMiguel, new Point(1,1));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), cementerio.getId());

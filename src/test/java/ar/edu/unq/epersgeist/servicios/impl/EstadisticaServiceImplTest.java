@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,8 +69,8 @@ public class EstadisticaServiceImplTest {
         demonio5 = new Demonio(50, "Jose", this.ubicacion2);
         this.demonio6 = new Demonio(40, "Dracula", this.ubicacion3);
 
-        medium = new Medium("Brujita", 100, 50, this.ubicacion);
-        medium2 = new Medium("Pepe", 100, 60, this.ubicacion);
+        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Point(1,1));
+        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Point(1,1));
 
     }
 

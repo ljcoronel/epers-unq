@@ -23,6 +23,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.geo.Point;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
@@ -75,9 +76,9 @@ public class UbicacionServiceTest {
 
         this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
 
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Point(1,1));
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Point(1,1));
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Point(1,1));
 
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
         this.ubicacionCinco = new Santuario("MiCasa", 30);
@@ -203,7 +204,7 @@ public class UbicacionServiceTest {
         Ubicacion ubicacion2 = new Santuario("Masedonia",50);
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Point(1,1));
         Espiritu espiritu = new Angel(10, "angelical", ubicacion1);
         espirituService.crear(espiritu);
         mediumService.crear(medium);

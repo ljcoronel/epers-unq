@@ -13,6 +13,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -80,8 +81,8 @@ public class MediumJPADTO {
         return dto;
     }
 
-    public Medium aModelo() {
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo());
+    public Medium aModelo(Point coordenada) {
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), coordenada);
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))

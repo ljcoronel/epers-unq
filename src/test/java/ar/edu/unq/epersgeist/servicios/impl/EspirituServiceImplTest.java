@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +78,7 @@ public class EspirituServiceImplTest {
                 "Sebastián", this.ubicacion
 
         );
-        medium = new Medium("Brujita", 100, 50, this.ubicacion);
+        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Point(1,1));
 
     }
 
@@ -98,7 +99,7 @@ public class EspirituServiceImplTest {
         Ubicacion bernal = new Santuario("Bernal", 50);
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Point(1,1));
         mediumService.crear(mediumDeBernal);
         Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes", quilmes);
         espirituService.crear(espirituDeQuilmes);
@@ -109,7 +110,7 @@ public class EspirituServiceImplTest {
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
         Ubicacion bernal = new Santuario("Bernal", 50);
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Point(1,1));
         mediumService.crear(mediumDeBernal);
         Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes", bernal);
         espirituService.crear(espirituDeBernal);
@@ -120,8 +121,8 @@ public class EspirituServiceImplTest {
     @Test
     void SiUnEspirituaNoEstaLibreDaErrorEspirituLibreException(){
         ubicacionService.crear(this.ubicacion);
-        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion);
-        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion);
+        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion, new Point(1,1));
+        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion, new Point(1,1));
         mediumService.crear(mediumLibre);
         mediumService.crear(mediumConEspiritu);
 
@@ -150,7 +151,7 @@ public class EspirituServiceImplTest {
     void alConectarConUnEspirituSeFortaleceElNivelDeConexion20delMedium(){
         ubicacionService.crear(this.ubicacion);
         int manaMedium = 50;
-        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion);
+        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion, new Point(1,1));
         mediumService.crear(medium);
         int conexionAngel = 30;
         Espiritu angelRafael = new Angel(conexionAngel, "Rafael", this.ubicacion);

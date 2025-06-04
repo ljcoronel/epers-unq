@@ -3,6 +3,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import org.springframework.data.geo.Point;
 
 public record MediumDTORequestPut(String nombre, int manaMax, int mana) {
 
@@ -11,7 +12,7 @@ public record MediumDTORequestPut(String nombre, int manaMax, int mana) {
 
         Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
 
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder);
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder, new Point(1,1));
         medium.setId(id);
         return medium;
     }
