@@ -9,16 +9,21 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.CementerioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.SantuarioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
+import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public enum TipoUbicacion {
 
     SANTUARIO{
         @Override
-        public Ubicacion getUbicacionInstance(String nombre, int energia) {
-            return new Santuario(nombre, energia);
+        public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
+            List<Point> areaGeo = area.stream()
+                    .map(doubles -> new Point(doubles.get(0), doubles.get(1)))
+                    .toList();
+            return new Santuario(nombre, energia, areaGeo);
         }
 
         @Override
@@ -39,8 +44,11 @@ public enum TipoUbicacion {
 
     },CEMENTERIO{
         @Override
-        public Ubicacion getUbicacionInstance(String nombre, int energia) {
-            return new Cementerio(nombre, energia);
+        public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
+            List<Point> areaGeo = area.stream()
+                        .map(doubles -> new Point(doubles.get(0), doubles.get(1)))
+                        .toList();
+            return new Cementerio(nombre, energia, areaGeo);
         }
 
         @Override
@@ -63,7 +71,7 @@ public enum TipoUbicacion {
         return " | " + Arrays.stream(values()).map(tipo -> tipo.toString() + " | ").collect(Collectors.joining());
     }
 
-    public abstract Ubicacion getUbicacionInstance(String nombre, int energia);
+    public abstract Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area);
 
     public static TipoUbicacion obtenerTipoUbicacion(Ubicacion ubicacion) {
         return switch (ubicacion){
