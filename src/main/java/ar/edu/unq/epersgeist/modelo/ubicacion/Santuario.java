@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 
@@ -18,7 +19,11 @@ import java.util.List;
 
 public class Santuario extends Ubicacion {
 
-    public Santuario(String nombre, int energia) {
+    public Santuario(String nombre, int energia,List<Point> territorio) {
+        super(nombre, energia,territorio);
+    }
+
+    public Santuario(String nombre, int energia) {//se quitaria?
         super(nombre, energia);
     }
 

@@ -61,7 +61,12 @@ public class EspirituServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal", 50);
+        this.ubicacion = new Santuario("Bernal", 50,Arrays.asList(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)));
+
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         angel2 = new Angel(10,"Angel2", this.ubicacion);
         angel3 = new Angel(10,"Angel3", this.ubicacion);
@@ -96,8 +101,13 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarseConUnMediumEnUnaUbicacionDiferenteDaErrorUbicacionDistintaException() {
-        Ubicacion quilmes = new Santuario("Quilmes", 50);
-        Ubicacion bernal = new Santuario("Bernal", 50);
+        Ubicacion quilmes = new Santuario("Quilmes", 50,Arrays.asList(
+                new Point(2, 2),
+                new Point(3, 2),
+                new Point(3, 3),
+                new Point(2, 3)));
+
+        Ubicacion bernal = ubicacion;
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Point(1,1));
@@ -109,7 +119,7 @@ public class EspirituServiceImplTest {
 
     @Test
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
-        Ubicacion bernal = new Santuario("Bernal", 50);
+        Ubicacion bernal = ubicacion;
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Point(1,1));
         mediumService.crear(mediumDeBernal);

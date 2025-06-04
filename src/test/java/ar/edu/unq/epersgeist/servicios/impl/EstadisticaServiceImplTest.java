@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -57,9 +59,24 @@ public class EstadisticaServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal", 60);
-        this.ubicacion2 = new Santuario("Quilmes",60);
-        this.ubicacion3 = new Cementerio("Solano",60);
+        this.ubicacion = new Santuario("Bernal", 60, List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
+        this.ubicacion2 = new Santuario("Quilmes",60,List.of(
+                new Point(3, 0),
+                new Point(4, 0),
+                new Point(4, 1),
+                new Point(3, 1)
+        ));
+        this.ubicacion3 = new Cementerio("Solano",60,List.of(
+                new Point(6, 0),
+                new Point(7, 0),
+                new Point(7, 1),
+                new Point(6, 1)
+        ));
 
         angel1 = new Angel(10,"Angel1", this.ubicacion);
         demonio1 = new Demonio(10, "Pepito", this.ubicacion);

@@ -24,10 +24,15 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
 
     private int energia;
 
-    private List<Point> territorio = new ArrayList<>();
+    private List<Point> territorio;
 
-    public Ubicacion(String nombre, int energia) {
+    public Ubicacion(String nombre, int energia,List<Point> territorio) {
+        this.nombre = nombre;
+        this.setEnergia(energia);
+        this.territorio = territorio;
+    }
 
+    public Ubicacion(String nombre, int energia) {//se quitaria?
         this.nombre = nombre;
         this.setEnergia(energia);
     }

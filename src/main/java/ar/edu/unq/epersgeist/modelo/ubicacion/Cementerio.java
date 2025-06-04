@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 
@@ -18,8 +19,11 @@ import java.util.List;
 public class Cementerio extends Ubicacion {
 
 
-    public Cementerio(String nombre, int energia) { super(nombre, energia); }
+    public Cementerio(String nombre, int energia,List<Point> territorio) { super(nombre, energia,territorio); }
 
+    public Cementerio(String nombre, int energia) {//se quitaria?
+        super(nombre, energia);
+    }
 
     @Override
     public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium) {

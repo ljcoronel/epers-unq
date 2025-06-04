@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,12 +64,42 @@ public class MediumServiceImplTest {
 
     @BeforeEach
     void crearMedium(){
-        this.santuario = new Santuario("Bernal", 50);
-        this.santuario2 = new Santuario("Villa Devoto", 90);
-        this.ubicacion2 = new Santuario("Quilmes", 50);
-        this.cementerio = new Cementerio("Tenebroso", 50);
-        this.cementerio2 = new Cementerio("oscuro", 90);
-        this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50);
+        this.santuario = new Santuario("Bernal", 50, List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
+        this.santuario2 = new Santuario("Villa Devoto", 90,List.of(
+                new Point(3, 0),
+                new Point(4, 0),
+                new Point(4, 1),
+                new Point(3, 1)
+        ));
+        this.ubicacion2 = new Santuario("Quilmes", 50,List.of(
+                new Point(0, 3),
+                new Point(1, 3),
+                new Point(1, 4),
+                new Point(0, 4)
+        ));
+        this.cementerio = new Cementerio("Tenebroso", 50,List.of(
+                new Point(3, 3),
+                new Point(4, 3),
+                new Point(4, 4),
+                new Point(3, 4)
+        ));
+        this.cementerio2 = new Cementerio("oscuro", 90,List.of(
+                new Point(6, 3),
+                new Point(7, 3),
+                new Point(7, 4),
+                new Point(6, 4)
+        ));
+        this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50,List.of(
+                new Point(9, 0),
+                new Point(10, 0),
+                new Point(10, 1),
+                new Point(9, 1)
+        ));
 
 
         ubicacionService.crear(santuario);
@@ -441,7 +472,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
 
-        Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita",50);
+        Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(cementerio.getId(),iglesia.getId());
 
@@ -461,9 +497,19 @@ public class MediumServiceImplTest {
     @Test
     void unMediumSeMueveYSuAngelSeQuedaSinConexionEntoncesSeLibera(){
 
-        Ubicacion wilde = new Cementerio("Wilde",50);
+        Ubicacion wilde = new Cementerio("Wilde",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
         ubicacionService.crear(wilde);
-        Ubicacion sarandi = new Cementerio("Sarandi",50);
+        Ubicacion sarandi = new Cementerio("Sarandi",50,List.of(
+                new Point(3, 0),
+                new Point(4, 0),
+                new Point(4, 1),
+                new Point(3, 1)
+        ));
         ubicacionService.crear(sarandi);
 
         ubicacionService.conectar(cementerio.getId(), wilde.getId());
@@ -490,9 +536,19 @@ public class MediumServiceImplTest {
     @Test
     void unMediumSeMueveYSuDemonioSeQuedaSinConexionEntoncesSeLibera(){
 
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
         ubicacionService.crear(iglesia);
-        Ubicacion vaticano = new Santuario("vaticano",50);
+        Ubicacion vaticano = new Santuario("vaticano",50,List.of(
+                new Point(3, 0),
+                new Point(4, 0),
+                new Point(4, 1),
+                new Point(3, 1)
+        ));
         ubicacionService.crear(vaticano);
 
         ubicacionService.conectar(santuario.getId(),iglesia.getId());
@@ -521,7 +577,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnCementerioElAngelRecibeElEfectoDelCorrespondiente(){
 
-        Ubicacion cementerio = new Cementerio("Recoleta",50);
+        Ubicacion cementerio = new Cementerio("Recoleta",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
         ubicacionService.crear(cementerio);
         ubicacionService.conectar(cementerio.getId(), this.cementerio.getId());
 
@@ -542,7 +603,12 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
 
-        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50);
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(iglesia.getId(), santuario.getId());
 
@@ -562,7 +628,13 @@ public class MediumServiceImplTest {
     @Test
     void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
 
-        Ubicacion sanMiguel = new Cementerio("San Miguel",50);
+        Ubicacion sanMiguel = new Cementerio("San Miguel",50,List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
+
         ubicacionService.crear(sanMiguel);
         ubicacionService.conectar(sanMiguel.getId(),cementerio.getId());
 
