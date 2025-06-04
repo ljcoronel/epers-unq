@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class MediumServiceImplTest {
         this.cementerio = new Cementerio("Tenebroso", 50);
         this.cementerio2 = new Cementerio("oscuro", 90);
         this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50);
+
 
         ubicacionService.crear(santuario);
         ubicacionService.crear(santuario2);
