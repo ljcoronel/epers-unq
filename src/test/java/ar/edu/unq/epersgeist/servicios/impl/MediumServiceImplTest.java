@@ -425,7 +425,7 @@ public class MediumServiceImplTest {
         int manaInicial = medium.getMana();
 
         //seteo una ubicacion al angel, que es diferente a la del medium
-        angelDebil.mover(ubicacion2);
+        angelDebil.setUbicacion(ubicacion2);
         espirituService.actualizar(angelDebil);
 
         mediumService.invocar(medium.getId(), angelDebil.getId());

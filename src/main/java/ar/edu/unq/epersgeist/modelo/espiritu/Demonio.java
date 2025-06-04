@@ -15,7 +15,7 @@ import org.springframework.data.geo.Point;
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar?
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
         super(nivelDeConexion, nombre, ubicacion);
     }
 
@@ -57,7 +57,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
         medium.usarManaParaInvocar();
-        this.mover(cementerio);
+        this.setUbicacion(cementerio);
     }
 
 

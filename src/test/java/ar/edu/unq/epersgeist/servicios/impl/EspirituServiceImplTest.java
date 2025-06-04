@@ -57,7 +57,6 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-//TODO cambiar ubicaciones de constructores de espiritus y mediums por coordenadas correspondientes cuando se haga la verificacion de posicion.
 //TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
     void crearInstancias() {

@@ -14,11 +14,11 @@ import org.springframework.data.geo.Point;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Angel extends Espiritu implements EfectosDeUbicacion {
 
-    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar?
+    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
         super(nivelDeConexion,nombre, ubicacion);
     }
 
-    public Angel(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {//TODO borrar ubicacion
+    public Angel(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {//TODO borrar ubicacion cuando se termine metodo mover
         super(nivelDeConexion,nombre, coordenada,ubicacion);
     }
 
@@ -50,7 +50,7 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
     @Override
     public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {
         medium.usarManaParaInvocar();
-        this.mover(santuario);
+        this.setUbicacion(santuario);
     }
 
     @Override

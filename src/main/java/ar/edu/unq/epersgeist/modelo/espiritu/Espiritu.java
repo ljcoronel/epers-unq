@@ -106,9 +106,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         return RandomGenerator.getInstance().getRandom(1, 100);
     }
 
-    public void mover(Ubicacion ubicacion) {
-        if (this.estaLibre()) this.setUbicacion(ubicacion);
-    }
 
     public void moverConMediumHacia(Ubicacion ubicacion) {
 

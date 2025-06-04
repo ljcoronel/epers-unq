@@ -240,7 +240,7 @@ public class UbicacionServiceTest {
         mediumService.crear(medium);
 
         espirituService.conectar(espiritu.getId(), medium.getId());
-        espiritu.mover(ubicacion2);
+        espiritu.setUbicacion(ubicacion2);
 
         assertNotEquals(espiritu.getUbicacion().getNombre(), ubicacion1.getNombre());
     }

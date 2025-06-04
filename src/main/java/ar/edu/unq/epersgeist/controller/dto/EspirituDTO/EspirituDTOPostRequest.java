@@ -16,6 +16,8 @@ public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivel
         if (this.nombre == null) throw new ParametroIncorrectoException("El nombre no debe ser nulo.");
         if (this.tipo == null) throw new ParametroIncorrectoException("El tipo del espíritu no debe ser nulo.");
 
+        if (coordenada.size()!=2) throw new ParametroIncorrectoException("La coordenada debe estar compuesta por 2 valores numericos, \"X\" e \"Y\".");
+
         Point coord = new Point(coordenada.get(0),coordenada.get(1));
 
         Ubicacion placeholder = new Santuario("placeholder",0,List.of(//TODO borrar placeholder al terminar el metodo mover

@@ -60,7 +60,7 @@ public abstract class EspirituJPADTO {
 
 
     public static EspirituJPADTO desdeModelo(Espiritu espiritu) {
-        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu); //TODO esto es válido? hay otra manera de dar el dto del tipo correcto?
+        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
         return tipo.getDto(espiritu);
     }
 
