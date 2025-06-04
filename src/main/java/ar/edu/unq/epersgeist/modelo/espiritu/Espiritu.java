@@ -31,19 +31,19 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private Ubicacion ubicacion;
     private Point coordenada;
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//necesario solo para hacer el aModelo de JPA
 
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
         this.ubicacion = ubicacion;
-        this.coordenada = new Point(33,24);
     }
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Point coordenada) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
         this.coordenada = coordenada;
+        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
     }
 
     public Espiritu(String nombre, Point coordenada) {
@@ -51,14 +51,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
         this.coordenada = coordenada;
-    }
-
-
-    public Espiritu(String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
-
-        this.setNivelDeConexion(0); //default es 0
-        this.nombre = nombre;
-        this.ubicacion = ubicacion;
     }
 
     public Espiritu(int nivelDeConexion, String nombre) {

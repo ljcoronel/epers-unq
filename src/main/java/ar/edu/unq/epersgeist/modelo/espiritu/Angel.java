@@ -14,12 +14,12 @@ import org.springframework.data.geo.Point;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Angel extends Espiritu implements EfectosDeUbicacion {
 
-    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
+    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar?
         super(nivelDeConexion,nombre, ubicacion);
     }
 
-    public Angel(Integer nivelDeConexion, String nombre, Point coordenada) {
-        super(nivelDeConexion,nombre, coordenada);
+    public Angel(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {//TODO borrar ubicacion
+        super(nivelDeConexion,nombre, coordenada,ubicacion);
     }
 
     public Angel(String nombre, Point coordenada) {

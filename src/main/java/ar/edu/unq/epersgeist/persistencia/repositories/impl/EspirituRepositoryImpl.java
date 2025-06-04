@@ -4,7 +4,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.espiritu.EspirituMongoDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMongoDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;

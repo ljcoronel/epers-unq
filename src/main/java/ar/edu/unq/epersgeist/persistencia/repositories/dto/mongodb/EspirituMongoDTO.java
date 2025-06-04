@@ -1,6 +1,5 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.espiritu;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
-import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,20 +18,17 @@ public class EspirituMongoDTO {
 
     @Id
     private Long id;
-    private String nombre;//TODO borrar al terminar de testear
     private GeoJsonPoint coordenada;
     private Long idUbicacion;
 
     public EspirituMongoDTO(Espiritu espiritu) {
         this.id = espiritu.getId();
-        this.nombre = espiritu.getNombre();//TODO borrar al terminar de testear
         this.coordenada = new GeoJsonPoint(espiritu.getCoordenada().getX(), espiritu.getCoordenada().getY());
         this.idUbicacion = espiritu.getUbicacion().getId();
     }
 
     public static EspirituMongoDTO desdeModelo(Espiritu espiritu){
-        TipoEspiritu tipo = TipoEspiritu.getValueOfEspiritu(espiritu);
-        return tipo.getMongo(espiritu);
+        return new EspirituMongoDTO(espiritu);
     }
 
     public Espiritu aModelo(Espiritu espiritu){

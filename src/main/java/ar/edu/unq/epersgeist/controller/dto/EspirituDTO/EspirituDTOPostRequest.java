@@ -18,7 +18,14 @@ public record EspirituDTOPostRequest(TipoEspiritu tipo, String nombre, int nivel
 
         Point coord = new Point(coordenada.get(0),coordenada.get(1));
 
-        return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, coord);
+        Ubicacion placeholder = new Santuario("placeholder",0,List.of(//TODO borrar placeholder al terminar el metodo mover
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1)
+        ));
+
+        return this.tipo.getEspirituInstance(this.nivelDeConexion, this.nombre, coord,placeholder);
     }
 
 }

@@ -14,11 +14,8 @@ import org.springframework.data.geo.Point;
 @Getter @Setter @NoArgsConstructor
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
-    public Demonio(String nombre, Ubicacion ubicacion) {
-        super(nombre, ubicacion);
-    }//TODO borrar a la mierda
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar?
         super(nivelDeConexion, nombre, ubicacion);
     }
 
@@ -26,8 +23,8 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada) {
-        super(nivelDeConexion,nombre, coordenada);
+    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {
+        super(nivelDeConexion,nombre, coordenada,ubicacion);
     }
 
     public void defender(Angel angel,int ataque) {
