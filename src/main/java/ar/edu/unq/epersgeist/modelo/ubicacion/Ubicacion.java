@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.data.geo.Point;
 
 
 import java.util.*;
@@ -22,6 +23,8 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     private String nombre;
 
     private int energia;
+
+    private List<Point> territorio = new ArrayList<>();
 
     public Ubicacion(String nombre, int energia) {
 

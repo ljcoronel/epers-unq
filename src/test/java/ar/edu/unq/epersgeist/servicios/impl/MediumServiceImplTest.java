@@ -70,6 +70,7 @@ public class MediumServiceImplTest {
         this.cementerio2 = new Cementerio("oscuro", 90);
         this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50);
 
+
         ubicacionService.crear(santuario);
         ubicacionService.crear(santuario2);
         ubicacionService.crear(ubicacion2);
