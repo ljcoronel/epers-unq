@@ -17,7 +17,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
@@ -52,9 +51,6 @@ public abstract class EspirituJPADTO {
     @NotNull
     private UbicacionJPADTO ubicacion;
 
-    @Column
-    private Point coordenada;
-
     private Date deleted;
 
     @CreatedDate
@@ -76,7 +72,6 @@ public abstract class EspirituJPADTO {
         nombre = espiritu.getNombre();
         medium = MediumJPADTO.desdeModelo(espiritu.getMedium());
         ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
-        coordenada = espiritu.getCoordenada();
     }
 
 
@@ -86,7 +81,6 @@ public abstract class EspirituJPADTO {
         nombre = espiritu.getNombre();
         medium = mediumDTO;
         ubicacion = UbicacionJPADTO.desdeModelo(espiritu.getUbicacion());
-        coordenada = espiritu.getCoordenada();
     }
 
     public Espiritu aModelo() {
