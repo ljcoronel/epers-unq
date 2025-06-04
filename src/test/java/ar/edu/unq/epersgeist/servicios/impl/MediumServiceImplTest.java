@@ -68,37 +68,43 @@ public class MediumServiceImplTest {
                 new Point(0, 0),
                 new Point(1, 0),
                 new Point(1, 1),
-                new Point(0, 1)
+                new Point(0, 1),
+                new Point(0, 0)
         ));
         this.santuario2 = new Santuario("Villa Devoto", 90,List.of(
                 new Point(3, 0),
                 new Point(4, 0),
                 new Point(4, 1),
-                new Point(3, 1)
+                new Point(3, 1),
+                new Point(3, 0)
         ));
         this.ubicacion2 = new Santuario("Quilmes", 50,List.of(
                 new Point(0, 3),
                 new Point(1, 3),
                 new Point(1, 4),
-                new Point(0, 4)
+                new Point(0, 4),
+                new Point(0, 3)
         ));
         this.cementerio = new Cementerio("Tenebroso", 50,List.of(
                 new Point(3, 3),
                 new Point(4, 3),
                 new Point(4, 4),
-                new Point(3, 4)
+                new Point(3, 4),
+                new Point(3, 3)
         ));
         this.cementerio2 = new Cementerio("oscuro", 90,List.of(
                 new Point(6, 3),
                 new Point(7, 3),
                 new Point(7, 4),
-                new Point(6, 4)
+                new Point(6, 4),
+                new Point(6, 3)
         ));
         this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50,List.of(
                 new Point(9, 0),
                 new Point(10, 0),
                 new Point(10, 1),
-                new Point(9, 1)
+                new Point(9, 1),
+                new Point(9, 0)
         ));
 
 
@@ -109,19 +115,19 @@ public class MediumServiceImplTest {
         ubicacionService.crear(cementerio2);
         ubicacionService.crear(ubicacionNoConectada);
 
-        medium = new Medium("Max",100,50, this.santuario, new Point(1,1));
-        medium2 = new Medium("Pepe",100,0, this.santuario, new Point(1,1));
-        medium3 = new Medium("Sabrina",100,60, this.cementerio, new Point(1,1));
+        medium = new Medium("Max",100,50, this.santuario, new Point(0.5, 0.5));
+        medium2 = new Medium("Pepe",100,0, this.santuario, new Point(0.5, 0.5));
+        medium3 = new Medium("Sabrina",100,60, this.cementerio, new Point(3.5, 3.5));
 
-        angelDebil = new Angel(10,"gabriel",this.santuario);
-        angelDebil2 = new Angel(10,"fernando",this.santuario2);
-        angelFuerte = new Angel(60,"Rafael",this.santuario);
-        angelEnCementerio = new Angel(50,"Di Maria",this.cementerio);
+        angelDebil = new Angel(10,"gabriel",new Point(0.5, 0.5),this.santuario);
+        angelDebil2 = new Angel(10,"fernando",new Point(3.5, 0.5),this.santuario2);
+        angelFuerte = new Angel(60,"Rafael",new Point(0.5, 0.5),this.santuario);
+        angelEnCementerio = new Angel(50,"Di Maria",new Point(3.5, 3.5),this.cementerio);
 
-        demonioDebil = new Demonio(5,"Rufi",this.santuario);
-        demonioDebil2 = new Demonio(5,"An",this.santuario2);
-        demonioFuerte = new Demonio(50,"Adam",this.santuario);
-        demonioEnCementerio =  new Demonio(5,"Lali",this.cementerio);
+        demonioDebil = new Demonio(5,"Rufi",new Point(0.5, 0.5),this.santuario);
+        demonioDebil2 = new Demonio(5,"An",new Point(3.5, 0.5),this.santuario2);
+        demonioFuerte = new Demonio(50,"Adam",new Point(0.5, 0.5),this.santuario);
+        demonioEnCementerio =  new Demonio(5,"Lali",new Point(3.5, 3.5),this.cementerio);
 
         fakeRandomStrategy = new FakeRandomStrategyImpl();
         RandomGenerator.getInstance().setStrategy(fakeRandomStrategy);
@@ -473,17 +479,18 @@ public class MediumServiceImplTest {
     void CuandoUnMediumSeMueveAUnSantuarioSuAngelNORecibeElEfecto(){
 
         Ubicacion iglesia = new Cementerio("Iglesia de Santa Teresita",50,List.of(
-                new Point(0, 0),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1)
+                new Point(12, 0),
+                new Point(13, 0),
+                new Point(13, 1),
+                new Point(12, 1),
+                new Point(12, 0)
         ));
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(cementerio.getId(),iglesia.getId());
 
-        Angel libertador = new Angel(10,"Libertador",cementerio);
+        Angel libertador = new Angel(10,"Libertador",new Point(3.5, 3.5),cementerio);
         espirituService.crear(libertador);
-        Medium medium = new Medium("Max",100,50,cementerio, new Point(1,1));
+        Medium medium = new Medium("Max",100,50,cementerio, new Point(3.5, 3.5));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), iglesia.getId());
@@ -515,10 +522,10 @@ public class MediumServiceImplTest {
         ubicacionService.conectar(cementerio.getId(), wilde.getId());
         ubicacionService.conectar(wilde.getId(), sarandi.getId());
 
-        Angel mabel = new Angel(5,"Amon",cementerio);
+        Angel mabel = new Angel(5,"Amon",new Point(3.5, 3.5),cementerio);
         espirituService.crear(mabel);
 
-        Medium osvaldo = new Medium("Osvaldo",100,20, cementerio, new Point(1,1));
+        Medium osvaldo = new Medium("Osvaldo",100,20, cementerio, new Point(3.5, 3.5));
 
         mediumService.crear(osvaldo);
         espirituService.conectar(mabel.getId(),osvaldo.getId());
@@ -555,10 +562,10 @@ public class MediumServiceImplTest {
         ubicacionService.conectar(iglesia.getId(),vaticano.getId());
         ubicacionService.conectar(vaticano.getId(),iglesia.getId());
 
-        Demonio amon = new Demonio(10,"Amon",santuario);
+        Demonio amon = new Demonio(10,"Amon",new Point(0.5, 0.5),santuario);
         espirituService.crear(amon);
 
-        Medium osvaldo = new Medium("Osvaldo",100,50, santuario, new Point(1,1));
+        Medium osvaldo = new Medium("Osvaldo",100,50, santuario, new Point(0.5, 0.5));
 
         mediumService.crear(osvaldo);
         espirituService.conectar(amon.getId(),osvaldo.getId());
@@ -578,17 +585,18 @@ public class MediumServiceImplTest {
     void CuandoUnMediumSeMueveAUnCementerioElAngelRecibeElEfectoDelCorrespondiente(){
 
         Ubicacion cementerio = new Cementerio("Recoleta",50,List.of(
-                new Point(0, 0),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1)
+                new Point(12, 0),
+                new Point(13, 0),
+                new Point(13, 1),
+                new Point(12, 1),
+                new Point(12, 0)
         ));
         ubicacionService.crear(cementerio);
         ubicacionService.conectar(cementerio.getId(), this.cementerio.getId());
 
-        Angel libertador = new Angel(10,"Libertador",cementerio);
+        Angel libertador = new Angel(10,"Libertador",new Point(12.5, 0.5),cementerio);
         espirituService.crear(libertador);
-        Medium medium = new Medium("Max",100,50,cementerio, new Point(1,1));
+        Medium medium = new Medium("Max",100,50,cementerio, new Point(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
         mediumService.mover(medium.getId(), this.cementerio.getId());
@@ -604,17 +612,18 @@ public class MediumServiceImplTest {
     void CuandoUnMediumSeMueveAUnSantuarioSuDemonioRecibeElEfectoCorrespondiente(){
 
         Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50,List.of(
-                new Point(0, 0),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1)
+                new Point(12, 0),
+                new Point(13, 0),
+                new Point(13, 1),
+                new Point(12, 1),
+                new Point(12, 0)
         ));
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(iglesia.getId(), santuario.getId());
 
-        Demonio demonicaco = new Demonio(10,"demonicaco",iglesia);
+        Demonio demonicaco = new Demonio(10,"demonicaco",new Point(12.5, 0.5),iglesia);
         espirituService.crear(demonicaco);
-        Medium medium = new Medium("Max",100,50,iglesia, new Point(1,1));
+        Medium medium = new Medium("Max",100,50,iglesia, new Point(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), santuario.getId());
@@ -629,19 +638,20 @@ public class MediumServiceImplTest {
     void CuandoUnMediumSeMueveAUnCementerioSuDemonioNoRecibeElEfectoCorrespondiente(){
 
         Ubicacion sanMiguel = new Cementerio("San Miguel",50,List.of(
-                new Point(0, 0),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1)
+                new Point(12, 0),
+                new Point(13, 0),
+                new Point(13, 1),
+                new Point(12, 1),
+                new Point(12, 0)
         ));
 
         ubicacionService.crear(sanMiguel);
         ubicacionService.conectar(sanMiguel.getId(),cementerio.getId());
 
-        Demonio demonicaco = new Demonio(10,"demonicaco",sanMiguel);
+        Demonio demonicaco = new Demonio(10,"demonicaco",new Point(12.5, 0.5),sanMiguel);
         espirituService.crear(demonicaco);
 
-        Medium medium = new Medium("Max",100,50,sanMiguel, new Point(1,1));
+        Medium medium = new Medium("Max",100,50,sanMiguel, new Point(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
         mediumService.mover(medium.getId(), cementerio.getId());

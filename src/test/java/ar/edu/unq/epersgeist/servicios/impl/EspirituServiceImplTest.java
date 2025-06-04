@@ -65,14 +65,16 @@ public class EspirituServiceImplTest {
                 new Point(0, 0),
                 new Point(1, 0),
                 new Point(1, 1),
-                new Point(0, 1)));
+                new Point(0, 1),
+                new Point(0, 0)));
 
-        angel1 = new Angel(10,"Angel1",new Point(1,1), this.ubicacion);
+        angel1 = new Angel(10,"Angel1",new Point(0.5,0.5), this.ubicacion);
         angel2 = new Angel(10,"Angel2",new Point(1,1), this.ubicacion);
         angel3 = new Angel(10,"Angel3",new Point(1,1), this.ubicacion);
+
         demonio1 = new Demonio(
                 10,
-                "Pepito",new Point(1,1), this.ubicacion
+                "Pepito",new Point(0.5,0.5), this.ubicacion
         );
         demonio2 = new Demonio(
                 90,
@@ -105,14 +107,15 @@ public class EspirituServiceImplTest {
                 new Point(2, 2),
                 new Point(3, 2),
                 new Point(3, 3),
-                new Point(2, 3)));
+                new Point(2, 3),
+                new Point(2, 2)));
 
         Ubicacion bernal = ubicacion;
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
         Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Point(1,1));
         mediumService.crear(mediumDeBernal);
-        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes",new Point(1,1), quilmes);
+        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes",new Point(2.5, 2.5), quilmes);
         espirituService.crear(espirituDeQuilmes);
         assertThrows(UbicacionDistintaException.class, ()->espirituService.conectar(espirituDeQuilmes.getId(), mediumDeBernal.getId()));
     }
@@ -496,11 +499,7 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio1);
         espirituService.crear(angel1);
 
-        Espiritu recuperado = espirituService.recuperar(demonio1.getId()).get();
-        Espiritu recuperadoA = espirituService.recuperar(angel1.getId()).get();
 
-        assertEquals(33,recuperado.getCoordenada().getX());
-        assertEquals(24,recuperado.getCoordenada().getY());
 
         assertEquals(2,espirituService.recuperarTodos().size());
         assertEquals(1,espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2).size());

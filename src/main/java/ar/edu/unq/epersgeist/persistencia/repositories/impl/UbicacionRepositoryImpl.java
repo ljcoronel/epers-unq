@@ -10,6 +10,8 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONG
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,13 +24,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
-    private final UbicacionDAOMONGO ubicacionDAOMongo;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOMONGO ubicacionDAOMongo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
         this.ubicacionDaoMongo = ubicacionDaoMongo;
-        this.ubicacionDAOMongo = ubicacionDAOMongo;
     }
 
     @Override
@@ -145,4 +145,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .collect(Collectors.toList());
     }
 
+    public Optional<Ubicacion> encontrarUbicacionQueContiene(Point punto){
+        GeoJsonPoint coordenada = new GeoJsonPoint(punto.getX(), punto.getY());
+
+        return ubicacionDaoMongo.findByPuntoDentroDelTerritorio(coordenada)
+                .map(mongoDTO -> {
+                    UbicacionJPADTO jpaDTO = ubicacionDaoJpa.findById(mongoDTO.getId()).get();
+                    Ubicacion ubicacion = jpaDTO.aModelo();
+                    return mongoDTO.aModelo(ubicacion);
+                });
+    }
 }

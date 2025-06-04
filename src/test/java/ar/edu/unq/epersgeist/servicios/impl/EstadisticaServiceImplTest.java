@@ -63,31 +63,34 @@ public class EstadisticaServiceImplTest {
                 new Point(0, 0),
                 new Point(1, 0),
                 new Point(1, 1),
-                new Point(0, 1)
+                new Point(0, 1),
+                new Point(0, 0)
         ));
         this.ubicacion2 = new Santuario("Quilmes",60,List.of(
                 new Point(3, 0),
                 new Point(4, 0),
                 new Point(4, 1),
-                new Point(3, 1)
+                new Point(3, 1),
+                new Point(3, 0)
         ));
         this.ubicacion3 = new Cementerio("Solano",60,List.of(
                 new Point(6, 0),
                 new Point(7, 0),
                 new Point(7, 1),
-                new Point(6, 1)
+                new Point(6, 1),
+                new Point(6, 0)
         ));
 
-        angel1 = new Angel(10,"Angel1", this.ubicacion);
-        demonio1 = new Demonio(10, "Pepito", this.ubicacion);
-        demonio2 = new Demonio(90, "Diavolo", this.ubicacion);
-        demonio3 = new Demonio(50, "Sebastián", this.ubicacion);
-        demonio4 = new Demonio(50, "Jorge", this.ubicacion);
-        demonio5 = new Demonio(50, "Jose", this.ubicacion2);
-        this.demonio6 = new Demonio(40, "Dracula", this.ubicacion3);
+        angel1 = new Angel(10,"Angel1",new Point(0.5,0.5), this.ubicacion);
+        demonio1 = new Demonio(10, "Pepito",new Point(0.5,0.5), this.ubicacion);
+        demonio2 = new Demonio(90, "Diavolo",new Point(0.5,0.5), this.ubicacion);
+        demonio3 = new Demonio(50, "Sebastián",new Point(0.5,0.5), this.ubicacion);
+        demonio4 = new Demonio(50, "Jorge",new Point(0.5,0.5), this.ubicacion);
+        demonio5 = new Demonio(50, "Jose",new Point(3.5,0.5), this.ubicacion2);
+        demonio6 = new Demonio(40, "Dracula",new Point(6.5,0.5), this.ubicacion3);
 
-        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Point(1,1));
-        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Point(1,1));
+        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Point(0.5,0.5));
+        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Point(0.5,0.5));
 
     }
 

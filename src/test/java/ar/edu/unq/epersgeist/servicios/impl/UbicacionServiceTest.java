@@ -71,14 +71,20 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
-        pointsUbicacionUno= List.of(new Point(0,0),
-                                    new Point(0,1),
-                                    new Point(1,2),
-                                    new Point(0,3));
-        pointsUbicacionDos= List.of(new Point(0,5),
-                                    new Point(0,10.5),
-                                    new Point(10.8,15),
-                                    new Point(10.5,5));
+        pointsUbicacionUno= List.of(
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1),
+                new Point(0, 0)
+        );
+
+        pointsUbicacionDos= List.of(
+                new Point(3, 3),
+                new Point(4, 3),
+                new Point(4, 4),
+                new Point(3, 4),
+                new Point(3, 3));
 
 
         this.ubicacionUno = new Santuario("Bernal", 50);
@@ -87,19 +93,19 @@ public class UbicacionServiceTest {
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
         this.ubicacionCinco = new Santuario("MiCasa", 30);
 
-        ubicacionUno.setTerritorio(pointsUbicacionUno);
+        ubicacionUno.setTerritorio(pointsUbicacionUno);//TODO ver si tendran que tener todas ubicaciones distintas o pueden compartirlos en estos test
         ubicacionDos.setTerritorio(pointsUbicacionDos);
         ubicacionTres.setTerritorio(pointsUbicacionUno);
         ubicacionCuatro.setTerritorio(pointsUbicacionUno);
         ubicacionCinco.setTerritorio(pointsUbicacionDos);
 
-        this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
+        this.angelUno = new Angel(10, "angelical",new Point(0.5, 0.5), this.ubicacionUno);
 
-        this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
+        this.demonioUno = new Demonio(10, "demonio",new Point(0.5, 0.5), this.ubicacionUno);
 
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Point(1,1));
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Point(1,1));
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Point(1,1));
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Point(0.5, 0.5));
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Point(0.5, 0.5));
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Point(0.5, 0.5));
 
 
     }
@@ -228,8 +234,8 @@ public class UbicacionServiceTest {
 
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Point(1,1));
-        Espiritu espiritu = new Angel(10, "angelical", ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Point(0.5, 0.5));
+        Espiritu espiritu = new Angel(10, "angelical",new Point(0.5, 0.5), ubicacion1);
         espirituService.crear(espiritu);
         mediumService.crear(medium);
 
