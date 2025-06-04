@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo;
+package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
 
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Getter @Setter

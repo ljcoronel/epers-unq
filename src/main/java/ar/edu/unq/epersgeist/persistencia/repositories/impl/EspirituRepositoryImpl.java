@@ -3,7 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
-import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.espiritu.EspirituMongoDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
@@ -19,9 +19,9 @@ import java.util.Optional;
 public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAOJPA espirituDAOJPA;
-    private final EspirituDAOMongo espirituDAOMongo;
+    private final EspirituDAOMONGO espirituDAOMongo;
 
-    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA,EspirituDAOMongo espirituDAOMongo) {
+    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAOMONGO espirituDAOMongo) {
         this.espirituDAOMongo = espirituDAOMongo;
         this.espirituDAOJPA = espirituDAOJPA;
     }

@@ -1,9 +1,8 @@
 package ar.edu.unq.epersgeist.testUtils;
 
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
-import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMongo;
-import ar.edu.unq.epersgeist.persistencia.dao.mongo.EspirituDAOMongo;
-import ar.edu.unq.epersgeist.persistencia.dao.mongo.UbicacionDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,9 +20,9 @@ public class TestService {
     @Autowired
     private UbicacionDAONEO ubicacionDAONEO;
     @Autowired
-    private EspirituDAOMongo espirituDAOMongo;
+    private EspirituDAOMONGO espirituDAOMongo;
     @Autowired
-    private UbicacionDAOMongo ubicacionDAOMongo;
+    private UbicacionDAOMONGO ubicacionDAOMongo;
 
     @Autowired
     private MediumDAOMONGO mediumDAOMONGO;

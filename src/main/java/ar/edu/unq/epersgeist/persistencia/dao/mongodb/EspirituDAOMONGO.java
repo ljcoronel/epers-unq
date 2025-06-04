@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface EspirituDAOMongo extends MongoRepository<EspirituMongoDTO, Long> {
+public interface EspirituDAOMONGO extends MongoRepository<EspirituMongoDTO, Long> {
 
 
 }
