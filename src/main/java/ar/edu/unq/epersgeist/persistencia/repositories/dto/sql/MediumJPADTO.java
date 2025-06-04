@@ -93,6 +93,18 @@ public class MediumJPADTO {
         return medium;
     }
 
+    public Medium aModelo() {
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), null);
+        medium.setId(this.id);
+        medium.setAngeles(this.angeles.stream()
+                .map(dto -> (Angel) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        medium.setDemonios(this.demonios.stream()
+                .map(dto -> (Demonio) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        return medium;
+    }
+
     public Medium aModelo(Medium medium) {
         medium.setId(this.id);
         return medium;

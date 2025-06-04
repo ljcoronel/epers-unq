@@ -27,8 +27,8 @@ public class MediumRepositoryImpl implements MediumRepository {
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPA = MediumJPADTO.desdeModelo(medium);
         Medium mediumConId = this.mediumDAOJPA.save(mediumJPA).aModelo(medium);
-        MediumMONGODTO mediumMongo = this.mediumDAOMONGO.save(MediumMONGODTO.desdeModelo(mediumConId));
-        return mediumMongo.aModelo(medium);
+        this.mediumDAOMONGO.save(MediumMONGODTO.desdeModelo(mediumConId));
+        return mediumConId;
     }
 
     @Override

@@ -1,15 +1,13 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.AngelMongoDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.EspirituMongoDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.espiritu.AngelMongoDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.espiritu.EspirituMongoDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import org.springframework.data.geo.Point;
 
 import java.util.Arrays;

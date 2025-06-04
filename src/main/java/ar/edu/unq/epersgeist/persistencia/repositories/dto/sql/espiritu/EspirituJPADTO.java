@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
@@ -20,7 +19,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -96,6 +94,7 @@ public abstract class EspirituJPADTO {
         Espiritu espiritu = instanciarEspiritu();
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
+        espiritu.setCoordenada(medium.getCoordenada());
         return espiritu;
     };
 
