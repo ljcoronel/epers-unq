@@ -9,11 +9,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface UbicacionDAOMongo extends MongoRepository<UbicacionMONGODTO, String> {
+public interface UbicacionDAOMongo extends MongoRepository<UbicacionMONGODTO, Long> {
 
-    @Aggregation(pipeline = {
-            "{$match :  {nombre :  '?0'}}"
-
-    })
-    public Ubicacion recuperarPorNombre(String nombre);
 }

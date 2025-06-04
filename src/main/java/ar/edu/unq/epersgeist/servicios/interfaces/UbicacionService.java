@@ -28,12 +28,4 @@ public interface UbicacionService  {
     List<DegreeResult>incomingDegreeOf(List<Long> ids);
     List<DegreeResult>outgoingDegreeOf(List<Long> ids);
 
-
-    //-------------------------------------------------------------------------------------
-    //----------------prueba de creacion mongo
-
-    public UbicacionMONGODTO guardarEnMongo(UbicacionMONGODTO ubicacion);
-
-    public UbicacionMONGODTO seRecuperarEnMongo(String ubicacionConId);
-
 }

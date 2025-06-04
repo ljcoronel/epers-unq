@@ -136,14 +136,4 @@ public class UbicacionServiceImpl implements UbicacionService {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
 
-    //-------------------------------------------------------------------------------------
-    //----------------prueba de creacion mongo
-
-    public UbicacionMONGODTO guardarEnMongo(UbicacionMONGODTO ubicacion){
-        return this.ubicacionRepository.guardarUbicacionEnMongo(ubicacion);
-    }
-
-    public UbicacionMONGODTO seRecuperarEnMongo(String ubicacionConId){
-        return this.ubicacionRepository.seRecuperaUnaUbicacionEnMongo(ubicacionConId);
-    }
 }

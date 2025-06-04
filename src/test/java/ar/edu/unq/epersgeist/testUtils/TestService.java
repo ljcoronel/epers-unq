@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.testUtils;
+import ar.edu.unq.epersgeist.persistencia.dao.mongo.UbicacionDAOMongo;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -15,6 +16,8 @@ public class TestService {
 
     @Autowired
     private UbicacionDAONEO ubicacionDAONEO;
+    @Autowired
+    private UbicacionDAOMongo ubicacionDAOMongo;
 
     public void eliminarEspiritus() {
         entityManager.createNativeQuery("DELETE FROM espiritu").executeUpdate();
@@ -24,7 +27,7 @@ public class TestService {
     public void eliminarUbicaciones() {
         entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
         ubicacionDAONEO.deleteAll();
-
+        ubicacionDAOMongo.deleteAll();
     }
 
     public void eliminarMediums() {
