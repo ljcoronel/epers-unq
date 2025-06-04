@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class EspirituServiceImplTest {
@@ -56,7 +57,7 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-
+//TODO cambiar ubicaciones de constructores de espiritus y mediums por coordenadas.
 
     @BeforeEach
     void crearInstancias() {
@@ -478,6 +479,22 @@ public class EspirituServiceImplTest {
 
     }
 
+    @Test
+    void testMongo(){//TODO borrar test al teminar
+        ubicacionService.crear((ubicacion));
+
+        espirituService.crear(demonio1);
+        espirituService.crear(angel1);
+
+        Espiritu recuperado = espirituService.recuperar(demonio1.getId()).get();
+        Espiritu recuperadoA = espirituService.recuperar(angel1.getId()).get();
+
+        assertEquals(33,recuperado.getCoordenada().getX());
+        assertEquals(24,recuperado.getCoordenada().getY());
+
+        assertEquals(2,espirituService.recuperarTodos().size());
+        assertEquals(1,espirituService.espiritusDemoniacos(Sort.Direction.ASC, 0, 2).size());
+    }
 
     @AfterEach
     void eliminarModelo() {

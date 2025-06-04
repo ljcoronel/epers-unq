@@ -42,6 +42,7 @@ public class EspirituServiceImpl implements EspirituService {
 
         Ubicacion ubicacion = ubicacionRepository.recuperar(espiritu.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
+
         espiritu.mover(ubicacion);
 
         return this.espirituRepository.guardar(espiritu);

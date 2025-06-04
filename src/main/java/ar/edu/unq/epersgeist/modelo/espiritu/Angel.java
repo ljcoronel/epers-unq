@@ -9,11 +9,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor @ToString
 public class Angel extends Espiritu implements EfectosDeUbicacion {
-    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+
+    public Angel(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//TODO borrar a la mierda
         super(nivelDeConexion,nombre, ubicacion);
+    }
+
+    public Angel(Integer nivelDeConexion, String nombre, Point coordenada) {
+        super(nivelDeConexion,nombre, coordenada);
+    }
+
+    public Angel(String nombre, Point coordenada) {
+        super(nombre, coordenada);
     }
 
     public Angel(int nivelDeConexion, String nombre) {

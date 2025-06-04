@@ -3,7 +3,10 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.mongo.EspirituDAOMongo;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongo.EspirituMongoDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +20,10 @@ import java.util.Optional;
 public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAOJPA espirituDAOJPA;
+    private final EspirituDAOMongo espirituDAOMongo;
 
-    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA) {
+    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA,EspirituDAOMongo espirituDAOMongo) {
+        this.espirituDAOMongo = espirituDAOMongo;
         this.espirituDAOJPA = espirituDAOJPA;
     }
 
@@ -31,6 +36,10 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public Espiritu guardar(Espiritu espiritu) {
         EspirituJPADTO espirituJpa = EspirituJPADTO.desdeModelo(espiritu);
         Espiritu espirituConId = this.espirituDAOJPA.save(espirituJpa).aModelo(espiritu);
+
+        EspirituMongoDTO espirituMongo= EspirituMongoDTO.desdeModelo(espirituConId);
+        this.espirituDAOMongo.save(espirituMongo);
+
         return espirituConId;
     }
 
@@ -38,17 +47,26 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public Optional<Espiritu> recuperar(Long id) {
         Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
 
-        return optionalEspirituJPADTO.map(EspirituJPADTO::aModelo);
+        return espirituDAOJPA.findById(id).map(jpaDTO->{
+            Espiritu espiritu = jpaDTO.aModelo();
+            EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(id).get();
+            return espirituMongo.aModelo(espiritu);
+        });
     }
 
     @Override
     public void eliminar(Long id) {
         espirituDAOJPA.deleteById(id);
+        this.espirituDAOMongo.deleteById(id);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return this.espirituDAOJPA.findAll().stream().map(EspirituJPADTO::aModelo).toList();
+        return this.espirituDAOJPA.findAll().stream().map(jpaDTO-> {
+            Espiritu espiritu = jpaDTO.aModelo();
+            EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+            return espirituMongo.aModelo(espiritu);
+        }).toList();
     }
 
     @Override
@@ -62,17 +80,21 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                        (Example.of
                                (EspirituJPADTO.desdeModelo(new Demonio())),
                                PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
-                                .map(dto -> (Demonio) dto.aModelo()).toList();
+                                .map(jpaDTO-> {
+                                    Demonio espiritu = (Demonio) jpaDTO.aModelo();
+                                    EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+                                    return (Demonio) espirituMongo.aModelo(espiritu);
+                                }).toList();
     }
 
     @Override
     public List<Espiritu> todosLosEspiritusDeMedium(Long id) {
-        return this.espirituDAOJPA.todosLosEspiritusDeMedium(id).stream().map(EspirituJPADTO::aModelo).toList();
+        return this.espirituDAOJPA.todosLosEspiritusDeMedium(id).stream().map(this::mappearEspiritu).toList();
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return this.espirituDAOJPA.espiritusEn(ubicacionId).stream().map(EspirituJPADTO::aModelo).toList();
+        return this.espirituDAOJPA.espiritusEn(ubicacionId).stream().map(this::mappearEspiritu).toList();
     }
 
     @Override
@@ -98,5 +120,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     @Override
     public boolean referencia(Long id) {
         return this.espirituDAOJPA.referencia(id);
+    }
+
+    private Espiritu mappearEspiritu(EspirituJPADTO espirituJPADTO){
+
+        Espiritu espiritu = espirituJPADTO.aModelo();
+        EspirituMongoDTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+        return espirituMongo.aModelo(espiritu);
     }
 }
