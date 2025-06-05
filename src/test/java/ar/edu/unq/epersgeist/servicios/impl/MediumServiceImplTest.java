@@ -506,17 +506,19 @@ public class MediumServiceImplTest {
     void unMediumSeMueveYSuAngelSeQuedaSinConexionEntoncesSeLibera(){
 
         Ubicacion wilde = new Cementerio("Wilde",50,List.of(
-                new Coordenada(0, 0),
-                new Coordenada(1, 0),
-                new Coordenada(1, 1),
-                new Coordenada(0, 1)
+                new Coordenada(40, 40),
+                new Coordenada(41, 40),
+                new Coordenada(41, 41),
+                new Coordenada(40, 41),
+                new Coordenada(40, 40)
         ));
         ubicacionService.crear(wilde);
         Ubicacion sarandi = new Cementerio("Sarandi",50,List.of(
-                new Coordenada(3, 0),
-                new Coordenada(4, 0),
-                new Coordenada(4, 1),
-                new Coordenada(3, 1)
+                new Coordenada(5, 5),
+                new Coordenada(6, 5),
+                new Coordenada(6, 6),
+                new Coordenada(5, 6),
+                new Coordenada(5, 5)
         ));
         ubicacionService.crear(sarandi);
 
@@ -545,17 +547,19 @@ public class MediumServiceImplTest {
     void unMediumSeMueveYSuDemonioSeQuedaSinConexionEntoncesSeLibera(){
 
         Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50,List.of(
-                new Coordenada(0, 0),
-                new Coordenada(1, 0),
-                new Coordenada(1, 1),
-                new Coordenada(0, 1)
+                new Coordenada(40, 40),
+                new Coordenada(41, 40),
+                new Coordenada(41, 41),
+                new Coordenada(40, 41),
+                new Coordenada(40, 40)
         ));
         ubicacionService.crear(iglesia);
         Ubicacion vaticano = new Santuario("vaticano",50,List.of(
-                new Coordenada(3, 0),
-                new Coordenada(4, 0),
-                new Coordenada(4, 1),
-                new Coordenada(3, 1)
+                new Coordenada(0, 5),
+                new Coordenada(1, 5),
+                new Coordenada(1, 6),
+                new Coordenada(0, 6),
+                new Coordenada(0, 5)
         ));
         ubicacionService.crear(vaticano);
 
