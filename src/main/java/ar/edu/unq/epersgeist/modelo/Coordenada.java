@@ -1,0 +1,29 @@
+package ar.edu.unq.epersgeist.modelo;
+
+import ar.edu.unq.epersgeist.modelo.exception.FueraDelMapaException;
+import org.springframework.data.geo.Point;
+
+public class Coordenada extends Point {
+
+    public Coordenada(double longitud, double latitud) {
+        super(longitud, latitud);
+        this.verificarLongitud(longitud);
+        this.verificarLatitud(latitud);
+    }
+
+    private void verificarLongitud(double longitud) {
+        if (Math.abs(longitud) > 180.0) throw new FueraDelMapaException(this.mensajeDeErrorLongitudExcedida());
+    }
+
+    private void verificarLatitud(double latitud) {
+        if (Math.abs(latitud) > 90.0) throw new FueraDelMapaException(this.mensajeDeErrorLatitudExcedida());
+    }
+
+    private String mensajeDeErrorLongitudExcedida() {
+        return "La longitud no puede ser mayor a 180 ni menor a -180";
+    }
+
+    private String mensajeDeErrorLatitudExcedida() {
+        return "La latitud no puede ser mayor a 90 ni menor a -90";
+    }
+}

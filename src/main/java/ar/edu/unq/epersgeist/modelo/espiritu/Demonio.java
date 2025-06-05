@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -9,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
@@ -19,11 +19,11 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         super(nivelDeConexion, nombre, ubicacion);
     }
 
-    public Demonio(String nombre, Point coordenada) {
+    public Demonio(String nombre, Coordenada coordenada) {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
         super(nivelDeConexion,nombre, coordenada,ubicacion);
     }
 

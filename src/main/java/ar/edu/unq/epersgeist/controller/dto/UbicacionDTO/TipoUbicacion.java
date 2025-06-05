@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.controller.dto.UbicacionDTO;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -9,7 +10,6 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.CementerioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.SantuarioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
-import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,8 +20,8 @@ public enum TipoUbicacion {
     SANTUARIO{
         @Override
         public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
-            List<Point> areaGeo = area.stream()
-                    .map(doubles -> new Point(doubles.get(0), doubles.get(1)))
+            List<Coordenada> areaGeo = area.stream()
+                    .map(doubles -> new Coordenada(doubles.get(0), doubles.get(1)))
                     .toList();
             return new Santuario(nombre, energia, areaGeo);
         }
@@ -45,8 +45,8 @@ public enum TipoUbicacion {
     },CEMENTERIO{
         @Override
         public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
-            List<Point> areaGeo = area.stream()
-                        .map(doubles -> new Point(doubles.get(0), doubles.get(1)))
+            List<Coordenada> areaGeo = area.stream()
+                        .map(doubles -> new Coordenada(doubles.get(0), doubles.get(1)))
                         .toList();
             return new Cementerio(nombre, energia, areaGeo);
         }

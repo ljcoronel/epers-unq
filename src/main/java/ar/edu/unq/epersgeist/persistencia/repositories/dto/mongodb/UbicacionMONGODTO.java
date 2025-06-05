@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
-
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,10 +10,9 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Getter @Setter
-
 @Document("Ubicacion")
 public class UbicacionMONGODTO {
 
@@ -36,7 +35,9 @@ public class UbicacionMONGODTO {
     }
 
     public Ubicacion aModelo(Ubicacion ubicacion) {
-        ubicacion.setTerritorio(this.getPoints());
+        ubicacion.setTerritorio(this.getPoints().stream()
+                .map(punto -> new Coordenada(punto.getX(), punto.getY()))
+                .collect(Collectors.toList()));
         return ubicacion;
     }
 }

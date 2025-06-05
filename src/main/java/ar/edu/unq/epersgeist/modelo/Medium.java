@@ -28,7 +28,7 @@ public class Medium implements Serializable {
     private Ubicacion ubicacion;
     private Point coordenada;
 
-    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion, Point coordenada) {
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion, Coordenada coordenada) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;

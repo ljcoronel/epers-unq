@@ -9,10 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Getter @Setter
-
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document("Espiritu")
 public class EspirituMongoDTO {
 
@@ -23,7 +20,7 @@ public class EspirituMongoDTO {
 
     public EspirituMongoDTO(Espiritu espiritu) {
         this.id = espiritu.getId();
-        this.coordenada = new GeoJsonPoint(espiritu.getCoordenada().getX(), espiritu.getCoordenada().getY());
+        this.coordenada = new GeoJsonPoint(espiritu.getCoordenada());
         this.idUbicacion = espiritu.getUbicacion().getId();
     }
 

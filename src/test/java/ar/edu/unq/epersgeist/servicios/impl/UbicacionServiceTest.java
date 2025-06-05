@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -45,8 +46,8 @@ public class UbicacionServiceTest {
     @Autowired
     private MediumService mediumService;
 
-    private List<Point> pointsUbicacionUno;
-    private List<Point> pointsUbicacionDos;
+    private List<Coordenada> pointsUbicacionUno;
+    private List<Coordenada> pointsUbicacionDos;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -72,19 +73,19 @@ public class UbicacionServiceTest {
     @BeforeEach
     void prepare() {
         pointsUbicacionUno= List.of(
-                new Point(0, 0),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1),
-                new Point(0, 0)
+                new Coordenada(0, 0),
+                new Coordenada(1, 0),
+                new Coordenada(1, 1),
+                new Coordenada(0, 1),
+                new Coordenada(0, 0)
         );
 
         pointsUbicacionDos= List.of(
-                new Point(3, 3),
-                new Point(4, 3),
-                new Point(4, 4),
-                new Point(3, 4),
-                new Point(3, 3));
+                new Coordenada(3, 3),
+                new Coordenada(4, 3),
+                new Coordenada(4, 4),
+                new Coordenada(3, 4),
+                new Coordenada(3, 3));
 
 
         this.ubicacionUno = new Santuario("Bernal", 50);
@@ -99,13 +100,13 @@ public class UbicacionServiceTest {
         ubicacionCuatro.setTerritorio(pointsUbicacionUno);
         ubicacionCinco.setTerritorio(pointsUbicacionDos);
 
-        this.angelUno = new Angel(10, "angelical",new Point(0.5, 0.5), this.ubicacionUno);
+        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5), this.ubicacionUno);
 
-        this.demonioUno = new Demonio(10, "demonio",new Point(0.5, 0.5), this.ubicacionUno);
+        this.demonioUno = new Demonio(10, "demonio",new Coordenada(0.5, 0.5), this.ubicacionUno);
 
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Point(0.5, 0.5));
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Point(0.5, 0.5));
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Point(0.5, 0.5));
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Coordenada(0.5, 0.5));
 
 
     }
@@ -234,8 +235,8 @@ public class UbicacionServiceTest {
 
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Point(0.5, 0.5));
-        Espiritu espiritu = new Angel(10, "angelical",new Point(0.5, 0.5), ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Coordenada(0.5, 0.5));
+        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5), ubicacion1);
         espirituService.crear(espiritu);
         mediumService.crear(medium);
 

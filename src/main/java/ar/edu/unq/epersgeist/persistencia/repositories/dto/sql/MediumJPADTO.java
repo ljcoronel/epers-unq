@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -82,7 +83,8 @@ public class MediumJPADTO {
     }
 
     public Medium aModelo(Point coordenada) {
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), coordenada);
+        Coordenada nuevaCoordenada = new Coordenada(coordenada.getX(), coordenada.getY());
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), nuevaCoordenada);
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))

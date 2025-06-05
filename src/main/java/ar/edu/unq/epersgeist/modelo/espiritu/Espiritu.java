@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -16,7 +17,6 @@ import lombok.ToString;
 import org.springframework.data.geo.Point;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,7 +26,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private Long id;
     private Integer nivelDeConexion;
     private String nombre;
-
     private Medium medium;
     private Ubicacion ubicacion;
     private Point coordenada;
@@ -38,7 +37,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.ubicacion = ubicacion;
     }
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Point coordenada,Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
@@ -46,7 +45,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
     }
 
-    public Espiritu(String nombre, Point coordenada) {
+    public Espiritu(String nombre, Coordenada coordenada) {
 
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
