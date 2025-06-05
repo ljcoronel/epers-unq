@@ -31,4 +31,6 @@ public interface UbicacionRepository {
     List<DegreeResult> incomingDegreeOf(List<Long> ids);
 
     Optional<Ubicacion> encontrarUbicacionQueContiene(Point punto);
+
+    boolean existeUbicacionEnArea(List<Point> territorio);
 }

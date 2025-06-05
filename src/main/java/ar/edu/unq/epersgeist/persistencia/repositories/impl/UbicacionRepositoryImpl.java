@@ -12,6 +12,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.Ubicaci
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -154,5 +155,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                     Ubicacion ubicacion = jpaDTO.aModelo();
                     return mongoDTO.aModelo(ubicacion);
                 });
+    }
+
+    @Override
+    public boolean existeUbicacionEnArea(List<Point> territorio) {
+        GeoJsonPolygon area = new GeoJsonPolygon(territorio);
+
+        return !ubicacionDaoMongo.interseccionesConArea(area).isEmpty();
     }
 }

@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -48,6 +49,9 @@ public class UbicacionServiceTest {
 
     private List<Coordenada> pointsUbicacionUno;
     private List<Coordenada> pointsUbicacionDos;
+    private List<Coordenada> pointsUbicacionTres;
+    private List<Coordenada> pointsUbicacionCuatro;
+    private List<Coordenada> pointsUbicacionCinco;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -87,6 +91,30 @@ public class UbicacionServiceTest {
                 new Coordenada(3, 4),
                 new Coordenada(3, 3));
 
+        pointsUbicacionTres = List.of(
+                new Coordenada(6, 0),
+                new Coordenada(7, 0),
+                new Coordenada(7, 1),
+                new Coordenada(6, 1),
+                new Coordenada(6, 0)
+        );
+
+        pointsUbicacionCuatro = List.of(
+                new Coordenada(0, 5),
+                new Coordenada(1, 5),
+                new Coordenada(1, 6),
+                new Coordenada(0, 6),
+                new Coordenada(0, 5)
+        );
+
+        pointsUbicacionCinco = List.of(
+                new Coordenada(5, 5),
+                new Coordenada(6, 5),
+                new Coordenada(6, 6),
+                new Coordenada(5, 6),
+                new Coordenada(5, 5)
+        );
+
 
         this.ubicacionUno = new Santuario("Bernal", 50);
         this.ubicacionDos = new Santuario("Quilmes", 50);
@@ -96,9 +124,9 @@ public class UbicacionServiceTest {
 
         ubicacionUno.setTerritorio(pointsUbicacionUno);//TODO ver si tendran que tener todas ubicaciones distintas o pueden compartirlos en estos test
         ubicacionDos.setTerritorio(pointsUbicacionDos);
-        ubicacionTres.setTerritorio(pointsUbicacionUno);
-        ubicacionCuatro.setTerritorio(pointsUbicacionUno);
-        ubicacionCinco.setTerritorio(pointsUbicacionDos);
+        ubicacionTres.setTerritorio(pointsUbicacionTres);
+        ubicacionCuatro.setTerritorio(pointsUbicacionCuatro);
+        ubicacionCinco.setTerritorio(pointsUbicacionCinco);
 
         this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5), this.ubicacionUno);
 
@@ -188,7 +216,7 @@ public class UbicacionServiceTest {
 
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
-        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId());
+        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId()); // TODO cambiar test para no depender del orden de guardado ya que aveces falla
         assertEquals(ubicaciones.get(1).getId(), this.ubicacionDos.getId());
         assertEquals(ubicaciones.getLast().getId(), this.ubicacionTres.getId());
         assertEquals(3, ubicaciones.size());
@@ -855,6 +883,17 @@ public class UbicacionServiceTest {
 
         assertEquals(2, ubicacionService.recuperarTodos().size());
 
+    }
+
+    @Test
+    void alCrearseUnaUbicacionConUnAreaQueIntersecteUnaUbicacionExistenteSeLanzaUnaExcepcion() {
+        List<Coordenada> areaQueIntersecta = List.of(new Coordenada(-0.5,0.5),new Coordenada(0.5,0.5),
+                new Coordenada(0.5,1.5),new Coordenada(-0.5,1.5),new Coordenada(-0.5,0.5));
+        ubicacionDos.setTerritorio(areaQueIntersecta);
+
+        ubicacionService.crear(this.ubicacionUno);
+
+        assertThrows(AreaOcupadaException.class, () -> ubicacionService.crear(this.ubicacionDos));
     }
 
     @AfterEach
