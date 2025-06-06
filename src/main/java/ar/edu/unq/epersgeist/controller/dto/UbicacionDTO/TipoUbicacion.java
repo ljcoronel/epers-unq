@@ -21,7 +21,7 @@ public enum TipoUbicacion {
         @Override
         public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
             List<Coordenada> areaGeo = area.stream()
-                    .map(doubles -> new Coordenada(doubles.get(0), doubles.get(1)))
+                    .map(Coordenada::new)
                     .toList();
             return new Santuario(nombre, energia, areaGeo);
         }
@@ -46,7 +46,7 @@ public enum TipoUbicacion {
         @Override
         public Ubicacion getUbicacionInstance(String nombre, int energia, List<List<Double>> area) {
             List<Coordenada> areaGeo = area.stream()
-                        .map(doubles -> new Coordenada(doubles.get(0), doubles.get(1)))
+                        .map(Coordenada::new)
                         .toList();
             return new Cementerio(nombre, energia, areaGeo);
         }

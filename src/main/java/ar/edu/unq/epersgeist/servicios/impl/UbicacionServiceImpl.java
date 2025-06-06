@@ -34,7 +34,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getTerritorio())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
+        if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getCoordenadas())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
         return this.ubicacionRepository.guardar(ubicacion);
     }
 

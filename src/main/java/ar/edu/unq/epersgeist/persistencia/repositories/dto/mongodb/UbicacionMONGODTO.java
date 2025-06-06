@@ -29,7 +29,7 @@ public class UbicacionMONGODTO {
     }
 
     public static UbicacionMONGODTO desdeModelo(Ubicacion ubicacion) {
-        GeoJsonPolygon area = new GeoJsonPolygon(ubicacion.getTerritorio());
+        GeoJsonPolygon area = new GeoJsonPolygon(ubicacion.getCoordenadas());
         return new UbicacionMONGODTO(ubicacion.getId(), area );
     }
 
