@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,20 +60,38 @@ public class EstadisticaServiceImplTest {
 
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal", 60);
-        this.ubicacion2 = new Santuario("Quilmes",60);
-        this.ubicacion3 = new Cementerio("Solano",60);
+        this.ubicacion = new Santuario("Bernal", 60, List.of(
+                new Coordenada(0, 0),
+                new Coordenada(1, 0),
+                new Coordenada(1, 1),
+                new Coordenada(0, 1),
+                new Coordenada(0, 0)
+        ));
+        this.ubicacion2 = new Santuario("Quilmes",60,List.of(
+                new Coordenada(3, 0),
+                new Coordenada(4, 0),
+                new Coordenada(4, 1),
+                new Coordenada(3, 1),
+                new Coordenada(3, 0)
+        ));
+        this.ubicacion3 = new Cementerio("Solano",60,List.of(
+                new Coordenada(6, 0),
+                new Coordenada(7, 0),
+                new Coordenada(7, 1),
+                new Coordenada(6, 1),
+                new Coordenada(6, 0)
+        ));
 
-        angel1 = new Angel(10,"Angel1", this.ubicacion);
-        demonio1 = new Demonio(10, "Pepito", this.ubicacion);
-        demonio2 = new Demonio(90, "Diavolo", this.ubicacion);
-        demonio3 = new Demonio(50, "Sebastián", this.ubicacion);
-        demonio4 = new Demonio(50, "Jorge", this.ubicacion);
-        demonio5 = new Demonio(50, "Jose", this.ubicacion2);
-        this.demonio6 = new Demonio(40, "Dracula", this.ubicacion3);
+        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5), this.ubicacion);
+        demonio1 = new Demonio(10, "Pepito",new Coordenada(0.5,0.5), this.ubicacion);
+        demonio2 = new Demonio(90, "Diavolo",new Coordenada(0.5,0.5), this.ubicacion);
+        demonio3 = new Demonio(50, "Sebastián",new Coordenada(0.5,0.5), this.ubicacion);
+        demonio4 = new Demonio(50, "Jorge",new Coordenada(0.5,0.5), this.ubicacion);
+        demonio5 = new Demonio(50, "Jose",new Coordenada(3.5,0.5), this.ubicacion2);
+        demonio6 = new Demonio(40, "Dracula",new Coordenada(6.5,0.5), this.ubicacion3);
 
-        medium = new Medium("Brujita", 100, 50, this.ubicacion);
-        medium2 = new Medium("Pepe", 100, 60, this.ubicacion);
+        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(0.5,0.5));
+        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Coordenada(0.5,0.5));
 
     }
 

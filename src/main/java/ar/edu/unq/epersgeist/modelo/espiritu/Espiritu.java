@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,24 +27,33 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private Long id;
     private Integer nivelDeConexion;
     private String nombre;
-
     private Medium medium;
     private Ubicacion ubicacion;
+    private Point coordenada;
 
     private Espiritu espirituDominante;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
-        this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
+
+        this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
         this.ubicacion = ubicacion;
     }
 
-    public Espiritu(String nombre, Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
+
+        this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
+        this.nombre = nombre;
+        this.coordenada = coordenada;
+        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
+    }
+
+    public Espiritu(String nombre, Coordenada coordenada) {
 
         this.setNivelDeConexion(0); //default es 0
         this.nombre = nombre;
-        this.ubicacion = ubicacion;
+        this.coordenada = coordenada;
     }
 
     public Espiritu(int nivelDeConexion, String nombre) {
@@ -98,9 +109,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         return RandomGenerator.getInstance().getRandom(1, 100);
     }
 
-    public void mover(Ubicacion ubicacion) {
-        if (this.estaLibre()) this.setUbicacion(ubicacion);
-    }
 
     public void moverConMediumHacia(Ubicacion ubicacion) {
 

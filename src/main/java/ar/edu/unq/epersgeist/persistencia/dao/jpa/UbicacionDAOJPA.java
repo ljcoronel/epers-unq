@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.Ubicaci
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 

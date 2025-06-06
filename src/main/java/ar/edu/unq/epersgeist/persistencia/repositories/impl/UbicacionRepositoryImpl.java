@@ -4,10 +4,15 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,10 +24,12 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
+    private final UbicacionDAOMONGO ubicacionDaoMongo;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
+        this.ubicacionDaoMongo = ubicacionDaoMongo;
     }
 
     @Override
@@ -39,7 +46,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 ubicacion.getNombre(),
                 ubicacion.getEnergia());
 
-        ubicacionDaoNeo.actualizar(
+        this.ubicacionDaoNeo.actualizar(
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia());
@@ -54,12 +61,19 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         UbicacionNEODTO ubicacionNeo = UbicacionNEODTO.desdeModelo(ubicacionConId);
         this.ubicacionDaoNeo.save(ubicacionNeo);
 
+        UbicacionMONGODTO ubicacionMongo = UbicacionMONGODTO.desdeModelo(ubicacion);
+        this.ubicacionDaoMongo.save(ubicacionMongo);
+
         return ubicacionConId;
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return ubicacionDaoJpa.findById(id).map(UbicacionJPADTO::aModelo);
+
+        return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
+                UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
+                return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+        });
     }
 
     @Override
@@ -84,7 +98,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDaoJpa.findAll().stream().map(UbicacionJPADTO::aModelo).toList());
+        return List.copyOf(this.ubicacionDaoJpa.findAll().stream()
+                .map(ubicacionJPA -> {
+                    UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionJPA.getId()).get();
+                    return ubicacionMongo.aModelo(ubicacionJPA.aModelo());
+                }).toList());
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
@@ -128,4 +146,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .collect(Collectors.toList());
     }
 
+    public Optional<Ubicacion> encontrarUbicacionQueContiene(Point punto){
+        GeoJsonPoint coordenada = new GeoJsonPoint(punto.getX(), punto.getY());
+
+        return ubicacionDaoMongo.findByPuntoDentroDelTerritorio(coordenada)
+                .map(mongoDTO -> {
+                    UbicacionJPADTO jpaDTO = ubicacionDaoJpa.findById(mongoDTO.getId()).get();
+                    Ubicacion ubicacion = jpaDTO.aModelo();
+                    return mongoDTO.aModelo(ubicacion);
+                });
+    }
+
+    @Override
+    public boolean existeUbicacionEnArea(List<Point> territorio) {
+        GeoJsonPolygon area = new GeoJsonPolygon(territorio);
+
+        return !ubicacionDaoMongo.interseccionesConArea(area).isEmpty();
+    }
 }

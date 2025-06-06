@@ -1,9 +1,10 @@
 package ar.edu.unq.epersgeist.controller.dto.MediumDTO;
+
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-
 
 public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ubicacionID) {
 
@@ -11,7 +12,7 @@ public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ub
         validarLosCampos();
         Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
         ubicacionPlaceholder.setId(this.ubicacionID);
-        return new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder);
+        return new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder, new Coordenada(1,1));
     }
 
     private void validarLosCampos() {
