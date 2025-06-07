@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,7 +103,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .map(ubicacionJPA -> {
                     UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionJPA.getId()).get();
                     return ubicacionMongo.aModelo(ubicacionJPA.aModelo());
-                }).toList());
+                })
+                .sorted(Comparator.comparing(Ubicacion::getId))
+                .toList());
     }
 
     public List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino){
