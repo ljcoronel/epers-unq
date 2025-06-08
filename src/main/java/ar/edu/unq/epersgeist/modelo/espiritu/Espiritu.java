@@ -3,13 +3,14 @@ package ar.edu.unq.epersgeist.modelo.espiritu;
 import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,7 +31,10 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private Ubicacion ubicacion;
     private Point coordenada;
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//necesario solo para hacer el aModelo de JPA
+    private Espiritu espirituDominante;
+
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+
 
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
@@ -116,14 +120,23 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void conectarConMedium(Optional<Medium> optionalMedium) {
         Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("No se encontró al Médium"));
 
-        verificarMediumEnMismaUbicacion(medium);
-        verificarEspirituLibre();
+        verificarSePuedeConectar(medium);
 
         int conexionAAumentar =(int) Math.round(medium.getMana()* getPorcentajeDeMana()) ;
         this.aumentarNivelDeConexionEn(conexionAAumentar);
         this.setMedium(medium);
 
         medium.realizarConexion(this);
+    }
+
+    private void verificarSePuedeConectar(Medium medium) {
+        verificarMediumEnMismaUbicacion(medium);
+        verificarEspirituLibre();
+        verificarNoEstaDominado();
+    }
+
+    private void verificarNoEstaDominado() {
+        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu ya está siendo dominado.");
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
@@ -156,5 +169,25 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     @Override
     public void recibirEfectoDe(Santuario ubicacion) {}
 
-
+    public void serDominadoPor(Espiritu espiritu) {
+        // if (this.getCoords().distanciaA(espiritu.getCoords) < 2 || > 5) return; // TODO revisar si va o no
+        if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre() || esMismoEspiritu(espiritu)) return;
+        verificarDominarAlQueLoDomina(espiritu);
+        setEspirituDominante(espiritu);
     }
+
+    private boolean estaSiendoDominado() {
+        return getEspirituDominante() != null;
+    }
+
+    private void verificarDominarAlQueLoDomina(Espiritu espiritu) {
+        if (esMismoEspiritu(espiritu.getEspirituDominante())) throw new EspirituDominadoException("El espíritu no puede dominar al espíritu que lo domina.");
+    }
+
+    private boolean esMismoEspiritu(Espiritu espiritu) {
+        if (espiritu == null) return false;
+        return Objects.equals(espiritu.getId(), this.getId());
+    }
+
+
+}

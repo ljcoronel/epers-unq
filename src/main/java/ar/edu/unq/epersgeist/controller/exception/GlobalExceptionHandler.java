@@ -3,6 +3,12 @@ package ar.edu.unq.epersgeist.controller.exception;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -83,6 +89,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UbicacionLejanaException.class)
     public DTOResponseError ubicacionLejana(UbicacionLejanaException ule) {
         return new DTOResponseError(ule.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EspirituDominadoException.class)
+    public DTOResponseError espirituDominado(EspirituDominadoException ede) {
+        return new DTOResponseError( ede.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
