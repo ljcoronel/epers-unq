@@ -31,4 +31,6 @@ public interface EspirituRepository {
     void desvincular(Long id);
 
     boolean referencia(Long idDelMedium);
+
+    boolean estanEntreDistancia(Long espirituDominanteId, Long espirituADominarId, int min, int max);
 }

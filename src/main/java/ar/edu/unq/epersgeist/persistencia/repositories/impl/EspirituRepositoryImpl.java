@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMongoDTO;
@@ -119,6 +120,11 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     @Override
     public boolean referencia(Long id) {
         return this.espirituDAOJPA.referencia(id);
+    }
+
+    @Override
+    public boolean estanEntreDistancia(Long espirituDominanteId, Long espirituADominarId, int min, int max) {
+        return espirituDAOMongo.estanEntreDistancia(espirituDominanteId, espirituADominarId, min, max);
     }
 
     private Espiritu mappearEspiritu(EspirituJPADTO espirituJPADTO){

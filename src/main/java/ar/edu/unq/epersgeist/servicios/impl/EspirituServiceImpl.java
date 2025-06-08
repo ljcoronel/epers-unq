@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -14,6 +15,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepos
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,15 +116,16 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void dominar(Long espirituDominanteId, Long espirituADominarId) {
 
-        //        verificarDistancia() -> if (espirituRepository.distanciaEntre(espirituDominanteId, espirituADominarId)) < 2 || > 5 throw new EspirituLejanoException;
-
         Optional<Espiritu> optEspDominante = espirituRepository.recuperar(espirituDominanteId);
         Optional<Espiritu> optEspADominar = espirituRepository.recuperar(espirituADominarId);
 
-        if(optEspDominante.isEmpty() || optEspADominar.isEmpty()) return; // TODO lo dejo así? o hago excepción?
+        if(optEspDominante.isEmpty() || optEspADominar.isEmpty()) return;
+        if (espirituRepository.estanEntreDistancia(espirituDominanteId, espirituADominarId, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
 
         Espiritu espirituDominante = optEspDominante.get();
         Espiritu espirituADominar = optEspADominar.get();
+
+
 
         espirituADominar.serDominadoPor(espirituDominante);
 

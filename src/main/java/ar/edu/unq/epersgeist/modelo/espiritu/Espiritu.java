@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -17,6 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.geo.Point;
 
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -170,7 +172,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void recibirEfectoDe(Santuario ubicacion) {}
 
     public void serDominadoPor(Espiritu espiritu) {
-        // if (this.getCoords().distanciaA(espiritu.getCoords) < 2 || > 5) return; // TODO revisar si va o no
         if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre() || esMismoEspiritu(espiritu)) return;
         verificarDominarAlQueLoDomina(espiritu);
         setEspirituDominante(espiritu);
