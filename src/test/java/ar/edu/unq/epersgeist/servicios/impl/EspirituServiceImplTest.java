@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,12 +80,12 @@ public class EspirituServiceImplTest {
         );
         demonio2 = new Demonio(
                 90,
-                "Diavolo",new Coordenada(1,1), this.ubicacion
+                "Diavolo",new Coordenada(0.520,0.520), this.ubicacion
 
         );
         demonio3 = new Demonio(
                 50,
-                "Sebastián",new Coordenada(1,1), this.ubicacion
+                "Sebastián",new Coordenada(0.550,0.550), this.ubicacion
 
         );
         medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(1,1));
@@ -594,6 +596,7 @@ public class EspirituServiceImplTest {
 
         demonio2.setNivelDeConexion(30);
         demonio3.setNivelDeConexion(30);
+        demonio3.setCoordenada(new Point(0.520, 0.520)); // lo acerco al demonio1
 
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
@@ -640,6 +643,41 @@ public class EspirituServiceImplTest {
 
         assertThrows(EspirituDominadoException.class,
                 () -> espirituService.conectar(demonio2.getId(), medium.getId()));
+
+    }
+
+    @Test
+    void unEspirituSeEncuentraAMasDe5KmDeDistanciaDeOtroYNoLoPuedeDominarTirandoUnaException() {
+        Ubicacion tailandia = new Santuario("Tailandia", 50,Arrays.asList(
+                new Coordenada(20, 20),
+                new Coordenada(20, 30),
+                new Coordenada(30, 30),
+                new Coordenada(30, 20),
+                new Coordenada(20, 20)));
+
+        ubicacionService.crear(ubicacion);
+        ubicacionService.crear(tailandia);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        demonio2.setCoordenada(new Point(21, 21)); // muy lejos del demonio 1 (como 3000km)
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+        assertThrows(EspirituMuyLejanoException.class, () -> {espirituService.dominar(demonio1.getId(), demonio2.getId());});
+
+    }
+
+    @Test
+    void unEspirituSeEncuentraAMenosDe2KmDeDistanciaDeOtroYNoLoPuedeDominarTirandoUnaException() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        demonio2.setCoordenada(new Point(0.001, 0));
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+
+        assertThrows(EspirituMuyLejanoException.class, () -> {espirituService.dominar(demonio1.getId(), demonio2.getId());});
 
     }
 

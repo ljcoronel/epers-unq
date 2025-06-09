@@ -147,7 +147,7 @@ public class MediumServiceImpl implements MediumService {
         Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
-        if (espirituRepository.estanEntreDistancia(espirituDominanteId, espirituADominarId, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
+//        if (espirituRepository.estanEntreDistancia(espirituDominanteId, espirituADominarId, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
 
         Medium medium = optionalMedium.get();
 

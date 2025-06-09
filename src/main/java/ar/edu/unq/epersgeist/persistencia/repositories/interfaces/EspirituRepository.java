@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +33,5 @@ public interface EspirituRepository {
 
     boolean referencia(Long idDelMedium);
 
-    boolean estanEntreDistancia(Long espirituDominanteId, Long espirituADominarId, int min, int max);
+    boolean estanEntreDistancia(Espiritu espirituDominante, Espiritu espirituADominar, int minKms, int maxKms);
 }

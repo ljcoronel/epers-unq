@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMongoDTO;
@@ -11,9 +10,13 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituReposi
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
+import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -123,8 +126,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public boolean estanEntreDistancia(Long espirituDominanteId, Long espirituADominarId, int min, int max) {
-        return espirituDAOMongo.estanEntreDistancia(espirituDominanteId, espirituADominarId, min, max);
+    public boolean estanEntreDistancia(Espiritu espirituDominante, Espiritu espirituADominar, int minKms, int maxKms) {
+        return espirituDAOMongo.estanEntreDistancia(espirituDominante.getId(), espirituADominar.getCoordenada(), minKms*1000, maxKms*1000).isPresent(); // TODO esto iría? o no se puede en esta capa transformar a bool?
+        // TODO lo mismo con el * 1000
     }
 
     private Espiritu mappearEspiritu(EspirituJPADTO espirituJPADTO){

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -119,13 +120,13 @@ public class EspirituServiceImpl implements EspirituService {
         Optional<Espiritu> optEspDominante = espirituRepository.recuperar(espirituDominanteId);
         Optional<Espiritu> optEspADominar = espirituRepository.recuperar(espirituADominarId);
 
-        if(optEspDominante.isEmpty() || optEspADominar.isEmpty()) return;
-        if (espirituRepository.estanEntreDistancia(espirituDominanteId, espirituADominarId, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
+        if(optEspDominante.isEmpty() || optEspADominar.isEmpty() || Objects.equals(espirituDominanteId, espirituADominarId)) return;
+        // TODO se puede hacer esa comparación de ids? mi idea era hacerla en el modelo, pero sino me tira el error de estanEntreDistancia
 
         Espiritu espirituDominante = optEspDominante.get();
         Espiritu espirituADominar = optEspADominar.get();
 
-
+        if (!espirituRepository.estanEntreDistancia(espirituDominante, espirituADominar, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
 
         espirituADominar.serDominadoPor(espirituDominante);
 

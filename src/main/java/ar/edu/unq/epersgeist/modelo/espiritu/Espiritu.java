@@ -172,7 +172,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void recibirEfectoDe(Santuario ubicacion) {}
 
     public void serDominadoPor(Espiritu espiritu) {
-        if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre() || esMismoEspiritu(espiritu)) return;
+        if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre()) return;
         verificarDominarAlQueLoDomina(espiritu);
         setEspirituDominante(espiritu);
     }
