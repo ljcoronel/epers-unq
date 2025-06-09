@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.mongodb;
 
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMongoDTO;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface EspirituDAOMONGO extends MongoRepository<EspirituMongoDTO, Long> {
+public interface EspirituDAOMONGO extends MongoRepository<EspirituMONGODTO, Long> {
 
     @Query("""
            {_id:?0, coordenada: {

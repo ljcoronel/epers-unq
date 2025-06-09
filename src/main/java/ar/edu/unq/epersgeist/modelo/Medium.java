@@ -34,7 +34,11 @@ public class Medium implements Serializable {
         this.mana = mana;
         this.angeles = new ArrayList<>();
         this.demonios = new ArrayList<>();
-        this.ubicacion = ubicacion;
+        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
+        this.coordenada = coordenada;
+    }
+
+    public void setCoordenada(Coordenada coordenada) {
         this.coordenada = coordenada;
     }
 

@@ -63,6 +63,9 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         setNivelDeConexion(nivelDeConexion);
     }
 
+    public void setCoordenada(Coordenada coordenada) {
+        this.coordenada = coordenada;
+    }
 
     public void aumentarNivelDeConexionEn(int cantConexion) {
         this.setNivelDeConexion(this.getNivelDeConexion() + cantConexion);

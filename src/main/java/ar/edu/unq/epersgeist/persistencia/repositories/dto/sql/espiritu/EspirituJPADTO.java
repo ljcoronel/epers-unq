@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
@@ -100,7 +101,6 @@ public abstract class EspirituJPADTO {
         Espiritu espiritu = instanciarEspiritu();
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
-        espiritu.setCoordenada(medium.getCoordenada());
         espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);
         return espiritu;
     };

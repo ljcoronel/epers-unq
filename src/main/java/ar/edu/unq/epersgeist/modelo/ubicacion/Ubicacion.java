@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.modelo.ubicacion;
 
 import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.Poligono;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -19,12 +20,12 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     private Long id;
     private String nombre;
     private int energia;
-    private List<Point> territorio;
+    private Poligono territorio;
 
-    public Ubicacion(String nombre, int energia, List<Coordenada> territorio) {
+    public Ubicacion(String nombre, int energia, List<Coordenada> coordenadas) {
         this.nombre = nombre;
         this.setEnergia(energia);
-        this.territorio = new ArrayList<>(territorio);
+        this.territorio = new Poligono(coordenadas);
     }
 
     public Ubicacion(String nombre, int energia) {//se quitaria?
@@ -32,8 +33,8 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
         this.setEnergia(energia);
     }
 
-    public void setTerritorio(List<Coordenada> territorio) {
-        this.territorio = new ArrayList<>(territorio);
+    public void setTerritorio(List<Coordenada> coordenadas) {
+        this.territorio = new Poligono(coordenadas);
     }
 
     public void setEnergia(int i) {
@@ -44,6 +45,10 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
         } else {
             this.energia = i;
         }
+    }
+
+    public List<Point> getCoordenadas() {
+        return territorio.getCoordenadas();
     }
 
     @Override

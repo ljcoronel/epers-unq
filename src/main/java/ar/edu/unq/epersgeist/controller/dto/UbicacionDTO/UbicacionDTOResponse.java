@@ -13,7 +13,7 @@ public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String 
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia(),
-                ubicacion.getTerritorio().stream().map(point -> List.of(point.getX(),point.getY())).toList()
+                ubicacion.getCoordenadas().stream().map(point -> List.of(point.getX(),point.getY())).toList()
         );
     }
 

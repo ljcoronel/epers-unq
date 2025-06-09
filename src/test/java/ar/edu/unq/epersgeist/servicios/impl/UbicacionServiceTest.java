@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.Poligono;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -878,8 +879,8 @@ public class UbicacionServiceTest {
         Ubicacion recuperadaUno = ubicacionService.recuperar(ubicacionUno.getId()).get();
         Ubicacion recuperadaDos = ubicacionService.recuperar(ubicacionDos.getId()).get();
 
-        assertEquals(recuperadaUno.getTerritorio() , pointsUbicacionUno );
-        assertEquals(recuperadaDos.getTerritorio() , pointsUbicacionDos );
+        assertEquals(recuperadaUno.getCoordenadas() , pointsUbicacionUno );
+        assertEquals(recuperadaDos.getCoordenadas() , pointsUbicacionDos );
 
         assertEquals(2, ubicacionService.recuperarTodos().size());
 
@@ -894,6 +895,26 @@ public class UbicacionServiceTest {
         ubicacionService.crear(this.ubicacionUno);
 
         assertThrows(AreaOcupadaException.class, () -> ubicacionService.crear(this.ubicacionDos));
+    }
+
+    @Test
+    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPolygono() {
+
+        List<Coordenada> coordenadasPoligonoAbierto =
+                List.of(new Coordenada(-70,0),new Coordenada(-70,1)
+                ,new Coordenada(-80,1));
+
+        ubicacionUno.setTerritorio(coordenadasPoligonoAbierto);
+        ubicacionService.crear(this.ubicacionUno);
+
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertEquals(4, ubicacionRecuperada.getCoordenadas().size());
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(0), coordenadasPoligonoAbierto.get(0));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(1), coordenadasPoligonoAbierto.get(1));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(2), coordenadasPoligonoAbierto.get(2));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(3), coordenadasPoligonoAbierto.get(0));//aca el primero es igual al ultimo
     }
 
     @AfterEach
