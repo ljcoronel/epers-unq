@@ -24,8 +24,8 @@ public class Santuario extends Ubicacion {
     }
 
     @Override
-    public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium, Coordenada coordenada) {
-        espiritu.invocarASantuarioAMedium(this, medium, coordenada);
+    public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium) {
+        espiritu.invocarASantuarioAMedium(this, medium);
     }
 
     @Override

@@ -936,8 +936,8 @@ public class MediumServiceImplTest {
         espirituService.crear(demonioDebil);
 
         Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
-//        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX()); // TODO revisar cuando esté implementado
-//        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
+        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX());
+        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
 
     }
 
@@ -951,8 +951,8 @@ public class MediumServiceImplTest {
         espirituService.crear(demonioDebil);
 
         Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
-//        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX()); // TODO revisar cuando esté implementado
-//        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
+        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX());
+        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
 
     }
 

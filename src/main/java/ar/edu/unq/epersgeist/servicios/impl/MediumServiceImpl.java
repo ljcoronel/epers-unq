@@ -153,13 +153,12 @@ public class MediumServiceImpl implements MediumService {
 
         if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50)) throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
 
-        medium.invocar(optionalEspiritu);
-
         Espiritu espiritu = optionalEspiritu.get();
+        Espiritu espirituInvocado = medium.invocar(espiritu);
 
         mediumRepository.guardar(medium);
-        espirituRepository.guardar(espiritu);
-        return espiritu;
+        espirituRepository.guardar(espirituInvocado);
+        return espirituInvocado;
     }
 
     @Override
