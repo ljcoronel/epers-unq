@@ -14,9 +14,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
-import java.awt.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -126,8 +124,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public boolean estanEntreDistancia(Espiritu espirituDominante, Espiritu espirituADominar, int minKms, int maxKms) {
-        return espirituDAOMongo.estanEntreDistancia(espirituDominante.getId(), espirituADominar.getCoordenada(), minKms*1000, maxKms*1000).isPresent(); // TODO esto iría? o no se puede en esta capa transformar a bool?
+    public boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms) {
+        return espirituDAOMongo.estanEntreDistancia(espirituId, new GeoJsonPoint(coordenadaReferencia), minKms*1000, maxKms*1000).isPresent(); // TODO esto iría? o no se puede en esta capa transformar a bool?
         // TODO lo mismo con el * 1000
     }
 

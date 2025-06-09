@@ -26,5 +26,5 @@ public interface EspirituDAOMONGO extends MongoRepository<EspirituMongoDTO, Long
                    }
     """
     )
-    Optional<EspirituMongoDTO> estanEntreDistancia(Long espirituDominanteId, Point coordenadasDelEspirituDominado, int minKms, int maxKms);
+    Optional<EspirituMongoDTO> estanEntreDistancia(Long espirituDominanteId, GeoJsonPoint coordenadasDelEspirituDominado, int minKms, int maxKms);
 }

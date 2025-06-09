@@ -104,7 +104,7 @@ public class Medium implements Serializable {
 
     public void invocar(Optional<Espiritu> opcionalEspiritu) {
 
-        if(opcionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe");
+
 
         Espiritu espiritu = opcionalEspiritu.get();
 

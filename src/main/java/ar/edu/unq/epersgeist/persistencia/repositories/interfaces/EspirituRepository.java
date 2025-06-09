@@ -33,5 +33,5 @@ public interface EspirituRepository {
 
     boolean referencia(Long idDelMedium);
 
-    boolean estanEntreDistancia(Espiritu espirituDominante, Espiritu espirituADominar, int minKms, int maxKms);
+    boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms);
 }

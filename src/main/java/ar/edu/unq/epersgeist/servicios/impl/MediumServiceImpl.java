@@ -142,14 +142,16 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
-
         Optional<Medium> optionalMedium =  mediumRepository.recuperar(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
-//        if (espirituRepository.estanEntreDistancia(espirituDominanteId, espirituADominarId, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
+
+        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe"); // TODO lo muevo acá porque sino tira el error de la distancia primero, en caso que no exista el espíritu
 
         Medium medium = optionalMedium.get();
+
+        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50)) throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
 
         medium.invocar(optionalEspiritu);
 

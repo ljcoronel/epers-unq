@@ -117,16 +117,17 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public void dominar(Long espirituDominanteId, Long espirituADominarId) {
 
+        if(Objects.equals(espirituDominanteId, espirituADominarId)) return;
+
         Optional<Espiritu> optEspDominante = espirituRepository.recuperar(espirituDominanteId);
         Optional<Espiritu> optEspADominar = espirituRepository.recuperar(espirituADominarId);
 
-        if(optEspDominante.isEmpty() || optEspADominar.isEmpty() || Objects.equals(espirituDominanteId, espirituADominarId)) return;
-        // TODO se puede hacer esa comparación de ids? mi idea era hacerla en el modelo, pero sino me tira el error de estanEntreDistancia
+        if(optEspDominante.isEmpty() || optEspADominar.isEmpty() ) return;
 
         Espiritu espirituDominante = optEspDominante.get();
         Espiritu espirituADominar = optEspADominar.get();
 
-        if (!espirituRepository.estanEntreDistancia(espirituDominante, espirituADominar, 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
+        if (!espirituRepository.estaEntreDistancia(espirituDominante.getId(), espirituADominar.getCoordenada(), 2, 5)) throw new EspirituMuyLejanoException("Los espíritus deben estar entre 2 y 5 km de distancia.");
 
         espirituADominar.serDominadoPor(espirituDominante);
 

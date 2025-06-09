@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -61,6 +62,7 @@ public class MediumServiceImplTest {
     private Ubicacion ubicacionNoConectada;
 
     private FakeRandomStrategyImpl fakeRandomStrategy;
+    private Santuario santuario3;
 
 
     @BeforeEach
@@ -79,6 +81,12 @@ public class MediumServiceImplTest {
                 new Coordenada(3, 1),
                 new Coordenada(3, 0)
         ));
+        this.santuario3 = new Santuario("Tailandia", 50,List.of(
+                new Coordenada(20, 20),
+                new Coordenada(20, 30),
+                new Coordenada(30, 30),
+                new Coordenada(30, 20),
+                new Coordenada(20, 20)));
         this.ubicacion2 = new Santuario("Quilmes", 50,List.of(
                 new Coordenada(0, 3),
                 new Coordenada(1, 3),
@@ -109,9 +117,11 @@ public class MediumServiceImplTest {
         ));
 
 
+
         ubicacionService.crear(santuario);
         ubicacionService.crear(santuario2);
         ubicacionService.crear(ubicacion2);
+        ubicacionService.crear(santuario3);
         ubicacionService.crear(cementerio);
         ubicacionService.crear(cementerio2);
         ubicacionService.crear(ubicacionNoConectada);
@@ -678,9 +688,19 @@ public class MediumServiceImplTest {
 
     @Test
     public void unMediumNoPuedeInvocarAUnDemonioAUnSantuario() {
-        mediumService.crear(medium); // está en "santuario"
-        espirituService.crear(demonioDebil2); // está en "santuario2"
-        int manaInicial = medium.getMana();
+        Santuario santuario4 = new Santuario("Chocolandia", 50,List.of(
+                new Coordenada(30.1, 30.1),
+                new Coordenada(40, 30.1),
+                new Coordenada(40, 40),
+                new Coordenada(30.1, 40),
+                new Coordenada(30.1, 30.1)));
+
+        medium.setCoordenada(new Point(30.11, 30.11));
+        demonioDebil2.setCoordenada(new Point(29.99, 29.99));
+
+        ubicacionService.crear(santuario4);
+        mediumService.crear(medium); // está en un santuario
+        espirituService.crear(demonioDebil2); // está en otro santuario
 
         mediumService.invocar(medium.getId(), demonioDebil2.getId());
 
@@ -695,9 +715,20 @@ public class MediumServiceImplTest {
 
     @Test
     public void unMediumNoPuedeInvocarAUnAngelAUnCementerio() {
+
+        Cementerio cementerio2 = new Cementerio("Paseo del Brócoli", 50,List.of(
+                new Coordenada(30.1, 30.1),
+                new Coordenada(40, 30.1),
+                new Coordenada(40, 40),
+                new Coordenada(30.1, 40),
+                new Coordenada(30.1, 30.1)));
+
+        medium3.setCoordenada(new Point(30.11, 30.11));
+        angelDebil.setCoordenada(new Point(29.99, 29.99));
+
+        ubicacionService.crear(cementerio2);
         mediumService.crear(medium3); // está en "cementerio"
         espirituService.crear(angelDebil); // está en "santuario"
-        int manaInicial = medium3.getMana();
 
         mediumService.invocar(medium3.getId(), angelDebil.getId());
 
@@ -712,8 +743,20 @@ public class MediumServiceImplTest {
 
     @Test
     public void unMediumPuedeInvocarAUnAngelAUnSantuario() {
-        mediumService.crear(medium); // está en "santuario"
-        espirituService.crear(angelDebil2); // está en "santuario2"
+
+        Santuario santuario4 = new Santuario("Chocolandia", 50,List.of(
+                new Coordenada(30.1, 30.1),
+                new Coordenada(40, 30.1),
+                new Coordenada(40, 40),
+                new Coordenada(30.1, 40),
+                new Coordenada(30.1, 30.1)));
+
+        medium.setCoordenada(new Point(30.11, 30.11));
+        angelDebil2.setCoordenada(new Point(29.99, 29.99));
+
+        ubicacionService.crear(santuario4);
+        mediumService.crear(medium); // está en un santuario
+        espirituService.crear(angelDebil2); // está en otro santuario
 
         mediumService.invocar(medium.getId(), angelDebil2.getId());
 
@@ -727,10 +770,21 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    public void unMediumPuedeInvocarAUnDemonioAUnCementerio() {
-        mediumService.crear(medium3); // está en "cementerio"
-        espirituService.crear(demonioDebil2); // está en "cementerio2"
+    public void unMediumPuedeInvocarUnDemonioAUnCementerio() {
+        Cementerio cementerio4 = new Cementerio("Paseo del Brócoli", 50,List.of(
+                new Coordenada(30.1, 30.1),
+                new Coordenada(40, 30.1),
+                new Coordenada(40, 40),
+                new Coordenada(30.1, 40),
+                new Coordenada(30.1, 30.1)));
 
+        demonioDebil2.setCoordenada(new Point(30.11, 30.11));
+        medium3.setCoordenada(new Point(30.2, 30.2));
+
+        ubicacionService.crear(cementerio4);
+
+        mediumService.crear(medium3); // está en un santuario
+        espirituService.crear(demonioDebil2); // está en un cementerio
 
         mediumService.invocar(medium3.getId(), demonioDebil2.getId());
 
@@ -861,6 +915,46 @@ public class MediumServiceImplTest {
         assertThrows(MediumEnDistintaUbicacionException.class, () -> this.mediumService.exorcisar(this.medium.getId(), this.medium3.getId()));
     }
 
+    @Test
+    void unMediumNoPuedeInvocarAUnEspirituAMasDe50KmDeDistancia() {
+
+        demonioDebil.setCoordenada(new Point(21, 21));
+
+        mediumService.crear(medium);
+        espirituService.crear(demonioDebil);
+
+        assertThrows(EspirituMuyLejanoException.class, () -> mediumService.invocar(medium.getId(), demonioDebil.getId()));
+    }
+
+    @Test
+    void unMediumPuedeInvocarAUnEspirituAAprox50KmDeDistancia() {
+
+        demonioDebil.setCoordenada(new Point(21, 21));
+        medium.setCoordenada(new Point(20.71, 20.649)); // distancia de 50 km
+
+        mediumService.crear(medium);
+        espirituService.crear(demonioDebil);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
+//        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX()); // TODO revisar cuando esté implementado
+//        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
+
+    }
+
+    @Test
+    void unMediumPuedeInvocarAUnEspirituAMenosDe50KmDeDistancia() {
+
+        demonioDebil.setCoordenada(new Point(21, 21));
+        medium.setCoordenada(new Point(20.90, 20.90)); // distancia de menos de 50 km
+
+        mediumService.crear(medium);
+        espirituService.crear(demonioDebil);
+
+        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
+//        assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX()); // TODO revisar cuando esté implementado
+//        assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
+
+    }
 
     @AfterEach
     void eliminarModelo() {

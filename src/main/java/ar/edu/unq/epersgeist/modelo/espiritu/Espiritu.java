@@ -138,7 +138,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     }
 
     private void verificarNoEstaDominado() {
-        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu ya está siendo dominado.");
+        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu está siendo dominado.");
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
