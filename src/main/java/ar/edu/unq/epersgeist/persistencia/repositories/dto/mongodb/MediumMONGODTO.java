@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class MediumMONGODTO {
     }
 
     public Medium aModelo(Medium medium){
-        medium.setCoordenada(coordenada);
+        medium.setCoordenada(new Coordenada(coordenada.getX(),  coordenada.getY()));
         return medium;
     }
 }

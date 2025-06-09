@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,8 +33,8 @@ public class EspirituMONGODTO {
     }
 
     public Espiritu aModelo(Espiritu espiritu){
-        espiritu.setCoordenada(this.getCoordenada());
-        if (espiritu.getMedium() != null) espiritu.getMedium().setCoordenada(espiritu.getCoordenada());
+        espiritu.setCoordenada(new Coordenada(this.getCoordenada().getX(), this.getCoordenada().getY()));
+        if (espiritu.getMedium() != null) espiritu.getMedium().setCoordenada(new Coordenada(espiritu.getCoordenada().getX(), espiritu.getCoordenada().getY()));
         return espiritu;
     }
 
