@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MediumMONGODTO {
     @Id
     private String id;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    @GeoSpatialIndexed(name = "coordenada", type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint coordenada;
 
     public static MediumMONGODTO desdeModelo(Medium medium){

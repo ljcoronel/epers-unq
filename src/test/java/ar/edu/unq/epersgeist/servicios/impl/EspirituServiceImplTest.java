@@ -596,7 +596,7 @@ public class EspirituServiceImplTest {
 
         demonio2.setNivelDeConexion(30);
         demonio3.setNivelDeConexion(30);
-        demonio3.setCoordenada(new Point(0.520, 0.520)); // lo acerco al demonio1
+        demonio3.setCoordenada(new Coordenada(0.520, 0.520)); // lo acerco al demonio1
 
         espirituService.crear(demonio1);
         espirituService.crear(demonio2);
@@ -659,7 +659,7 @@ public class EspirituServiceImplTest {
         ubicacionService.crear(tailandia);
 
         demonio2.setNivelDeConexion(30); // energía menor a 50
-        demonio2.setCoordenada(new Point(21, 21)); // muy lejos del demonio 1 (como 3000km)
+        demonio2.setCoordenada(new Coordenada(21, 21)); // muy lejos del demonio 1 (como 3000km)
         espirituService.crear(demonio1);
         espirituService.crear(demonio2); // es libre
 
@@ -672,7 +672,7 @@ public class EspirituServiceImplTest {
         ubicacionService.crear(ubicacion);
 
         demonio2.setNivelDeConexion(30); // energía menor a 50
-        demonio2.setCoordenada(new Point(0.001, 0));
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
         espirituService.crear(demonio1);
         espirituService.crear(demonio2); // es libre
 

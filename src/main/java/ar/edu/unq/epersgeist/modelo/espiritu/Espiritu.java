@@ -164,9 +164,9 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     abstract public void desconectarDeMedium(Medium medium);
 
-    public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium);
+    public abstract void invocarASantuarioAMedium(Santuario santuario, Medium medium, Coordenada coordenada);
 
-    public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium);
+    public abstract void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium, Coordenada coordenada);
 
     @Override
     public void recibirEfectoDe(Cementerio ubicacion) {}

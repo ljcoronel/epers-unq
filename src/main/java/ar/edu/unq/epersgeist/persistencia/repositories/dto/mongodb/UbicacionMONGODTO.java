@@ -20,7 +20,7 @@ public class UbicacionMONGODTO {
 
     @Id
     private Long id;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    @GeoSpatialIndexed(name = "area", type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPolygon area;
 
     public UbicacionMONGODTO(Long id, GeoJsonPolygon area) {

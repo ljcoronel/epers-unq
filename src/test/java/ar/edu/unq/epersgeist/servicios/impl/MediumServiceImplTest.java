@@ -695,8 +695,8 @@ public class MediumServiceImplTest {
                 new Coordenada(30.1, 40),
                 new Coordenada(30.1, 30.1)));
 
-        medium.setCoordenada(new Point(30.11, 30.11));
-        demonioDebil2.setCoordenada(new Point(29.99, 29.99));
+        medium.setCoordenada(new Coordenada(30.11, 30.11));
+        demonioDebil2.setCoordenada(new Coordenada(29.99, 29.99));
 
         ubicacionService.crear(santuario4);
         mediumService.crear(medium); // está en un santuario
@@ -723,8 +723,8 @@ public class MediumServiceImplTest {
                 new Coordenada(30.1, 40),
                 new Coordenada(30.1, 30.1)));
 
-        medium3.setCoordenada(new Point(30.11, 30.11));
-        angelDebil.setCoordenada(new Point(29.99, 29.99));
+        medium3.setCoordenada(new Coordenada(30.11, 30.11));
+        angelDebil.setCoordenada(new Coordenada(29.99, 29.99));
 
         ubicacionService.crear(cementerio2);
         mediumService.crear(medium3); // está en "cementerio"
@@ -751,8 +751,8 @@ public class MediumServiceImplTest {
                 new Coordenada(30.1, 40),
                 new Coordenada(30.1, 30.1)));
 
-        medium.setCoordenada(new Point(30.11, 30.11));
-        angelDebil2.setCoordenada(new Point(29.99, 29.99));
+        medium.setCoordenada(new Coordenada(30.11, 30.11));
+        angelDebil2.setCoordenada(new Coordenada(29.99, 29.99));
 
         ubicacionService.crear(santuario4);
         mediumService.crear(medium); // está en un santuario
@@ -778,8 +778,8 @@ public class MediumServiceImplTest {
                 new Coordenada(30.1, 40),
                 new Coordenada(30.1, 30.1)));
 
-        demonioDebil2.setCoordenada(new Point(30.11, 30.11));
-        medium3.setCoordenada(new Point(30.2, 30.2));
+        demonioDebil2.setCoordenada(new Coordenada(30.11, 30.11));
+        medium3.setCoordenada(new Coordenada(30.2, 30.2));
 
         ubicacionService.crear(cementerio4);
 
@@ -918,7 +918,7 @@ public class MediumServiceImplTest {
     @Test
     void unMediumNoPuedeInvocarAUnEspirituAMasDe50KmDeDistancia() {
 
-        demonioDebil.setCoordenada(new Point(21, 21));
+        demonioDebil.setCoordenada(new Coordenada(21, 21));
 
         mediumService.crear(medium);
         espirituService.crear(demonioDebil);
@@ -929,8 +929,8 @@ public class MediumServiceImplTest {
     @Test
     void unMediumPuedeInvocarAUnEspirituAAprox50KmDeDistancia() {
 
-        demonioDebil.setCoordenada(new Point(21, 21));
-        medium.setCoordenada(new Point(20.71, 20.649)); // distancia de 50 km
+        demonioDebil.setCoordenada(new Coordenada(21, 21));
+        medium.setCoordenada(new Coordenada(20.71, 20.649)); // distancia de 50 km
 
         mediumService.crear(medium);
         espirituService.crear(demonioDebil);
@@ -944,8 +944,8 @@ public class MediumServiceImplTest {
     @Test
     void unMediumPuedeInvocarAUnEspirituAMenosDe50KmDeDistancia() {
 
-        demonioDebil.setCoordenada(new Point(21, 21));
-        medium.setCoordenada(new Point(20.90, 20.90)); // distancia de menos de 50 km
+        demonioDebil.setCoordenada(new Coordenada(21, 21));
+        medium.setCoordenada(new Coordenada(20.90, 20.90)); // distancia de menos de 50 km
 
         mediumService.crear(medium);
         espirituService.crear(demonioDebil);

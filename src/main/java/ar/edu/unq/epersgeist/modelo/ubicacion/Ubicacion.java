@@ -56,7 +56,7 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
         throw new NotImplementedException("recibir no implementado");
     }
 
-    public abstract void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium);
+    public abstract void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium, Coordenada coordenada);
 
     public abstract void recuperarConexionParaAngeles(List<Angel> angeles);
 

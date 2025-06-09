@@ -107,15 +107,12 @@ public class Medium implements Serializable {
     }
 
     public void invocar(Optional<Espiritu> opcionalEspiritu) {
-
-
-
         Espiritu espiritu = opcionalEspiritu.get();
 
         verificarSiEstaLibre(espiritu);
 
         if (this.getMana() >= 10) {
-            this.getUbicacion().invocarAEspirituParaMedium(espiritu, this);
+            this.getUbicacion().invocarAEspirituParaMedium(espiritu, this, new Coordenada(this.getCoordenada().getX(), this.getCoordenada().getY()));
         }
     }
 

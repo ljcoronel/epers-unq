@@ -18,7 +18,7 @@ public class EspirituMONGODTO {
 
     @Id
     private Long id;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    @GeoSpatialIndexed(name = "coordenada", type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint coordenada;
     private Long idUbicacion;
 

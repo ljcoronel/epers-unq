@@ -22,8 +22,8 @@ public class Cementerio extends Ubicacion {
     }
 
     @Override
-    public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium) {
-        espiritu.invocadoACementerioPorMedium(this, medium);
+    public void invocarAEspirituParaMedium(Espiritu espiritu, Medium medium, Coordenada coordenada) {
+        espiritu.invocadoACementerioPorMedium(this, medium, coordenada);
     };
 
     @Override

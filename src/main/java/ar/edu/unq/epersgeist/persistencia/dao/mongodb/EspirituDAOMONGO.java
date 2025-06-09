@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.mongodb;
 
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMongoDTO;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -27,5 +26,5 @@ public interface EspirituDAOMONGO extends MongoRepository<EspirituMONGODTO, Long
                    }
     """
     )
-    Optional<EspirituMongoDTO> estanEntreDistancia(Long espirituDominanteId, GeoJsonPoint coordenadasDelEspirituDominado, int minKms, int maxKms);
+    Optional<EspirituMONGODTO> estanEntreDistancia(Long espirituDominanteId, GeoJsonPoint coordenadasDelEspirituDominado, int minKms, int maxKms);
 }
