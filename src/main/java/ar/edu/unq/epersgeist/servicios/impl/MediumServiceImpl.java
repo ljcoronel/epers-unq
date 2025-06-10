@@ -147,7 +147,7 @@ public class MediumServiceImpl implements MediumService {
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
-        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe"); // TODO lo muevo acá porque sino tira el error de la distancia primero, en caso que no exista el espíritu
+        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("El espíritu a invocar no existe"); // TODO lo muevo acá porque sino tira el error de la distancia primero, en caso que no exista el espíritu
 
         Medium medium = optionalMedium.get();
 

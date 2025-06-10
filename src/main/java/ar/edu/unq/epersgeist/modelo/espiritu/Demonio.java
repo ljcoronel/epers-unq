@@ -56,9 +56,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
-        medium.usarManaParaInvocar();
-        this.setUbicacion(cementerio);
-        this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
+        serInvocadoPorMedium(cementerio, medium);
     }
 
 

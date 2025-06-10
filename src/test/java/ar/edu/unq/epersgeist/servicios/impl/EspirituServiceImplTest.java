@@ -612,6 +612,30 @@ public class EspirituServiceImplTest {
     }
 
     @Test
+    void unEspirituDominaAUnEspirituQueDominaAOtroEspiritu() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30);
+        demonio3.setNivelDeConexion(30);
+
+        demonio1.setCoordenada(new Coordenada(0.59, 0.520));
+        demonio2.setCoordenada(new Coordenada(0.55, 0.520));
+        demonio3.setCoordenada(new Coordenada(0.5201, 0.520));
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        espirituService.dominar(demonio2.getId(), demonio3.getId());
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
+        Espiritu dominado3 = espirituService.recuperar(demonio3.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
+        assertEquals(demonio2.getId(), dominado3.getEspirituDominante().getId());
+    }
+
+    @Test
     void unEspirituNoPuedeSerDominadoCuandoYaEstaDominado() {
         ubicacionService.crear(ubicacion);
 

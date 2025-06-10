@@ -448,6 +448,9 @@ public class MediumServiceImplTest {
         Ubicacion ubicacionEspiritu = ubicacionService.recuperar(espirituRecuperado.getUbicacion().getId()).get();
 
         assertEquals(ubicacionMedium.getId(), ubicacionEspiritu.getId());
+        assertEquals(espirituRecuperado.getCoordenada().getX(), medium.getCoordenada().getX());
+        assertEquals(espirituRecuperado.getCoordenada().getY(), medium.getCoordenada().getY());
+
         assertEquals( manaInicial - 10 , mediumRecuperado.getMana());
     }
 
@@ -711,6 +714,8 @@ public class MediumServiceImplTest {
         Long demonioUbicacionId = demonioRecuperado.getUbicacion().getId();
 
         assertNotEquals(mediumUbicacionId, demonioUbicacionId); // siguen en diferente ubicación
+        assertFalse(demonioRecuperado.getCoordenada().getX() == medium.getCoordenada().getX()
+                && demonioRecuperado.getCoordenada().getY() == medium.getCoordenada().getY());
     }
 
     @Test
@@ -739,6 +744,8 @@ public class MediumServiceImplTest {
         Long angelUbicacionId = angelRecuperado.getUbicacion().getId();
 
         assertNotEquals(mediumUbicacionId, angelUbicacionId); // siguen en diferente ubicación
+        assertFalse(angelRecuperado.getCoordenada().getX() == medium.getCoordenada().getX()
+                && angelRecuperado.getCoordenada().getY() == medium.getCoordenada().getY());
     }
 
     @Test
@@ -767,6 +774,8 @@ public class MediumServiceImplTest {
         Long angelUbicacionId = angelRecuperado.getUbicacion().getId();
 
         assertEquals(mediumUbicacionId, angelUbicacionId); // misma ubicación
+        assertEquals(angelRecuperado.getCoordenada().getX(), medium.getCoordenada().getX());
+        assertEquals(angelRecuperado.getCoordenada().getY(), medium.getCoordenada().getY());
     }
 
     @Test
@@ -795,6 +804,8 @@ public class MediumServiceImplTest {
         Long demonioUbicacionId = demonioRecuperado.getUbicacion().getId();
 
         assertEquals(mediumUbicacionId, demonioUbicacionId); // misma ubicacion
+        assertEquals(demonioRecuperado.getCoordenada().getX(), mediumRecuperado.getCoordenada().getX());
+        assertEquals(demonioRecuperado.getCoordenada().getY(), mediumRecuperado.getCoordenada().getY());
     }
 
     @Test
@@ -929,13 +940,13 @@ public class MediumServiceImplTest {
     @Test
     void unMediumPuedeInvocarAUnEspirituAAprox50KmDeDistancia() {
 
-        demonioDebil.setCoordenada(new Coordenada(21, 21));
+        angelDebil.setCoordenada(new Coordenada(21, 21));
         medium.setCoordenada(new Coordenada(20.71, 20.649)); // distancia de 50 km
 
         mediumService.crear(medium);
-        espirituService.crear(demonioDebil);
+        espirituService.crear(angelDebil);
 
-        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
+        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), angelDebil.getId());
         assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX());
         assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
 
@@ -944,13 +955,13 @@ public class MediumServiceImplTest {
     @Test
     void unMediumPuedeInvocarAUnEspirituAMenosDe50KmDeDistancia() {
 
-        demonioDebil.setCoordenada(new Coordenada(21, 21));
+        angelDebil.setCoordenada(new Coordenada(21, 21));
         medium.setCoordenada(new Coordenada(20.90, 20.90)); // distancia de menos de 50 km
 
         mediumService.crear(medium);
-        espirituService.crear(demonioDebil);
+        espirituService.crear(angelDebil);
 
-        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), demonioDebil.getId());
+        Espiritu espirituInvocado = mediumService.invocar(medium.getId(), angelDebil.getId());
         assertEquals(espirituInvocado.getCoordenada().getX(), medium.getCoordenada().getX());
         assertEquals(espirituInvocado.getCoordenada().getY(), medium.getCoordenada().getY());
 

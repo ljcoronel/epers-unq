@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Repository
 public class EspirituRepositoryImpl implements EspirituRepository {
@@ -35,10 +36,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public Espiritu guardar(Espiritu espiritu) {
-        EspirituJPADTO espirituJpa = EspirituJPADTO.desdeModelo(espiritu);
-        Espiritu espirituConId = this.espirituDAOJPA.save(espirituJpa).aModelo(espiritu);
+        EspirituJPADTO jpaDTO = EspirituJPADTO.desdeModelo(espiritu);
+        Espiritu espirituConId = this.espirituDAOJPA.save(jpaDTO).aModelo(espiritu);
 
-        EspirituMONGODTO espirituMongo= EspirituMONGODTO.desdeModelo(espirituConId);
+        mappearEspirituDominante(espiritu.getEspirituDominante());
+
+        EspirituMONGODTO espirituMongo = EspirituMONGODTO.desdeModelo(espirituConId);
         this.espirituDAOMongo.save(espirituMongo);
 
         return espirituConId;
@@ -51,6 +54,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         return espirituDAOJPA.findById(id).map(jpaDTO->{
             Espiritu espiritu = jpaDTO.aModelo();
             EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(id).get();
+
+            mappearEspirituDominante(espiritu.getEspirituDominante());
+
             return espirituMongo.aModelo(espiritu);
         });
     }
@@ -66,6 +72,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         return this.espirituDAOJPA.findAll().stream().map(jpaDTO-> {
             Espiritu espiritu = jpaDTO.aModelo();
             EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+
+            mappearEspirituDominante(espiritu.getEspirituDominante());
+
             return espirituMongo.aModelo(espiritu);
         }).toList();
     }
@@ -81,11 +90,18 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                        (Example.of
                                (EspirituJPADTO.desdeModelo(new Demonio())),
                                PageRequest.of(pagina,cantidadPorPagina, direccion, "nivelDeConexion"))
-                                .map(jpaDTO-> {
-                                    Demonio espiritu = (Demonio) jpaDTO.aModelo();
-                                    EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
-                                    return (Demonio) espirituMongo.aModelo(espiritu);
-                                }).toList();
+                                .map(mappearDemonioAModelo()).toList();
+    }
+
+    private Function<EspirituJPADTO, Demonio> mappearDemonioAModelo() {
+        return jpaDTO -> {
+            Demonio espiritu = (Demonio) jpaDTO.aModelo();
+            EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+
+            mappearEspirituDominante(espiritu.getEspirituDominante());
+
+            return (Demonio) espirituMongo.aModelo(espiritu);
+        };
     }
 
     @Override
@@ -129,10 +145,24 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         // TODO lo mismo con el * 1000
     }
 
-    private Espiritu mappearEspiritu(EspirituJPADTO espirituJPADTO){
+    private Espiritu mappearEspiritu(EspirituJPADTO jpaDTO){
 
-        Espiritu espiritu = espirituJPADTO.aModelo();
+        Espiritu espiritu = jpaDTO.aModelo();
         EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
+
+        mappearEspirituDominante(espiritu.getEspirituDominante());
+
         return espirituMongo.aModelo(espiritu);
     }
+
+    private void mappearEspirituDominante(Espiritu espirituDominante){
+        if (espirituDominante == null) return;
+        EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espirituDominante.getId()).get();
+
+        mappearEspirituDominante(espirituDominante.getEspirituDominante()); // recursivo, dá coords a todos los espíritus de la cadena de dominancia
+
+        espirituMongo.aModelo(espirituDominante);
+    }
+
+
 }

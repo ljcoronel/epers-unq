@@ -37,7 +37,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
 
-
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
         this.ubicacion = ubicacion;
@@ -187,6 +186,12 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private boolean esMismoEspiritu(Espiritu espiritu) {
         if (espiritu == null) return false;
         return Objects.equals(espiritu.getId(), this.getId());
+    }
+
+    public void serInvocadoPorMedium(Ubicacion ubicacion, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(ubicacion);
+        this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
     }
 
 
