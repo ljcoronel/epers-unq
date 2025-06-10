@@ -4,5 +4,5 @@ import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 
 public interface EstadisticaService {
     ReporteSantuarioMasCorrupto santuarioCorrupto();
-
+    void crearSnapshot();
 }

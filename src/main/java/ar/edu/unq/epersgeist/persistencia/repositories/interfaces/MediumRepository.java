@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +15,5 @@ public interface MediumRepository {
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
 
     Long mediumConMasDemonios(Long idSantuario);
+    void crearSnapshot(Snapshot snapshot);
 }

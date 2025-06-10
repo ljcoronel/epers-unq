@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -31,4 +32,5 @@ public interface EspirituRepository {
     void desvincular(Long id);
 
     boolean referencia(Long idDelMedium);
+    void crearSnapshot(Snapshot snapshot);
 }

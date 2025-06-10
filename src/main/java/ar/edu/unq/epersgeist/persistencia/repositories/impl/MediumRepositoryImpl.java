@@ -1,9 +1,12 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.data.geo.Point;
@@ -74,5 +77,12 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public Long mediumConMasDemonios(Long idSantuario) {
         return this.mediumDAOJPA.mediumConMasDemonios(idSantuario);
+    }
+
+    @Override
+    public void crearSnapshot(Snapshot snapshot) {
+        snapshot.guardarEstadoSql(this.mediumDAOJPA.findAll().stream()
+                .map(dto -> (SnapshotSql) DraftMediumJPADTO.guardar(dto))
+                .toList());
     }
 }
