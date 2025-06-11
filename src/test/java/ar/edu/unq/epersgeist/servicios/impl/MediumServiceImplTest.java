@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class MediumServiceImplTest {
     private Medium medium;
     private Medium medium2;
     private Medium medium3;
+
+
 
     private Angel angelDebil;
     private Angel angelDebil2;
@@ -119,6 +122,10 @@ public class MediumServiceImplTest {
         medium = new Medium("Max",100,50, this.santuario, new Coordenada(0.5, 0.5));
         medium2 = new Medium("Pepe",100,0, this.santuario, new Coordenada(0.5, 0.5));
         medium3 = new Medium("Sabrina",100,60, this.cementerio, new Coordenada(3.5, 3.5));
+
+//        mediumMaxEnSantuarioBernal = new Medium("Max",100,50, this.santuario, new Coordenada(0.5, 0.5));
+//        mediumPepeEnSantiarioBernal = new Medium("Pepe",100,0, this.santuario, new Coordenada(0.5, 0.5));
+//        mediumSabrinaEnCementerioTenebroso = new Medium("Sabrina",100,60, this.cementerio, new Coordenada(3.5, 3.5));
 
         angelDebil = new Angel(10,"gabriel",new Coordenada(0.5, 0.5),this.santuario);
         angelDebil2 = new Angel(10,"fernando",new Coordenada(3.5, 0.5),this.santuario2);
@@ -494,7 +501,8 @@ public class MediumServiceImplTest {
         Medium medium = new Medium("Max",100,50,cementerio, new Coordenada(3.5, 3.5));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
-        mediumService.mover(medium.getId(), iglesia.getId());
+
+        mediumService.mover(medium.getId(), 12.5, 0.5);
 
         Espiritu espirituRecuperado = espirituService.recuperar(libertador.getId()).get();
 
@@ -532,9 +540,9 @@ public class MediumServiceImplTest {
 
         mediumService.crear(osvaldo);
         espirituService.conectar(mabel.getId(),osvaldo.getId());
-        mediumService.mover(osvaldo.getId(), wilde.getId());
+        mediumService.mover(osvaldo.getId(), 40.5, 40.5); // dentro de  Wilde
 
-        mediumService.mover(osvaldo.getId(), sarandi.getId());
+        mediumService.mover(osvaldo.getId(), 5.5,5.5); // dentro de Sarandi
 
         Espiritu espirituRecuperado = espirituService.recuperar(mabel.getId()).get();
 
@@ -574,10 +582,10 @@ public class MediumServiceImplTest {
 
         mediumService.crear(osvaldo);
         espirituService.conectar(amon.getId(),osvaldo.getId());
-        mediumService.mover(osvaldo.getId(), iglesia.getId());
+        mediumService.mover(osvaldo.getId(), 40.5,40.5);
 
-        mediumService.mover(osvaldo.getId(), vaticano.getId());
-        mediumService.mover(osvaldo.getId(), iglesia.getId());
+        mediumService.mover(osvaldo.getId(), 0.5,5.5); // dentro de vaticano;
+        mediumService.mover(osvaldo.getId(), 40.5,40.5);
 
         Espiritu espirituRecuperado = espirituService.recuperar(amon.getId()).get();
 
@@ -604,7 +612,7 @@ public class MediumServiceImplTest {
         Medium medium = new Medium("Max",100,50,cementerio, new Coordenada(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(libertador.getId(),medium.getId());
-        mediumService.mover(medium.getId(), this.cementerio.getId());
+        mediumService.mover(medium.getId(), 12.5,0.5);
 
         Espiritu espirituRecuperado = espirituService.recuperar(libertador.getId()).get();
 
@@ -631,7 +639,7 @@ public class MediumServiceImplTest {
         Medium medium = new Medium("Max",100,50,iglesia, new Coordenada(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
-        mediumService.mover(medium.getId(), santuario.getId());
+        mediumService.mover(medium.getId(), 0.5,0.5);
 
         Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
 
@@ -659,7 +667,7 @@ public class MediumServiceImplTest {
         Medium medium = new Medium("Max",100,50,sanMiguel, new Coordenada(12.5, 0.5));
         mediumService.crear(medium);
         espirituService.conectar(demonicaco.getId(),medium.getId());
-        mediumService.mover(medium.getId(), cementerio.getId());
+        mediumService.mover(medium.getId(), 3.5,3.5);
 
         Espiritu espirituRecuperado = espirituService.recuperar(demonicaco.getId()).get();
 
@@ -672,7 +680,7 @@ public class MediumServiceImplTest {
         this.mediumService.crear(this.medium); //ubicacion santuario
 
         assertThrows(UbicacionLejanaException.class,
-                ()-> this.mediumService.mover(this.medium.getId(), ubicacionNoConectada.getId()));
+                ()-> this.mediumService.mover(this.medium.getId(), 9.5,9.5));
 
     }
 
@@ -845,10 +853,10 @@ public class MediumServiceImplTest {
     }
 
     @Test
-    public void unMediumSeMueveAUnaUbicacionInexistenteEntoncesSeLanzaUnaExcepcion() {
+    public void unMediumSeMueveAUnPuntoLejanoDaElErrorCorrespondiente() {
         this.mediumService.crear(this.medium);
 
-        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.mover(this.medium.getId(), 100L));
+        assertThrows(UbicacionLejanaException.class, () -> this.mediumService.mover(this.medium.getId(), 100.0, -90.0));
     }
 
     @Test
@@ -861,6 +869,38 @@ public class MediumServiceImplTest {
         assertThrows(MediumEnDistintaUbicacionException.class, () -> this.mediumService.exorcisar(this.medium.getId(), this.medium3.getId()));
     }
 
+    @Test
+    public void cuandoUnMediumSeMueveAUnaUbicacionNoConectadaDaElCorrespondieneteError(){
+
+        mediumService.crear(medium);
+        List<Point> coordenadas = ubicacionNoConectada.getCoordenadas();
+        Point unPuntoEnUbicacion = coordenadas.getFirst();
+
+        assertThrows(UbicacionLejanaException.class, () -> mediumService.mover(medium.getId(), unPuntoEnUbicacion.getX(), unPuntoEnUbicacion.getY()));
+
+    }
+
+    @Test
+    public void siUnaUbicacionEstaMuyLejosDaElErrorCorrespondiente() {
+        mediumService.crear(medium);
+
+        Ubicacion ubicacionLejana = new Santuario("Laprida", 50, List.of(
+                new Coordenada(-90, -90),
+                new Coordenada(-80, -90),
+                new Coordenada(-80, -80),
+                new Coordenada(-90, -80),
+                new Coordenada(-90, -90)));
+
+        ubicacionService.crear(ubicacionLejana);
+        ubicacionService.conectar(medium.getUbicacion().getId(), ubicacionLejana.getId()); // la Ubicacion NoConectada esta muylejos
+
+        List<Point> coordenadas = ubicacionLejana.getCoordenadas();
+        Point unPuntoEnUbicacion = coordenadas.getFirst();
+        
+        assertThrows(UbicacionLejanaException.class, () -> mediumService.mover(medium.getId(), unPuntoEnUbicacion.getX(), unPuntoEnUbicacion.getY()));
+
+
+    }
 
     @AfterEach
     void eliminarModelo() {

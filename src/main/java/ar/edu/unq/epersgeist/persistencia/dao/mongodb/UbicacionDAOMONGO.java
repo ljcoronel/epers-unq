@@ -20,5 +20,4 @@ public interface UbicacionDAOMONGO extends MongoRepository<UbicacionMONGODTO, Lo
 
     @Query("{'area' : { $geoIntersects :  { $geometry :  ?0 } } }")
     List<UbicacionMONGODTO> interseccionesConArea(GeoJsonPolygon area);
-
 }

@@ -16,5 +16,5 @@ public interface MediumService {
     void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar);
     List<Espiritu> espiritus(Long mediumId);
     Espiritu invocar(Long mediumId, Long espirituId);
-    void mover(Long mediumId, Long ubicacionId);
+    void mover(Long mediumId,Double latitud, Double logitud);
 }
