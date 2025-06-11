@@ -165,13 +165,6 @@ public class MediumServiceImpl implements MediumService {
     }
 
 
-    private boolean mediumEstaLejosDe(long idMedium, GeoJsonPoint nuevaUbicacion ){
-        return mediumRepository.
-                estaEntreDistancia(idMedium,
-                        nuevaUbicacion,
-                        0,
-                        30 * 1000);
-    }
 
     private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino,  Coordenada coordenada) {
 
@@ -179,8 +172,13 @@ public class MediumServiceImpl implements MediumService {
                 ubicacionRepository.
                 estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
 
-        if ( this.mediumEstaLejosDe(medium.getId(), new GeoJsonPoint(coordenada)) ||
-                       !estanConectadas) {
+        boolean estaLejos = mediumRepository.
+                estaEntreDistancia(medium.getId(),
+                        new GeoJsonPoint(coordenada),
+                        0,
+                        30 * 1000);
+
+        if (estaLejos || !estanConectadas) {
             throw new UbicacionLejanaException("La ubicacion a moverser esta lejos o no esta conectada");
         };
     }

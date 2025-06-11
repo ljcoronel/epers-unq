@@ -354,14 +354,17 @@ public class MediumServiceImplTest {
         mediumService.crear(medium);
         mediumService.crear(medium2);
 
-        espirituService.crear(angelFuerte);
         espirituService.crear(angelDebil);
+        espirituService.crear(angelFuerte);
 
-        espirituService.crear(demonioFuerte);
+
         espirituService.crear(demonioDebil);
+        espirituService.crear(demonioFuerte);
 
-        espirituService.conectar(angelFuerte.getId(),medium.getId());
+
         espirituService.conectar(angelDebil.getId(),medium.getId());
+        espirituService.conectar(angelFuerte.getId(),medium.getId());
+
 
         espirituService.conectar(demonioDebil.getId(),medium2.getId());
         espirituService.conectar(demonioFuerte.getId(),medium2.getId());

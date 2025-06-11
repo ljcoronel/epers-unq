@@ -65,6 +65,7 @@ public class Medium implements Serializable {
         }
 
     }
+
     public void exorcizarA(Optional<Medium> optionalMedium){
 
         Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
