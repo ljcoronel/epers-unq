@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -141,21 +142,23 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
-
         Optional<Medium> optionalMedium =  mediumRepository.recuperar(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
+        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("El espíritu a invocar no existe"); // TODO lo muevo acá porque sino tira el error de la distancia primero, en caso que no exista el espíritu
+
         Medium medium = optionalMedium.get();
 
-        medium.invocar(optionalEspiritu);
+        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50)) throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
 
         Espiritu espiritu = optionalEspiritu.get();
+        Espiritu espirituInvocado = medium.invocar(espiritu);
 
         mediumRepository.guardar(medium);
-        espirituRepository.guardar(espiritu);
-        return espiritu;
+        espirituRepository.guardar(espirituInvocado);
+        return espirituInvocado;
     }
 
     @Override
