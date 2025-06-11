@@ -17,4 +17,5 @@ public interface EspirituService {
     List<Demonio> espiritusDemoniacos(Sort.Direction direccion, int pagina, int cantidadPorPagina);
     Medium conectar(Long espirituId, Long mediumId);
     boolean existeConNombre(Espiritu espiritu);
+    void dominar(Long espirituDominanteId, Long espirituADominarId);
 }

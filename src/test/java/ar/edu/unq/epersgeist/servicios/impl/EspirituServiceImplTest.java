@@ -1,7 +1,9 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
@@ -9,8 +11,8 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionDistintaException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class EspirituServiceImplTest {
@@ -55,29 +58,35 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-
-
+//TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
     void crearInstancias() {
-        this.ubicacion = new Santuario("Bernal", 50);
-        angel1 = new Angel(10,"Angel1", this.ubicacion);
-        angel2 = new Angel(10,"Angel2", this.ubicacion);
-        angel3 = new Angel(10,"Angel3", this.ubicacion);
+        this.ubicacion = new Santuario("Bernal", 50,Arrays.asList(
+                new Coordenada(0, 0),
+                new Coordenada(1, 0),
+                new Coordenada(1, 1),
+                new Coordenada(0, 1),
+                new Coordenada(0, 0)));
+
+        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5), this.ubicacion);
+        angel2 = new Angel(10,"Angel2",new Coordenada(1,1), this.ubicacion);
+        angel3 = new Angel(10,"Angel3",new Coordenada(1,1), this.ubicacion);
+
         demonio1 = new Demonio(
                 10,
-                "Pepito", this.ubicacion
+                "Pepito",new Coordenada(0.5,0.5), this.ubicacion
         );
         demonio2 = new Demonio(
                 90,
-                "Diavolo", this.ubicacion
+                "Diavolo",new Coordenada(1,1), this.ubicacion
 
         );
         demonio3 = new Demonio(
                 50,
-                "Sebastián", this.ubicacion
+                "Sebastián",new Coordenada(1,1), this.ubicacion
 
         );
-        medium = new Medium("Brujita", 100, 50, this.ubicacion);
+        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(1,1));
 
     }
 
@@ -94,38 +103,44 @@ public class EspirituServiceImplTest {
 
     @Test
     void alConectarseConUnMediumEnUnaUbicacionDiferenteDaErrorUbicacionDistintaException() {
-        Ubicacion quilmes = new Santuario("Quilmes", 50);
-        Ubicacion bernal = new Santuario("Bernal", 50);
+        Ubicacion quilmes = new Santuario("Quilmes", 50,Arrays.asList(
+                new Coordenada(2, 2),
+                new Coordenada(3, 2),
+                new Coordenada(3, 3),
+                new Coordenada(2, 3),
+                new Coordenada(2, 2)));
+
+        Ubicacion bernal = ubicacion;
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Coordenada(1,1));
         mediumService.crear(mediumDeBernal);
-        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes", quilmes);
+        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes",new Coordenada(2.5, 2.5), quilmes);
         espirituService.crear(espirituDeQuilmes);
         assertThrows(UbicacionDistintaException.class, ()->espirituService.conectar(espirituDeQuilmes.getId(), mediumDeBernal.getId()));
     }
 
     @Test
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
-        Ubicacion bernal = new Santuario("Bernal", 50);
+        Ubicacion bernal = ubicacion;
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal);
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Coordenada(1,1));
         mediumService.crear(mediumDeBernal);
-        Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes", bernal);
+        Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1), bernal);
         espirituService.crear(espirituDeBernal);
         assertDoesNotThrow(()->espirituService.conectar(espirituDeBernal.getId(), mediumDeBernal.getId()));
 
     }
 
     @Test
-    void SiUnEspirituaNoEstaLibreDaErrorEspirituLibreException(){
+    void SiUnEspiritusNoEstaLibreDaErrorEspirituLibreException(){
         ubicacionService.crear(this.ubicacion);
-        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion);
-        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion);
+        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(1,1));
+        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion, new Coordenada(1,1));
         mediumService.crear(mediumLibre);
         mediumService.crear(mediumConEspiritu);
 
-        Angel espirituConectado = new Angel(10, "AngelDeQuilmes", this.ubicacion);
+        Angel espirituConectado = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1), this.ubicacion);
         espirituService.crear(espirituConectado);
         espirituService.conectar(espirituConectado.getId(), mediumConEspiritu.getId());
 
@@ -139,7 +154,7 @@ public class EspirituServiceImplTest {
         ubicacionService.crear(this.ubicacion);
 
         int conexionAngel = 30;
-        Espiritu angelRafael = new Angel(conexionAngel, "Rafael", this.ubicacion);
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1), this.ubicacion);
         espirituService.crear(angelRafael);
 
         assertThrows(EntidadInexistenteException.class, () -> espirituService.conectar(angelRafael.getId() , -1L));
@@ -150,10 +165,10 @@ public class EspirituServiceImplTest {
     void alConectarConUnEspirituSeFortaleceElNivelDeConexion20delMedium(){
         ubicacionService.crear(this.ubicacion);
         int manaMedium = 50;
-        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion);
+        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion, new Coordenada(1,1));
         mediumService.crear(medium);
         int conexionAngel = 30;
-        Espiritu angelRafael = new Angel(conexionAngel, "Rafael", this.ubicacion);
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1), this.ubicacion);
         espirituService.crear(angelRafael);
 
         int conexionBuscada = ((int) Math.round(manaMedium* 0.20) ) + conexionAngel;
@@ -430,7 +445,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 99,
-                "Enrique", this.ubicacion
+                "Enrique",new Coordenada(1,1), this.ubicacion
 
         );
         espirituService.crear(demonio1);
@@ -456,7 +471,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 2,
-                "Enrique", this.ubicacion
+                "Enrique",new Coordenada(1,1), this.ubicacion
 
         );
         espirituService.crear(demonio1);
@@ -477,6 +492,156 @@ public class EspirituServiceImplTest {
 
     }
 
+    @Test
+    void noSePuedeDominarAUnEspirituQueNoExiste() {
+        ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio1);
+
+        espirituService.dominar(demonio1.getId(), -1L);
+        Espiritu dominado = espirituService.recuperar(demonio1.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+
+    @Test
+    void noPuedeOcurrirUnaDominacionEntreElMismoEspiritu() {
+        ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio2.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituNoLibre() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(10);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.conectar(demonio2.getId(), medium.getId()); // ya no es libre el demonio
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituCon50DeEnergia() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(50);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noPuedeOcurrirUnaDominacionAUnEspirituConMasDe50DeEnergia() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(70);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertNull(dominado.getEspirituDominante());
+    }
+
+    @Test
+    void noSePuedeDominarAUnEspirituSiDominadoQuiereDominarAlQueLoDominaYArrojaException() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+
+        assertThrows(EspirituDominadoException.class,
+                () -> espirituService.dominar(demonio2.getId(), demonio1.getId()));
+    }
+
+    @Test
+    void cumpliendoTodasLasCondicionesSePuedeDominarAOtroEspiritu() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30); // energía menor a 50
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2); // es libre
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        Espiritu dominado = espirituService.recuperar(demonio2.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unEspirituDominaAVariosEspiritus() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30);
+        demonio3.setNivelDeConexion(30);
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        espirituService.dominar(demonio1.getId(), demonio3.getId());
+        Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
+        Espiritu dominado3 = espirituService.recuperar(demonio3.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
+        assertEquals(demonio1.getId(), dominado3.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unEspirituNoPuedeSerDominadoCuandoYaEstaDominado() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(30);
+        demonio3.setNivelDeConexion(30);
+
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+        espirituService.dominar(demonio3.getId(), demonio2.getId());
+        Espiritu dominado2 = espirituService.recuperar(demonio2.getId()).get();
+
+        assertEquals(demonio1.getId(), dominado2.getEspirituDominante().getId());
+    }
+
+    @Test
+    void unMediumNoPuedeConectarseConUnEspirituDominado() {
+        ubicacionService.crear(ubicacion);
+
+        mediumService.crear(medium);
+
+        demonio2.setNivelDeConexion(30);
+        espirituService.crear(demonio1);
+        espirituService.crear(demonio2);
+
+        espirituService.dominar(demonio1.getId(), demonio2.getId());
+
+        assertThrows(EspirituDominadoException.class,
+                () -> espirituService.conectar(demonio2.getId(), medium.getId()));
+
+    }
 
     @AfterEach
     void eliminarModelo() {

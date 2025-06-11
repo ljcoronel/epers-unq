@@ -1,12 +1,15 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.Poligono;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
-import ar.edu.unq.epersgeist.modelo.exception.UbicacionesNoConectadasException;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.geo.Point;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
@@ -43,6 +47,12 @@ public class UbicacionServiceTest {
 
     @Autowired
     private MediumService mediumService;
+
+    private List<Coordenada> pointsUbicacionUno;
+    private List<Coordenada> pointsUbicacionDos;
+    private List<Coordenada> pointsUbicacionTres;
+    private List<Coordenada> pointsUbicacionCuatro;
+    private List<Coordenada> pointsUbicacionCinco;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -67,20 +77,67 @@ public class UbicacionServiceTest {
 
     @BeforeEach
     void prepare() {
+        pointsUbicacionUno= List.of(
+                new Coordenada(0, 0),
+                new Coordenada(1, 0),
+                new Coordenada(1, 1),
+                new Coordenada(0, 1),
+                new Coordenada(0, 0)
+        );
+
+        pointsUbicacionDos= List.of(
+                new Coordenada(3, 3),
+                new Coordenada(4, 3),
+                new Coordenada(4, 4),
+                new Coordenada(3, 4),
+                new Coordenada(3, 3));
+
+        pointsUbicacionTres = List.of(
+                new Coordenada(6, 0),
+                new Coordenada(7, 0),
+                new Coordenada(7, 1),
+                new Coordenada(6, 1),
+                new Coordenada(6, 0)
+        );
+
+        pointsUbicacionCuatro = List.of(
+                new Coordenada(0, 5),
+                new Coordenada(1, 5),
+                new Coordenada(1, 6),
+                new Coordenada(0, 6),
+                new Coordenada(0, 5)
+        );
+
+        pointsUbicacionCinco = List.of(
+                new Coordenada(5, 5),
+                new Coordenada(6, 5),
+                new Coordenada(6, 6),
+                new Coordenada(5, 6),
+                new Coordenada(5, 5)
+        );
+
+
         this.ubicacionUno = new Santuario("Bernal", 50);
         this.ubicacionDos = new Santuario("Quilmes", 50);
         this.ubicacionTres = new Santuario("Avellaneda", 50);
-
-        this.angelUno = new Angel(10, "angelical", this.ubicacionUno);
-
-        this.demonioUno = new Demonio(10, "demonio", this.ubicacionUno);
-
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno);
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno);
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno);
-
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
         this.ubicacionCinco = new Santuario("MiCasa", 30);
+
+        ubicacionUno.setTerritorio(pointsUbicacionUno);//TODO ver si tendran que tener todas ubicaciones distintas o pueden compartirlos en estos test
+        ubicacionDos.setTerritorio(pointsUbicacionDos);
+        ubicacionTres.setTerritorio(pointsUbicacionTres);
+        ubicacionCuatro.setTerritorio(pointsUbicacionCuatro);
+        ubicacionCinco.setTerritorio(pointsUbicacionCinco);
+
+        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5), this.ubicacionUno);
+
+        this.demonioUno = new Demonio(10, "demonio",new Coordenada(0.5, 0.5), this.ubicacionUno);
+
+        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Coordenada(0.5, 0.5));
+
+
     }
 
     @Test
@@ -160,7 +217,7 @@ public class UbicacionServiceTest {
 
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
-        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId());
+        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId()); // TODO cambiar test para no depender del orden de guardado ya que aveces falla
         assertEquals(ubicaciones.get(1).getId(), this.ubicacionDos.getId());
         assertEquals(ubicaciones.getLast().getId(), this.ubicacionTres.getId());
         assertEquals(3, ubicaciones.size());
@@ -201,15 +258,19 @@ public class UbicacionServiceTest {
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
         Ubicacion ubicacion1 = new Santuario("ElClerigo",50);
         Ubicacion ubicacion2 = new Santuario("Masedonia",50);
+
+        ubicacion1.setTerritorio(pointsUbicacionUno);
+        ubicacion2.setTerritorio(pointsUbicacionDos);
+
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1);
-        Espiritu espiritu = new Angel(10, "angelical", ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Coordenada(0.5, 0.5));
+        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5), ubicacion1);
         espirituService.crear(espiritu);
         mediumService.crear(medium);
 
         espirituService.conectar(espiritu.getId(), medium.getId());
-        espiritu.mover(ubicacion2);
+        espiritu.setUbicacion(ubicacion2);
 
         assertNotEquals(espiritu.getUbicacion().getNombre(), ubicacion1.getNombre());
     }
@@ -805,6 +866,55 @@ public class UbicacionServiceTest {
 
         assertTrue(results.stream().anyMatch(r -> r.closeness() > 0.0));
 
+    }
+
+    @Test
+    void alCrearseUnaUbicacionSePersistenLasCoordenadasQueDelimitanSuTerritorio() {
+        ubicacionUno.setTerritorio(pointsUbicacionUno);
+        ubicacionDos.setTerritorio(pointsUbicacionDos);
+
+        ubicacionService.crear((ubicacionUno));
+        ubicacionService.crear((ubicacionDos));
+
+        Ubicacion recuperadaUno = ubicacionService.recuperar(ubicacionUno.getId()).get();
+        Ubicacion recuperadaDos = ubicacionService.recuperar(ubicacionDos.getId()).get();
+
+        assertEquals(recuperadaUno.getCoordenadas() , pointsUbicacionUno );
+        assertEquals(recuperadaDos.getCoordenadas() , pointsUbicacionDos );
+
+        assertEquals(2, ubicacionService.recuperarTodos().size());
+
+    }
+
+    @Test
+    void alCrearseUnaUbicacionConUnAreaQueIntersecteUnaUbicacionExistenteSeLanzaUnaExcepcion() {
+        List<Coordenada> areaQueIntersecta = List.of(new Coordenada(-0.5,0.5),new Coordenada(0.5,0.5),
+                new Coordenada(0.5,1.5),new Coordenada(-0.5,1.5),new Coordenada(-0.5,0.5));
+        ubicacionDos.setTerritorio(areaQueIntersecta);
+
+        ubicacionService.crear(this.ubicacionUno);
+
+        assertThrows(AreaOcupadaException.class, () -> ubicacionService.crear(this.ubicacionDos));
+    }
+
+    @Test
+    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPolygono() {
+
+        List<Coordenada> coordenadasPoligonoAbierto =
+                List.of(new Coordenada(-70,0),new Coordenada(-70,1)
+                ,new Coordenada(-80,1));
+
+        ubicacionUno.setTerritorio(coordenadasPoligonoAbierto);
+        ubicacionService.crear(this.ubicacionUno);
+
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertEquals(4, ubicacionRecuperada.getCoordenadas().size());
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(0), coordenadasPoligonoAbierto.get(0));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(1), coordenadasPoligonoAbierto.get(1));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(2), coordenadasPoligonoAbierto.get(2));
+        assertEquals(ubicacionRecuperada.getCoordenadas().get(3), coordenadasPoligonoAbierto.get(0));//aca el primero es igual al ultimo
     }
 
     @AfterEach

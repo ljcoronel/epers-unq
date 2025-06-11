@@ -2,8 +2,11 @@ package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,43 +14,61 @@ import java.util.Optional;
 
 @Repository
 public class MediumRepositoryImpl implements MediumRepository {
+
     private final MediumDAOJPA mediumDAOJPA;
+    private final MediumDAOMONGO mediumDAOMONGO;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO) {
         this.mediumDAOJPA = mediumDAOJPA;
-    }
-
-    @Override
-    public void actualizar(Medium medium) {
-        mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        this.mediumDAOMONGO = mediumDAOMONGO;
     }
 
     @Override
     public Medium guardar(Medium medium) {
         MediumJPADTO mediumJPA = MediumJPADTO.desdeModelo(medium);
         Medium mediumConId = this.mediumDAOJPA.save(mediumJPA).aModelo(medium);
+        this.mediumDAOMONGO.save(MediumMONGODTO.desdeModelo(mediumConId));
         return mediumConId;
     }
 
     @Override
     public Optional<Medium> recuperar(Long id) {
         Optional<MediumJPADTO> optionalMediumJPADTO = this.mediumDAOJPA.findById(id);
-        return optionalMediumJPADTO.map(MediumJPADTO::aModelo);
+        Optional<MediumMONGODTO> mediumMONGODTO = this.mediumDAOMONGO.findById(id.toString());
+        if (mediumMONGODTO.isEmpty()) return Optional.empty();
+        Point coordenada = mediumMONGODTO.get().getCoordenada();
+        return optionalMediumJPADTO.map(mediumdto -> mediumdto.aModelo(coordenada));
+    }
+
+    @Override
+    public List<Medium> recuperarTodos() {
+        return this.mediumDAOJPA.findAll().stream()
+                .map(mediumdto -> {
+                    Point coordenada = this.mediumDAOMONGO.findById(mediumdto.getId().toString()).get().getCoordenada();
+                    return mediumdto.aModelo(coordenada);
+                })
+                .toList();
+    }
+
+    @Override
+    public void actualizar(Medium medium) {
+        this.mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override
     public void eliminar(Long id) {
         this.mediumDAOJPA.deleteById(id);
-    }
-
-    @Override
-    public List<Medium> recuperarTodos() {
-        return this.mediumDAOJPA.findAll().stream().map(MediumJPADTO::aModelo).toList();
+        this.mediumDAOMONGO.deleteById(id.toString());
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId).stream().map(MediumJPADTO::aModelo).toList();
+        return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId).stream()
+                .map(mediumdto -> {
+                    Point coordenada = this.mediumDAOMONGO.findById(mediumdto.getId().toString()).get().getCoordenada();
+                    return mediumdto.aModelo(coordenada);
+                })
+                .toList();
     }
 
     @Override

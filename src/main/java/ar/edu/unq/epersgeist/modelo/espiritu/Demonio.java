@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -13,14 +14,18 @@ import lombok.ToString;
 @Getter @Setter @NoArgsConstructor
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
-    public Demonio(String nombre, Ubicacion ubicacion) {
-        super(nombre, ubicacion);
-    }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
         super(nivelDeConexion, nombre, ubicacion);
     }
 
+    public Demonio(String nombre, Coordenada coordenada) {
+        super(nombre, coordenada);
+    }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
+        super(nivelDeConexion,nombre, coordenada,ubicacion);
+    }
 
     public void defender(Angel angel,int ataque) {
 
@@ -52,7 +57,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
         medium.usarManaParaInvocar();
-        this.mover(cementerio);
+        this.setUbicacion(cementerio);
     }
 
 

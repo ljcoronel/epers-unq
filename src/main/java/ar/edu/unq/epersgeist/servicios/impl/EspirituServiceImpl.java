@@ -40,9 +40,10 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        Ubicacion ubicacion = ubicacionRepository.recuperar(espiritu.getUbicacion().getId())
+        Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(espiritu.getCoordenada())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
-        espiritu.mover(ubicacion);
+
+        espiritu.setUbicacion(ubicacion);
 
         return this.espirituRepository.guardar(espiritu);
 
@@ -108,6 +109,25 @@ public class EspirituServiceImpl implements EspirituService {
     @Override
     public boolean existeConNombre(Espiritu espiritu) {
         return this.espirituRepository.espirituConNombre(espiritu.getNombre(), espiritu.getId());
+    }
+
+    @Override
+    public void dominar(Long espirituDominanteId, Long espirituADominarId) {
+
+        //        verificarDistancia() -> if (espirituRepository.distanciaEntre(espirituDominanteId, espirituADominarId)) < 2 || > 5 throw new EspirituLejanoException;
+
+        Optional<Espiritu> optEspDominante = espirituRepository.recuperar(espirituDominanteId);
+        Optional<Espiritu> optEspADominar = espirituRepository.recuperar(espirituADominarId);
+
+        if(optEspDominante.isEmpty() || optEspADominar.isEmpty()) return; // TODO lo dejo así? o hago excepción?
+
+        Espiritu espirituDominante = optEspDominante.get();
+        Espiritu espirituADominar = optEspADominar.get();
+
+        espirituADominar.serDominadoPor(espirituDominante);
+
+        espirituRepository.guardar(espirituADominar);
+
     }
 
 }

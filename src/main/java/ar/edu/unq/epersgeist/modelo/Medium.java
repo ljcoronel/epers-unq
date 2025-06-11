@@ -3,41 +3,43 @@ package ar.edu.unq.epersgeist.modelo;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.exception.EspirituLibreException;
-import ar.edu.unq.epersgeist.modelo.exception.ExorcistaSinAngelesException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.modelo.exception.MediumEnDistintaUbicacionException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.*;
+import org.springframework.data.geo.Point;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter @Setter @NoArgsConstructor @EqualsAndHashCode
-@ToString
+@Getter @Setter @NoArgsConstructor @EqualsAndHashCode @ToString
 public class Medium implements Serializable {
 
     private Long id;
-
     private String nombre;
-
     private Integer manaMax;
-
     private Integer mana;
-
-    private List<Angel> angeles = new ArrayList<>();
-
-    private List<Demonio> demonios = new ArrayList<>();
-
+    private List<Angel> angeles;
+    private List<Demonio> demonios;
     private Ubicacion ubicacion;
+    private Point coordenada;
 
-    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion) {
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion, Coordenada coordenada) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
-        this.ubicacion = ubicacion;
+        this.angeles = new ArrayList<>();
+        this.demonios = new ArrayList<>();
+        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
+        this.coordenada = coordenada;
+    }
+
+    public void setCoordenada(Coordenada coordenada) {
+        this.coordenada = coordenada;
     }
 
     public void realizarConexion(Espiritu espiritu){

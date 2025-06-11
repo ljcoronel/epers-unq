@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.*;
+import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
@@ -9,6 +10,7 @@ import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getCoordenadas())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
         return this.ubicacionRepository.guardar(ubicacion);
     }
 
@@ -134,4 +137,5 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
+
 }

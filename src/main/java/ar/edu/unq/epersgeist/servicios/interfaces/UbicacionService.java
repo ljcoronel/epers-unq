@@ -27,5 +27,4 @@ public interface UbicacionService  {
     List<DegreeResult>incomingDegreeOf(List<Long> ids);
     List<DegreeResult>outgoingDegreeOf(List<Long> ids);
 
-
 }

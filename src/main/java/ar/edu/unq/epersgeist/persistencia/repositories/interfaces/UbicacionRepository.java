@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +30,7 @@ public interface UbicacionRepository {
     List<DegreeResult> outgoingDegreeOf(List<Long> ids);
     List<DegreeResult> incomingDegreeOf(List<Long> ids);
 
+    Optional<Ubicacion> encontrarUbicacionQueContiene(Point punto);
+
+    boolean existeUbicacionEnArea(List<Point> territorio);
 }

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -80,8 +82,21 @@ public class MediumJPADTO {
         return dto;
     }
 
+    public Medium aModelo(Point coordenada) {
+        Coordenada nuevaCoordenada = new Coordenada(coordenada.getX(), coordenada.getY());
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), nuevaCoordenada);
+        medium.setId(this.id);
+        medium.setAngeles(this.angeles.stream()
+                .map(dto -> (Angel) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        medium.setDemonios(this.demonios.stream()
+                .map(dto -> (Demonio) dto.aModelo(medium))
+                .collect(Collectors.toList()));
+        return medium;
+    }
+
     public Medium aModelo() {
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo());
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, this.ubicacion.aModelo(), null);
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))

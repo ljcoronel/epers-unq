@@ -30,13 +30,6 @@ public class DemonioJPADTO extends EspirituJPADTO {
         super(espiritu, mediumDTO);
     }
 
-    public Espiritu aModelo() {
-        Espiritu espiritu = new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
-        espiritu.setId(this.getId());
-        espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
-        return espiritu;
-    }
-
     @Override
     public Espiritu instanciarEspiritu() {
         return new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
