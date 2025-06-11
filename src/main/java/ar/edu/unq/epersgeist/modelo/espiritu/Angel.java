@@ -49,8 +49,7 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
 
     @Override
     public void invocarASantuarioAMedium(Santuario santuario, Medium medium) {
-        medium.usarManaParaInvocar();
-        this.setUbicacion(santuario);
+        serInvocadoPorMedium(santuario, medium);
     }
 
     @Override
