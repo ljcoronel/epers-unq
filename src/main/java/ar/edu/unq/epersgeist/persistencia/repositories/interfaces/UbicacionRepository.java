@@ -33,4 +33,7 @@ public interface UbicacionRepository {
     Optional<Ubicacion> encontrarUbicacionQueContiene(Point punto);
 
     boolean existeUbicacionEnArea(List<Point> territorio);
+
+
+
 }

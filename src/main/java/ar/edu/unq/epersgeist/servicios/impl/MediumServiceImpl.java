@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -13,9 +14,11 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumReposito
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +31,7 @@ public class MediumServiceImpl implements MediumService {
     private final EspirituRepository espirituRepository;
     private final UbicacionRepository ubicacionRepository;
 
-    public MediumServiceImpl (MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository) {
+    public MediumServiceImpl (MediumRepository mediumRepository, EspirituRepository espirituRepository, UbicacionRepository ubicacionRepository, UbicacionServiceImpl ubicacionServiceImpl) {
         this.mediumRepository = mediumRepository;
         this.espirituRepository = espirituRepository;
         this.ubicacionRepository = ubicacionRepository;
@@ -161,24 +164,45 @@ public class MediumServiceImpl implements MediumService {
         return espirituInvocado;
     }
 
+
+
+    private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino,  Coordenada coordenada) {
+
+        boolean estanConectadas = opUbicacionDestino.isPresent() &&
+                ubicacionRepository.
+                estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
+
+        boolean estaLejos = mediumRepository.
+                estaEntreDistancia(medium.getId(),
+                        new GeoJsonPoint(coordenada),
+                        0,
+                        30 * 1000);
+
+        if (estaLejos || !estanConectadas) {
+            throw new UbicacionLejanaException("La ubicacion a moverser esta lejos o no esta conectada");
+        };
+    }
+
     @Override
-    public void mover(Long mediumId, Long ubicacionId) {
+    public void mover(Long mediumId, Double lat, Double longitud) {
+
+        Coordenada coordenada = new Coordenada(lat,longitud);
+        Optional<Ubicacion> opUbicacionDestino = ubicacionRepository.encontrarUbicacionQueContiene(coordenada);
+
         Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
 
+
         if (optionalMedium.isEmpty()) return;
-
         Medium medium = optionalMedium.get();
+        this.validarSiSePuedeMoverMediumDesdeA(medium,opUbicacionDestino,coordenada);
 
-        Optional<Ubicacion> ubicacionOpcional = ubicacionRepository.recuperar(ubicacionId);
-
-        this.validarCercaniaDeUbicacion(medium.getUbicacion(),ubicacionOpcional);
 
         // ------------------------------------- // TODO quitar cuando esté fixeado el desvincular
         ArrayList<Angel> angeles = new ArrayList<>(medium.getAngeles());
         ArrayList<Demonio> demonios = new ArrayList<>(medium.getDemonios());
         // -------------------------------------
 
-        medium.mover(ubicacionOpcional);
+        medium.mover(opUbicacionDestino);
 
         mediumRepository.guardar(medium);
 
@@ -186,14 +210,6 @@ public class MediumServiceImpl implements MediumService {
         angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
         demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
         // -------------------------------------
-
-    }
-
-    private void validarCercaniaDeUbicacion(Ubicacion ubicacionOrigen,Optional<Ubicacion> ubicacionDestino) {
-        if (ubicacionDestino.isPresent() &&
-                !ubicacionRepository.estanConectadas(ubicacionOrigen.getId(), ubicacionDestino.get().getId())) {
-            throw new UbicacionLejanaException("La ubicacion de destino es lejana a la ubicacion actual");
-        }
 
     }
 

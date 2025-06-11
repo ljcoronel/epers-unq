@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODT
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -70,9 +71,13 @@ public class MediumRepositoryImpl implements MediumRepository {
                 })
                 .toList();
     }
-
     @Override
     public Long mediumConMasDemonios(Long idSantuario) {
         return this.mediumDAOJPA.mediumConMasDemonios(idSantuario);
+    }
+
+    @Override
+    public boolean estaEntreDistancia(Long id, Point coordenadaReferencia, int minKms, int maxKms) {
+        return mediumDAOMONGO.estanEntreDistancia(id, new GeoJsonPoint(coordenadaReferencia), minKms*1000, maxKms*1000).isPresent();
     }
 }

@@ -166,4 +166,5 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
         return !ubicacionDaoMongo.interseccionesConArea(area).isEmpty();
     }
+
 }
