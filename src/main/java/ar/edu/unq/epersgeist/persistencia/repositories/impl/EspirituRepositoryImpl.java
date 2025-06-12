@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
@@ -135,6 +137,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public void crearSnapshot(Snapshot snapshot) {
         snapshot.guardarEstadoSql(this.espirituDAOJPA.findAll().stream()
                 .map(dto -> (SnapshotSql) DraftEspirituJPADTO.guardar(dto))
+                .toList());
+        snapshot.guardarEstadoMongo(this.espirituDAOMongo.findAll().stream()
+                .map(dto -> (SnapshotMongo) DraftEspirituMONGODTO.guardar(dto))
                 .toList());
     }
 }

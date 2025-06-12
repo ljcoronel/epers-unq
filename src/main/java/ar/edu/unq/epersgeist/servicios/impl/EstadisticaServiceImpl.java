@@ -12,6 +12,8 @@ import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @Transactional
 public class EstadisticaServiceImpl implements EstadisticaService {
@@ -47,6 +49,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         return reporte;
     }
 
+    @Override
     public void crearSnapshot() {
         Snapshot snapshot = new Snapshot();
         this.espirituRepository.crearSnapshot(snapshot);
@@ -55,4 +58,8 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         this.snapshotRepository.crear(snapshot);
     }
 
+    @Override
+    public Snapshot obtenerSnapshot(LocalDate fecha) {
+        return this.snapshotRepository.recuperarPorFecha(fecha);
+    }
 }

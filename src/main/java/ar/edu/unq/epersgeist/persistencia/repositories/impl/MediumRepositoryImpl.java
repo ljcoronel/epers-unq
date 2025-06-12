@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
@@ -83,6 +85,9 @@ public class MediumRepositoryImpl implements MediumRepository {
     public void crearSnapshot(Snapshot snapshot) {
         snapshot.guardarEstadoSql(this.mediumDAOJPA.findAll().stream()
                 .map(dto -> (SnapshotSql) DraftMediumJPADTO.guardar(dto))
+                .toList());
+        snapshot.guardarEstadoMongo(this.mediumDAOMONGO.findAll().stream()
+                .map(dto -> (SnapshotMongo) DraftMediumMONGODTO.guardar(dto))
                 .toList());
     }
 }

@@ -95,7 +95,7 @@ public interface UbicacionDAONEO extends Neo4jRepository<UbicacionNEODTO, Long> 
     List<CentralityResultDTO> incomingDegreeOf(@Param("ids") List<Long> ids);
 
     @Query("""
-        MATCH (o:UBICACION {id: ubicacionId})-[:CONECTADA]->(d:UBICACION)
+        MATCH (o:UBICACION {id: $ubicacionId})-[:CONECTADA]->(d:UBICACION)
         RETURN d.id
     """)
     List<Long> ubicacionesConectadas(@Param("ubicacionId") Long ubicacionId);
