@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.TipoUbicacion;
 import ar.edu.unq.epersgeist.modelo.exception.*;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
@@ -89,6 +90,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UbicacionLejanaException.class)
     public DTOResponseError ubicacionLejana(UbicacionLejanaException ule) {
         return new DTOResponseError(ule.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EspirituMuyLejanoException.class)
+    public DTOResponseError espirituMuyLejano(EspirituMuyLejanoException emle) {
+        return new DTOResponseError( emle.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

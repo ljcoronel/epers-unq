@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +33,7 @@ public interface EspirituRepository {
     void desvincular(Long id);
 
     boolean referencia(Long idDelMedium);
+
+    boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms);
     void crearSnapshot(Snapshot snapshot);
 }

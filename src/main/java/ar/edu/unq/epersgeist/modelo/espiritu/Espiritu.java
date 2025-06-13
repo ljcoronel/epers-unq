@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
+import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -17,6 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.geo.Point;
 
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +36,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private Espiritu espirituDominante;
 
     public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
-
 
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
@@ -59,10 +60,6 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public Espiritu(int nivelDeConexion, String nombre) {
         this.nombre = nombre;
         setNivelDeConexion(nivelDeConexion);
-    }
-
-    public void setCoordenada(Coordenada coordenada) {
-        this.coordenada = coordenada;
     }
 
     public void aumentarNivelDeConexionEn(int cantConexion) {
@@ -139,7 +136,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     }
 
     private void verificarNoEstaDominado() {
-        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu ya está siendo dominado.");
+        if (estaSiendoDominado()) throw new EspirituDominadoException("El espíritu está siendo dominado.");
     }
 
     private void verificarMediumEnMismaUbicacion(Medium medium) throws UbicacionDistintaException {
@@ -173,8 +170,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void recibirEfectoDe(Santuario ubicacion) {}
 
     public void serDominadoPor(Espiritu espiritu) {
-        // if (this.getCoords().distanciaA(espiritu.getCoords) < 2 || > 5) return; // TODO revisar si va o no
-        if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre() || esMismoEspiritu(espiritu)) return;
+        if (estaSiendoDominado() || getNivelDeConexion() >= 50 || !estaLibre()) return;
         verificarDominarAlQueLoDomina(espiritu);
         setEspirituDominante(espiritu);
     }
@@ -190,6 +186,12 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     private boolean esMismoEspiritu(Espiritu espiritu) {
         if (espiritu == null) return false;
         return Objects.equals(espiritu.getId(), this.getId());
+    }
+
+    public void serInvocadoPorMedium(Ubicacion ubicacion, Medium medium) {
+        medium.usarManaParaInvocar();
+        this.setUbicacion(ubicacion);
+        this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
     }
 
 

@@ -48,9 +48,11 @@ public class MediumJPADTO {
     @Check(constraints = "mana BETWEEN 0 AND mana_max")
     private Integer mana;
 
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AngelJPADTO> angeles = new ArrayList<>();
 
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "medium", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DemonioJPADTO> demonios = new ArrayList<>();
 
@@ -75,7 +77,7 @@ public class MediumJPADTO {
         dto.ubicacion = UbicacionJPADTO.desdeModelo(medium.getUbicacion());
         dto.angeles = medium.getAngeles().stream()
                 .map(angel -> new AngelJPADTO(angel, dto))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()).reversed();
         dto.demonios = medium.getDemonios().stream()
                 .map(demonio -> new DemonioJPADTO(demonio, dto))
                 .collect(Collectors.toList());
@@ -88,7 +90,7 @@ public class MediumJPADTO {
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
         medium.setDemonios(this.demonios.stream()
                 .map(dto -> (Demonio) dto.aModelo(medium))
                 .collect(Collectors.toList()));
@@ -100,7 +102,7 @@ public class MediumJPADTO {
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
         medium.setDemonios(this.demonios.stream()
                 .map(dto -> (Demonio) dto.aModelo(medium))
                 .collect(Collectors.toList()));

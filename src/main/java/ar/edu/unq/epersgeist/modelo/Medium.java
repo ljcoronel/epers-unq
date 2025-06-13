@@ -38,10 +38,6 @@ public class Medium implements Serializable {
         this.coordenada = coordenada;
     }
 
-    public void setCoordenada(Coordenada coordenada) {
-        this.coordenada = coordenada;
-    }
-
     public void realizarConexion(Espiritu espiritu){
 
        espiritu.agregarAEspiritusDeMedium(this);
@@ -69,6 +65,7 @@ public class Medium implements Serializable {
         }
 
     }
+
     public void exorcizarA(Optional<Medium> optionalMedium){
 
         Medium medium = optionalMedium.orElseThrow(() -> new EntidadInexistenteException("el Medium a exorcizar no existe"));
@@ -106,17 +103,14 @@ public class Medium implements Serializable {
         return (!demonios.isEmpty());
     }
 
-    public void invocar(Optional<Espiritu> opcionalEspiritu) {
-
-        if(opcionalEspiritu.isEmpty()) throw new EntidadInexistenteException("el espiritu a invocar no existe");
-
-        Espiritu espiritu = opcionalEspiritu.get();
+    public Espiritu invocar(Espiritu espiritu) {
 
         verificarSiEstaLibre(espiritu);
 
         if (this.getMana() >= 10) {
             this.getUbicacion().invocarAEspirituParaMedium(espiritu, this);
         }
+        return espiritu;
     }
 
     private void verificarSiEstaLibre(Espiritu espiritu) {

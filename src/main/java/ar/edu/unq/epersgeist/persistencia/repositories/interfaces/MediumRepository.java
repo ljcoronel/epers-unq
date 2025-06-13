@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
+import org.springframework.data.geo.Point;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 
 import java.util.List;
@@ -15,5 +16,9 @@ public interface MediumRepository {
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
 
     Long mediumConMasDemonios(Long idSantuario);
+
+    boolean estaEntreDistancia(Long id, Point coordenadaReferencia, int minKms, int maxKms);
+
+
     void crearSnapshot(Snapshot snapshot);
 }
