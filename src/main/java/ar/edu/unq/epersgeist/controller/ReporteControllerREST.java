@@ -3,7 +3,6 @@ package ar.edu.unq.epersgeist.controller;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.ReporteResponseDTO;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotResponseDTO;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
