@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import org.springframework.data.geo.Point;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,5 @@ public interface MediumRepository {
     boolean estaEntreDistancia(Long id, Point coordenadaReferencia, int minKms, int maxKms);
 
 
+    void crearSnapshot(Snapshot snapshot);
 }

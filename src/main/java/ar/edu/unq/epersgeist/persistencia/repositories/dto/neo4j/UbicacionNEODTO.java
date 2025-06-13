@@ -7,12 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,14 +16,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 
 @Node(labels = "UBICACION")
-public abstract class UbicacionNEODTO{
+public abstract class UbicacionNEODTO {
 
     @Id
     private Long id;
-
     private String nombre;
-
     private int energia;
+    private List<UbicacionNEODTO> ubicacionesConectadas;
 
     public UbicacionNEODTO(Ubicacion ubicacion) {
         id = ubicacion.getId();

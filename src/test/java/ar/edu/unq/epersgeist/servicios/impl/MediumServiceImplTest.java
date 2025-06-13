@@ -354,8 +354,8 @@ public class MediumServiceImplTest {
         mediumService.crear(medium);
         mediumService.crear(medium2);
 
-        espirituService.crear(angelDebil);
         espirituService.crear(angelFuerte);
+        espirituService.crear(angelDebil);
 
 
         espirituService.crear(demonioDebil);

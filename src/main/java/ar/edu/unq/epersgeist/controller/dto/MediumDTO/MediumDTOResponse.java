@@ -5,11 +5,13 @@ import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
 
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record MediumDTOResponse(Long id, String nombre, int manaMax, int mana, List<EspirituDTOResponse> angeles, List<EspirituDTOResponse> demonios, UbicacionDTOResponse ubicacion) {
+public record MediumDTOResponse(Long id, String nombre, int manaMax, int mana, List<EspirituDTOResponse> angeles,
+                                List<EspirituDTOResponse> demonios, Point coordenada, UbicacionDTOResponse ubicacion) {
 
     public static MediumDTOResponse desdeModelo(Medium medium) {
         if(medium == null) return null;
@@ -25,6 +27,7 @@ public record MediumDTOResponse(Long id, String nombre, int manaMax, int mana, L
                 medium.getDemonios().stream()
                         .map(EspirituDTOResponse::desdeModelo)
                         .collect(Collectors.toList()),
+                medium.getCoordenada(),
                 UbicacionDTOResponse.desdeModelo(medium.getUbicacion())
         );
     }

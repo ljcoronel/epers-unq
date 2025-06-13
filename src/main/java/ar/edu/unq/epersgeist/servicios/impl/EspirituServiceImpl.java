@@ -13,9 +13,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituReposi
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
-import lombok.Getter;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -2,6 +2,7 @@ package ar.edu.unq.epersgeist.testUtils;
 
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.SnapshotDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import jakarta.persistence.EntityManager;
@@ -23,6 +24,8 @@ public class TestService {
     private EspirituDAOMONGO espirituDAOMongo;
     @Autowired
     private UbicacionDAOMONGO ubicacionDAOMongo;
+    @Autowired
+    private SnapshotDAOMONGO snapshotDAOMONGO;
 
     @Autowired
     private MediumDAOMONGO mediumDAOMONGO;
@@ -42,5 +45,9 @@ public class TestService {
     public void eliminarMediums() {
         entityManager.createNativeQuery("DELETE FROM medium").executeUpdate();
         this.mediumDAOMONGO.deleteAll();
+    }
+
+    public void eliminarSnapshots() {
+        this.snapshotDAOMONGO.deleteAll();
     }
 }

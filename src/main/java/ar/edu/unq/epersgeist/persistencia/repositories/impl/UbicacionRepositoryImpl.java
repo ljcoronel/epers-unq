@@ -1,11 +1,13 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
@@ -167,4 +169,16 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return !ubicacionDaoMongo.interseccionesConArea(area).isEmpty();
     }
 
+    @Override
+    public void crearSnapshot(Snapshot snapshot) {
+        snapshot.guardarEstadoSql(this.ubicacionDaoJpa.findAll().stream()
+                .map(dto -> (SnapshotSql) DraftUbicacionJPADTO.guardar(dto))
+                .toList());
+        snapshot.guardarEstadoMongo(this.ubicacionDaoMongo.findAll().stream()
+                .map(dto -> (SnapshotMongo) DraftUbicacionMONGODTO.guardar(dto))
+                .toList());
+        snapshot.guardarEstadoNeo(this.ubicacionDaoNeo.findAll().stream()
+                .map(dto -> (SnapshotNeo) DraftUbicacionNEODTO.guardar(dto, this.ubicacionDaoNeo.ubicacionesConectadas(dto.getId())))
+                .toList());
+    }
 }
