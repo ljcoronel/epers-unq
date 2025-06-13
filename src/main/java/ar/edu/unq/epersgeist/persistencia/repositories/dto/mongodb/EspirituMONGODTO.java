@@ -34,9 +34,12 @@ public class EspirituMONGODTO {
         return new EspirituMONGODTO(espiritu);
     }
 
-    public Espiritu aModelo(Espiritu espiritu){
+    public Espiritu aModelo(Espiritu espiritu, UbicacionMONGODTO datosUbicacion){
         espiritu.setCoordenada(new Coordenada(this.getCoordenada().getX(), this.getCoordenada().getY()));
         if (espiritu.getMedium() != null) espiritu.getMedium().setCoordenada(new Coordenada(espiritu.getCoordenada().getX(), espiritu.getCoordenada().getY()));
+
+        datosUbicacion.aModelo(espiritu.getUbicacion()); //incrusto datos de ubicación
+
         return espiritu;
     }
 

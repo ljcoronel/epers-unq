@@ -2,6 +2,8 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
 import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +13,8 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,8 +34,13 @@ public class MediumMONGODTO {
         return dto;
     }
 
-    public Medium aModelo(Medium medium){
-        medium.setCoordenada(new Coordenada(coordenada.getX(),  coordenada.getY()));
+    public Medium aModelo(Medium medium, UbicacionMONGODTO ubicacionMONGODTO){
+        medium.setCoordenada(new Coordenada(getCoordenada().getX(), getCoordenada().getY()));
+        ubicacionMONGODTO.aModelo(medium.getUbicacion());
+        medium.getAngeles()
+                .forEach(angel -> ubicacionMONGODTO.aModelo(angel.getUbicacion()));
+        medium.getDemonios()
+                .forEach(demonio -> ubicacionMONGODTO.aModelo(demonio.getUbicacion()));
         return medium;
     }
 }

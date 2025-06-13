@@ -33,7 +33,7 @@ public class ReporteControllerREST {
     }
 
     @GetMapping("/snapshot")
-    public ResponseEntity<SnapshotResponseDTO> obtenerSnapshot(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+    public ResponseEntity<SnapshotResponseDTO> obtenerSnapshot(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         if (this.estadisticaService.obtenerSnapshot(fecha) == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(SnapshotResponseDTO.desdeModelo(this.estadisticaService.obtenerSnapshot(fecha)));
     }

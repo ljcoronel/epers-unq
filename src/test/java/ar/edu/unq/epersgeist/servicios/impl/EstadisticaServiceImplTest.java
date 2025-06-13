@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -166,6 +167,7 @@ public class EstadisticaServiceImplTest {
         this.espirituService.crear(this.angel1);
         this.espirituService.crear(this.demonio1);
         this.espirituService.crear(this.demonio2);
+
         this.espirituService.conectar(this.angel1.getId(), this.medium.getId());
         this.espirituService.conectar(this.demonio2.getId(), this.medium.getId());
         this.espirituService.conectar(this.demonio1.getId(), this.medium.getId());
@@ -173,6 +175,7 @@ public class EstadisticaServiceImplTest {
 
         this.ubicacionService.crear(this.ubicacion2);
         this.ubicacionService.crear(this.ubicacion3);
+
         this.ubicacionService.conectar(this.ubicacion.getId(), this.ubicacion2.getId());
         this.ubicacionService.conectar(this.ubicacion.getId(), this.ubicacion3.getId());
         this.estadisticaService.crearSnapshot();
@@ -183,6 +186,39 @@ public class EstadisticaServiceImplTest {
         Snapshot snapshot = this.estadisticaService.obtenerSnapshot(LocalDate.now());
 
         assertEquals(3, snapshot.getNeo4j().size());
+        assertEquals(7, snapshot.getMongo().size());
+        assertEquals(7, snapshot.getSql().size());
+    }
+
+    @Test
+    public void noSePuedeObtenerUnSnapshotMasViejoParaElMismoDia() {
+        this.ubicacionService.crear(this.ubicacion);
+        this.mediumService.crear(this.medium);
+        this.espirituService.crear(this.angel1);
+        this.espirituService.crear(this.demonio1);
+        this.espirituService.crear(this.demonio2);
+
+        this.espirituService.conectar(this.angel1.getId(), this.medium.getId());
+        this.espirituService.conectar(this.demonio2.getId(), this.medium.getId());
+        this.espirituService.conectar(this.demonio1.getId(), this.medium.getId());
+        LocalDate fechaVieja = LocalDate.now();
+        this.estadisticaService.crearSnapshot();
+
+        this.ubicacionService.crear(this.ubicacion2);
+        this.ubicacionService.crear(this.ubicacion3);
+
+        this.ubicacionService.conectar(this.ubicacion.getId(), this.ubicacion2.getId());
+        this.ubicacionService.conectar(this.ubicacion.getId(), this.ubicacion3.getId());
+        this.estadisticaService.crearSnapshot();
+
+        this.ubicacionService.conectar(this.ubicacion2.getId(), this.ubicacion3.getId());
+        this.ubicacionService.conectar(this.ubicacion3.getId(), this.ubicacion2.getId());
+        this.estadisticaService.crearSnapshot();
+        Snapshot snapshot = this.estadisticaService.obtenerSnapshot(fechaVieja);
+
+        assertEquals(3, snapshot.getNeo4j().size());
+        assertEquals(7, snapshot.getMongo().size());
+        assertEquals(7, snapshot.getSql().size());
     }
 
     @Test

@@ -5,11 +5,16 @@ import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumMONGODTO;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -23,10 +28,12 @@ public class MediumRepositoryImpl implements MediumRepository {
 
     private final MediumDAOJPA mediumDAOJPA;
     private final MediumDAOMONGO mediumDAOMONGO;
+    private final UbicacionDAOMONGO ubicacionDAOMONGO;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO, UbicacionDAOMONGO ubicacionDAOMONGO) {
         this.mediumDAOJPA = mediumDAOJPA;
         this.mediumDAOMONGO = mediumDAOMONGO;
+        this.ubicacionDAOMONGO = ubicacionDAOMONGO;
     }
 
     @Override
@@ -40,19 +47,23 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public Optional<Medium> recuperar(Long id) {
         Optional<MediumJPADTO> optionalMediumJPADTO = this.mediumDAOJPA.findById(id);
-        Optional<MediumMONGODTO> mediumMONGODTO = this.mediumDAOMONGO.findById(id.toString());
-        if (mediumMONGODTO.isEmpty()) return Optional.empty();
-        Point coordenada = mediumMONGODTO.get().getCoordenada();
-        return optionalMediumJPADTO.map(mediumdto -> mediumdto.aModelo(coordenada));
+
+        return optionalMediumJPADTO.map(this::mappearMedium);
+    }
+
+    private Medium mappearMedium(MediumJPADTO jpaDTO){
+
+        Medium medium = jpaDTO.aModelo();
+        MediumMONGODTO mediumMONGODTO = this.mediumDAOMONGO.findById(String.valueOf(medium.getId())).get();
+
+        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(medium.getUbicacion().getId()).get();
+        return mediumMONGODTO.aModelo(medium, ubicacionMONGODTO);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
         return this.mediumDAOJPA.findAll().stream()
-                .map(mediumdto -> {
-                    Point coordenada = this.mediumDAOMONGO.findById(mediumdto.getId().toString()).get().getCoordenada();
-                    return mediumdto.aModelo(coordenada);
-                })
+                .map(this::mappearMedium)
                 .toList();
     }
 
@@ -70,10 +81,7 @@ public class MediumRepositoryImpl implements MediumRepository {
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId).stream()
-                .map(mediumdto -> {
-                    Point coordenada = this.mediumDAOMONGO.findById(mediumdto.getId().toString()).get().getCoordenada();
-                    return mediumdto.aModelo(coordenada);
-                })
+                .map(this::mappearMedium)
                 .toList();
     }
 

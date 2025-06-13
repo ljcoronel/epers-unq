@@ -8,8 +8,10 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
+import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;
@@ -28,10 +30,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     private final EspirituDAOJPA espirituDAOJPA;
     private final EspirituDAOMONGO espirituDAOMongo;
+    private final UbicacionDAOMONGO ubicacionDAOMONGO;
 
-    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAOMONGO espirituDAOMongo) {
+    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAOMONGO espirituDAOMongo, UbicacionDAOMONGO ubicacionDAOMONGO) {
         this.espirituDAOMongo = espirituDAOMongo;
         this.espirituDAOJPA = espirituDAOJPA;
+        this.ubicacionDAOMONGO = ubicacionDAOMONGO;
     }
 
     @Override
@@ -56,14 +60,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public Optional<Espiritu> recuperar(Long id) {
         Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
 
-        return espirituDAOJPA.findById(id).map(jpaDTO->{
-            Espiritu espiritu = jpaDTO.aModelo();
-            EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(id).get();
-
-            mappearEspirituDominante(espiritu.getEspirituDominante());
-
-            return espirituMongo.aModelo(espiritu);
-        });
+        return espirituDAOJPA.findById(id).map(this::mappearEspiritu);
     }
 
     @Override
@@ -74,14 +71,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Espiritu> recuperarTodos() {
-        return this.espirituDAOJPA.findAll().stream().map(jpaDTO-> {
-            Espiritu espiritu = jpaDTO.aModelo();
-            EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
-
-            mappearEspirituDominante(espiritu.getEspirituDominante());
-
-            return espirituMongo.aModelo(espiritu);
-        }).toList();
+        return this.espirituDAOJPA.findAll().stream().map(this::mappearEspiritu).toList();
     }
 
     @Override
@@ -104,8 +94,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
             EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
 
             mappearEspirituDominante(espiritu.getEspirituDominante());
-
-            return (Demonio) espirituMongo.aModelo(espiritu);
+            UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
+            return (Demonio) espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
         };
     }
 
@@ -146,8 +136,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms) {
-        return espirituDAOMongo.estanEntreDistancia(espirituId, new GeoJsonPoint(coordenadaReferencia), minKms*1000, maxKms*1000).isPresent(); // TODO esto iría? o no se puede en esta capa transformar a bool?
-        // TODO lo mismo con el * 1000
+        return espirituDAOMongo.estanEntreDistancia(espirituId, new GeoJsonPoint(coordenadaReferencia), minKms*1000, maxKms*1000).isPresent();
     }
 
     private Espiritu mappearEspiritu(EspirituJPADTO jpaDTO){
@@ -156,8 +145,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
 
         mappearEspirituDominante(espiritu.getEspirituDominante());
-
-        return espirituMongo.aModelo(espiritu);
+        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
+        return espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
     }
 
     private void mappearEspirituDominante(Espiritu espirituDominante){
@@ -165,12 +154,10 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espirituDominante.getId()).get();
 
         mappearEspirituDominante(espirituDominante.getEspirituDominante()); // recursivo, dá coords a todos los espíritus de la cadena de dominancia
-
-        espirituMongo.aModelo(espirituDominante);
+        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espirituDominante.getUbicacion().getId()).get();
+        espirituMongo.aModelo(espirituDominante, ubicacionMONGODTO);
     }
-
-
-
+    
     @Override
     public void crearSnapshot(Snapshot snapshot) {
         snapshot.guardarEstadoSql(this.espirituDAOJPA.findAll().stream()

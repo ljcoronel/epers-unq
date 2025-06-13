@@ -102,7 +102,7 @@ public class MediumJPADTO {
         medium.setId(this.id);
         medium.setAngeles(this.angeles.stream()
                 .map(dto -> (Angel) dto.aModelo(medium))
-                .collect(Collectors.toList()).reversed());
+                .collect(Collectors.toList()));
         medium.setDemonios(this.demonios.stream()
                 .map(dto -> (Demonio) dto.aModelo(medium))
                 .collect(Collectors.toList()));
