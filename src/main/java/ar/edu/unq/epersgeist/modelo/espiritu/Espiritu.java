@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
+import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
@@ -39,7 +40,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.nombre = nombre;
     }
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Point coordenada ) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;

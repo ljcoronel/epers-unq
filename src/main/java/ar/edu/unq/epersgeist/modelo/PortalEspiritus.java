@@ -5,26 +5,38 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.geo.Point;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter @Setter
 public class PortalEspiritus {
-    private final Demonio demonioHost;
-    private int cantMinionsInvocados;
+    private Demonio demonioHost;
+    private int cantMinionsInvocados = 1;
     private Point coordenada;
+    private List<Demonio> minionsInvocados = new ArrayList<>();
 
-    public PortalEspiritus(Demonio espirituHost, Point coordenada) {
-        this.demonioHost = espirituHost;
+    public PortalEspiritus(Point coordenada) {
         this.coordenada = coordenada;
     }
 
     public Demonio abrirPortal() {
-        demonioHost.reducirNivelDeConexionEn(10);
+        Demonio minion = summonearMinion();
         cantMinionsInvocados++;
-        return summonearMinion();
+        demonioHost.reducirNivelDeConexionEn(10);
+        return minion;
     }
 
     private Demonio summonearMinion() {
-        Demonio minion = new Demonio(10, "minion-de-" + demonioHost.getNombre() + "-" + cantMinionsInvocados);
-        minion.setCoordenada(coordenada);
+        int nivelDeConexTomado = 10;
+
+        if (demonioHost.getNivelDeConexion() < 10) nivelDeConexTomado = demonioHost.getNivelDeConexion(); // TODO testear
+
+        Demonio minion = new Demonio(nivelDeConexTomado, "minion-de-" + demonioHost.getNombre() + "-" + cantMinionsInvocados, coordenada);
+        minionsInvocados.add(minion);
         return minion;
+    }
+
+    public boolean sigueAbierto() {
+        return demonioHost.getNivelDeConexion() > 0;
     }
 }

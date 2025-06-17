@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
@@ -22,7 +23,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada ) {
         super(nivelDeConexion,nombre, coordenada);
     }
 

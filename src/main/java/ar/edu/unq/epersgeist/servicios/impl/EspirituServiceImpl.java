@@ -20,7 +20,6 @@ import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -138,25 +137,34 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public PortalEspiritus crearPortal(Double latitud, Double longitud) {
-        verificarTemperaturaBaja(latitud, longitud);
+    public PortalEspiritus crearPortal(PortalEspiritus portal) {
 
-        Long id = this.ubicacionRepository.encontrarUbicacionQueContiene(new Point(latitud, longitud)).get().getId();
-        Espiritu espirituHost = this.espirituRepository.espiritusEn(id).stream().max(Comparator.comparing(Espiritu::getNivelDeConexion)).get(); // TODO obviamente, cambiar
+        Point punto = portal.getCoordenada();
 
-        PortalEspiritus portal = new PortalEspiritus( (Demonio) espirituHost, new Point(latitud, longitud));
+        ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
+                ()-> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
 
-        while(espirituHost.getNivelDeConexion() >= 10) { // TODO falta instanciar al último minion con el lvl de conex que haya
-            this.crear(portal.abrirPortal()); // devuelve al minion
-        }
+        verificarTemperaturaBaja(punto);
 
-        espirituRepository.guardar(espirituHost);
+        Demonio demonioHost = this.espirituRepository.demonioLibreMasFuerteEn(punto.getX(), punto.getY());  // TODO tal vez tomar un radio en vez de una ubicación entera?
+        portal.setDemonioHost(demonioHost);
+
+        new Thread(() -> iniciarPortal(demonioHost, portal)).start(); // TODO revisar cuando se reinstancia un portal (no hay limit en JPQL)
 
         return portal;
     }
 
-    private void verificarTemperaturaBaja(Double latitud, Double longitud) {
-        if(!ubicacionRepository.esTemperaturaMenorOIgualA(latitud, longitud, -5) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
+    private void iniciarPortal(Espiritu demonioHost, PortalEspiritus portal) {
+        while(portal.sigueAbierto()) { // TODO falta instanciar al último minion con el lvl de conex que haya
+            try {
+                Thread.sleep(10000); } catch (InterruptedException e) {throw new RuntimeException(e);}
+            this.crear(portal.abrirPortal()); // crea al minion
+            espirituRepository.guardar(demonioHost); // actualiza al host
+        }
+    }
+
+    private void verificarTemperaturaBaja(Point punto) {
+        if(!ubicacionRepository.esTemperaturaMenorOIgualA(punto.getX(), punto.getY(), -5) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
     }
 
 }

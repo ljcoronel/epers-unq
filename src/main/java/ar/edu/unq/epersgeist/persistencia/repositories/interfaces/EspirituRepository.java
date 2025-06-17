@@ -30,10 +30,13 @@ public interface EspirituRepository {
 
     int cantidadDeDemoniosLibresEn(Long idSantuario);
 
+    Demonio demonioLibreMasFuerteEn(Double latitud, Double longitud);
+
     void desvincular(Long id);
 
     boolean referencia(Long idDelMedium);
 
     boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms);
     void crearSnapshot(Snapshot snapshot);
+
 }

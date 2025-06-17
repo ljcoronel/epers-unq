@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
@@ -25,11 +26,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -714,7 +718,12 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
-        espirituService.crearPortal(0.001, 0d);
+        espirituService.crearPortal(new PortalEspiritus(new Point(0.001, 0d) ));
+
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException ignored) {
+        }
 
         List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
 
@@ -725,6 +734,38 @@ public class EspirituServiceImplTest {
         assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "4")));
         assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "5")));
 
+
+    }
+
+    @Test
+    void unPortalSeAbreEnUnaCoordenadaValidaYNoGeneraMinionsPorqueLeFaltaNivelDeConexion() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(0);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+
+        espirituService.crearPortal(new PortalEspiritus(new Point(0.001, 0d) ));
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException ignored) {
+        }
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+
+        assertEquals(1, demonios.size());
+
+    }
+
+    @Test
+    void noSePuedeAbrirUnPortalEnUnasCoordsNoValidas() {
+        ubicacionService.crear(ubicacion);
+
+        espirituService.crear(demonio2);
+
+        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal (new PortalEspiritus(new Point(90, 0d) )));
 
     }
 

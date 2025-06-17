@@ -125,6 +125,12 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
+    public Demonio demonioLibreMasFuerteEn(Double latitud, Double longitud) {
+        Long id = this.ubicacionDAOMONGO.findByPuntoDentroDelTerritorio(new GeoJsonPoint(latitud, longitud)).get().getId();;
+        return (Demonio) mappearEspiritu(this.espirituDAOJPA.demonioLibreMasFuerteEn(id));
+    }
+
+    @Override
     public void desvincular(Long id) {
         this.espirituDAOJPA.desvincular(id);
     }
@@ -167,4 +173,5 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                 .map(dto -> (SnapshotMongo) DraftEspirituMONGODTO.guardar(dto))
                 .toList());
     }
+
 }
