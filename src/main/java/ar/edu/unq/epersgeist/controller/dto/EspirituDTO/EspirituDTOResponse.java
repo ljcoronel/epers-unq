@@ -1,12 +1,7 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
-import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.geo.Point;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public record EspirituDTOResponse(Long id, TipoEspiritu tipo, String nombre, int nivelDeConexion

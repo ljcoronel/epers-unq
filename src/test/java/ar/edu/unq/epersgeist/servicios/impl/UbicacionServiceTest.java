@@ -1,7 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
-import ar.edu.unq.epersgeist.modelo.Poligono;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.geo.Point;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
@@ -123,19 +121,19 @@ public class UbicacionServiceTest {
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
         this.ubicacionCinco = new Santuario("MiCasa", 30);
 
-        ubicacionUno.setTerritorio(pointsUbicacionUno);//TODO ver si tendran que tener todas ubicaciones distintas o pueden compartirlos en estos test
+        ubicacionUno.setTerritorio(pointsUbicacionUno);
         ubicacionDos.setTerritorio(pointsUbicacionDos);
         ubicacionTres.setTerritorio(pointsUbicacionTres);
         ubicacionCuatro.setTerritorio(pointsUbicacionCuatro);
         ubicacionCinco.setTerritorio(pointsUbicacionCinco);
 
-        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5), this.ubicacionUno);
+        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5));
 
-        this.demonioUno = new Demonio(10, "demonio",new Coordenada(0.5, 0.5), this.ubicacionUno);
+        this.demonioUno = new Demonio(10, "demonio",new Coordenada(0.5, 0.5));
 
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Coordenada(0.5, 0.5));
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Coordenada(0.5, 0.5));
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.mediumUno = new Medium("Fabian", 100, 10, new Coordenada(0.5, 0.5));
+        this.mediumDos = new Medium("Franco", 200, 50, new Coordenada(0.5, 0.5));
+        this.mediumTres = new Medium("Tobias", 300, 60, new Coordenada(0.5, 0.5));
 
 
     }
@@ -217,9 +215,6 @@ public class UbicacionServiceTest {
 
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
-//        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId()); // TODO cambiar test para no depender del orden de guardado ya que aveces falla
-//        assertEquals(ubicaciones.get(1).getId(), this.ubicacionDos.getId());
-//        assertEquals(ubicaciones.getLast().getId(), this.ubicacionTres.getId());
         assertEquals(3, ubicaciones.size());
     }
 
@@ -264,8 +259,8 @@ public class UbicacionServiceTest {
 
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Coordenada(0.5, 0.5));
-        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5), ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, new Coordenada(0.5, 0.5));
+        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5));
         espirituService.crear(espiritu);
         mediumService.crear(medium);
 

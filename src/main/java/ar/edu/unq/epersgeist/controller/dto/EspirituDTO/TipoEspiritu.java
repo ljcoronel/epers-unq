@@ -1,10 +1,9 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
@@ -15,8 +14,8 @@ import java.util.stream.Collectors;
 public enum TipoEspiritu {
     ANGEL {
         @Override
-        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada, Ubicacion ubicacion){
-            return new Angel(nivelDeConexion, nombre, coordenada,ubicacion);
+        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada){
+            return new Angel(nivelDeConexion, nombre, coordenada);
         }
 
         @Override
@@ -27,8 +26,8 @@ public enum TipoEspiritu {
     },
     DEMONIO {
         @Override
-        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion){
-            return new Demonio(nivelDeConexion, nombre, coordenada,ubicacion);
+        public Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada ){
+            return new Demonio(nivelDeConexion, nombre, coordenada);
         }
 
         @Override
@@ -42,7 +41,7 @@ public enum TipoEspiritu {
         return " | " + Arrays.stream(values()).map(tipo -> tipo.toString() + " | ").collect(Collectors.joining());
     }
 
-    public abstract Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion);
+    public abstract Espiritu getEspirituInstance(int nivelDeConexion, String nombre, Coordenada coordenada);
     public abstract EspirituJPADTO getDto(Espiritu espiritu);
 
     public static TipoEspiritu getValueOfEspiritu(Espiritu espiritu) {

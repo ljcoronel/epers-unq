@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -12,11 +13,14 @@ import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryIm
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.exception.TemperaturaMuyAltaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -131,6 +135,28 @@ public class EspirituServiceImpl implements EspirituService {
 
         espirituRepository.guardar(espirituADominar);
 
+    }
+
+    @Override
+    public PortalEspiritus crearPortal(Double latitud, Double longitud) {
+        verificarTemperaturaBaja(latitud, longitud);
+
+        Long id = this.ubicacionRepository.encontrarUbicacionQueContiene(new Point(latitud, longitud)).get().getId();
+        Espiritu espirituHost = this.espirituRepository.espiritusEn(id).stream().max(Comparator.comparing(Espiritu::getNivelDeConexion)).get(); // TODO obviamente, cambiar
+
+        PortalEspiritus portal = new PortalEspiritus( (Demonio) espirituHost, new Point(latitud, longitud));
+
+        while(espirituHost.getNivelDeConexion() >= 10) { // TODO falta instanciar al último minion con el lvl de conex que haya
+            this.crear(portal.abrirPortal()); // devuelve al minion
+        }
+
+        espirituRepository.guardar(espirituHost);
+
+        return portal;
+    }
+
+    private void verificarTemperaturaBaja(Double latitud, Double longitud) {
+        if(!ubicacionRepository.esTemperaturaMenorOIgualA(latitud, longitud, -5) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
     }
 
 }

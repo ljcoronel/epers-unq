@@ -20,11 +20,8 @@ public interface UbicacionService  {
     void conectar(Long idOrigen, Long idDestino);
     List<Ubicacion> caminoMasCorto(Long idOrigen, Long idDestino);
     List<Ubicacion> ubicacionesSobrecargadas(int umbralDeEnergia);
-
     Boolean estanConectadas(Long idOrigen, Long idDestino);
-
     List<ClosenessResult> closenessOf(List<Long> ids);
     List<DegreeResult>incomingDegreeOf(List<Long> ids);
     List<DegreeResult>outgoingDegreeOf(List<Long> ids);
-
 }

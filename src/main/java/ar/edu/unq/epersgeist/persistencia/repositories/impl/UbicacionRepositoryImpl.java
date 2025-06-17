@@ -181,4 +181,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .map(dto -> (SnapshotNeo) DraftUbicacionNEODTO.guardar(dto, this.ubicacionDaoNeo.ubicacionesConectadas(dto.getId())))
                 .toList());
     }
+
+    @Override
+    public boolean esTemperaturaMenorOIgualA(Double latitud, Double longitud, int delta) {
+        return true; // TODO implementar
+    }
 }

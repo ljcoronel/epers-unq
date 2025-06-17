@@ -1,11 +1,10 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,16 +14,16 @@ import lombok.ToString;
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
-        super(nivelDeConexion, nombre, ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre ) {//se usa en el aModelo del JPA
+        super(nivelDeConexion, nombre);
     }
 
     public Demonio(String nombre, Coordenada coordenada) {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
-        super(nivelDeConexion,nombre, coordenada,ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+        super(nivelDeConexion,nombre, coordenada);
     }
 
     public void defender(Angel angel,int ataque) {

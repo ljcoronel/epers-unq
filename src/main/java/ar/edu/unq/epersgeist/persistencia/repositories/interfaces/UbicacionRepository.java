@@ -35,4 +35,6 @@ public interface UbicacionRepository {
 
     boolean existeUbicacionEnArea(List<Point> territorio);
     void crearSnapshot(Snapshot snapshot);
+
+    boolean esTemperaturaMenorOIgualA(Double latitud, Double longitud, int delta);
 }

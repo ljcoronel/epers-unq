@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
@@ -20,10 +20,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Point;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,16 +83,16 @@ public class EstadisticaServiceImplTest {
                 new Coordenada(6, 0)
         ));
 
-        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio1 = new Demonio(10, "Pepito",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio2 = new Demonio(90, "Diavolo",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio3 = new Demonio(50, "Sebastián",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio4 = new Demonio(50, "Jorge",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio5 = new Demonio(50, "Jose",new Coordenada(3.5,0.5), this.ubicacion2);
-        demonio6 = new Demonio(40, "Dracula",new Coordenada(6.5,0.5), this.ubicacion3);
+        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5));
+        demonio1 = new Demonio(10, "Pepito",new Coordenada(0.5,0.5));
+        demonio2 = new Demonio(90, "Diavolo",new Coordenada(0.5,0.5));
+        demonio3 = new Demonio(50, "Sebastián",new Coordenada(0.5,0.5));
+        demonio4 = new Demonio(50, "Jorge",new Coordenada(0.5,0.5));
+        demonio5 = new Demonio(50, "Jose",new Coordenada(3.5,0.5));
+        demonio6 = new Demonio(40, "Dracula",new Coordenada(6.5,0.5));
 
-        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(0.5,0.5));
-        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Coordenada(0.5,0.5));
+        medium = new Medium("Brujita", 100, 50, new Coordenada(0.5,0.5));
+        medium2 = new Medium("Pepe", 100, 60, new Coordenada(0.5,0.5));
 
     }
 

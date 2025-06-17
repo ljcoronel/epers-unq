@@ -32,7 +32,7 @@ public class DemonioJPADTO extends EspirituJPADTO {
 
     @Override
     public Espiritu instanciarEspiritu() {
-        return new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
+        return new Demonio(this.getNivelDeConexion(), this.getNombre());
     }
 
 

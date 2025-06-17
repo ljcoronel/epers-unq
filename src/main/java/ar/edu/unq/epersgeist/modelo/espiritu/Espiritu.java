@@ -1,10 +1,9 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
-import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -18,7 +17,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.geo.Point;
 
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,19 +33,17 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     private Espiritu espirituDominante;
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre ) {
 
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
-        this.ubicacion = ubicacion;
     }
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
         this.coordenada = coordenada;
-        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
     }
 
     public Espiritu(String nombre, Coordenada coordenada) {

@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.*;
 import org.springframework.data.geo.Point;
@@ -28,13 +29,12 @@ public class Medium implements Serializable {
     private Ubicacion ubicacion;
     private Point coordenada;
 
-    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion, Coordenada coordenada) {
+    public Medium(String nombre, Integer manaMax, Integer mana, Coordenada coordenada) {
         this.nombre = nombre;
         this.manaMax = manaMax;
         this.mana = mana;
         this.angeles = new ArrayList<>();
         this.demonios = new ArrayList<>();
-        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
         this.coordenada = coordenada;
     }
 
