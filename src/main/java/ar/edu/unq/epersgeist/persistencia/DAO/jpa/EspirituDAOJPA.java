@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.DAO;
+package ar.edu.unq.epersgeist.persistencia.DAO.jpa;
 
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EspirituDAO extends JpaRepository<Espiritu, Long> {
+public interface EspirituDAOJPA extends JpaRepository<Espiritu, Long> {
 
     @Query(
             "From Espiritu e where e.medium.id= :MediumId "

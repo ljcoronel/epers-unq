@@ -5,9 +5,9 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaExceptio
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
-import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.EspirituDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.MediumDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,31 +19,31 @@ import java.util.Optional;
 @Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
-    private final UbicacionDAO ubicacionDAO;
-    private final EspirituDAO espirituDAO;
-    private final MediumDAO mediumDAO;
+    private final UbicacionDAOJPA ubicacionDAOJPA;
+    private final EspirituDAOJPA espirituDAOJPA;
+    private final MediumDAOJPA mediumDAOJPA;
 
-    public UbicacionServiceImpl(UbicacionDAO ubicacionDAO, EspirituDAO espirituDAO, MediumDAO mediumDAO) {
-        this.ubicacionDAO = ubicacionDAO;
-        this.espirituDAO = espirituDAO;
-        this.mediumDAO = mediumDAO;
+    public UbicacionServiceImpl(UbicacionDAOJPA ubicacionDAOJPA, EspirituDAOJPA espirituDAOJPA, MediumDAOJPA mediumDAOJPA) {
+        this.ubicacionDAOJPA = ubicacionDAOJPA;
+        this.espirituDAOJPA = espirituDAOJPA;
+        this.mediumDAOJPA = mediumDAOJPA;
     }
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        return this.ubicacionDAO.save(ubicacion);
+        if (this.ubicacionDAOJPA.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        return this.ubicacionDAOJPA.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return this.ubicacionDAO.findById(id);
+        return this.ubicacionDAOJPA.findById(id);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if (this.ubicacionDAO.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        this.ubicacionDAO.actualizar(
+        if (this.ubicacionDAOJPA.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        this.ubicacionDAOJPA.actualizar(
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia());
@@ -51,22 +51,22 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void eliminar(Long id) {
-        if (this.ubicacionDAO.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
-        this.ubicacionDAO.deleteById(id);
+        if (this.ubicacionDAOJPA.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
+        this.ubicacionDAOJPA.deleteById(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDAO.findAll());
+        return List.copyOf(this.ubicacionDAOJPA.findAll());
     }
 
     @Override
     public List<Espiritu> espiritusEn(Long ubicacionId) {
-        return this.espirituDAO.espiritusEn(ubicacionId);
+        return this.espirituDAOJPA.espiritusEn(ubicacionId);
     }
 
     @Override
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
-        return this.mediumDAO.mediumsSinEspiritusEn(ubicacionId);
+        return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId);
     }
 }

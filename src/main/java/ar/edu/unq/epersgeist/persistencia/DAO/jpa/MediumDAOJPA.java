@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.persistencia.DAO;
+package ar.edu.unq.epersgeist.persistencia.DAO.jpa;
 
 import ar.edu.unq.epersgeist.modelo.Medium;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MediumDAO extends JpaRepository<Medium, Long> {
+public interface MediumDAOJPA extends JpaRepository<Medium, Long> {
     @Query("from Medium m where m.ubicacion.id = :unaUbicacion and m.angeles is empty and m.demonios is empty order by m.nombre asc")
     List<Medium> mediumsSinEspiritusEn(@Param("unaUbicacion") Long ubicacionId);
 

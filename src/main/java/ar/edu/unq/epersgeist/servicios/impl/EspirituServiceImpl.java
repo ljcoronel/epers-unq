@@ -7,9 +7,9 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
-import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.EspirituDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.MediumDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import lombok.Getter;
 import org.springframework.data.domain.Example;
@@ -26,14 +26,14 @@ import java.util.Optional;
 @Transactional
 public class EspirituServiceImpl implements EspirituService {
 
-    private final EspirituDAO espirituDao;
-    private final MediumDAO mediumDao;
-    private final UbicacionDAO ubicacionDao;
+    private final EspirituDAOJPA espirituDAOJPA;
+    private final MediumDAOJPA mediumDAOJPA;
+    private final UbicacionDAOJPA ubicacionDAOJPA;
 
-    public EspirituServiceImpl(EspirituDAO espirituDao, MediumDAO mediumDAO, UbicacionDAO ubicacionDao) {
-        this.espirituDao = espirituDao;
-        this.mediumDao = mediumDAO;
-        this.ubicacionDao = ubicacionDao;
+    public EspirituServiceImpl(EspirituDAOJPA espirituDAOJPA, MediumDAOJPA mediumDAOJPA, UbicacionDAOJPA ubicacionDAOJPA) {
+        this.espirituDAOJPA = espirituDAOJPA;
+        this.mediumDAOJPA = mediumDAOJPA;
+        this.ubicacionDAOJPA = ubicacionDAOJPA;
     }
 
 
@@ -42,11 +42,11 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        Ubicacion ubicacion = ubicacionDao.findById(espiritu.getUbicacion().getId())
+        Ubicacion ubicacion = ubicacionDAOJPA.findById(espiritu.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
         espiritu.setUbicacion(ubicacion);
 
-        return getEspirituDao().save(espiritu);
+        return getEspirituDAOJPA().save(espiritu);
 
     }
 
@@ -56,13 +56,13 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public Optional<Espiritu> recuperar(Long espirituId) {
-        return getEspirituDao().findById(espirituId);
+        return getEspirituDAOJPA().findById(espirituId);
     }
 
     @Override
     public List<Espiritu> recuperarTodos() {
 
-        return espirituDao.findAll();
+        return espirituDAOJPA.findAll();
     }
 
     @Override
@@ -70,12 +70,12 @@ public class EspirituServiceImpl implements EspirituService {
 
         verificarNombreRepetido(espiritu);
 
-        getEspirituDao().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
+        getEspirituDAOJPA().actualizar(espiritu.getNombre(), espiritu.getNivelDeConexion(), espiritu.getId());
     }
 
     @Override
     public void eliminar(Long espirituId) {
-        getEspirituDao().deleteById(espirituId);
+        getEspirituDAOJPA().deleteById(espirituId);
     }
 
     @Override
@@ -83,15 +83,15 @@ public class EspirituServiceImpl implements EspirituService {
         if (pagina < 0) throw new ParametroIncorrectoException("El valor página debe ser positivo o 0.");
         if (cantidadPorPagina <= 0) throw new ParametroIncorrectoException("La cantidad por página debe ser positiva."); // porque no se debería hacer una consulta a la base de datos para traerse nada
 
-        return getEspirituDao().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
+        return getEspirituDAOJPA().findAll(Example.of(new Demonio()), PageRequest.of(pagina, cantidadPorPagina, direccion, "nivelDeConexion")).toList();
     }
 
     @Override
     public Medium conectar(Long espirituId, Long mediumId) {
 
-            Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+            Optional<Medium> optionalMedium = mediumDAOJPA.findById(mediumId);
 
-            Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+            Optional<Espiritu> optionalEspiritu = espirituDAOJPA.findById(espirituId);
 
             if (optionalEspiritu.isEmpty()) return optionalMedium.orElse(null);
             Espiritu espiritu = optionalEspiritu.get();
@@ -100,7 +100,7 @@ public class EspirituServiceImpl implements EspirituService {
 
             Medium medium = optionalMedium.get();
 
-            mediumDao.save(medium);
+            mediumDAOJPA.save(medium);
 
             return medium;
 
@@ -109,7 +109,7 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public boolean existeConNombre(Espiritu espiritu) {
-        return this.espirituDao.espirituConNombre(espiritu.getNombre(), espiritu.getId());
+        return this.espirituDAOJPA.espirituConNombre(espiritu.getNombre(), espiritu.getId());
     }
 
 }

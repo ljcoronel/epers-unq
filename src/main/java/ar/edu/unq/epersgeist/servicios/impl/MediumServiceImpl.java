@@ -5,14 +5,13 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.persistencia.DAO.EspirituDAO;
-import ar.edu.unq.epersgeist.persistencia.DAO.UbicacionDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.EspirituDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
-import ar.edu.unq.epersgeist.persistencia.DAO.MediumDAO;
+import ar.edu.unq.epersgeist.persistencia.DAO.jpa.MediumDAOJPA;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,73 +19,73 @@ import java.util.Optional;
 @Transactional
 public class MediumServiceImpl implements MediumService {
 
-    private final MediumDAO mediumDao;
-    private final EspirituDAO espirituDao;
-    private final UbicacionDAO ubicacionDao;
+    private final MediumDAOJPA mediumDAOJPA;
+    private final EspirituDAOJPA espirituDAOJPA;
+    private final UbicacionDAOJPA ubicacionDAOJPA;
 
 
-    public MediumServiceImpl (MediumDAO mediumDao, EspirituDAO espirituDao,UbicacionDAO ubicacionDao) {
-        this.mediumDao = mediumDao;
-        this.espirituDao = espirituDao;
-        this.ubicacionDao = ubicacionDao;
+    public MediumServiceImpl (MediumDAOJPA mediumDAOJPA, EspirituDAOJPA espirituDAOJPA, UbicacionDAOJPA ubicacionDAOJPA) {
+        this.mediumDAOJPA = mediumDAOJPA;
+        this.espirituDAOJPA = espirituDAOJPA;
+        this.ubicacionDAOJPA = ubicacionDAOJPA;
     }
 
     @Override
     public Medium crear(Medium medium) {
 
-        Ubicacion ubicacion =  ubicacionDao.findById(medium.getUbicacion().getId())
+        Ubicacion ubicacion =  ubicacionDAOJPA.findById(medium.getUbicacion().getId())
                 .orElseThrow(()-> new EntidadInexistenteException("La Ubicacion no existe"));
 
         medium.setUbicacion(ubicacion);
 
-        return mediumDao.save(medium);
+        return mediumDAOJPA.save(medium);
 
     }
 
     @Override
     public Optional<Medium> recuperar(Long mediumId) throws EntidadInexistenteException {
-        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+        Optional<Medium> optionalMedium = mediumDAOJPA.findById(mediumId);
 
-        return mediumDao.findById(mediumId);
+        return mediumDAOJPA.findById(mediumId);
     }
 
     @Override
     public List<Medium> recuperarTodos() {
 
-        return mediumDao.findAll();
+        return mediumDAOJPA.findAll();
     }
 
     @Override
     public void actualizar(Medium medium) {
 
-        mediumDao.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
+        mediumDAOJPA.actualizar(medium.getNombre(), medium.getManaMax(),medium.getMana(), medium.getId());
     }
 
     @Override
     public void eliminar(Long idDelMedium) {
-        if (this.mediumDao.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
-        mediumDao.deleteById(idDelMedium);
+        if (this.mediumDAOJPA.esReferenciado(idDelMedium)) throw new EntidadTodaviaReferenciadaException("El médium de id: " + idDelMedium + " todavía es referenciado.");
+        mediumDAOJPA.deleteById(idDelMedium);
     }
 
     @Override
     public void descansar(Long mediumId) {
 
-        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+        Optional<Medium> optionalMedium = mediumDAOJPA.findById(mediumId);
 
         if (optionalMedium.isEmpty()) return;
 
         Medium medium = optionalMedium.get();
         medium.descansar();
 
-        mediumDao.save(medium);
+        mediumDAOJPA.save(medium);
 
     }
 
     @Override
     public void exorcisar(Long idMediumExorcista, Long idMediumAExorcisar) {
 
-        Optional<Medium> optionalExorcista = mediumDao.findById(idMediumExorcista);
-        Optional<Medium> optionalPoseido = mediumDao.findById(idMediumAExorcisar);
+        Optional<Medium> optionalExorcista = mediumDAOJPA.findById(idMediumExorcista);
+        Optional<Medium> optionalPoseido = mediumDAOJPA.findById(idMediumAExorcisar);
 
         if (optionalExorcista.isEmpty()) return;
 
@@ -96,21 +95,21 @@ public class MediumServiceImpl implements MediumService {
 
         Medium exorcizado = optionalPoseido.get();
 
-        mediumDao.save(exorcista);
-        mediumDao.save(exorcizado);
+        mediumDAOJPA.save(exorcista);
+        mediumDAOJPA.save(exorcizado);
 
     }
 
     @Override
     public List<Espiritu> espiritus(Long mediumId) {
 
-        Optional<Medium> medium = mediumDao.findById(mediumId);
+        Optional<Medium> medium = mediumDAOJPA.findById(mediumId);
         List<Espiritu> espiritus;
 
         if(medium.isEmpty()) return null;
         Medium currentMedium = medium.get();
 
-        espiritus = espirituDao.todosLosEspiritusDeMedium(currentMedium.getId());
+        espiritus = espirituDAOJPA.todosLosEspiritusDeMedium(currentMedium.getId());
 
         return espiritus;
 
@@ -121,8 +120,8 @@ public class MediumServiceImpl implements MediumService {
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
 
-        Optional<Medium> optionalMedium =  mediumDao.findById(mediumId);
-        Optional<Espiritu> optionalEspiritu = espirituDao.findById(espirituId);
+        Optional<Medium> optionalMedium =  mediumDAOJPA.findById(mediumId);
+        Optional<Espiritu> optionalEspiritu = espirituDAOJPA.findById(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
@@ -132,24 +131,24 @@ public class MediumServiceImpl implements MediumService {
 
         Espiritu espiritu = optionalEspiritu.get();
 
-        mediumDao.save(medium);
-        espirituDao.save(espiritu);
+        mediumDAOJPA.save(medium);
+        espirituDAOJPA.save(espiritu);
         return espiritu;
     }
 
     @Override
     public void mover(Long mediumId, Long ubicacionId) {
-        Optional<Medium> optionalMedium = mediumDao.findById(mediumId);
+        Optional<Medium> optionalMedium = mediumDAOJPA.findById(mediumId);
 
         if (optionalMedium.isEmpty()) return;
 
         Medium medium = optionalMedium.get();
 
-        Optional<Ubicacion> ubicacion = ubicacionDao.findById(ubicacionId);
+        Optional<Ubicacion> ubicacion = ubicacionDAOJPA.findById(ubicacionId);
 
         medium.mover(ubicacion);
 
-        mediumDao.save(medium);
+        mediumDAOJPA.save(medium);
 
     }
 
