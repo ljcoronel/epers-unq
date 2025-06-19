@@ -7,12 +7,13 @@ import org.springframework.data.geo.Point;
 
 import java.util.List;
 
-public record PortalDTOResponse(Point coordenada, EspirituDTOResponseAcotado demonioHost) {
+public record PortalDTOResponse(Point coordenada, EspirituDTOResponseAcotado demonioHost, int energiaTotal) {
 
     public static PortalDTOResponse desdeModelo(PortalEspiritus portalCreado) {
         return new PortalDTOResponse(
                 portalCreado.getCoordenada(),
-                EspirituDTOResponseAcotado.desdeModelo(portalCreado.getDemonioHost())
+                EspirituDTOResponseAcotado.desdeModelo(portalCreado.getDemonioHost()),
+                portalCreado.getNivelDeConexionAbsorbido()
         );
 
     }

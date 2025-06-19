@@ -10,33 +10,47 @@ import java.util.List;
 
 @Getter @Setter
 public class PortalEspiritus {
+    public static final int DURACION = 10000;
+    public static final int NIVEL_DE_CONEX_A_TOMAR = 10;
+
     private Demonio demonioHost;
-    private int cantMinionsInvocados = 1;
     private Point coordenada;
-    private List<Demonio> minionsInvocados = new ArrayList<>();
+
+    private int cantMinionsInvocados = 1;
+    private int nivelDeConexionAbsorbido;
 
     public PortalEspiritus(Point coordenada) {
         this.coordenada = coordenada;
     }
 
-    public Demonio abrirPortal() {
+    public synchronized void abrirPortal() {
+        nivelDeConexionAbsorbido = demonioHost.getNivelDeConexion();
+        demonioHost.setNivelDeConexion(0);
+    }
+
+    public synchronized Demonio obtenerSiguienteMinion() throws InterruptedException {
         Demonio minion = summonearMinion();
         cantMinionsInvocados++;
-        demonioHost.reducirNivelDeConexionEn(10);
+
         return minion;
     }
 
-    private Demonio summonearMinion() {
-        int nivelDeConexTomado = 10;
+    private synchronized Demonio summonearMinion() throws InterruptedException {
+        int nivelDeConexTomado = NIVEL_DE_CONEX_A_TOMAR; // default es 10
 
-        if (demonioHost.getNivelDeConexion() < 10) nivelDeConexTomado = demonioHost.getNivelDeConexion(); // TODO testear
+        if (nivelDeConexionAbsorbido < NIVEL_DE_CONEX_A_TOMAR) nivelDeConexTomado = nivelDeConexionAbsorbido; // TODO testear
 
         Demonio minion = new Demonio(nivelDeConexTomado, "minion-de-" + demonioHost.getNombre() + "-" + cantMinionsInvocados, coordenada);
-        minionsInvocados.add(minion);
+        minion.setEspirituDominante(demonioHost);
+
+        nivelDeConexionAbsorbido -= nivelDeConexTomado;
+        Thread.sleep(DURACION);
         return minion;
     }
 
-    public boolean sigueAbierto() {
-        return demonioHost.getNivelDeConexion() > 0;
+    public synchronized boolean sigueAbierto() {
+        return nivelDeConexionAbsorbido > 0;
     }
+
+
 }

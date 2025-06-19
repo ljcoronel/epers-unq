@@ -12,6 +12,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;
@@ -125,9 +126,14 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
-    public Demonio demonioLibreMasFuerteEn(Double latitud, Double longitud) {
-        Long id = this.ubicacionDAOMONGO.findByPuntoDentroDelTerritorio(new GeoJsonPoint(latitud, longitud)).get().getId();;
-        return (Demonio) mappearEspiritu(this.espirituDAOJPA.demonioLibreMasFuerteEn(id));
+    public Optional<Demonio> demonioLibreNoDominadoMasFuerteEn(Double latitud, Double longitud) {
+        Long idUbicacion = this.ubicacionDAOMONGO.findByPuntoDentroDelTerritorio(new GeoJsonPoint(latitud, longitud)).get().getId();
+
+        List<DemonioJPADTO> dtoDemonios = espirituDAOJPA.demoniosLibresNoDominadosMasFuertesEn(idUbicacion, PageRequest.of(0, 1));
+
+        if (dtoDemonios.isEmpty()) return Optional.empty();
+
+        return Optional.of((Demonio) mappearEspiritu(dtoDemonios.getFirst())); // trae a uno solo
     }
 
     @Override

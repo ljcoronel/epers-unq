@@ -31,11 +31,13 @@ public class EspirituServiceImpl implements EspirituService {
     private final EspirituRepository espirituRepository;
     private final MediumRepository mediumRepository;
     private final UbicacionRepository ubicacionRepository;
+//    private final ArrayList<PortalEspiritus> portalesAbiertos;
 
     public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumRepository mediumRepository, UbicacionRepository ubicacionRepository) {
         this.espirituRepository = espirituRepository;
         this.mediumRepository = mediumRepository;
         this.ubicacionRepository = ubicacionRepository;
+//        this.portalesAbiertos = new ArrayList<>();
     }
 
 
@@ -142,26 +144,41 @@ public class EspirituServiceImpl implements EspirituService {
         Point punto = portal.getCoordenada();
 
         ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
-                ()-> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
+                () -> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
 
         verificarTemperaturaBaja(punto);
 
-        Demonio demonioHost = this.espirituRepository.demonioLibreMasFuerteEn(punto.getX(), punto.getY());  // TODO tal vez tomar un radio en vez de una ubicación entera?
+        Demonio demonioHost =
+                this.espirituRepository
+                        .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
+                        .orElseThrow(() -> new EntidadInexistenteException("No se encontró un host válido."));  // TODO tal vez tomar un radio en vez de una ubicación entera?
+
         portal.setDemonioHost(demonioHost);
 
-        new Thread(() -> iniciarPortal(demonioHost, portal)).start(); // TODO revisar cuando se reinstancia un portal (no hay limit en JPQL)
+
+        new Thread(() -> activarPortal(demonioHost, portal)).start(); // TODO revisar cuando se reinstancia un portal (no hay limit en JPQL)
 
         return portal;
     }
 
     private void iniciarPortal(Espiritu demonioHost, PortalEspiritus portal) {
+        portal.abrirPortal();
+        espirituRepository.guardar(demonioHost); // su nivel de conex pasa a 0
+    }
+
+    private void activarPortal(Espiritu demonioHost, PortalEspiritus portal) {
+//        portalesAbiertos.add(portal);
+        iniciarPortal(demonioHost, portal);
         while(portal.sigueAbierto()) { // TODO falta instanciar al último minion con el lvl de conex que haya
             try {
-                Thread.sleep(10000); } catch (InterruptedException e) {throw new RuntimeException(e);}
-            this.crear(portal.abrirPortal()); // crea al minion
-            espirituRepository.guardar(demonioHost); // actualiza al host
+                espirituRepository.guardar(demonioHost); // actualiza al host
+                this.crear(portal.obtenerSiguienteMinion()); } catch (InterruptedException e) {throw new RuntimeException(e);}
+                // crea al minion
         }
+//        portalesAbiertos.remove(portal);
     }
+
+
 
     private void verificarTemperaturaBaja(Point punto) {
         if(!ubicacionRepository.esTemperaturaMenorOIgualA(punto.getX(), punto.getY(), -5) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");

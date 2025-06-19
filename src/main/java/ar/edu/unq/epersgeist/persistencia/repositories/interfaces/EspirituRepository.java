@@ -30,7 +30,7 @@ public interface EspirituRepository {
 
     int cantidadDeDemoniosLibresEn(Long idSantuario);
 
-    Demonio demonioLibreMasFuerteEn(Double latitud, Double longitud);
+    Optional<Demonio> demonioLibreNoDominadoMasFuerteEn(Double latitud, Double longitud);
 
     void desvincular(Long id);
 

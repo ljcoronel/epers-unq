@@ -74,7 +74,7 @@ public final class EspirituControllerREST {
         return ResponseEntity.status(201).body(EspirituDTOResponse.desdeModelo(espirituCreado));
     }
 
-    @PostMapping("/portal")
+    @PostMapping("/crearPortal")
     public ResponseEntity<PortalDTOResponse> crearPortal(@RequestBody PortalDTORequest portalDTORequest) {
 
         PortalEspiritus portalCreado = espirituService.crearPortal(portalDTORequest.aModelo());
