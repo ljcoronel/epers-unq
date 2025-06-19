@@ -28,5 +28,4 @@ public class TestService {
         entityManager.createNativeQuery("DELETE FROM medium").executeUpdate();
     }
 
-    public void limpiarMedicionesInfluxDB() { influxDB.deleteAll(); }
 }

@@ -22,7 +22,7 @@ public class LecturaDeSensorServiceImpl implements LecturaDeSensorService {
     @Override
     public void recibirLecturaDeTemperatura(Point lectura) {
 
-        this.lecturaDAOInflux.guardarLectura(lectura);
+        //this.lecturaDAOInflux.guardarLectura(lectura);
     }
 
     @Override

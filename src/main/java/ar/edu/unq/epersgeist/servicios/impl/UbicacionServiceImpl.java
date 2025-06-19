@@ -8,7 +8,10 @@ import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.persistencia.DAO.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.DAO.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.DAO.jpa.UbicacionDAOJPA;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
+import com.influxdb.client.write.Point;
+import com.influxdb.query.FluxRecord;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,31 +22,31 @@ import java.util.Optional;
 @Transactional
 public class UbicacionServiceImpl implements UbicacionService {
 
-    private final UbicacionDAOJPA ubicacionDAOJPA;
+    private final UbicacionRepository ubicacionRepository;
     private final EspirituDAOJPA espirituDAOJPA;
     private final MediumDAOJPA mediumDAOJPA;
 
-    public UbicacionServiceImpl(UbicacionDAOJPA ubicacionDAOJPA, EspirituDAOJPA espirituDAOJPA, MediumDAOJPA mediumDAOJPA) {
-        this.ubicacionDAOJPA = ubicacionDAOJPA;
+    public UbicacionServiceImpl(UbicacionRepository ubicacionRepository, EspirituDAOJPA espirituDAOJPA, MediumDAOJPA mediumDAOJPA) {
+        this.ubicacionRepository = ubicacionRepository;
         this.espirituDAOJPA = espirituDAOJPA;
         this.mediumDAOJPA = mediumDAOJPA;
     }
 
     @Override
     public Ubicacion crear(Ubicacion ubicacion) {
-        if (this.ubicacionDAOJPA.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        return this.ubicacionDAOJPA.save(ubicacion);
+        if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        return this.ubicacionRepository.save(ubicacion);
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
-        return this.ubicacionDAOJPA.findById(id);
+        return this.ubicacionRepository.findById(id);
     }
 
     @Override
     public void actualizar(Ubicacion ubicacion) {
-        if (this.ubicacionDAOJPA.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
-        this.ubicacionDAOJPA.actualizar(
+        if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
+        this.ubicacionRepository.actualizar(
                 ubicacion.getId(),
                 ubicacion.getNombre(),
                 ubicacion.getEnergia());
@@ -51,13 +54,13 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     @Override
     public void eliminar(Long id) {
-        if (this.ubicacionDAOJPA.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
-        this.ubicacionDAOJPA.deleteById(id);
+        if (this.ubicacionRepository.esReferenciado(id)) throw new EntidadTodaviaReferenciadaException("La ubicación de id: " + id + " todavía es referenciada.");
+        this.ubicacionRepository.deleteById(id);
     }
 
     @Override
     public List<Ubicacion> recuperarTodos() {
-        return List.copyOf(this.ubicacionDAOJPA.findAll());
+        return List.copyOf(this.ubicacionRepository.findAll());
     }
 
     @Override
@@ -69,4 +72,15 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Medium> mediumsSinEspiritusEn(Long ubicacionId) {
         return this.mediumDAOJPA.mediumsSinEspiritusEn(ubicacionId);
     }
+
+    @Override
+    public void guardarLecturaDeTemperatura(String ubicacionId, double temperatura, String timeStamp) {
+        ubicacionRepository.guardarLecturaDeTemperatura(ubicacionId, temperatura, timeStamp);
+    }
+
+    @Override
+    public List<FluxRecord> recuperarLecturas() {
+        return ubicacionRepository.recuperarLecturas();
+    }
+
 }

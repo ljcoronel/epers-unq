@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface LecturaDAOInflux {
-    void guardarLectura(Point influxPoint);
-
     List<FluxRecord> recuperarLecturas();
 
-    void deleteAll();
+    void guardarLectura(String ubicacionId, double temperatura, String timeStamp);
 }

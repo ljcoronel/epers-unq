@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.DAO.influx;
 import ar.edu.unq.epersgeist.persistencia.DTOs.influx.LecturaDeSensorDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.Bucket;
+import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
@@ -22,10 +23,6 @@ public class LecturaDAOInfluxImpl implements LecturaDAOInflux{
         this.influxDBClient = influxDBClient;
     }
 
-    @Override
-    public void guardarLectura(Point influxPoint) {
-        influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
-    }
 
     @Override
     public List<FluxRecord> recuperarLecturas() {
@@ -44,14 +41,13 @@ public class LecturaDAOInfluxImpl implements LecturaDAOInflux{
     }
 
     @Override
-    public void deleteAll() {
-        String bucket =  "lecturas";
-        String org = "Dev Team";
-        OffsetDateTime start = OffsetDateTime.parse("2025-05-18T00:00:00Z");
-        OffsetDateTime stop = OffsetDateTime.now();
+    public void guardarLectura(String ubicacionId, double temperatura, String timeStamp) {
+        Point lecturaPoint = Point.measurement("temperaturas")
+                .addTag("ubicacion", ubicacionId)
+                .addField("temp", temperatura)
+                .time(Instant.parse(timeStamp), WritePrecision.MS);
 
-        String predicate = "_measurement=\"temperaturas\"";
-
-        influxDBClient.getDeleteApi().delete(start,stop,predicate,bucket,org);
+        influxDBClient.getWriteApiBlocking().writePoint(lecturaPoint);
     }
+
 }

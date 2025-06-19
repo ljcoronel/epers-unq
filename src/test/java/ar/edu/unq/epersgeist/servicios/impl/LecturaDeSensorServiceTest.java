@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest
 public class LecturaDeSensorServiceTest {
     @Autowired
-    private LecturaDeSensorService lecturaService;
+    private UbicacionService ubicacionService;
 
     @Autowired
     private TestService testService;
@@ -29,17 +29,13 @@ public class LecturaDeSensorServiceTest {
     @Test
     void seGuardaUnaLecturaYApareceEnLaBaseDeDatos() {
 
-        Point lecturaPoint = Point.measurement("temperaturas")
-                                .addTag("ubicacion", "1")
-                                .addField("temp", 50)
-                                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        ubicacionService.guardarLecturaDeTemperatura("1",50.0,Instant.now().toString());
 
-        lecturaService.recibirLecturaDeTemperatura(lecturaPoint);
+        List<FluxRecord> lecturasRecuperadas = ubicacionService.recuperarLecturas();
 
-        List<FluxRecord> lecturasRecuperadas = lecturaService.recuperarLecturas();
-
+        assertFalse(lecturasRecuperadas.isEmpty());
         assertEquals("1", lecturasRecuperadas.getFirst().getValueByKey("ubicacion"));
-        assertEquals(50L, lecturasRecuperadas.getFirst().getValueByKey("_value"));
+        assertEquals(50.0, lecturasRecuperadas.getFirst().getValueByKey("_value"));
     }
 
 

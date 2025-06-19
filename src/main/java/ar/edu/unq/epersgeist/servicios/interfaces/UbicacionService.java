@@ -3,6 +3,8 @@ package ar.edu.unq.epersgeist.servicios.interfaces;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import com.influxdb.client.write.Point;
+import com.influxdb.query.FluxRecord;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +17,6 @@ public interface UbicacionService  {
     void eliminar(Long ubicacionId);
     List<Espiritu> espiritusEn(Long ubicacionId);
     List<Medium> mediumsSinEspiritusEn(Long ubicacionId);
+    void guardarLecturaDeTemperatura(String ubicacionId, double temperatura, String timeStamp);
+    List<FluxRecord> recuperarLecturas();
 }
