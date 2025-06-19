@@ -31,13 +31,11 @@ public class EspirituServiceImpl implements EspirituService {
     private final EspirituRepository espirituRepository;
     private final MediumRepository mediumRepository;
     private final UbicacionRepository ubicacionRepository;
-//    private final ArrayList<PortalEspiritus> portalesAbiertos;
 
     public EspirituServiceImpl(EspirituRepositoryImpl espirituRepository, MediumRepository mediumRepository, UbicacionRepository ubicacionRepository) {
         this.espirituRepository = espirituRepository;
         this.mediumRepository = mediumRepository;
         this.ubicacionRepository = ubicacionRepository;
-//        this.portalesAbiertos = new ArrayList<>();
     }
 
 
@@ -152,9 +150,7 @@ public class EspirituServiceImpl implements EspirituService {
                 this.espirituRepository
                         .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
                         .orElseThrow(() -> new EntidadInexistenteException("No se encontró un host válido."));  // TODO tal vez tomar un radio en vez de una ubicación entera?
-
         portal.setDemonioHost(demonioHost);
-
 
         new Thread(() -> activarPortal(demonioHost, portal)).start(); // TODO revisar cuando se reinstancia un portal (no hay limit en JPQL)
 
@@ -167,15 +163,15 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     private void activarPortal(Espiritu demonioHost, PortalEspiritus portal) {
-//        portalesAbiertos.add(portal);
         iniciarPortal(demonioHost, portal);
-        while(portal.sigueAbierto()) { // TODO falta instanciar al último minion con el lvl de conex que haya
+        while(portal.sigueAbierto()) {
             try {
                 espirituRepository.guardar(demonioHost); // actualiza al host
-                this.crear(portal.obtenerSiguienteMinion()); } catch (InterruptedException e) {throw new RuntimeException(e);}
+                Demonio minion = (Demonio) this.crear(portal.obtenerSiguienteMinion());
+                portal.nombrarMinion(minion);
+            } catch (InterruptedException e) {throw new RuntimeException(e);}
                 // crea al minion
         }
-//        portalesAbiertos.remove(portal);
     }
 
 

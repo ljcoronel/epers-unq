@@ -53,4 +53,7 @@ public class PortalEspiritus {
     }
 
 
+    public void nombrarMinion(Demonio minion) {
+        minion.setNombre(minion.getNombre() + "-" + minion.getId());
+    }
 }
