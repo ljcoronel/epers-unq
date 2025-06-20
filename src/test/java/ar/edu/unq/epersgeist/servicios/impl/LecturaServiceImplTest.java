@@ -113,6 +113,44 @@ public class LecturaServiceImplTest {
         assertEquals(id2,ubicacionRecuperada.getId());
     }
 
+    @Test
+    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas(){
+        this.ubicacionService.crear(ubicacion1);
+        this.ubicacionService.crear(ubicacion2);
+
+        Long id = this.ubicacion1.getId();
+        String idString = id.toString();
+
+        Long id2 = this.ubicacion2.getId();
+        String idString2 = id2.toString();
+
+        Point lecturaPoint0 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 50)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint1 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 40)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint2 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 10)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint3 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 50)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint0);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint1);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint2);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint3);
+
+        Ubicacion ubicacionRecuperada = lecturaService.ubicacionMasPeligrosa();
+
+        assertEquals(id2,ubicacionRecuperada.getId());
+    }
+
 
     @AfterEach
     public void tearDown() {

@@ -10,4 +10,5 @@ public interface LecturaService {
     void recibirLecturaDeTemperatura(Point lectura); //timestamp en iso 8601
     List<FluxRecord> recuperarLecturas();
     Ubicacion ubicacionMasPeligrosa();
+    Ubicacion ubicacionConMasTransitoDeEspiritus();
 }

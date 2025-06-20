@@ -38,4 +38,11 @@ public class LecturaServiceImpl implements LecturaService {
         Long ubicacionId = this.lecturaRepository.recuperarIdDeUbicacionMasPeligrosa();
         return ubicacionRepository.recuperar(ubicacionId).get();
     }
+
+    @Override
+    public Ubicacion ubicacionConMasTransitoDeEspiritus(){
+
+        Long ubicacionId = this.lecturaRepository.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+        return ubicacionRepository.recuperar(ubicacionId).get();
+    }
 }

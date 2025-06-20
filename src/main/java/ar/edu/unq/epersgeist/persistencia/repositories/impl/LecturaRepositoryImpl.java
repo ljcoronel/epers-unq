@@ -48,7 +48,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
     public Long recuperarIdDeUbicacionMasPeligrosa() {
         String query =
                 "from(bucket: \"lecturas\")\n" +
-                        "  |> range(start: -30d)\n" +
+                        "  |> range(start: -1m)\n" +
                         "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
                         "  |> group(columns: [\"ubicacion\"])\n" +
                         "  |> sort(columns: [\"_time\"], desc: true)\n" +
@@ -71,10 +71,10 @@ public class LecturaRepositoryImpl implements LecturaRepository {
 
     @Override
     public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
-/*
+
         String query = """
             from(bucket: "lecturas")
-              |> range(start: -30d)
+              |> range(start: -1m)
               |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
               |> group(columns: ["ubicacion"])
               |> sort(columns: ["_time"], desc: true)
@@ -90,8 +90,12 @@ public class LecturaRepositoryImpl implements LecturaRepository {
 
         if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
             throw new EntidadInexistenteException("No se encontraron lecturas de temperaturas.");
-        }*/
+        }
 
-        return null;
+        FluxRecord record = tables.get(0).getRecords().get(0);
+
+        String ubicacionStr = (String) record.getValueByKey("ubicacion");
+
+        return Long.valueOf(ubicacionStr);
     }
 }
