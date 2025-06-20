@@ -5,11 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.geo.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter @Setter
-public class PortalEspiritus {
+public class PortalDemonios {
     public static final int DURACION = 10000;
     public static final int NIVEL_DE_CONEX_A_TOMAR = 10;
 
@@ -19,7 +16,7 @@ public class PortalEspiritus {
     private int cantMinionsInvocados = 1;
     private int nivelDeConexionAbsorbido;
 
-    public PortalEspiritus(Point coordenada) {
+    public PortalDemonios(Point coordenada) {
         this.coordenada = coordenada;
     }
 

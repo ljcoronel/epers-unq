@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;

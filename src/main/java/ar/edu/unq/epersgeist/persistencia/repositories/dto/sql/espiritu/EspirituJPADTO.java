@@ -58,7 +58,7 @@ public abstract class EspirituJPADTO {
     @LastModifiedDate
     private Date updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     EspirituJPADTO espirituDominante;
 
 

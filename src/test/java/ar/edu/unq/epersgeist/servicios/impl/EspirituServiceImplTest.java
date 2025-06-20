@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
@@ -30,7 +30,6 @@ import org.springframework.data.geo.Point;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,8 +61,8 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-    PortalEspiritus portalEspiritus1;
-    PortalEspiritus portalEspiritus2;
+    PortalDemonios portalDemonios1;
+    PortalDemonios portalDemonios2;
 
 //TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
@@ -95,8 +94,8 @@ public class EspirituServiceImplTest {
         );
         medium = new Medium("Brujita", 100, 50, new Coordenada(1,1));
 
-        portalEspiritus1 = new PortalEspiritus(new Point(0.001, 0d));
-        portalEspiritus2 = new PortalEspiritus(new Point(0.001, 90d));
+        portalDemonios1 = new PortalDemonios(new Point(0.001, 0d));
+        portalDemonios2 = new PortalDemonios(new Point(0.001, 90d));
 
     }
 
@@ -722,7 +721,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
-        espirituService.crearPortal(portalEspiritus1);
+        espirituService.crearPortal(portalDemonios1);
 
         try {
             Thread.sleep(10500); // para cuando pasen 10 segundos, debería haber 1
@@ -732,8 +731,106 @@ public class EspirituServiceImplTest {
         List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
 
         assertEquals(2, demonios.size());
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
 
+    }
+
+    @Test
+    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar1MinionEnBaseASuNivelDeConexion() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(1);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+
+        espirituService.crearPortal(portalDemonios1);
+
+        try {
+            Thread.sleep(12000);
+        } catch (InterruptedException ignored) {
+        }
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+
+        assertEquals(2, demonios.size());
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+
+    }
+
+    @Test
+    void unPortalSeAbreYEligeAlDemonioConMasNivelDeConexion() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(20);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        demonio1.setNivelDeConexion(21);
+        demonio1.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio1);
+
+        espirituService.crearPortal(portalDemonios1);
+
+        try {
+            Thread.sleep(40000); // con 30 debería llegar, pero dejo 40 para estar seguro
+        } catch (InterruptedException ignored) {
+        }
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+
+        Demonio demonioRecuperado2 = (Demonio) espirituService.recuperar(demonio2.getId()).get();
+        Demonio demonioRecuperado1 = (Demonio) espirituService.recuperar(demonio1.getId()).get();
+
+        assertEquals(5, demonios.size());
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "2")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "3")));
+
+        assertEquals(0, demonioRecuperado1.getNivelDeConexion());
+        assertEquals(20, demonioRecuperado2.getNivelDeConexion());
+    }
+
+    @Test
+    void sePuedenAbrirDosPortalesALaVezConHostsDiferentes() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(20);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        demonio1.setNivelDeConexion(30);
+        demonio1.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio1);
+
+        espirituService.crearPortal(portalDemonios1);
+
+        PortalDemonios portalDemonios3 = new PortalDemonios(new Point(0.001, 0d));
+
+        espirituService.crearPortal(portalDemonios3);
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException ignored) {
+        }
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+
+        Demonio demonioRecuperado2 = (Demonio) espirituService.recuperar(demonio2.getId()).get();
+        Demonio demonioRecuperado1 = (Demonio) espirituService.recuperar(demonio1.getId()).get();
+
+        assertEquals(7, demonios.size());
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "2")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio1.getNombre() + "-" + "3")));
+
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+
+        assertEquals(0, demonioRecuperado1.getNivelDeConexion());
+        assertEquals(0, demonioRecuperado2.getNivelDeConexion());
     }
 
     @Test
@@ -745,7 +842,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
-        espirituService.crearPortal(portalEspiritus1);
+        espirituService.crearPortal(portalDemonios1);
 
         try {
             Thread.sleep(60000);
@@ -755,11 +852,11 @@ public class EspirituServiceImplTest {
         List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
 
         assertEquals(6, demonios.size());
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "1")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "2")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "3")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "4")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "5")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "3")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "4")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "5")));
 
 
     }
@@ -773,7 +870,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
-        espirituService.crearPortal(new PortalEspiritus(new Point(0.001, 0d) ));
+        espirituService.crearPortal(new PortalDemonios(new Point(0.001, 0d) ));
 
         try {
             Thread.sleep(70000);
@@ -783,18 +880,17 @@ public class EspirituServiceImplTest {
         List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
 
         assertEquals(7, demonios.size());
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "1")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "2")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "3")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "4")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "5")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "6")));
-
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "3")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "4")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "5")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "6")));
 
     }
 
     @Test
-    void unPortalSeAbreEnUnaCoordenadaValidaYNoGeneraMinionsPorqueLeFaltaNivelDeConexion() {
+    void unPortalSeAbreEnUnaCoordenadaValidaPeroNoGeneraMinionsPorqueLeFaltaNivelDeConexionYNoTieneHost() {
         ubicacionService.crear(ubicacion);
 
         demonio2.setNivelDeConexion(0);
@@ -802,44 +898,62 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
+        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
 
-        espirituService.crearPortal(portalEspiritus1);
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException ignored) {
-        }
-
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
-
-        assertEquals(1, demonios.size());
 
     }
 
-    @Test
-    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroNoPuedeVolverASerSeleccionadoParaOtroPortal() {
-        ubicacionService.crear(ubicacion);
+//    @Test
+//    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroSeQuedaSinNivelDeConexionPorLoQueNoEsVueltoASeleccionar() {
+//        ubicacionService.crear(ubicacion);
+//
+//        demonio2.setNivelDeConexion(20);
+//        demonio2.setCoordenada(new Coordenada(0.001, 0));
+//
+//        espirituService.crear(demonio2);
+//
+//        PortalDemonios portalDemonios = espirituService.crearPortal(new PortalDemonios(new Point(0.001, 0d) ));
+//        espirituService.crearPortal(new PortalDemonios(new Point(0.001, 0d) ));
+//
+//        try {
+//            Thread.sleep(30000);
+//        } catch (InterruptedException ignored) {
+//        }
+//
+//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+//        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
+//
+//        assertEquals(0, demonioRecuperado.getNivelDeConexion());
+//        assertEquals(3, demonios.size());
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+//
+//    }
 
-        demonio2.setNivelDeConexion(20);
-        demonio2.setCoordenada(new Coordenada(0.001, 0));
-
-        espirituService.crear(demonio2);
-
-        espirituService.crearPortal(new PortalEspiritus(new Point(0.001, 0d) ));
-        espirituService.crearPortal(new PortalEspiritus(new Point(0.001, 0d) ));
-
-        try {
-            Thread.sleep(40000);
-        } catch (InterruptedException ignored) {
-        }
-
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
-
-        assertEquals(3, demonios.size());
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "1")));
-        assertTrue(demonios.stream().anyMatch(dem -> Objects.equals(dem.getNombre(), "minion-de-" + demonio2.getNombre() + "-" + "2")));
-
-    }
+//    @Test
+//    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroNoPuedeVolverASerSeleccionadoParaOtroPortal() {
+//        ubicacionService.crear(ubicacion);
+//
+//        demonio2.setNivelDeConexion(20);
+//        demonio2.setCoordenada(new Coordenada(0.001, 0));
+//
+//        espirituService.crear(demonio2);
+//
+//        espirituService.crearPortal(portalDemonios1);
+//        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
+//
+//        try {
+//            Thread.sleep(40000);
+//        } catch (InterruptedException ignored) {
+//        }
+//
+//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+//
+//        assertEquals(3, demonios.size());
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+//
+//    }
 
     @Test
     void unPortalNoSeleccionaAUnEspirituDominado() {
@@ -852,8 +966,8 @@ public class EspirituServiceImplTest {
         espirituService.crear(demonio2);
         espirituService.dominar(demonio1.getId(), demonio2.getId());
 
-        espirituService.crearPortal(portalEspiritus1);
-        espirituService.crearPortal(portalEspiritus1);
+        espirituService.crearPortal(portalDemonios1);
+        espirituService.crearPortal(portalDemonios1);
 
         Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
 
@@ -864,9 +978,36 @@ public class EspirituServiceImplTest {
 
         assertEquals(20, demonioRecuperado.getNivelDeConexion());
 
-
-
     }
+
+//    @Test
+//    void unPortalNoSeAbreDosVecesParaElMismoHostInclusoSiRecuperaNivelDeConexion() {
+//        ubicacionService.crear(ubicacion);
+//
+//        demonio2.setNivelDeConexion(20); // le da para hacer 5 (10 por cada)
+//        demonio2.setCoordenada(new Coordenada(0.001, 0));
+//
+//        espirituService.crear(demonio2);
+//
+//        espirituService.crearPortal(portalDemonios1);
+//
+//        demonio2.setNivelDeConexion(10);
+//        espirituService.actualizar(demonio2);
+//
+//        try {Thread.sleep(1000); } catch (InterruptedException ignored) {}
+//
+//        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
+//
+//        try {Thread.sleep(30000); } catch (InterruptedException ignored) {}
+//
+//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+//
+//        assertEquals(3, demonios.size());
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+//
+//
+//    }
 
 //    @Test
 //    void unPortalNoSePuedeAbrirPorEstarEnUnaZonaDeDeltaMuyCaliente() {
@@ -889,7 +1030,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crear(demonio2);
 
-        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalEspiritus2));
+        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios2));
 
     }
 

@@ -6,7 +6,7 @@ import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.PortalDTO.PortalDTORequest;
 import ar.edu.unq.epersgeist.controller.dto.PortalDTO.PortalDTOResponse;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -77,7 +77,7 @@ public final class EspirituControllerREST {
     @PostMapping("/crearPortal")
     public ResponseEntity<PortalDTOResponse> crearPortal(@RequestBody PortalDTORequest portalDTORequest) {
 
-        PortalEspiritus portalCreado = espirituService.crearPortal(portalDTORequest.aModelo());
+        PortalDemonios portalCreado = espirituService.crearPortal(portalDTORequest.aModelo());
 
         return ResponseEntity.status(201).body(PortalDTOResponse.desdeModelo(portalCreado));
     }

@@ -1,15 +1,12 @@
 package ar.edu.unq.epersgeist.controller.dto.PortalDTO;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponseAcotado;
-import ar.edu.unq.epersgeist.modelo.PortalEspiritus;
-import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import org.springframework.data.geo.Point;
-
-import java.util.List;
 
 public record PortalDTOResponse(Point coordenada, EspirituDTOResponseAcotado demonioHost, int energiaTotal) {
 
-    public static PortalDTOResponse desdeModelo(PortalEspiritus portalCreado) {
+    public static PortalDTOResponse desdeModelo(PortalDemonios portalCreado) {
         return new PortalDTOResponse(
                 portalCreado.getCoordenada(),
                 EspirituDTOResponseAcotado.desdeModelo(portalCreado.getDemonioHost()),
