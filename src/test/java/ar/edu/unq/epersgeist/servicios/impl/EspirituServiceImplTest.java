@@ -61,10 +61,11 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-    PortalDemonios portalDemonios1;
-    PortalDemonios portalDemonios2;
+    private PortalDemonios portalDemonios1;
+    private PortalDemonios portalDemonios2;
+    private PortalDemonios portalDemonios3;
 
-//TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
+    //TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
     void crearInstancias() {
         this.ubicacion = new Santuario("Bernal", 50,Arrays.asList(
@@ -96,6 +97,7 @@ public class EspirituServiceImplTest {
 
         portalDemonios1 = new PortalDemonios(new Point(0.001, 0d));
         portalDemonios2 = new PortalDemonios(new Point(0.001, 90d));
+        portalDemonios3 = new PortalDemonios(new Point(0.001, 0.001));
 
     }
 
@@ -807,7 +809,7 @@ public class EspirituServiceImplTest {
 
         espirituService.crearPortal(portalDemonios1);
 
-        PortalDemonios portalDemonios3 = new PortalDemonios(new Point(0.001, 0d));
+
 
         espirituService.crearPortal(portalDemonios3);
 
@@ -903,57 +905,37 @@ public class EspirituServiceImplTest {
 
     }
 
-//    @Test
-//    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroSeQuedaSinNivelDeConexionPorLoQueNoEsVueltoASeleccionar() {
-//        ubicacionService.crear(ubicacion);
-//
-//        demonio2.setNivelDeConexion(20);
-//        demonio2.setCoordenada(new Coordenada(0.001, 0));
-//
-//        espirituService.crear(demonio2);
-//
-//        PortalDemonios portalDemonios = espirituService.crearPortal(new PortalDemonios(new Point(0.001, 0d) ));
-//        espirituService.crearPortal(new PortalDemonios(new Point(0.001, 0d) ));
-//
-//        try {
-//            Thread.sleep(30000);
-//        } catch (InterruptedException ignored) {
-//        }
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
-//        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
-//
-//        assertEquals(0, demonioRecuperado.getNivelDeConexion());
-//        assertEquals(3, demonios.size());
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
-//
-//    }
 
-//    @Test
-//    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroNoPuedeVolverASerSeleccionadoParaOtroPortal() {
-//        ubicacionService.crear(ubicacion);
-//
-//        demonio2.setNivelDeConexion(20);
-//        demonio2.setCoordenada(new Coordenada(0.001, 0));
-//
-//        espirituService.crear(demonio2);
-//
-//        espirituService.crearPortal(portalDemonios1);
-//        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
-//
-//        try {
-//            Thread.sleep(40000);
-//        } catch (InterruptedException ignored) {
-//        }
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
-//
-//        assertEquals(3, demonios.size());
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
-//
-//    }
+    @Test
+    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroNoPuedeVolverASerSeleccionadoParaOtroPortalPorqueSuNivelDeConexionEs0() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(20);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+
+        espirituService.crearPortal(portalDemonios1);
+
+        try {Thread.sleep(2000);} catch (InterruptedException ignored) {} // debe pasar un tiempo entre crear ambos portales
+
+        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios3));
+
+        try {
+            Thread.sleep(40000);
+        } catch (InterruptedException ignored) {
+        }
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
+
+        assertEquals(3, demonios.size());
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
+        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
+
+        assertEquals(0, demonioRecuperado.getNivelDeConexion());
+
+    }
 
     @Test
     void unPortalNoSeleccionaAUnEspirituDominado() {
@@ -967,7 +949,7 @@ public class EspirituServiceImplTest {
         espirituService.dominar(demonio1.getId(), demonio2.getId());
 
         espirituService.crearPortal(portalDemonios1);
-        espirituService.crearPortal(portalDemonios1);
+        espirituService.crearPortal(portalDemonios3);
 
         Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
 
@@ -980,34 +962,30 @@ public class EspirituServiceImplTest {
 
     }
 
-//    @Test
-//    void unPortalNoSeAbreDosVecesParaElMismoHostInclusoSiRecuperaNivelDeConexion() {
-//        ubicacionService.crear(ubicacion);
-//
-//        demonio2.setNivelDeConexion(20); // le da para hacer 5 (10 por cada)
-//        demonio2.setCoordenada(new Coordenada(0.001, 0));
-//
-//        espirituService.crear(demonio2);
-//
-//        espirituService.crearPortal(portalDemonios1);
-//
-//        demonio2.setNivelDeConexion(10);
-//        espirituService.actualizar(demonio2);
-//
-//        try {Thread.sleep(1000); } catch (InterruptedException ignored) {}
-//
-//        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
-//
-//        try {Thread.sleep(30000); } catch (InterruptedException ignored) {}
-//
-//        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
-//
-//        assertEquals(3, demonios.size());
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
-//        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
-//
-//
-//    }
+    @Test
+    void unPortalSeAbreDosVecesParaUnMismoHostQueHayaRecuperadoConexion() {
+        ubicacionService.crear(ubicacion);
+
+        demonio2.setNivelDeConexion(20);
+        demonio2.setCoordenada(new Coordenada(0.001, 0));
+
+        espirituService.crear(demonio2);
+
+        espirituService.crearPortal(portalDemonios1);
+
+        try {Thread.sleep(1000); } catch (InterruptedException ignored) {} // debe pasar un tiempo entre crear el portal y actualizar
+
+        demonio2.setNivelDeConexion(10);
+        espirituService.actualizar(demonio2);
+
+        espirituService.crearPortal(portalDemonios3);
+
+        try {Thread.sleep(40000); } catch (InterruptedException ignored) {}
+
+        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 10);
+
+        assertEquals(4, demonios.size());
+    }
 
 //    @Test
 //    void unPortalNoSePuedeAbrirPorEstarEnUnaZonaDeDeltaMuyCaliente() {
