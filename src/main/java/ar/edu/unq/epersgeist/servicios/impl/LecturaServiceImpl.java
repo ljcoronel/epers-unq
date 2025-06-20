@@ -1,6 +1,8 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.LecturaRepository;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.LecturaService;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.write.Point;
@@ -13,9 +15,11 @@ import java.util.List;
 public class LecturaServiceImpl implements LecturaService {
 
     private LecturaRepository lecturaRepository;
+    private UbicacionRepository ubicacionRepository;
 
-    public LecturaServiceImpl(LecturaRepository lecturaRepository) {
+    public LecturaServiceImpl(LecturaRepository lecturaRepository,UbicacionRepository ubicacionRepository) {
         this.lecturaRepository = lecturaRepository;
+        this.ubicacionRepository = ubicacionRepository;
     }
 
     @Override
@@ -27,5 +31,11 @@ public class LecturaServiceImpl implements LecturaService {
     @Override
     public List<FluxRecord> recuperarLecturas() {
         return this.lecturaRepository.recuperarLecturas();
+    }
+
+    @Override
+    public Ubicacion ubicacionMasPeligrosa(){
+        Long ubicacionId = this.lecturaRepository.recuperarIdDeUbicacionMasPeligrosa();
+        return ubicacionRepository.recuperar(ubicacionId).get();
     }
 }

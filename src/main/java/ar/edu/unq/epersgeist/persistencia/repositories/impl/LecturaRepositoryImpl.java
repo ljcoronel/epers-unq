@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.LecturaRepository;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.Bucket;
@@ -44,14 +45,53 @@ public class LecturaRepositoryImpl implements LecturaRepository {
     }
 
     @Override
-    public void deleteAll() {
-        String bucket =  "lecturas";
-        String org = "Dev Team";
-        OffsetDateTime start = OffsetDateTime.parse("2025-05-18T00:00:00Z");
-        OffsetDateTime stop = OffsetDateTime.now();
+    public Long recuperarIdDeUbicacionMasPeligrosa() {
+        String query =
+                "from(bucket: \"lecturas\")\n" +
+                        "  |> range(start: -30d)\n" +
+                        "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
+                        "  |> group(columns: [\"ubicacion\"])\n" +
+                        "  |> sort(columns: [\"_time\"], desc: true)\n" +
+                        "  |> unique(column: \"ubicacion\")\n" +
+                        "  |> group()\n" +
+                        "  |> sort(columns: [\"_value\"])\n" +
+                        "  |> limit(n: 1)";
 
-        String predicate = "_measurement=\"temperaturas\"";
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
-        influxDBClient.getDeleteApi().delete(start,stop,predicate,bucket,org);
+        if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
+            throw new EntidadInexistenteException("No se encontraron lecturas de temperatura.");
+        }
+
+        FluxRecord record = tables.get(0).getRecords().get(0);
+        String ubicacionStr = (String) record.getValueByKey("ubicacion");
+
+        return Long.valueOf(ubicacionStr);
+    }
+
+    @Override
+    public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
+/*
+        String query = """
+            from(bucket: "lecturas")
+              |> range(start: -30d)
+              |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
+              |> group(columns: ["ubicacion"])
+              |> sort(columns: ["_time"], desc: true)
+              |> difference(nonNegative: true)
+              |> map(fn: (r) => ({ r with _value: if exists r._value then 1 else 0 }))
+              |> group(columns: ["ubicacion"])
+              |> sum()
+              |> sort(columns: ["_value"], desc: true)
+              |> limit(n: 1)
+            """;
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
+            throw new EntidadInexistenteException("No se encontraron lecturas de temperaturas.");
+        }*/
+
+        return null;
     }
 }

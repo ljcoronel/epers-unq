@@ -13,5 +13,7 @@ public interface LecturaRepository {
 
     List<FluxRecord> recuperarLecturas();
 
-    void deleteAll();
+    public Long recuperarIdDeUbicacionMasPeligrosa();
+
+    public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
 }

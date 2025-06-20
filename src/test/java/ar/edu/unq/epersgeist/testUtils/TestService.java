@@ -55,5 +55,4 @@ public class TestService {
         this.snapshotDAOMONGO.deleteAll();
     }
 
-    public void limpiarMedicionesInfluxDB() { influxDB.deleteAll(); }
 }
