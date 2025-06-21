@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.LecturaRepository;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.Bucket;
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class LecturaRepositoryImpl implements LecturaRepository {
@@ -31,7 +33,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
     @Override
     public List<FluxRecord> recuperarLecturas() {
         String query = "from(bucket: \"lecturas\")\n" +
-                "  |> range(start: -10m)\n" +
+                "  |> range(start: -10s)\n" +
                 "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
                 "  |> keep(columns: [\"_time\", \"_value\", \"ubicacion\"])" ;
 
@@ -48,7 +50,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
     public Long recuperarIdDeUbicacionMasPeligrosa() {
         String query =
                 "from(bucket: \"lecturas\")\n" +
-                        "  |> range(start: -1m)\n" +
+                        "  |> range(start: -10s)\n" +
                         "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
                         "  |> group(columns: [\"ubicacion\"])\n" +
                         "  |> sort(columns: [\"_time\"], desc: true)\n" +
@@ -74,7 +76,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
 
         String query = """
             from(bucket: "lecturas")
-              |> range(start: -1m)
+              |> range(start: -10s)
               |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
               |> group(columns: ["ubicacion"])
               |> sort(columns: ["_time"], desc: true)
@@ -97,5 +99,47 @@ public class LecturaRepositoryImpl implements LecturaRepository {
         String ubicacionStr = (String) record.getValueByKey("ubicacion");
 
         return Long.valueOf(ubicacionStr);
+    }
+
+    public List<Long> recuperarIdDeUbicacionesRecuperadas(){
+
+        String query = """
+        bajos = from(bucket: "lecturas")
+          |> range(start: -30m)
+          |> filter(fn: (r) =>
+            r._measurement == "temperaturas" and
+            r._field == "temp" and
+            r._value <= 5.0
+          )
+          |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
+          |> keep(columns: ["ubicacion"])
+          |> distinct(column: "ubicacion")
+          |> group(columns: ["ubicacion"])
+
+        ultimas = from(bucket: "lecturas")
+          |> range(start: -30m)
+          |> filter(fn: (r) =>
+            r._measurement == "temperaturas" and
+            r._field == "temp"
+          )
+          |> group(columns: ["ubicacion"])
+          |> last()
+          |> filter(fn: (r) => r._value >= 25.0)
+          |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
+          |> group(columns: ["ubicacion"])
+
+        join(
+          tables: {bajos: bajos, altas: ultimas},
+          on: ["ubicacion"]
+        )
+        |> keep(columns: ["ubicacion"])
+    """;
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        return tables.stream()
+                .flatMap(table -> table.getRecords().stream())
+                .map(record -> Long.valueOf(record.getValueByKey("ubicacion").toString()))
+                .collect(Collectors.toList());
     }
 }

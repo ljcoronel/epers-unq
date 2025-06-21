@@ -9,6 +9,7 @@ import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,5 +45,19 @@ public class LecturaServiceImpl implements LecturaService {
 
         Long ubicacionId = this.lecturaRepository.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
         return ubicacionRepository.recuperar(ubicacionId).get();
+    }
+
+    @Override
+    public List<Ubicacion> ubicacionesRecuperadas(){
+
+        List<Long> ubicacionesId = this.lecturaRepository.recuperarIdDeUbicacionesRecuperadas();
+        List<Ubicacion> ubicaciones = new ArrayList<>();
+
+        for (Long ubicacion: ubicacionesId){
+            ubicaciones.add(ubicacionRepository.recuperar(ubicacion).get());
+
+        }
+        return ubicaciones;
+
     }
 }

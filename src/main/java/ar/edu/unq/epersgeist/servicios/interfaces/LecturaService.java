@@ -11,4 +11,5 @@ public interface LecturaService {
     List<FluxRecord> recuperarLecturas();
     Ubicacion ubicacionMasPeligrosa();
     Ubicacion ubicacionConMasTransitoDeEspiritus();
+    List<Ubicacion> ubicacionesRecuperadas();
 }

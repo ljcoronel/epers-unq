@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -149,6 +151,46 @@ public class LecturaServiceImplTest {
         Ubicacion ubicacionRecuperada = lecturaService.ubicacionMasPeligrosa();
 
         assertEquals(id2,ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
+
+        this.ubicacionService.crear(ubicacion1);
+        this.ubicacionService.crear(ubicacion2);
+
+        Long id = this.ubicacion1.getId();
+        String idString = id.toString();
+
+        Long id2 = this.ubicacion2.getId();
+        String idString2 = id2.toString();
+
+        Point lecturaPoint0 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 30)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint1 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 27)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint2 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 3)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint3 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 29)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint0);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint1);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint2);
+        lecturaService.recibirLecturaDeTemperatura(lecturaPoint3);
+
+        List<Ubicacion> ubicacionesRecuperadas = lecturaService.ubicacionesRecuperadas();
+
+        assertEquals(1,ubicacionesRecuperadas.size());
+        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
     }
 
 

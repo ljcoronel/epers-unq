@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 
 
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
@@ -16,4 +17,6 @@ public interface LecturaRepository {
     public Long recuperarIdDeUbicacionMasPeligrosa();
 
     public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+
+    public List<Long> recuperarIdDeUbicacionesRecuperadas();
 }
