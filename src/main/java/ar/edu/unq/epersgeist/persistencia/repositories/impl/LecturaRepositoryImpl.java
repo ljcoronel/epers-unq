@@ -105,7 +105,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
 
         String query = """
         bajos = from(bucket: "lecturas")
-          |> range(start: -30m)
+          |> range(start: -30s)
           |> filter(fn: (r) =>
             r._measurement == "temperaturas" and
             r._field == "temp" and
@@ -117,7 +117,7 @@ public class LecturaRepositoryImpl implements LecturaRepository {
           |> group(columns: ["ubicacion"])
 
         ultimas = from(bucket: "lecturas")
-          |> range(start: -30m)
+          |> range(start: -30s)
           |> filter(fn: (r) =>
             r._measurement == "temperaturas" and
             r._field == "temp"
