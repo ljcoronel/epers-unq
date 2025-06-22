@@ -7,7 +7,7 @@ import com.influxdb.query.FluxRecord;
 import java.util.List;
 import java.util.Optional;
 
-public interface LecturaDAO {
+public interface UbicacionDAOINFLUX {
     void guardarLectura(Point influxPoint);
 
     List<FluxRecord> recuperarLecturas();

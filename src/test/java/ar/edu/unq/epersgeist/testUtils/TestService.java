@@ -5,7 +5,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.SnapshotDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
-import ar.edu.unq.epersgeist.persistencia.dao.influxdb.LecturaDAO;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -32,7 +32,7 @@ public class TestService {
     private MediumDAOMONGO mediumDAOMONGO;
 
     @Autowired
-    private LecturaDAO influxDB;
+    private UbicacionDAOINFLUX influxDB;
 
     public void eliminarEspiritus() {
         entityManager.createNativeQuery("DELETE FROM espiritu").executeUpdate();

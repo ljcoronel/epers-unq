@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class LecturaDAOImpl implements LecturaDAO {
+public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     private final InfluxDBClient influxDBClient;
 
-    public LecturaDAOImpl(InfluxDBClient influxDBClient) {
+    public UbicacionDAOINFLUXImpl(InfluxDBClient influxDBClient) {
         this.influxDBClient = influxDBClient;
     }
 
@@ -124,8 +124,7 @@ join(
 )
 |> keep(columns: ["ubicacion"])
 |> yield(name: "resultado")
-""";
-
+"""; // TODO en vez de 25.0 iría la temp ambiente de la ubicación específica
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
