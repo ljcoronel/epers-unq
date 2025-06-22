@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasE
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.LecturaDAO;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -19,6 +20,8 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import com.influxdb.client.domain.WritePrecision;
+import com.influxdb.client.write.Point;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +29,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.geo.Point;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.LongStream;
 
+import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,6 +51,9 @@ public class UbicacionServiceTest {
 
     @Autowired
     private MediumService mediumService;
+
+    @Autowired
+    private LecturaDAO lecturaDAO;
 
     private List<Coordenada> pointsUbicacionUno;
     private List<Coordenada> pointsUbicacionDos;
@@ -915,6 +922,123 @@ public class UbicacionServiceTest {
         assertEquals(ubicacionRecuperada.getCoordenadas().get(1), coordenadasPoligonoAbierto.get(1));
         assertEquals(ubicacionRecuperada.getCoordenadas().get(2), coordenadasPoligonoAbierto.get(2));
         assertEquals(ubicacionRecuperada.getCoordenadas().get(3), coordenadasPoligonoAbierto.get(0));//aca el primero es igual al ultimo
+    }
+
+    @Test
+    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas(){
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        Long id = this.ubicacionUno.getId();
+        String idString = id.toString();
+
+        Long id2 = this.ubicacionDos.getId();
+        String idString2 = id2.toString();
+
+        com.influxdb.client.write.Point lecturaPoint0 = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", "10")
+                .addField("temp", 50)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        com.influxdb.client.write.Point lecturaPoint1 = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 40)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        com.influxdb.client.write.Point lecturaPoint2 = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 0)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        com.influxdb.client.write.Point lecturaPoint3 = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 10)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+
+        lecturaDAO.guardarLectura(lecturaPoint0);
+        lecturaDAO.guardarLectura(lecturaPoint1);
+        lecturaDAO.guardarLectura(lecturaPoint2);
+        lecturaDAO.guardarLectura(lecturaPoint3);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
+
+        assertEquals(id2,ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas(){
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        Long id = this.ubicacionUno.getId();
+        String idString = id.toString();
+
+        Long id2 = this.ubicacionDos.getId();
+        String idString2 = id2.toString();
+
+        Point lecturaPoint0 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 50)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint1 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 40)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint2 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 10)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint3 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 50)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+
+        lecturaDAO.guardarLectura(lecturaPoint0);
+        lecturaDAO.guardarLectura(lecturaPoint1);
+        lecturaDAO.guardarLectura(lecturaPoint2);
+        lecturaDAO.guardarLectura(lecturaPoint3);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
+
+        assertEquals(id2,ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        Long id = this.ubicacionUno.getId();
+        String idString = id.toString();
+
+        Long id2 = this.ubicacionDos.getId();
+        String idString2 = id2.toString();
+
+        Point lecturaPoint0 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 30)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint1 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 27)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Point lecturaPoint2 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 3)
+                .time(now().toEpochMilli(), WritePrecision.MS);
+        Instant base = now();//asegura que la ultima lectura es la siguiente en cuanto al tiempo
+        Point lecturaPoint3 = Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 29)
+                .time(base.plusMillis(100).toEpochMilli(), WritePrecision.MS);
+
+        lecturaDAO.guardarLectura(lecturaPoint0);
+        lecturaDAO.guardarLectura(lecturaPoint1);
+        lecturaDAO.guardarLectura(lecturaPoint2);
+        lecturaDAO.guardarLectura(lecturaPoint3);
+
+        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
+
+        assertEquals(1,ubicacionesRecuperadas.size());
+        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
     }
 
     @AfterEach

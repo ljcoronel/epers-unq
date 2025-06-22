@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.*;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.LecturaDAO;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -28,11 +30,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
+    private final LecturaDAO lecturaDAO;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo,LecturaDAO lecturaDAO) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
         this.ubicacionDaoMongo = ubicacionDaoMongo;
+        this.lecturaDAO = lecturaDAO;
     }
 
     @Override
@@ -180,5 +184,45 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         snapshot.guardarEstadoNeo(this.ubicacionDaoNeo.findAll().stream()
                 .map(dto -> (SnapshotNeo) DraftUbicacionNEODTO.guardar(dto, this.ubicacionDaoNeo.ubicacionesConectadas(dto.getId())))
                 .toList());
+    }
+
+    @Override
+    public Optional<Ubicacion> ubicacionMasFria(){
+        Long ubicacionId = this.lecturaDAO.recuperarIdDeUbicacionMasPeligrosa();
+        return ubicacionDaoJpa.findById(ubicacionId).map(ubicacionJPADTO -> {
+            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionId).get();
+            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+        });
+    }
+
+    @Override
+    public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(){
+
+        Long ubicacionId = this.lecturaDAO.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+
+        return ubicacionDaoJpa.findById(ubicacionId).map(ubicacionJPADTO -> {
+            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionId).get();
+            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+        });
+    }
+
+    @Override
+    public List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse(){
+
+        List<Long> ubicacionesId = this.lecturaDAO.recuperarIdDeUbicacionesRecuperadas();
+
+        return ubicacionesId.stream()
+                .map(this::recuperacion)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+    }
+
+    private Optional<Ubicacion> recuperacion(Long id){
+        return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
+            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
+            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+        });
     }
 }

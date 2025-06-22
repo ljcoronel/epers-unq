@@ -15,6 +15,7 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,4 +139,32 @@ public class UbicacionServiceImpl implements UbicacionService {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
 
+    @Override
+    public Ubicacion ubicacionMasPeligrosa(){
+        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionMasFria();
+
+        if (optionalUbicacion.isEmpty()){
+            throw new EntidadInexistenteException("La ubicación destino no existe.");
+        }
+        return optionalUbicacion.get();
+    }
+
+    @Override
+    public Ubicacion ubicacionConMasTransitoDeEspiritus(){
+
+        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas();
+
+        if (optionalUbicacion.isEmpty()){
+            throw new EntidadInexistenteException("La ubicación destino no existe.");
+        }
+        return optionalUbicacion.get();
+
+    }
+
+    @Override
+    public List<Ubicacion> ubicacionesRecuperadas(){
+
+        return this.ubicacionRepository.ubicacionesFriasQueVolvieronACalentarse();
+
+    }
 }

@@ -1,27 +1,22 @@
-package ar.edu.unq.epersgeist.persistencia.repositories.impl;
+package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
-import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.LecturaRepository;
 import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.domain.Bucket;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class LecturaRepositoryImpl implements LecturaRepository {
+public class LecturaDAOImpl implements LecturaDAO {
 
     private final InfluxDBClient influxDBClient;
 
-    public LecturaRepositoryImpl(InfluxDBClient influxDBClient) {
+    public LecturaDAOImpl(InfluxDBClient influxDBClient) {
         this.influxDBClient = influxDBClient;
     }
 
@@ -101,39 +96,35 @@ public class LecturaRepositoryImpl implements LecturaRepository {
         return Long.valueOf(ubicacionStr);
     }
 
-    public List<Long> recuperarIdDeUbicacionesRecuperadas(){
+    public List<Long>   recuperarIdDeUbicacionesRecuperadas(){
 
         String query = """
-        bajos = from(bucket: "lecturas")
-          |> range(start: -30s)
-          |> filter(fn: (r) =>
-            r._measurement == "temperaturas" and
-            r._field == "temp" and
-            r._value <= 5.0
-          )
-          |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
-          |> keep(columns: ["ubicacion"])
-          |> distinct(column: "ubicacion")
-          |> group(columns: ["ubicacion"])
+join(
+  tables: {
+    frio: from(bucket: "lecturas")
+      |> range(start: -10m)
+      |> filter(fn: (r) =>
+          r._measurement == "temperaturas" and r._field == "temp" and r._value <= 5.0)
+      |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
+      |> keep(columns: ["ubicacion"])
+      |> distinct(column: "ubicacion"),
 
-        ultimas = from(bucket: "lecturas")
-          |> range(start: -30s)
-          |> filter(fn: (r) =>
-            r._measurement == "temperaturas" and
-            r._field == "temp"
-          )
-          |> group(columns: ["ubicacion"])
-          |> last()
-          |> filter(fn: (r) => r._value >= 25.0)
-          |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
-          |> group(columns: ["ubicacion"])
+    calor: from(bucket: "lecturas")
+      |> range(start: -10m)
+      |> filter(fn: (r) =>
+          r._measurement == "temperaturas" and r._field == "temp")
+      |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
+      |> group()
+      |> last()
+      |> filter(fn: (r) => r._value >= 25.0)
+      |> keep(columns: ["ubicacion"])
+  },
+  on: ["ubicacion"]
+)
+|> keep(columns: ["ubicacion"])
+|> yield(name: "resultado")
+""";
 
-        join(
-          tables: {bajos: bajos, altas: ultimas},
-          on: ["ubicacion"]
-        )
-        |> keep(columns: ["ubicacion"])
-    """;
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
