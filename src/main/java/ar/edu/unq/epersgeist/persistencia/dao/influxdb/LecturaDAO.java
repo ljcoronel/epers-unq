@@ -5,15 +5,16 @@ import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LecturaDAO {
     void guardarLectura(Point influxPoint);
 
     List<FluxRecord> recuperarLecturas();
 
-    public Long recuperarIdDeUbicacionMasPeligrosa();
+    Long recuperarIdDeUbicacionMasPeligrosa();
 
-    public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+    Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
 
-    public List<Long> recuperarIdDeUbicacionesRecuperadas();
+    List<Long> recuperarIdDeUbicacionesRecuperadas();
 }

@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -77,10 +76,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
 
-        return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
-                UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
-                return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-        });
+        return mappearUbicacion(id);
     }
 
     @Override
@@ -189,21 +185,16 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> ubicacionMasFria(){
         Long ubicacionId = this.lecturaDAO.recuperarIdDeUbicacionMasPeligrosa();
-        return ubicacionDaoJpa.findById(ubicacionId).map(ubicacionJPADTO -> {
-            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionId).get();
-            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-        });
+        return mappearUbicacion(ubicacionId);
     }
 
     @Override
     public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(){
 
-        Long ubicacionId = this.lecturaDAO.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+        Optional<Ubicacion> optionalUbicacion = this.lecturaDAO.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
+                .map( opId -> mappearUbicacion(opId).get());
 
-        return ubicacionDaoJpa.findById(ubicacionId).map(ubicacionJPADTO -> {
-            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionId).get();
-            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-        });
+        return optionalUbicacion;
     }
 
     @Override
@@ -212,14 +203,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         List<Long> ubicacionesId = this.lecturaDAO.recuperarIdDeUbicacionesRecuperadas();
 
         return ubicacionesId.stream()
-                .map(this::recuperacion)
+                .map(this::mappearUbicacion)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
 
     }
 
-    private Optional<Ubicacion> recuperacion(Long id){
+    private Optional<Ubicacion> mappearUbicacion(Long id){
         return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
             UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
             return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));

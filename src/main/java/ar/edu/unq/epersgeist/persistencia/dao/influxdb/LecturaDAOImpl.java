@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -67,7 +68,7 @@ public class LecturaDAOImpl implements LecturaDAO {
     }
 
     @Override
-    public Long recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
+    public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
 
         String query = """
             from(bucket: "lecturas")
@@ -86,14 +87,14 @@ public class LecturaDAOImpl implements LecturaDAO {
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
         if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
-            throw new EntidadInexistenteException("No se encontraron lecturas de temperaturas.");
+            return Optional.empty();
         }
 
         FluxRecord record = tables.get(0).getRecords().get(0);
 
         String ubicacionStr = (String) record.getValueByKey("ubicacion");
 
-        return Long.valueOf(ubicacionStr);
+        return Optional.of(Long.valueOf(ubicacionStr));
     }
 
     public List<Long>   recuperarIdDeUbicacionesRecuperadas(){

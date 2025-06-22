@@ -995,7 +995,7 @@ public class UbicacionServiceTest {
         lecturaDAO.guardarLectura(lecturaPoint2);
         lecturaDAO.guardarLectura(lecturaPoint3);
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
         assertEquals(id2,ubicacionRecuperada.getId());
     }

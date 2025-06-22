@@ -155,7 +155,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas();
 
         if (optionalUbicacion.isEmpty()){
-            throw new EntidadInexistenteException("La ubicación destino no existe.");
+            throw new EntidadInexistenteException("No existe ubicación con más tránsito.");
         }
         return optionalUbicacion.get();
 

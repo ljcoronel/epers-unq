@@ -44,6 +44,7 @@ public class TestService {
         entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
         ubicacionDAONEO.deleteAll();
         ubicacionDAOMongo.deleteAll();
+        // TODO charlar con nico para drop de todos los datos
     }
 
     public void eliminarMediums() {
