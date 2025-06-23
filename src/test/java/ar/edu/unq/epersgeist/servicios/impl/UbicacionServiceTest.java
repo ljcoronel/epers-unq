@@ -908,7 +908,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPolygono() {
+    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPoligono() {
 
         List<Coordenada> coordenadasPoligonoAbierto =
                 List.of(new Coordenada(-70,0),new Coordenada(-70,1)
@@ -944,7 +944,7 @@ public class UbicacionServiceTest {
 
         ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
 
-        boolean esFria = ubicacionRepository.esDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+        boolean esFria = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
 
         assertTrue(esFria);
     }
@@ -952,7 +952,7 @@ public class UbicacionServiceTest {
     @Test
     void enLaUbicacionMasPeligrosaSinUbicacionesLanzaException(){
 
-        assertThrows (EntidadInexistenteException.class, () -> ubicacionService.ubicacionMasPeligrosa());
+        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionMasPeligrosa());
     }
 
     @Test

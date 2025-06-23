@@ -217,6 +217,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
                 .addTag("ubicacion", "1")
                 .addField("temp", temperatura)
+                .addField("tempAmbiente", 20)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
         ubicacionDAOInflux.guardarDatos(influxPoint);
@@ -228,8 +229,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public boolean esDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
-        return this.ubicacionDAOInflux.esDeltaDeTemperaturaMenorOIgual(id, -5);
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, -5);
     }
 
     private Optional<Ubicacion> mappearUbicacion(Long id){

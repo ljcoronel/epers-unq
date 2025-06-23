@@ -44,5 +44,5 @@ public interface UbicacionRepository {
 
     double getTemperatura(Long id);
 
-    boolean esDeltaDeTemperaturaMenorOIgual(Long id, int i);
+    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
 }

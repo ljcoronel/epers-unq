@@ -84,7 +84,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
               |> sum()
               |> sort(columns: ["_value"], desc: true)
               |> limit(n: 1)
-            """;
+            """; // difference es la cantidad de cambios de temp
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -157,19 +157,19 @@ join(
     }
 
     @Override
-    public boolean esDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
         // TODO agregar temp ambiente y quitar esto
 
         int tempAmbiente = 10;
 
         String query = """
                         from(bucket: "lecturas")
-      |> range(start: -10s)
-      |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
-      |> keep(columns: ["_value"])
-      |> map(fn: (r) => ({ _value: r._value, esDelTempMenorOIgual: if r._value - %d <= %d then true else false }))
-      |> keep(columns: ["esDelTempMenorOIgual"])
-    """.formatted(id, tempAmbiente, deltaTemp);
+                        |> range(start: -10s)
+                        |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
+                        |> keep(columns: ["_value"])
+                        |> map(fn: (r) => ({ _value: r._value, esDelTempMenorOIgual: if r._value - %d <= %d then true else false }))
+                        |> keep(columns: ["esDelTempMenorOIgual"])
+                """.formatted(id, tempAmbiente, deltaTemp);
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
