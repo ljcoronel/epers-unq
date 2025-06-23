@@ -213,11 +213,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void cambiarTemperatura(Long id, int temperatura) {
+    public void cambiarTemperatura(Long id, double temperatura) {
         com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
-                .addTag("ubicacion", "1")
+                .addTag("ubicacion", String.valueOf(id))
                 .addField("temp", temperatura)
-                .addField("tempAmbiente", 20)
+                .addField("tempAmbiente", 20d)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
         ubicacionDAOInflux.guardarDatos(influxPoint);
@@ -229,7 +229,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
         return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, -5);
     }
 

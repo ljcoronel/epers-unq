@@ -40,9 +40,9 @@ public interface UbicacionRepository {
     Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas();
     List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse();
 
-    void cambiarTemperatura(Long id, int temperatura);
+    void cambiarTemperatura(Long id, double temperatura);
 
     double getTemperatura(Long id);
 
-    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
+    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp);
 }

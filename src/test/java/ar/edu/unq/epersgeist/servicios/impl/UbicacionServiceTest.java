@@ -931,7 +931,7 @@ public class UbicacionServiceTest {
     void seGuardaUnaLecturaDeTemperaturaYApareceEnLaBaseDeDatos() {
         ubicacionService.crear(ubicacionUno);
 
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 15);
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 15d);
 
         double temperaturaUbicacion = ubicacionRepository.getTemperatura(ubicacionUno.getId());
 
@@ -947,6 +947,62 @@ public class UbicacionServiceTest {
         boolean esFria = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
 
         assertTrue(esFria);
+    }
+
+    @Test
+    void seGuardanLecturasDeTemperaturaYSeLasConsideraFrias() {
+        ubicacionService.crear(ubicacionUno);
+        ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 5);
+
+        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
+
+        assertTrue(esFria1);
+        assertTrue(esFria2);
+    }
+
+    @Test
+    void seGuardaUnaLecturaDeTemperaturaYSeLaConsideraNormal() {
+        ubicacionService.crear(ubicacionUno);
+
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 20);
+
+        boolean esFria = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+
+        assertFalse(esFria);
+    }
+
+    @Test
+    void seGuardanLecturasDeTemperaturaYSeLasConsideraNormales() {
+        ubicacionService.crear(ubicacionUno);
+        ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 20);
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 23);
+
+        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
+
+        assertFalse(esFria1);
+        assertFalse(esFria2);
+    }
+
+    @Test
+    void seGuardanLecturasDeTemperaturaMixtaYSeLasConsideraComoCorresponda() {
+        ubicacionService.crear(ubicacionUno);
+        ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 23);
+
+        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
+
+        assertTrue(esFria1);
+        assertFalse(esFria2);
     }
 
     @Test
