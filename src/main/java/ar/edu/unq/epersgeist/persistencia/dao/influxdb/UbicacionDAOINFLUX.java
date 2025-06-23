@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionDAOINFLUX {
-    void guardarLectura(Point influxPoint);
+    void guardarDatos(Point influxPoint);
 
     List<FluxRecord> recuperarLecturas();
 
@@ -17,4 +17,8 @@ public interface UbicacionDAOINFLUX {
     Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
 
     List<Long> recuperarIdDeUbicacionesRecuperadas();
+
+    double getTemperatura(Long id);
+
+    boolean esDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
 }

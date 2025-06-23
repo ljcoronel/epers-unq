@@ -13,11 +13,13 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONG
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import com.influxdb.client.domain.WritePrecision;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +31,13 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
-    private final UbicacionDAOINFLUX lecturaDAO;
+    private final UbicacionDAOINFLUX ubicacionDAOInflux;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOINFLUX lecturaDAO) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
         this.ubicacionDaoMongo = ubicacionDaoMongo;
-        this.lecturaDAO = lecturaDAO;
+        this.ubicacionDAOInflux = ubicacionDAOINFLUX;
     }
 
     @Override
@@ -184,14 +186,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Optional<Ubicacion> ubicacionMasFria(){
-        Long ubicacionId = this.lecturaDAO.recuperarIdDeUbicacionMasPeligrosa();
+        Long ubicacionId = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasPeligrosa();
         return mappearUbicacion(ubicacionId);
     }
 
     @Override
     public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(){
 
-        Optional<Ubicacion> optionalUbicacion = this.lecturaDAO.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
+        Optional<Ubicacion> optionalUbicacion = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
                 .map( opId -> mappearUbicacion(opId).get());
 
         return optionalUbicacion;
@@ -200,7 +202,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse(){
 
-        List<Long> ubicacionesId = this.lecturaDAO.recuperarIdDeUbicacionesRecuperadas();
+        List<Long> ubicacionesId = this.ubicacionDAOInflux.recuperarIdDeUbicacionesRecuperadas();
 
         return ubicacionesId.stream()
                 .map(this::mappearUbicacion)
@@ -208,6 +210,26 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .map(Optional::get)
                 .toList();
 
+    }
+
+    @Override
+    public void cambiarTemperatura(Long id, int temperatura) {
+        com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", "1")
+                .addField("temp", temperatura)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+
+        ubicacionDAOInflux.guardarDatos(influxPoint);
+    }
+
+    @Override
+    public double getTemperatura(Long id) {
+        return this.ubicacionDAOInflux.getTemperatura(id);
+    }
+
+    @Override
+    public boolean esDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+        return this.ubicacionDAOInflux.esDeltaDeTemperaturaMenorOIgual(id, -5);
     }
 
     private Optional<Ubicacion> mappearUbicacion(Long id){

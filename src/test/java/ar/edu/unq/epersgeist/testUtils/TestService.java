@@ -6,11 +6,16 @@ import ar.edu.unq.epersgeist.persistencia.dao.mongodb.SnapshotDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.domain.DeletePredicateRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
 
 @Service
 @Transactional
@@ -32,7 +37,8 @@ public class TestService {
     private MediumDAOMONGO mediumDAOMONGO;
 
     @Autowired
-    private UbicacionDAOINFLUX influxDB;
+//    private UbicacionDAOINFLUX influxDB;
+    private InfluxDBClient influxDBClient;
 
     public void eliminarEspiritus() {
         entityManager.createNativeQuery("DELETE FROM espiritu").executeUpdate();
@@ -44,7 +50,6 @@ public class TestService {
         entityManager.createNativeQuery("DELETE FROM ubicacion").executeUpdate();
         ubicacionDAONEO.deleteAll();
         ubicacionDAOMongo.deleteAll();
-        // TODO charlar con nico para drop de todos los datos
     }
 
     public void eliminarMediums() {

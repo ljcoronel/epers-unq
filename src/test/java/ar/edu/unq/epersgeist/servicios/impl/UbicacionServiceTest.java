@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -52,7 +53,10 @@ public class UbicacionServiceTest {
     private MediumService mediumService;
 
     @Autowired
-    private UbicacionDAOINFLUX lecturaDAO;
+    private UbicacionDAOINFLUX ubicacionDAOINFLUX; // TODO sacar, se debería poder hacer con el service
+
+    @Autowired
+    private UbicacionRepository ubicacionRepository; // TODO sacar
 
     private List<Coordenada> pointsUbicacionUno;
     private List<Coordenada> pointsUbicacionDos;
@@ -925,20 +929,24 @@ public class UbicacionServiceTest {
 
     @Test
     void seGuardaUnaLecturaDeTemperaturaYApareceEnLaBaseDeDatos() {
+        ubicacionService.crear(ubicacionUno);
 
-//        Point lecturaPoint = Point.measurement("temperaturas")
-//                .addTag("ubicacion", "1")
-//                .addField("temp", 50)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionService.cambiarTemperatura(id, 15);
-//
-//        ubicacionService.recibirLecturaDeTemperatura(lecturaPoint);
-//
-//        List<FluxRecord> lecturasRecuperadas = lecturaService.recuperarLecturas();
-//
-//        assertEquals("1", lecturasRecuperadas.getFirst().getValueByKey("ubicacion"));
-//        assertEquals(50L, lecturasRecuperadas.getFirst().getValueByKey("_value"));
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 15);
+
+        double temperaturaUbicacion = ubicacionRepository.getTemperatura(ubicacionUno.getId());
+
+        assertEquals(15d, temperaturaUbicacion);
+    }
+
+    @Test
+    void seGuardaUnaLecturaDeTemperaturaYSeLaConsideraFria() {
+        ubicacionService.crear(ubicacionUno);
+
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
+
+        boolean esFria = ubicacionRepository.esDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
+
+        assertTrue(esFria);
     }
 
     @Test
@@ -959,7 +967,7 @@ public class UbicacionServiceTest {
                 .addField("temp", 40)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
 
@@ -995,10 +1003,10 @@ public class UbicacionServiceTest {
                 .addField("temp", 10)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
 
@@ -1024,7 +1032,7 @@ public class UbicacionServiceTest {
                 .addField("temp", 50)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
@@ -1059,10 +1067,10 @@ public class UbicacionServiceTest {
                 .addField("temp", 50)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
@@ -1097,9 +1105,9 @@ public class UbicacionServiceTest {
                 .addField("temp", 29)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
 
@@ -1136,10 +1144,10 @@ public class UbicacionServiceTest {
                 .addField("temp", 29)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
 
@@ -1186,13 +1194,13 @@ public class UbicacionServiceTest {
                 .addField("temp", 29)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
-        lecturaDAO.guardarLectura(lecturaPoint4);
-        lecturaDAO.guardarLectura(lecturaPoint5);
-        lecturaDAO.guardarLectura(lecturaPoint6);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint4);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint5);
+        ubicacionDAOINFLUX.guardarDatos(lecturaPoint6);
 
         List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
 
