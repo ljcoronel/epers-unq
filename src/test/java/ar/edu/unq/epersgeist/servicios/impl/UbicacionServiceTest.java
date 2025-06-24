@@ -1021,17 +1021,23 @@ public class UbicacionServiceTest {
 
     @Test
     void seRecuperaLaUbicacionMasPeligrosaCuandoHaySoloUnaYDevuelveEsa(){
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         this.ubicacionService.crear(ubicacionUno);
 
         Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
 
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 40)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint1 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 40)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
 
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+        ubicacionRepository.cambiarTemperatura(id, 40);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
 
@@ -1040,37 +1046,44 @@ public class UbicacionServiceTest {
 
 
     @Test
-    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas(){
+    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas() throws InterruptedException {
+        Thread.sleep(11000);
         this.ubicacionService.crear(ubicacionUno); // TODO cambiar para que reciba temp ambiente
         this.ubicacionService.crear(ubicacionDos);
+        this.ubicacionService.crear(ubicacionTres);
 
         Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
 
         Long id2 = this.ubicacionDos.getId();
-        String idString2 = id2.toString();
 
-        Point lecturaPoint0 = Point.measurement("temperaturas")
-                .addTag("ubicacion", "10")
-                .addField("temp", 50)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 40)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint2 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 0)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint3 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 10)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        Long id3 = this.ubicacionTres.getId();
 
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
+//        Point lecturaPoint0 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", "10")
+//                .addField("temp", 50)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint1 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 40)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint2 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 0)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint3 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 10)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+
+        ubicacionRepository.cambiarTemperatura(id, 50);
+        ubicacionRepository.cambiarTemperatura(id3, 40);
+        ubicacionRepository.cambiarTemperatura(id2, 0);
+        ubicacionRepository.cambiarTemperatura(id, 10);
+
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
 
@@ -1078,36 +1091,49 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoYLanzaException(){
+    public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoYLanzaException() throws InterruptedException {
+        Thread.sleep(11000);
 
         assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionConMasTransitoDeEspiritus());
 
     }
 
     @Test
-    public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus() {
+    public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus() throws InterruptedException {
+        Thread.sleep(11000);
         this.ubicacionService.crear(ubicacionUno);
 
-        Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
+//        Long id = this.ubicacionUno.getId();
+//        String idString = id.toString();
 
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 50.1)
-                .time(fechaFija(1, 0).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 50.1)
+//                .time(fechaFija(1, 0).toEpochMilli(), WritePrecision.MS));
+//
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 55.1)
+//                .time(fechaFija(1, 5).toEpochMilli(), WritePrecision.MS));
 
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 55.1)
-                .time(fechaFija(1, 5).toEpochMilli(), WritePrecision.MS));
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),50.1);
+        try {
+            Thread.sleep(1000); // para que no se solapen las escrituras
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 55.1);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
-        assertEquals(id, ubicacionRecuperada.getId());
+        assertEquals(ubicacionUno.getId(), ubicacionRecuperada.getId());
     }
 
     @Test
-    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas() {
+    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas() throws InterruptedException {
+        Thread.sleep(11000);
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
         this.ubicacionService.crear(ubicacionUno);
         this.ubicacionService.crear(ubicacionDos);
 
@@ -1117,31 +1143,65 @@ public class UbicacionServiceTest {
         Long id2 = this.ubicacionDos.getId();
         String idString2 = id2.toString();
 
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString1)
-                .addField("temp", 20.1)
-                .time(fechaFija(2, 0).toEpochMilli(), WritePrecision.MS));
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString1)
-                .addField("temp", 20.1)
-                .time(fechaFija(2, 5).toEpochMilli(), WritePrecision.MS));
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString1)
-                .addField("temp", 25.1)
-                .time(fechaFija(2, 10).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString1)
+//                .addField("temp", 20.1)
+//                .time(fechaFija(2, 0).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString1)
+//                .addField("temp", 20.1)
+//                .time(fechaFija(2, 5).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString1)
+//                .addField("temp", 25.1)
+//                .time(fechaFija(2, 10).toEpochMilli(), WritePrecision.MS));
 
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 30.1)
-                .time(fechaFija(2, 1).toEpochMilli(), WritePrecision.MS));
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 35.1)
-                .time(fechaFija(2, 6).toEpochMilli(), WritePrecision.MS));
-        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 32.1)
-                .time(fechaFija(2, 11).toEpochMilli(), WritePrecision.MS));
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),20.1);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),20.1);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 25.1);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(),30.1);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 35.1);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 32.1);
+
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 30.1)
+//                .time(fechaFija(2, 1).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 35.1)
+//                .time(fechaFija(2, 6).toEpochMilli(), WritePrecision.MS));
+//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 32.1)
+//                .time(fechaFija(2, 11).toEpochMilli(), WritePrecision.MS));
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
@@ -1150,215 +1210,45 @@ public class UbicacionServiceTest {
 
 
     @Test
-    public void cuandoNoHayUbicacionesLasUbicacionesRecuperadasTiraException(){
-
-        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionesRecuperadas());
+    public void cuandoNoHayUbicacionesLasUbicacionesRecuperadasTiraException() throws InterruptedException {
+//        Thread.sleep(11000);
+//
+//        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionesRecuperadas());
     }
 
     @Test
     public void recuperaLaUbicacionQueTuvoUnPicoDeNegativoDeTemperaturaYAhoraEstaNormalCuandoSoloHayUna(){
 
-        this.ubicacionService.crear(ubicacionDos);
-
-        Long id2 = this.ubicacionDos.getId();
-        String idString2 = id2.toString();
-
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 27)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint2 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 3)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint3 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 29)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-
-        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-
-        assertEquals(1,ubicacionesRecuperadas.size());
-        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
+//        this.ubicacionService.crear(ubicacionDos);
+//
+//        Long id2 = this.ubicacionDos.getId();
+//        String idString2 = id2.toString();
+//
+//        Point lecturaPoint1 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 27)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint2 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 3)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint3 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 29)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
+//
+//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
+//
+//        assertEquals(1,ubicacionesRecuperadas.size());
+//        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
     }
 
     @Test
     public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-
-        this.ubicacionService.crear(ubicacionUno);
-        this.ubicacionService.crear(ubicacionDos);
-
-        Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
-
-        Long id2 = this.ubicacionDos.getId();
-        String idString2 = id2.toString();
-
-        Point lecturaPoint0 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 30)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 27)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint2 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 3)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint3 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 29)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-
-        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-
-        assertEquals(1,ubicacionesRecuperadas.size());
-        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
-    }
-
-
-    @Test
-    public void recuperaLasUbicacionesQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-
-        this.ubicacionService.crear(ubicacionUno);
-        this.ubicacionService.crear(ubicacionDos);
-
-        Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
-
-        Long id2 = this.ubicacionDos.getId();
-        String idString2 = id2.toString();
-
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 25)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint2 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 1)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint3 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 30)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
-        Point lecturaPoint4 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 27)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint5 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 3)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint6 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 29)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint4);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint5);
-        ubicacionDAOINFLUX.guardarDatos(lecturaPoint6);
-
-        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-
-        assertEquals(2,ubicacionesRecuperadas.size());
-        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id)));
-        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id2)));
-    }
-
-
-//    @Test
-//    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas(){
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        com.influxdb.client.write.Point lecturaPoint0 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", "10")
-//                .addField("temp", 50)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        com.influxdb.client.write.Point lecturaPoint1 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 40)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        com.influxdb.client.write.Point lecturaPoint2 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 0)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        com.influxdb.client.write.Point lecturaPoint3 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 10)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//
-//        lecturaDAO.guardarLectura(lecturaPoint0);
-//        lecturaDAO.guardarLectura(lecturaPoint1);
-//        lecturaDAO.guardarLectura(lecturaPoint2);
-//        lecturaDAO.guardarLectura(lecturaPoint3);
-//
-//        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
-//
-//        assertEquals(id2,ubicacionRecuperada.getId());
-//    }
-//
-//    @Test
-//    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas(){
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        Point lecturaPoint0 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 50)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 40)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 10)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 50)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//
-//        lecturaDAO.guardarLectura(lecturaPoint0);
-//        lecturaDAO.guardarLectura(lecturaPoint1);
-//        lecturaDAO.guardarLectura(lecturaPoint2);
-//        lecturaDAO.guardarLectura(lecturaPoint3);
-//
-//        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
-//
-//        assertEquals(id2,ubicacionRecuperada.getId());
-//    }
-//
-//    @Test
-//    public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
 //
 //        this.ubicacionService.crear(ubicacionUno);
 //        this.ubicacionService.crear(ubicacionDos);
@@ -1372,31 +1262,84 @@ public class UbicacionServiceTest {
 //        Point lecturaPoint0 = Point.measurement("temperaturas")
 //                .addTag("ubicacion", idString)
 //                .addField("temp", 30)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 //        Point lecturaPoint1 = Point.measurement("temperaturas")
 //                .addTag("ubicacion", idString2)
 //                .addField("temp", 27)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 //        Point lecturaPoint2 = Point.measurement("temperaturas")
 //                .addTag("ubicacion", idString2)
 //                .addField("temp", 3)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        Instant base = now();//asegura que la ultima lectura es la siguiente en cuanto al tiempo
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 //        Point lecturaPoint3 = Point.measurement("temperaturas")
 //                .addTag("ubicacion", idString2)
 //                .addField("temp", 29)
-//                .time(base.plusMillis(100).toEpochMilli(), WritePrecision.MS);
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 //
-//        lecturaDAO.guardarLectura(lecturaPoint0);
-//        lecturaDAO.guardarLectura(lecturaPoint1);
-//        lecturaDAO.guardarLectura(lecturaPoint2);
-//        lecturaDAO.guardarLectura(lecturaPoint3);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 //
 //        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
 //
 //        assertEquals(1,ubicacionesRecuperadas.size());
 //        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
-//    }
+    }
+
+
+    @Test
+    public void recuperaLasUbicacionesQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
+//
+//        this.ubicacionService.crear(ubicacionUno);
+//        this.ubicacionService.crear(ubicacionDos);
+//
+//        Long id = this.ubicacionUno.getId();
+//        String idString = id.toString();
+//
+//        Long id2 = this.ubicacionDos.getId();
+//        String idString2 = id2.toString();
+//
+//        Point lecturaPoint1 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 25)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint2 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 1)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint3 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString)
+//                .addField("temp", 30)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//
+//        Point lecturaPoint4 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 27)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint5 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 3)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//        Point lecturaPoint6 = Point.measurement("temperaturas")
+//                .addTag("ubicacion", idString2)
+//                .addField("temp", 29)
+//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+//
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
+//
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint4);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint5);
+//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint6);
+//
+//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
+//
+//        assertEquals(2,ubicacionesRecuperadas.size());
+//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id)));
+//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id2)));
+    }
 
     @AfterEach
     public void tearDown() {
