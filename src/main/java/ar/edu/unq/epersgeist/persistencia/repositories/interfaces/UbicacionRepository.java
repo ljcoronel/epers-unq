@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
-import com.influxdb.query.FluxRecord;
 import org.springframework.data.geo.Point;
 
 import java.util.List;
@@ -40,4 +39,10 @@ public interface UbicacionRepository {
     Optional<Ubicacion> ubicacionMasFria();
     Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas();
     List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse();
+
+    void cambiarTemperatura(Long id, double temperatura);
+
+    double getTemperatura(Long id);
+
+    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp);
 }

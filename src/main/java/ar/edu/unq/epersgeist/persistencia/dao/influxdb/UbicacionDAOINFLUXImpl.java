@@ -24,38 +24,40 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     @Override
-    public void guardarLectura(Point influxPoint) {
+    public void guardarDatos(Point influxPoint) {
         influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
     }
 
-    @Override
-    public List<FluxRecord> recuperarLecturas() {
-        String query = "from(bucket: \"lecturas\")\n" +
-                "  |> range(start: -10s)\n" +
-                "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
-                "  |> keep(columns: [\"_time\", \"_value\", \"ubicacion\"])" ;
-
-        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
-
-        List<FluxRecord> lecturas = new ArrayList<>();
-
-        tables.forEach(table -> { lecturas.addAll(table.getRecords());});
-
-        return lecturas;
-    }
+//    @Override // TODO borrar
+//    public List<FluxRecord> recuperarLecturas() {
+//        String query = """
+//                from(bucket: "lecturas")
+//                  |> range(start: -10s)
+//                  |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
+//                  |> keep(columns: ["_time", "_value", "ubicacion"])""";
+//
+//        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+//
+//        List<FluxRecord> lecturas = new ArrayList<>();
+//
+//        tables.forEach(table -> { lecturas.addAll(table.getRecords());});
+//
+//        return lecturas;
+//    }
 
     @Override
     public Long recuperarIdDeUbicacionMasPeligrosa() {
         String query =
-                "from(bucket: \"lecturas\")\n" +
-                        "  |> range(start: -10s)\n" +
-                        "  |> filter(fn: (r) => r._measurement == \"temperaturas\" and r._field == \"temp\")\n" +
-                        "  |> group(columns: [\"ubicacion\"])\n" +
-                        "  |> sort(columns: [\"_time\"], desc: true)\n" +
-                        "  |> unique(column: \"ubicacion\")\n" +
-                        "  |> group()\n" +
-                        "  |> sort(columns: [\"_value\"])\n" +
-                        "  |> limit(n: 1)";
+                """
+                        from(bucket: "lecturas")
+                          |> range(start: -10s)
+                          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
+                          |> group(columns: ["ubicacion"])
+                          |> sort(columns: ["_time"], desc: true)
+                          |> unique(column: "ubicacion")
+                          |> group()
+                          |> sort(columns: ["_value"])
+                          |> limit(n: 1)""";
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -135,5 +137,54 @@ join(
                 .map(record -> Long.valueOf(record.getValueByKey("ubicacion").toString()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public double getTemperatura(Long id) {
+        String query = """
+                        from(bucket: "lecturas")
+                          |> range(start: -10s)
+                          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
+                          |> keep(columns: ["_value"])
+                        """.formatted(id);
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        double temperatura = (double) tables.getFirst()
+                .getRecords()
+                .getFirst()
+                .getRow()
+                .getLast();
+
+        return temperatura;
+    }
+
+    @Override
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+
+//        String query = """
+//                        from(bucket: "lecturas")
+//                        |> range(start: -10s)
+//                        |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
+//                        |> keep(columns: ["_value"])
+//                        |> map(fn: (r) => ({ _value: r._value, esDelTempMenorOIgual: if r._value - %d <= %d then true else false }))
+//                        |> keep(columns: ["esDelTempMenorOIgual"])
+//                """.formatted(id, tempAmbiente, deltaTemp);
+
+        String query = """
+                        from(bucket: "lecturas")
+                        |> range(start: -10s)
+                        |> filter(fn: (r) => r._measurement == "temperaturas" and (r._field == "temp" or r._field == "tempAmbiente") and r.ubicacion == "%s")
+                        |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+                        |> map(fn: (r) => ({temp: r.temp, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
+                """.formatted(id, deltaTemp); // TODO no puedo sacar ese temp del map o revienta
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        return (boolean) tables.getFirst()
+                .getRecords()
+                .getFirst()
+                .getValueByKey("esDelTempMenorOIgual");
+    }
+
 
 }
