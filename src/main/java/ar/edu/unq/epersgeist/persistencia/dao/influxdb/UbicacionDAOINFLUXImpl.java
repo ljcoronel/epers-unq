@@ -30,25 +30,9 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
     }
 
-//    @Override // TODO borrar
-//    public List<FluxRecord> recuperarLecturas() {
-//        String query = """
-//                from(bucket: "lecturas")
-//                  |> range(start: -10s)
-//                  |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
-//                  |> keep(columns: ["_time", "_value", "ubicacion"])""";
-//
-//        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
-//
-//        List<FluxRecord> lecturas = new ArrayList<>();
-//
-//        tables.forEach(table -> { lecturas.addAll(table.getRecords());});
-//
-//        return lecturas;
-//    }
-
     @Override
     public Long recuperarIdDeUbicacionMasPeligrosa() {
+        // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
         String query =
                 """
                         from(bucket: "lecturas")
@@ -75,10 +59,11 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
+        // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
 
         String query = """
     from(bucket: "lecturas")
-      |> range(start: -30d)
+      |> range(start: -7s)
       |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
       |> group(columns: ["ubicacion"])
       |> sort(columns: ["_time"])
