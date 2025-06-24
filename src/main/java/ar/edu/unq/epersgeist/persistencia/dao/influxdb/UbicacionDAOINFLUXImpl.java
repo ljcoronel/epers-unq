@@ -1,12 +1,14 @@
 package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -101,41 +103,33 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         return Optional.of(Long.valueOf(ubicacionStr));
     }
 
-    public List<Long>   recuperarIdDeUbicacionesRecuperadas(){
-
+    public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
-join(
-  tables: {
-    frio: from(bucket: "lecturas")
-      |> range(start: -10m)
-      |> filter(fn: (r) =>
-          r._measurement == "temperaturas" and r._field == "temp" and r._value <= 5.0)
-      |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
-      |> keep(columns: ["ubicacion"])
-      |> distinct(column: "ubicacion"),
-
-    calor: from(bucket: "lecturas")
-      |> range(start: -10m)
-      |> filter(fn: (r) =>
-          r._measurement == "temperaturas" and r._field == "temp")
-      |> map(fn: (r) => ({ r with ubicacion: string(v: r.ubicacion) }))
-      |> group()
-      |> last()
-      |> filter(fn: (r) => r._value >= 25.0)
-      |> keep(columns: ["ubicacion"])
-  },
-  on: ["ubicacion"]
-)
-|> keep(columns: ["ubicacion"])
-|> yield(name: "resultado")
-"""; // TODO en vez de 25.0 iría la temp ambiente de la ubicación específica
+        from(bucket: "lecturas")
+          |> range(start: -30d)
+          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
+          |> group(columns: ["ubicacion"])
+          |> sort(columns: ["_time"])
+          |> derivative(unit: 5s, nonNegative: false)
+          |> filter(fn: (r) => r._value < -1.6)
+          |> map(fn: (r) => ({ r with intensidad: r._value }))
+          |> keep(columns: ["ubicacion", "_time", "intensidad"])
+    """;
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
+        if (tables.isEmpty()) {
+            return List.of();
+        }
+
         return tables.stream()
                 .flatMap(table -> table.getRecords().stream())
-                .map(record -> Long.valueOf(record.getValueByKey("ubicacion").toString()))
-                .collect(Collectors.toList());
+                .map(record -> new EventoPortalDTO(
+                        Long.valueOf((String) record.getValueByKey("ubicacion")),
+                        ((Instant) record.getTime()),
+                        (Double) record.getValueByKey("intensidad")
+                ))
+                .toList();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 
@@ -14,7 +15,7 @@ public interface UbicacionDAOINFLUX {
 
     Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
 
-    List<Long> recuperarIdDeUbicacionesRecuperadas();
+    List<EventoPortalDTO> recuperarEventosDePortales();
 
     double getTemperatura(Long id);
 

@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
@@ -200,16 +201,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse(){
+    public List<EventoPortalDTO> eventosDePortalesOcurridos() {
+        List<EventoPortalDTO> eventosDePortales = this.ubicacionDAOInflux.recuperarEventosDePortales();
 
-        List<Long> ubicacionesId = this.ubicacionDAOInflux.recuperarIdDeUbicacionesRecuperadas();
-
-        return ubicacionesId.stream()
-                .map(this::mappearUbicacion)
+        return eventosDePortales.stream()
+                .map(evento -> mappearUbicacion(evento.getUbicacionId())
+                        .map(ubicacion -> new EventoPortalDTO(ubicacion, evento.getTiempo(), evento.getIntensidad())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-
     }
 
     @Override

@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.interfaces;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import org.springframework.data.geo.Point;
 
@@ -38,7 +39,7 @@ public interface UbicacionRepository {
 
     Optional<Ubicacion> ubicacionMasFria();
     Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas();
-    List<Ubicacion> ubicacionesFriasQueVolvieronACalentarse();
+    List<EventoPortalDTO> eventosDePortalesOcurridos();
 
     void cambiarTemperatura(Long id, double temperatura);
 
