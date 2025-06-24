@@ -153,10 +153,14 @@ public class UbicacionServiceTest {
 
     }
 
-    private Instant fechaFija(int diasAtras, int minutosDespues) {
+    private Instant fechaFija(int diasAtras, int minutosDespues, int segundosDespues) {
         LocalDateTime base = LocalDateTime.of(2025, 6, 21, 12, 0);
-        return base.minusDays(diasAtras).plusMinutes(minutosDespues)
-                .atZone(ZoneId.systemDefault()).toInstant();
+        return base
+                .minusDays(diasAtras)
+                .plusMinutes(minutosDespues)
+                .plusSeconds(segundosDespues)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
 
     @Test
@@ -1222,20 +1226,22 @@ public class UbicacionServiceTest {
         this.ubicacionService.crear(ubicacionDos);
 
         Long id2 = this.ubicacionDos.getId();
+        String idString2 = id2.toString();
 
-        ubicacionRepository.cambiarTemperatura(id2,27.0);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        ubicacionRepository.cambiarTemperatura(id2,3.0);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        ubicacionRepository.cambiarTemperatura(id2,29.0);
+        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 27.0)
+                .time(fechaFija(2, 0, 0).toEpochMilli(), WritePrecision.MS));
+
+        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 3.0)
+                .time(fechaFija(2, 0, 1).toEpochMilli(), WritePrecision.MS));
+
+        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 29.0)
+                .time(fechaFija(2, 0, 2).toEpochMilli(), WritePrecision.MS));
 
         List<EventoPortalDTO> eventosPortal = ubicacionService.EventosDePortalesOcurridos();
 
@@ -1244,6 +1250,11 @@ public class UbicacionServiceTest {
         EventoPortalDTO evento = eventosPortal.get(0);
 
         assertEquals(id2, evento.getUbicacionId());
+
+        assertEquals(-120.0, evento.getIntensidad(), 0.001);
+
+       Instant esperado = fechaFija(2, 0,0).plusSeconds(1);
+        assertEquals(esperado, evento.getTiempo());
 
     }
 
