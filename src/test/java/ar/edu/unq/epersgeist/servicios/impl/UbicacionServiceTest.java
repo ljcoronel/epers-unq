@@ -32,6 +32,8 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.LongStream;
 
@@ -144,6 +146,12 @@ public class UbicacionServiceTest {
         this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Coordenada(0.5, 0.5));
 
 
+    }
+
+    private Instant fechaFija(int diasAtras, int minutosDespues) {
+        LocalDateTime base = LocalDateTime.of(2025, 6, 21, 12, 0);
+        return base.minusDays(diasAtras).plusMinutes(minutosDespues)
+                .atZone(ZoneId.systemDefault()).toInstant();
     }
 
     @Test
@@ -1013,60 +1021,66 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus(){
+    public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus() {
         this.ubicacionService.crear(ubicacionUno);
-
         Long id = this.ubicacionUno.getId();
         String idString = id.toString();
 
-        Point lecturaPoint0 = Point.measurement("temperaturas")
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
                 .addTag("ubicacion", idString)
                 .addField("temp", 50)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+                .time(fechaFija(1, 0).toEpochMilli(), WritePrecision.MS));
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString)
+                .addField("temp", 55)
+                .time(fechaFija(1, 5).toEpochMilli(), WritePrecision.MS));
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
-        assertEquals(id,ubicacionRecuperada.getId());
+        assertEquals(id, ubicacionRecuperada.getId());
     }
 
     @Test
-    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas(){
+    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas() {
         this.ubicacionService.crear(ubicacionUno);
         this.ubicacionService.crear(ubicacionDos);
 
-        Long id = this.ubicacionUno.getId();
-        String idString = id.toString();
+        Long id1 = this.ubicacionUno.getId();
+        String idString1 = id1.toString();
 
         Long id2 = this.ubicacionDos.getId();
         String idString2 = id2.toString();
 
-        Point lecturaPoint0 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 50)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint1 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 40)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint2 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString2)
-                .addField("temp", 10)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-        Point lecturaPoint3 = Point.measurement("temperaturas")
-                .addTag("ubicacion", idString)
-                .addField("temp", 50)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString1)
+                .addField("temp", 20)
+                .time(fechaFija(2, 0).toEpochMilli(), WritePrecision.MS));
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString1)
+                .addField("temp", 20)
+                .time(fechaFija(2, 5).toEpochMilli(), WritePrecision.MS));
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString1)
+                .addField("temp", 25)
+                .time(fechaFija(2, 10).toEpochMilli(), WritePrecision.MS));
 
-        lecturaDAO.guardarLectura(lecturaPoint0);
-        lecturaDAO.guardarLectura(lecturaPoint1);
-        lecturaDAO.guardarLectura(lecturaPoint2);
-        lecturaDAO.guardarLectura(lecturaPoint3);
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 30)
+                .time(fechaFija(2, 1).toEpochMilli(), WritePrecision.MS));
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 35)
+                .time(fechaFija(2, 6).toEpochMilli(), WritePrecision.MS));
+        lecturaDAO.guardarLectura(Point.measurement("temperaturas")
+                .addTag("ubicacion", idString2)
+                .addField("temp", 32)
+                .time(fechaFija(2, 11).toEpochMilli(), WritePrecision.MS));
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
-        assertEquals(id2,ubicacionRecuperada.getId());
+        assertEquals(id2, ubicacionRecuperada.getId());
     }
 
 

@@ -7,6 +7,8 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,18 +73,18 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
 
         String query = """
-            from(bucket: "lecturas")
-              |> range(start: -10s)
-              |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
-              |> group(columns: ["ubicacion"])
-              |> sort(columns: ["_time"], desc: true)
-              |> difference(nonNegative: true)
-              |> map(fn: (r) => ({ r with _value: if exists r._value then 1 else 0 }))
-              |> group(columns: ["ubicacion"])
-              |> sum()
-              |> sort(columns: ["_value"], desc: true)
-              |> limit(n: 1)
-            """;
+    from(bucket: "lecturas")
+      |> range(start: -30d)
+      |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
+      |> group(columns: ["ubicacion"])
+      |> sort(columns: ["_time"])
+      |> difference()
+      |> filter(fn: (r) => r._value != 0.0)
+      |> count()
+      |> group()
+      |> sort(columns: ["_value"], desc: true)
+      |> limit(n:1)
+""";
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -133,4 +135,5 @@ join(
                 .map(record -> Long.valueOf(record.getValueByKey("ubicacion").toString()))
                 .collect(Collectors.toList());
     }
+
 }
