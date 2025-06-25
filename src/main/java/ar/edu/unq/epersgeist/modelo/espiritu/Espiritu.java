@@ -4,7 +4,6 @@ import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
-import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -18,7 +17,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.geo.Point;
 
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,19 +33,17 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     private Espiritu espirituDominante;
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre ) {
 
         this.setNivelDeConexion(nivelDeConexion);
         this.nombre = nombre;
-        this.ubicacion = ubicacion;
     }
 
-    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
+    public Espiritu(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
 
         this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
         this.nombre = nombre;
         this.coordenada = coordenada;
-        this.ubicacion = ubicacion;// TODO BORRAR cuando se haga el metodo mover
     }
 
     public Espiritu(String nombre, Coordenada coordenada) {
@@ -60,6 +56,12 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public Espiritu(int nivelDeConexion, String nombre) {
         this.nombre = nombre;
         setNivelDeConexion(nivelDeConexion);
+    }
+
+    public Espiritu(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+        this.setNivelDeConexion(nivelDeConexion); //para evitar valores por bajo de 0 y por encima de 100
+        this.nombre = nombre;
+        this.ubicacion = ubicacion;
     }
 
     public void aumentarNivelDeConexionEn(int cantConexion) {
@@ -111,10 +113,8 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
 
     public void moverConMediumHacia(Ubicacion ubicacion) {
-
             ubicacion.recibir(this);
-            this.ubicacion = ubicacion;
-
+            establecerUbicacionConTemp(ubicacion);
     }
 
     public void conectarConMedium(Optional<Medium> optionalMedium) {
@@ -190,9 +190,10 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     public void serInvocadoPorMedium(Ubicacion ubicacion, Medium medium) {
         medium.usarManaParaInvocar();
-        this.setUbicacion(ubicacion);
+        this.establecerUbicacionConTemp(ubicacion);
         this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
     }
 
+    public abstract void establecerUbicacionConTemp(Ubicacion ubicacion);
 
 }

@@ -9,18 +9,17 @@ import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
-import com.influxdb.client.domain.WritePrecision;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +71,8 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
         UbicacionMONGODTO ubicacionMongo = UbicacionMONGODTO.desdeModelo(ubicacion);
         this.ubicacionDaoMongo.save(ubicacionMongo);
+
+        this.cambiarTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
 
         return ubicacionConId;
     }
@@ -161,6 +162,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .map(mongoDTO -> {
                     UbicacionJPADTO jpaDTO = ubicacionDaoJpa.findById(mongoDTO.getId()).get();
                     Ubicacion ubicacion = jpaDTO.aModelo();
+                    mappearConInflux(mongoDTO.getId(), ubicacion);
                     return mongoDTO.aModelo(ubicacion);
                 });
     }
@@ -214,17 +216,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public void cambiarTemperatura(Long id, double temperatura) {
-        com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
-                .addTag("ubicacion", String.valueOf(id))
-                .addField("temp", temperatura)
-                .addField("tempAmbiente", 20d)
-                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
-        ubicacionDAOInflux.guardarDatos(influxPoint);
+        ubicacionDAOInflux.cambiarTemperatura(id, temperatura);
     }
 
     @Override
-    public double getTemperatura(Long id) {
+    public double getTemperatura(Long id) { // TODO borrar?
         return this.ubicacionDAOInflux.getTemperatura(id);
     }
 
@@ -236,7 +232,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private Optional<Ubicacion> mappearUbicacion(Long id){
         return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
             UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
-            return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+            Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+//            UbicacionINFLUXDTO ubicacionInflux = ubicacionDAOInflux.find(id).get().aModelo(ubicacionMappeada); TODO implementar?
+            mappearConInflux(id, ubicacionMappeada); // y esto no iría?
+            return ubicacionMappeada;
         });
+    }
+
+    private void mappearConInflux(Long id, Ubicacion ubicacionMappeada) {
+        ubicacionMappeada.setTemperatura(this.getTemperatura(id)); // añado temp de influx
     }
 }

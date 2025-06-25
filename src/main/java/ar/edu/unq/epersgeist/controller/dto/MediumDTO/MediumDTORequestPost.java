@@ -12,10 +12,8 @@ public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ub
 
     public Medium aModelo() {
         validarLosCampos();
-        Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
-        ubicacionPlaceholder.setId(this.ubicacionID);
         Coordenada coordenadaActual = new Coordenada(coordenada.getFirst(),coordenada.getLast());
-        return new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder, coordenadaActual);
+        return new Medium(this.nombre, this.manaMax, this.mana, coordenadaActual);
     }
 
     private void validarLosCampos() {

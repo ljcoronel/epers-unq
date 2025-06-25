@@ -60,7 +60,6 @@ public class EspirituServiceImplTest {
 
     private Ubicacion ubicacion;
 
-//TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
     void crearInstancias() {
         this.ubicacion = new Santuario("Bernal", 50,Arrays.asList(
@@ -68,27 +67,27 @@ public class EspirituServiceImplTest {
                 new Coordenada(1, 0),
                 new Coordenada(1, 1),
                 new Coordenada(0, 1),
-                new Coordenada(0, 0)));
+                new Coordenada(0, 0)), 5);
 
-        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5), this.ubicacion);
-        angel2 = new Angel(10,"Angel2",new Coordenada(1,1), this.ubicacion);
-        angel3 = new Angel(10,"Angel3",new Coordenada(1,1), this.ubicacion);
+        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5));
+        angel2 = new Angel(10,"Angel2",new Coordenada(1,1));
+        angel3 = new Angel(10,"Angel3",new Coordenada(1,1));
 
         demonio1 = new Demonio(
                 10,
-                "Pepito",new Coordenada(0.5,0.5), this.ubicacion
+                "Pepito",new Coordenada(0.5,0.5)
         );
         demonio2 = new Demonio(
                 90,
-                "Diavolo",new Coordenada(0.520,0.520), this.ubicacion
+                "Diavolo",new Coordenada(0.520,0.520)
 
         );
         demonio3 = new Demonio(
                 50,
-                "Sebastián",new Coordenada(0.550,0.550), this.ubicacion
+                "Sebastián",new Coordenada(0.550,0.550)
 
         );
-        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(1,1));
+        medium = new Medium("Brujita", 100, 50, new Coordenada(1,1));
 
     }
 
@@ -110,14 +109,14 @@ public class EspirituServiceImplTest {
                 new Coordenada(3, 2),
                 new Coordenada(3, 3),
                 new Coordenada(2, 3),
-                new Coordenada(2, 2)));
+                new Coordenada(2, 2)), 10);
 
         Ubicacion bernal = ubicacion;
         ubicacionService.crear(quilmes);
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Coordenada(1,1));
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, new Coordenada(1,1));
         mediumService.crear(mediumDeBernal);
-        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes",new Coordenada(2.5, 2.5), quilmes);
+        Angel espirituDeQuilmes = new Angel(10, "AngelDeQuilmes",new Coordenada(2.5, 2.5));
         espirituService.crear(espirituDeQuilmes);
         assertThrows(UbicacionDistintaException.class, ()->espirituService.conectar(espirituDeQuilmes.getId(), mediumDeBernal.getId()));
     }
@@ -126,9 +125,9 @@ public class EspirituServiceImplTest {
     void permiteConectarseAlMediunEnLaMismaUbicacion() {
         Ubicacion bernal = ubicacion;
         ubicacionService.crear(bernal);
-        Medium mediumDeBernal = new Medium("Brujita", 100, 50, bernal, new Coordenada(1,1));
+        Medium mediumDeBernal = new Medium("Brujita", 100, 50, new Coordenada(1,1));
         mediumService.crear(mediumDeBernal);
-        Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1), bernal);
+        Angel espirituDeBernal = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1));
         espirituService.crear(espirituDeBernal);
         assertDoesNotThrow(()->espirituService.conectar(espirituDeBernal.getId(), mediumDeBernal.getId()));
 
@@ -137,12 +136,12 @@ public class EspirituServiceImplTest {
     @Test
     void SiUnEspiritusNoEstaLibreDaErrorEspirituLibreException(){
         ubicacionService.crear(this.ubicacion);
-        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(1,1));
-        Medium mediumLibre = new Medium("JonWick", 100, 50, this.ubicacion, new Coordenada(1,1));
+        Medium mediumConEspiritu = new Medium("Brujita", 100, 50, new Coordenada(1,1));
+        Medium mediumLibre = new Medium("JonWick", 100, 50, new Coordenada(1,1));
         mediumService.crear(mediumLibre);
         mediumService.crear(mediumConEspiritu);
 
-        Angel espirituConectado = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1), this.ubicacion);
+        Angel espirituConectado = new Angel(10, "AngelDeQuilmes",new Coordenada(1,1));
         espirituService.crear(espirituConectado);
         espirituService.conectar(espirituConectado.getId(), mediumConEspiritu.getId());
 
@@ -156,7 +155,7 @@ public class EspirituServiceImplTest {
         ubicacionService.crear(this.ubicacion);
 
         int conexionAngel = 30;
-        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1), this.ubicacion);
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1));
         espirituService.crear(angelRafael);
 
         assertThrows(EntidadInexistenteException.class, () -> espirituService.conectar(angelRafael.getId() , -1L));
@@ -167,10 +166,10 @@ public class EspirituServiceImplTest {
     void alConectarConUnEspirituSeFortaleceElNivelDeConexion20delMedium(){
         ubicacionService.crear(this.ubicacion);
         int manaMedium = 50;
-        Medium medium = new Medium("JonWick", 100, manaMedium, this.ubicacion, new Coordenada(1,1));
+        Medium medium = new Medium("JonWick", 100, manaMedium, new Coordenada(1,1));
         mediumService.crear(medium);
         int conexionAngel = 30;
-        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1), this.ubicacion);
+        Espiritu angelRafael = new Angel(conexionAngel, "Rafael",new Coordenada(1,1));
         espirituService.crear(angelRafael);
 
         int conexionBuscada = ((int) Math.round(manaMedium* 0.20) ) + conexionAngel;
@@ -447,7 +446,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 99,
-                "Enrique",new Coordenada(1,1), this.ubicacion
+                "Enrique",new Coordenada(1,1)
 
         );
         espirituService.crear(demonio1);
@@ -473,7 +472,7 @@ public class EspirituServiceImplTest {
         this.ubicacionService.crear(this.ubicacion);
         Demonio demonio4 = new Demonio(
                 2,
-                "Enrique",new Coordenada(1,1), this.ubicacion
+                "Enrique",new Coordenada(1,1)
 
         );
         espirituService.crear(demonio1);
@@ -677,7 +676,7 @@ public class EspirituServiceImplTest {
                 new Coordenada(20, 30),
                 new Coordenada(30, 30),
                 new Coordenada(30, 20),
-                new Coordenada(20, 20)));
+                new Coordenada(20, 20)), 50);
 
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(tailandia);

@@ -11,9 +11,7 @@ public record MediumDTORequestPut(String nombre, int manaMax, int mana) {
     public Medium aModelo(Long id) {
         validarLosCampos();
 
-        Ubicacion ubicacionPlaceholder = new Santuario("Placeholder", 0);
-
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, ubicacionPlaceholder, new Coordenada(1,1));
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, new Coordenada(1,1));
         medium.setId(id);
         return medium;
     }

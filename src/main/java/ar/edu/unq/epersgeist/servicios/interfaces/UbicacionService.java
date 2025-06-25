@@ -6,12 +6,14 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionService  {
-    Ubicacion crear(Ubicacion ubicacion);
+    Ubicacion crear(Ubicacion ubicacion );
+
     Optional<Ubicacion> recuperar(Long ubicacionId);
     List<Ubicacion> recuperarTodos();
     void actualizar(Ubicacion ubicacion);

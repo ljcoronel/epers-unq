@@ -6,6 +6,8 @@ import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
@@ -29,11 +31,13 @@ public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
     private final MediumDAOMONGO mediumDAOMONGO;
     private final UbicacionDAOMONGO ubicacionDAOMONGO;
+    private final UbicacionDAOINFLUX ubicacionDAOINFLUX;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO, UbicacionDAOMONGO ubicacionDAOMONGO) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO, UbicacionDAOMONGO ubicacionDAOMONGO, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.mediumDAOJPA = mediumDAOJPA;
         this.mediumDAOMONGO = mediumDAOMONGO;
         this.ubicacionDAOMONGO = ubicacionDAOMONGO;
+        this.ubicacionDAOINFLUX = ubicacionDAOINFLUX;
     }
 
     @Override
@@ -57,7 +61,20 @@ public class MediumRepositoryImpl implements MediumRepository {
         MediumMONGODTO mediumMONGODTO = this.mediumDAOMONGO.findById(String.valueOf(medium.getId())).get();
 
         UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(medium.getUbicacion().getId()).get();
+
+        mappearConInflux(medium);
+
         return mediumMONGODTO.aModelo(medium, ubicacionMONGODTO);
+    }
+
+    private void mappearConInflux(Medium medium) {
+        // TODO debería hacer esto con DTOs?
+        Ubicacion ubMedium = medium.getUbicacion();
+        double temperatura = ubicacionDAOINFLUX.getTemperatura(ubMedium.getId());
+
+        ubMedium.establecerTemperatura(temperatura); // añado temp de influx
+        medium.getDemonios().forEach(dem -> dem.getUbicacion().establecerTemperatura(temperatura));
+        medium.getAngeles().forEach(ang -> ang.getUbicacion().establecerTemperatura(temperatura));
     }
 
     @Override

@@ -2,14 +2,13 @@ package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import com.influxdb.client.write.Point;
-import com.influxdb.query.FluxRecord;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UbicacionDAOINFLUX {
-    void guardarDatos(Point influxPoint);
+    void cambiarTemperatura(Long id, double temperatura);
 
     Long recuperarIdDeUbicacionMasPeligrosa();
 
@@ -20,4 +19,5 @@ public interface UbicacionDAOINFLUX {
     double getTemperatura(Long id);
 
     boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
+
 }

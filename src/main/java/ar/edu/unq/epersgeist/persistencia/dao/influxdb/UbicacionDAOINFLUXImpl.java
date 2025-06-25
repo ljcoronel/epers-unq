@@ -2,19 +2,16 @@ package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.write.Point;
+import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
@@ -26,8 +23,61 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     @Override
-    public void guardarDatos(Point influxPoint) {
+    public void cambiarTemperatura(Long id, double temperatura) {
+
+        double temperaturaAmbiente = this.getTemperaturaAmbiente(id).orElse(temperatura); // si no hay temp ambiente, la creo
+
+        com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
+                .addTag("ubicacion", String.valueOf(id))
+                .addField("temp", temperatura)
+                .addField("tempAmbiente", temperaturaAmbiente)
+                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
+
+
         influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
+    }
+
+    @Override
+    public double getTemperatura(Long id) {
+        String query = """
+                        from(bucket: "lecturas")
+                          |> range(start: -30s)
+                          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
+                          |> last()
+                          |> keep(columns: ["_value"])
+                        """.formatted(id); // para testear usar -30s en range
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        double temperatura = (double) tables.getFirst()
+                .getRecords()
+                .getFirst()
+                .getRow()
+                .getLast();
+
+        return temperatura;
+    }
+
+    private Optional<Double> getTemperaturaAmbiente(Long id) {
+        String query = """
+                        from(bucket: "lecturas")
+                          |> range(start: -30s)
+                          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "tempAmbiente" and r.ubicacion == "%s")
+                          |> last()
+                          |> keep(columns: ["_value"])
+                        """.formatted(id); // para testear usar -30s en range
+
+        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
+
+        if (tables.isEmpty()) return Optional.empty();
+
+        double tempAmbiente = (double) tables.getFirst()
+                .getRecords()
+                .getFirst()
+                .getRow()
+                .getLast();
+
+        return Optional.of(tempAmbiente);
     }
 
     @Override
@@ -117,25 +167,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .toList();
     }
 
-    @Override
-    public double getTemperatura(Long id) {
-        String query = """
-                        from(bucket: "lecturas")
-                          |> range(start: -10s)
-                          |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
-                          |> keep(columns: ["_value"])
-                        """.formatted(id);
 
-        List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
-
-        double temperatura = (double) tables.getFirst()
-                .getRecords()
-                .getFirst()
-                .getRow()
-                .getLast();
-
-        return temperatura;
-    }
 
     @Override
     public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {

@@ -69,32 +69,32 @@ public class EstadisticaServiceImplTest {
                 new Coordenada(1, 1),
                 new Coordenada(0, 1),
                 new Coordenada(0, 0)
-        ));
+        ), 5);
         this.ubicacion2 = new Santuario("Quilmes",60,List.of(
                 new Coordenada(3, 0),
                 new Coordenada(4, 0),
                 new Coordenada(4, 1),
                 new Coordenada(3, 1),
                 new Coordenada(3, 0)
-        ));
+        ), 10);
         this.ubicacion3 = new Cementerio("Solano",60,List.of(
                 new Coordenada(6, 0),
                 new Coordenada(7, 0),
                 new Coordenada(7, 1),
                 new Coordenada(6, 1),
                 new Coordenada(6, 0)
-        ));
+        ), -5);
 
-        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio1 = new Demonio(10, "Pepito",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio2 = new Demonio(90, "Diavolo",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio3 = new Demonio(50, "Sebastián",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio4 = new Demonio(50, "Jorge",new Coordenada(0.5,0.5), this.ubicacion);
-        demonio5 = new Demonio(50, "Jose",new Coordenada(3.5,0.5), this.ubicacion2);
-        demonio6 = new Demonio(40, "Dracula",new Coordenada(6.5,0.5), this.ubicacion3);
+        angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5));
+        demonio1 = new Demonio(10, "Pepito",new Coordenada(0.5,0.5));
+        demonio2 = new Demonio(90, "Diavolo",new Coordenada(0.5,0.5));
+        demonio3 = new Demonio(50, "Sebastián",new Coordenada(0.5,0.5));
+        demonio4 = new Demonio(50, "Jorge",new Coordenada(0.5,0.5));
+        demonio5 = new Demonio(50, "Jose",new Coordenada(3.5,0.5));
+        demonio6 = new Demonio(40, "Dracula",new Coordenada(6.5,0.5));
 
-        medium = new Medium("Brujita", 100, 50, this.ubicacion, new Coordenada(0.5,0.5));
-        medium2 = new Medium("Pepe", 100, 60, this.ubicacion, new Coordenada(0.5,0.5));
+        medium = new Medium("Brujita", 100, 50, new Coordenada(0.5,0.5));
+        medium2 = new Medium("Pepe", 100, 60, new Coordenada(0.5,0.5));
 
     }
 

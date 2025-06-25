@@ -15,16 +15,20 @@ import lombok.ToString;
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
-        super(nivelDeConexion, nombre, ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre ) {
+        super(nivelDeConexion, nombre);
     }
 
     public Demonio(String nombre, Coordenada coordenada) {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
-        super(nivelDeConexion,nombre, coordenada,ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+        super(nivelDeConexion,nombre, coordenada);
+    }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+        super(nivelDeConexion,nombre, ubicacion);
     }
 
     public void defender(Angel angel,int ataque) {
@@ -56,12 +60,19 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
+        this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
         serInvocadoPorMedium(cementerio, medium);
     }
-
 
     @Override
     public void recibirEfectoDe(Santuario ubicacion) {
         this.reducirNivelDeConexionEn(10);
+    }
+
+    @Override
+    public void establecerUbicacionConTemp(Ubicacion ubicacion)  {
+        if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d);
+        setUbicacion(ubicacion);
+        ubicacion.bajarTemperaturaEn(0.2d);
     }
 }

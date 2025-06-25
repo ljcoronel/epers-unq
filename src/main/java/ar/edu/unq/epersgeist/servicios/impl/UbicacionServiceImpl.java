@@ -8,6 +8,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -16,7 +17,6 @@ import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +38,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getCoordenadas())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
-        return this.ubicacionRepository.guardar(ubicacion);
+
+        Ubicacion ubicacionConId = this.ubicacionRepository.guardar(ubicacion);
+//        this.ubicacionRepository.crearTemperatura(ubicacionConId.getId(), ubicacion.getTemperatura());
+
+        return ubicacionConId;
     }
 
     @Override

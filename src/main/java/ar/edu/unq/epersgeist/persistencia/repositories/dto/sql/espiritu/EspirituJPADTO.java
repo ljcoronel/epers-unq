@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import jakarta.persistence.*;
@@ -96,8 +97,9 @@ public abstract class EspirituJPADTO {
 
     public abstract Espiritu instanciarEspiritu();
 
-    public Espiritu aModelo(Medium medium) {
+    public Espiritu aModelo(Medium medium, Ubicacion ubicacion) {
         Espiritu espiritu = instanciarEspiritu();
+        espiritu.setUbicacion(ubicacion); // TODO revisar si va, es para que tengan el mismo objeto ubicación
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
         espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);

@@ -44,8 +44,9 @@ public class EspirituServiceImpl implements EspirituService {
         Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(espiritu.getCoordenada())
                 .orElseThrow(()-> new EntidadInexistenteException("No se encontró la ubicación del espíritu."));
 
-        espiritu.setUbicacion(ubicacion);
+        espiritu.establecerUbicacionConTemp(ubicacion);
 
+        this.ubicacionRepository.guardar(ubicacion); // actualizo la temperatura
         return this.espirituRepository.guardar(espiritu);
 
     }
