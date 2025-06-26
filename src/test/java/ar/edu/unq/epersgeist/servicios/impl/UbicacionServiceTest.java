@@ -1408,7 +1408,7 @@ public class UbicacionServiceTest {
     @Test
     public void cuandoNoHayEventosDePortalesOcurridosDaListaVacia(){
 
-        List<EventoPortalDTO> eventosPortal = ubicacionService.EventosDePortalesOcurridos();
+        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
         assertTrue(eventosPortal.isEmpty());
     }
 
@@ -1434,7 +1434,7 @@ public class UbicacionServiceTest {
 //                .addField("temp", 29.0)
 //                .time(fechaFija(2, 0, 2).toEpochMilli(), WritePrecision.MS));
 //
-//        List<EventoPortalDTO> eventosPortal = ubicacionService.EventosDePortalesOcurridos();
+//        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
 //
 //        assertEquals(1,eventosPortal.size());
 //
@@ -1483,7 +1483,7 @@ public class UbicacionServiceTest {
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 //
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.EventosDePortalesOcurridos();
+//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.eventosDePortalesOcurridos();
 //
 //        assertEquals(1,ubicacionesRecuperadas.size());
 //        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());

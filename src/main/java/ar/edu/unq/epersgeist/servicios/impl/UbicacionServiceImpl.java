@@ -153,7 +153,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         }
         return optionalUbicacion.get();
     }
-
+//TODO hacer que ambos metodos retornen Optional<Ubicacion>
     @Override
     public Ubicacion ubicacionConMasTransitoDeEspiritus(){
 
@@ -167,7 +167,7 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public List<EventoPortalDTO> EventosDePortalesOcurridos(){
+    public List<EventoPortalDTO> eventosDePortalesOcurridos(){
 
         return this.ubicacionRepository.eventosDePortalesOcurridos();
 
