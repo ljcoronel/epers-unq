@@ -144,32 +144,38 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
-        Optional<Medium> optionalMedium =  mediumRepository.recuperar(mediumId);
+        Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
-        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("El espíritu a invocar no existe");
+        if (optionalEspiritu.isEmpty())
+            throw new EntidadInexistenteException("El espíritu a invocar no existe");
 
         Medium medium = optionalMedium.get();
 
-        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50)) throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
+        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50))
+            throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
 
         Espiritu espiritu = optionalEspiritu.get();
+        Ubicacion ubicacionAntesDeInvocar = espiritu.getUbicacion();
         Espiritu espirituInvocado = medium.invocar(espiritu);
 
         mediumRepository.guardar(medium);
         espirituRepository.guardar(espirituInvocado);
+
+        ubicacionRepository.guardar(medium.getUbicacion()); // guardo ubicación que podría estar más fría si lo que invoca es un demonio
+        ubicacionRepository.guardar(ubicacionAntesDeInvocar); // guardo ubicación antes de invocar para revertir su temperatura si fuera un demonio
+
         return espirituInvocado;
     }
 
 
 
-    private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino,  Coordenada coordenada) {
+    private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino, Coordenada coordenada) {
 
         boolean estanConectadas = opUbicacionDestino.isPresent() &&
-                ubicacionRepository.
-                estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
+                ubicacionRepository.estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
 
         boolean estaLejos = mediumRepository.
                 estaEntreDistancia(medium.getId(),
@@ -178,7 +184,7 @@ public class MediumServiceImpl implements MediumService {
                         30 * 1000);
 
         if (estaLejos || !estanConectadas) {
-            throw new UbicacionLejanaException("La ubicacion a moverser esta lejos o no esta conectada");
+            throw new UbicacionLejanaException("La ubicación a moverse está lejos o no está conectada.");
         };
     }
 
@@ -201,9 +207,13 @@ public class MediumServiceImpl implements MediumService {
         ArrayList<Demonio> demonios = new ArrayList<>(medium.getDemonios());
         // -------------------------------------
 
+        Ubicacion ubicacionAnterior = medium.getUbicacion();
+
         medium.mover(opUbicacionDestino);
 
         mediumRepository.guardar(medium);
+        ubicacionRepository.guardar(opUbicacionDestino.get());
+        ubicacionRepository.guardar(ubicacionAnterior);
 
         // -------------------------------------
         angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});

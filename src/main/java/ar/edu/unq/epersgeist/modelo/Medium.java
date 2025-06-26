@@ -9,6 +9,7 @@ import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import lombok.*;
 import org.springframework.data.geo.Point;
 
@@ -36,6 +37,16 @@ public class Medium implements Serializable {
         this.angeles = new ArrayList<>();
         this.demonios = new ArrayList<>();
         this.coordenada = coordenada;
+    }
+
+    public Medium(String nombre, Integer manaMax, Integer mana, Ubicacion ubicacion, Coordenada coordenada) {
+        this.nombre = nombre;
+        this.manaMax = manaMax;
+        this.mana = mana;
+        this.angeles = new ArrayList<>();
+        this.demonios = new ArrayList<>();
+        this.coordenada = coordenada;
+        this.ubicacion = ubicacion;
     }
 
     public void realizarConexion(Espiritu espiritu){

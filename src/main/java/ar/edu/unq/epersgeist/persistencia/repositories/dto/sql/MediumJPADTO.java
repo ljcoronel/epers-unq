@@ -4,6 +4,7 @@ import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
@@ -86,27 +87,27 @@ public class MediumJPADTO {
 
     public Medium aModelo(Point coordenada) {
         Coordenada nuevaCoordenada = new Coordenada(coordenada.getX(), coordenada.getY());
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, nuevaCoordenada);
+        Ubicacion ubicacionParaTodos = this.ubicacion.aModelo();
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, ubicacionParaTodos, nuevaCoordenada);
         medium.setId(this.id);
-        medium.setUbicacion(this.ubicacion.aModelo());
         medium.setAngeles(this.angeles.stream()
-                .map(dto -> (Angel) dto.aModelo(medium))
+                .map(dto -> (Angel) dto.aModelo(medium, ubicacionParaTodos))
                 .collect(Collectors.toList()).reversed());
         medium.setDemonios(this.demonios.stream()
-                .map(dto -> (Demonio) dto.aModelo(medium))
+                .map(dto -> (Demonio) dto.aModelo(medium, ubicacionParaTodos))
                 .collect(Collectors.toList()));
         return medium;
     }
 
     public Medium aModelo() {
-        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, null);
+        Ubicacion ubicacionParaTodos = this.ubicacion.aModelo();
+        Medium medium = new Medium(this.nombre, this.manaMax, this.mana, ubicacionParaTodos, null);
         medium.setId(this.id);
-        medium.setUbicacion(this.ubicacion.aModelo());
         medium.setAngeles(this.angeles.stream()
-                .map(dto -> (Angel) dto.aModelo(medium))
+                .map(dto -> (Angel) dto.aModelo(medium, ubicacionParaTodos))
                 .collect(Collectors.toList()));
         medium.setDemonios(this.demonios.stream()
-                .map(dto -> (Demonio) dto.aModelo(medium))
+                .map(dto -> (Demonio) dto.aModelo(medium, ubicacionParaTodos))
                 .collect(Collectors.toList()));
         return medium;
     }

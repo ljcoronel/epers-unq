@@ -15,13 +15,21 @@ import org.springframework.data.geo.Point;
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
-    public Demonio(Integer nivelDeConexion, String nombre ) {//se usa en el aModelo del JPA
+    public Demonio(Integer nivelDeConexion, String nombre ) {
         super(nivelDeConexion, nombre);
     }
 
     public Demonio(String nombre, Coordenada coordenada) {
         super(nombre, coordenada);
     }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+        super(nivelDeConexion,nombre, coordenada);
+    }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+        super(nivelDeConexion,nombre, ubicacion);
+        }
 
     public Demonio(Integer nivelDeConexion, String nombre, Point coordenada ) {
         super(nivelDeConexion,nombre, coordenada);
@@ -59,9 +67,15 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         serInvocadoPorMedium(cementerio, medium);
     }
 
-
     @Override
     public void recibirEfectoDe(Santuario ubicacion) {
         this.reducirNivelDeConexionEn(10);
+    }
+
+    @Override
+    public void establecerUbicacionConTemp(Ubicacion ubicacion)  {
+        if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
+        setUbicacion(ubicacion);
+        ubicacion.bajarTemperaturaEn(0.2d);
     }
 }

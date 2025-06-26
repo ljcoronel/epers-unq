@@ -21,14 +21,16 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
     private String nombre;
     private int energia;
     private Poligono territorio;
+    private double temperatura;
 
-    public Ubicacion(String nombre, int energia, List<Coordenada> coordenadas) {
+    public Ubicacion(String nombre, int energia, List<Coordenada> coordenadas, double temperatura) {
         this.nombre = nombre;
         this.setEnergia(energia);
         this.territorio = new Poligono(coordenadas);
+        establecerTemperatura(temperatura);
     }
 
-    public Ubicacion(String nombre, int energia) {//se quitaria?
+    public Ubicacion(String nombre, int energia) {
         this.nombre = nombre;
         this.setEnergia(energia);
     }
@@ -64,4 +66,21 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
 
     public abstract void recuperarManaParaMedium(Medium medium);
 
+    public void establecerTemperatura(double grados) {
+        if (grados < -20) {
+            this.setTemperatura(-20);
+        } else if (grados > 50) {
+            this.setTemperatura(50);
+        } else {
+            this.setTemperatura(grados);
+        }
+    }
+
+    public void bajarTemperaturaEn(double grados) {
+        this.establecerTemperatura(this.getTemperatura() - grados);
+    }
+
+    public void subirTemperaturaEn(double grados) {
+        this.establecerTemperatura(this.getTemperatura() + grados);
+    }
 }

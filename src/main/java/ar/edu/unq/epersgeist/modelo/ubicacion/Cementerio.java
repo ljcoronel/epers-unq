@@ -15,9 +15,9 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Cementerio extends Ubicacion {
 
-    public Cementerio(String nombre, int energia,List<Coordenada> territorio) { super(nombre, energia,territorio); }
+    public Cementerio(String nombre, int energia,List<Coordenada> territorio, double temperatura) { super(nombre, energia, territorio, temperatura); }
 
-    public Cementerio(String nombre, int energia) {//se quitaria?
+    public Cementerio(String nombre, int energia) {
         super(nombre, energia);
     }
 

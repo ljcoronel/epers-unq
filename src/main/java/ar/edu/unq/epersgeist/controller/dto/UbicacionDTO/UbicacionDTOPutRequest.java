@@ -11,6 +11,7 @@ public record UbicacionDTOPutRequest (String nombre, int energia){
 
         Ubicacion ubicacion = new Cementerio(this.nombre, this.energia);
         // un placeholder, la subclase concreta es irrelevante porque no se puede modificar tipo
+        // TODO modificar temp?
         ubicacion.setId(id);
 
         return ubicacion;

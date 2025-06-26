@@ -7,6 +7,8 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
@@ -36,7 +38,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getCoordenadas())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
-        return this.ubicacionRepository.guardar(ubicacion);
+
+        Ubicacion ubicacionConId = this.ubicacionRepository.guardar(ubicacion);
+//        this.ubicacionRepository.crearTemperatura(ubicacionConId.getId(), ubicacion.getTemperatura());
+
+        return ubicacionConId;
     }
 
     @Override
@@ -138,4 +144,32 @@ public class UbicacionServiceImpl implements UbicacionService {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
 
+    @Override
+    public Ubicacion ubicacionMasPeligrosa(){
+        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionMasFria();
+
+        if (optionalUbicacion.isEmpty()){
+            throw new EntidadInexistenteException("La ubicación destino no existe.");
+        }
+        return optionalUbicacion.get();
+    }
+
+    @Override
+    public Ubicacion ubicacionConMasTransitoDeEspiritus(){
+
+        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas();
+
+        if (optionalUbicacion.isEmpty()){
+            throw new EntidadInexistenteException("No existe ubicación con más tránsito.");
+        }
+        return optionalUbicacion.get();
+
+    }
+
+    @Override
+    public List<EventoPortalDTO> EventosDePortalesOcurridos(){
+
+        return this.ubicacionRepository.eventosDePortalesOcurridos();
+
+    }
 }

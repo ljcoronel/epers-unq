@@ -15,11 +15,11 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Santuario extends Ubicacion {
 
-    public Santuario(String nombre, int energia,List<Coordenada> territorio) {
-        super(nombre, energia,territorio);
+    public Santuario(String nombre, int energia,List<Coordenada> territorio, double temperatura) {
+        super(nombre, energia, territorio, temperatura);
     }
 
-    public Santuario(String nombre, int energia) {//se quitaria?
+    public Santuario(String nombre, int energia) {
         super(nombre, energia);
     }
 

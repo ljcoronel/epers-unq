@@ -65,7 +65,6 @@ public class EspirituServiceImplTest {
     private PortalDemonios portalDemonios2;
     private PortalDemonios portalDemonios3;
 
-    //TODO borrar ubicaciones de los constructores de espiritus y mediums cuando se haga el mover con la verificacion del lugar
     @BeforeEach
     void crearInstancias() {
         this.ubicacion = new Santuario("Bernal", 50,Arrays.asList(
@@ -73,7 +72,7 @@ public class EspirituServiceImplTest {
                 new Coordenada(1, 0),
                 new Coordenada(1, 1),
                 new Coordenada(0, 1),
-                new Coordenada(0, 0)));
+                new Coordenada(0, 0)), 5);
 
         angel1 = new Angel(10,"Angel1",new Coordenada(0.5,0.5));
         angel2 = new Angel(10,"Angel2",new Coordenada(1,1));
@@ -119,7 +118,7 @@ public class EspirituServiceImplTest {
                 new Coordenada(3, 2),
                 new Coordenada(3, 3),
                 new Coordenada(2, 3),
-                new Coordenada(2, 2)));
+                new Coordenada(2, 2)), 10);
 
         Ubicacion bernal = ubicacion;
         ubicacionService.crear(quilmes);
@@ -686,7 +685,7 @@ public class EspirituServiceImplTest {
                 new Coordenada(20, 30),
                 new Coordenada(30, 30),
                 new Coordenada(30, 20),
-                new Coordenada(20, 20)));
+                new Coordenada(20, 20)), 50);
 
         ubicacionService.crear(ubicacion);
         ubicacionService.crear(tailandia);

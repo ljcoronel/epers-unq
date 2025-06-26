@@ -73,20 +73,20 @@ public class MediumServiceImplTest {
                 new Coordenada(1, 1),
                 new Coordenada(0, 1),
                 new Coordenada(0, 0)
-        ));
+        ),5);
         this.santuario2 = new Santuario("Villa Devoto", 90,List.of(
                 new Coordenada(3, 0),
                 new Coordenada(4, 0),
                 new Coordenada(4, 1),
                 new Coordenada(3, 1),
                 new Coordenada(3, 0)
-        ));
+        ), 5);
         this.santuario3 = new Santuario("Tailandia", 50,List.of(
                 new Coordenada(20, 20),
                 new Coordenada(20, 30),
                 new Coordenada(30, 30),
                 new Coordenada(30, 20),
-                new Coordenada(20, 20)));
+                new Coordenada(20, 20)), 50);
 
         this.ubicacion2 = new Santuario("Quilmes", 50,List.of(
                 new Coordenada(0, 3),
@@ -94,28 +94,28 @@ public class MediumServiceImplTest {
                 new Coordenada(1, 4),
                 new Coordenada(0, 4),
                 new Coordenada(0, 3)
-        ));
+        ), 10);
         this.cementerio = new Cementerio("Tenebroso", 50,List.of(
                 new Coordenada(3, 3),
                 new Coordenada(4, 3),
                 new Coordenada(4, 4),
                 new Coordenada(3, 4),
                 new Coordenada(3, 3)
-        ));
+        ), -10);
         this.cementerio2 = new Cementerio("oscuro", 90,List.of(
                 new Coordenada(6, 3),
                 new Coordenada(7, 3),
                 new Coordenada(7, 4),
                 new Coordenada(6, 4),
                 new Coordenada(6, 3)
-        ));
+        ), -5);
         this.ubicacionNoConectada = new Santuario("MuyMuyLejano", 50,List.of(
                 new Coordenada(9, 0),
                 new Coordenada(10, 0),
                 new Coordenada(10, 1),
                 new Coordenada(9, 1),
                 new Coordenada(9, 0)
-        ));
+        ), 30);
 
 
         ubicacionService.crear(santuario);
@@ -501,7 +501,7 @@ public class MediumServiceImplTest {
                 new Coordenada(13, 1),
                 new Coordenada(12, 1),
                 new Coordenada(12, 0)
-        ));
+        ), 10);
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(cementerio.getId(),iglesia.getId());
 
@@ -528,7 +528,7 @@ public class MediumServiceImplTest {
                 new Coordenada(41, 41),
                 new Coordenada(40, 41),
                 new Coordenada(40, 40)
-        ));
+        ), 10);
         ubicacionService.crear(wilde);
         Ubicacion sarandi = new Cementerio("Sarandi",50,List.of(
                 new Coordenada(5, 5),
@@ -536,7 +536,7 @@ public class MediumServiceImplTest {
                 new Coordenada(6, 6),
                 new Coordenada(5, 6),
                 new Coordenada(5, 5)
-        ));
+        ), -5);
         ubicacionService.crear(sarandi);
 
         ubicacionService.conectar(cementerio.getId(), wilde.getId());
@@ -569,7 +569,7 @@ public class MediumServiceImplTest {
                 new Coordenada(41, 41),
                 new Coordenada(40, 41),
                 new Coordenada(40, 40)
-        ));
+        ), 10);
         ubicacionService.crear(iglesia);
         Ubicacion vaticano = new Santuario("vaticano",50,List.of(
                 new Coordenada(0, 5),
@@ -577,7 +577,7 @@ public class MediumServiceImplTest {
                 new Coordenada(1, 6),
                 new Coordenada(0, 6),
                 new Coordenada(0, 5)
-        ));
+        ), 40);
         ubicacionService.crear(vaticano);
 
         ubicacionService.conectar(santuario.getId(),iglesia.getId());
@@ -612,7 +612,7 @@ public class MediumServiceImplTest {
                 new Coordenada(13, 1),
                 new Coordenada(12, 1),
                 new Coordenada(12, 0)
-        ));
+        ), 25);
         ubicacionService.crear(cementerio);
         ubicacionService.conectar(cementerio.getId(), this.cementerio.getId());
 
@@ -639,7 +639,7 @@ public class MediumServiceImplTest {
                 new Coordenada(13, 1),
                 new Coordenada(12, 1),
                 new Coordenada(12, 0)
-        ));
+        ), 10);
         ubicacionService.crear(iglesia);
         ubicacionService.conectar(iglesia.getId(), santuario.getId());
 
@@ -665,7 +665,7 @@ public class MediumServiceImplTest {
                 new Coordenada(13, 1),
                 new Coordenada(12, 1),
                 new Coordenada(12, 0)
-        ));
+        ), 15);
 
         ubicacionService.crear(sanMiguel);
         ubicacionService.conectar(sanMiguel.getId(),cementerio.getId());
@@ -700,7 +700,7 @@ public class MediumServiceImplTest {
                 new Coordenada(40, 30.1),
                 new Coordenada(40, 40),
                 new Coordenada(30.1, 40),
-                new Coordenada(30.1, 30.1)));
+                new Coordenada(30.1, 30.1)), 20);
 
         medium.setCoordenada(new Coordenada(30.11, 30.11));
         demonioDebil2.setCoordenada(new Coordenada(29.99, 29.99));
@@ -730,7 +730,7 @@ public class MediumServiceImplTest {
                 new Coordenada(40, 30.1),
                 new Coordenada(40, 40),
                 new Coordenada(30.1, 40),
-                new Coordenada(30.1, 30.1)));
+                new Coordenada(30.1, 30.1)), -15);
 
         medium3.setCoordenada(new Coordenada(30.11, 30.11));
         angelDebil.setCoordenada(new Coordenada(29.99, 29.99));
@@ -760,7 +760,7 @@ public class MediumServiceImplTest {
                 new Coordenada(40, 30.1),
                 new Coordenada(40, 40),
                 new Coordenada(30.1, 40),
-                new Coordenada(30.1, 30.1)));
+                new Coordenada(30.1, 30.1)), 15);
 
         medium.setCoordenada(new Coordenada(30.11, 30.11));
         angelDebil2.setCoordenada(new Coordenada(29.99, 29.99));
@@ -789,7 +789,7 @@ public class MediumServiceImplTest {
                 new Coordenada(40, 30.1),
                 new Coordenada(40, 40),
                 new Coordenada(30.1, 40),
-                new Coordenada(30.1, 30.1)));
+                new Coordenada(30.1, 30.1)), -15);
 
         demonioDebil2.setCoordenada(new Coordenada(30.11, 30.11));
         medium3.setCoordenada(new Coordenada(30.2, 30.2));
@@ -965,7 +965,7 @@ public class MediumServiceImplTest {
                 new Coordenada(-80, -90),
                 new Coordenada(-80, -80),
                 new Coordenada(-90, -80),
-                new Coordenada(-90, -90)));
+                new Coordenada(-90, -90)), -20);
 
         ubicacionService.crear(ubicacionLejana);
         ubicacionService.conectar(medium.getUbicacion().getId(), ubicacionLejana.getId()); // la Ubicacion NoConectada esta muylejos

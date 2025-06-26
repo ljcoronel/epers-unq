@@ -4,8 +4,11 @@ import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituJPADTO;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituMONGODTO;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
+import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.EspirituDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.EspirituDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
@@ -32,11 +35,13 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     private final EspirituDAOJPA espirituDAOJPA;
     private final EspirituDAOMONGO espirituDAOMongo;
     private final UbicacionDAOMONGO ubicacionDAOMONGO;
+    private final UbicacionDAOINFLUX ubicacionDAOINFLUX;
 
-    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAOMONGO espirituDAOMongo, UbicacionDAOMONGO ubicacionDAOMONGO) {
+    public EspirituRepositoryImpl(EspirituDAOJPA espirituDAOJPA, EspirituDAOMONGO espirituDAOMongo, UbicacionDAOMONGO ubicacionDAOMONGO, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.espirituDAOMongo = espirituDAOMongo;
         this.espirituDAOJPA = espirituDAOJPA;
         this.ubicacionDAOMONGO = ubicacionDAOMONGO;
+        this.ubicacionDAOINFLUX = ubicacionDAOINFLUX;
     }
 
     @Override
@@ -68,6 +73,7 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     public void eliminar(Long id) {
         espirituDAOJPA.deleteById(id);
         this.espirituDAOMongo.deleteById(id);
+        // TODO devolver temperatura a la normalidad
     }
 
     @Override
@@ -96,6 +102,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
             mappearEspirituDominante(espiritu.getEspirituDominante());
             UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
+
+            mappearConInflux(espiritu);
+
             return (Demonio) espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
         };
     }
@@ -158,7 +167,20 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
         mappearEspirituDominante(espiritu.getEspirituDominante());
         UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
+
+        mappearConInflux(espiritu);
+
         return espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
+    }
+
+    private void mappearConInflux(Espiritu espiritu) {
+        // TODO debería hacer esto con DTOs?
+        Ubicacion ubEspiritu = espiritu.getUbicacion();
+        ubEspiritu.establecerTemperatura(ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId()));// añado temp de influx
+        if (espiritu.getEspirituDominante() == null) return;
+
+        Ubicacion ubEspirituDom = espiritu.getEspirituDominante().getUbicacion();
+        ubEspirituDom.establecerTemperatura(ubicacionDAOINFLUX.getTemperatura(ubEspirituDom.getId()));// añado temp de influx
     }
 
     private void mappearEspirituDominante(Espiritu espirituDominante){
