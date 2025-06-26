@@ -70,7 +70,7 @@ public abstract class Ubicacion implements UbicacionesRecibidoras {
         if (grados < -20) {
             this.setTemperatura(-20);
         } else if (grados > 50) {
-            this.setTemperatura(50);
+            this.setTemperatura(50); // TODO testear esto con los otros cosos
         } else {
             this.setTemperatura(grados);
         }

@@ -46,5 +46,5 @@ public interface UbicacionRepository {
     double getTemperatura(Long id);
     boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp);
 
-    boolean esTemperaturaMenorOIgualA(Double latitud, Double longitud, int delta);
+    void modificarTemperatura(Long id, double temperatura);
 }

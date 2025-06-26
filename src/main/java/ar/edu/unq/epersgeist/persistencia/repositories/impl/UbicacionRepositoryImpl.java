@@ -221,7 +221,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
-        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, -5);
+        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, deltaTemp);
+    }
+
+    @Override
+    public synchronized void modificarTemperatura(Long id, double temperatura) {
+        // este method lee la temperatura y la modifica, de esta manera no hay problemas de concurrencia (ya que es synchronized)
+        double tempExistente = ubicacionDAOInflux.getTemperatura(id);
+        ubicacionDAOInflux.cambiarTemperatura(id, tempExistente + temperatura);
     }
 
     private Optional<Ubicacion> mappearUbicacionConDTO(Long id){

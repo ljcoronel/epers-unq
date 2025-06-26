@@ -105,7 +105,6 @@ public class EspirituServiceImpl implements EspirituService {
 
             mediumRepository.guardar(medium);
 
-
             return medium;
 
     }
@@ -142,10 +141,10 @@ public class EspirituServiceImpl implements EspirituService {
 
         Point punto = portal.getCoordenada();
 
-        ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
+        Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
                 () -> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
 
-        verificarTemperaturaBaja(punto);
+        verificarTemperaturaBaja(ubicacion.getId());
 
         Demonio demonioHost = this.espirituRepository
                         .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
@@ -153,30 +152,38 @@ public class EspirituServiceImpl implements EspirituService {
         // TODO tal vez tomar un radio en vez de una ubicación entera?
         portal.setDemonioHost(demonioHost);
 
-        new Thread(() -> activarPortal(demonioHost, portal)).start();
+        new Thread(() -> activarPortal(demonioHost, portal, ubicacion)).start();
 
         return portal;
     }
 
-    private void iniciarPortal(Espiritu demonioHost, PortalDemonios portal) {
-        portal.abrirPortal();
+    private void iniciarPortal(Espiritu demonioHost, PortalDemonios portal, Ubicacion ubicacion) {
+        portal.abrir();
         espirituRepository.guardar(demonioHost); // su nivel de conex pasa a 0
+        ubicacionRepository.modificarTemperatura(ubicacion.getId(), -5); // baja su temp en 5°C (forzosamente y respeta orden de llegada)
     }
 
-    private void activarPortal(Espiritu demonioHost, PortalDemonios portal) {
-        iniciarPortal(demonioHost, portal);
+    private void activarPortal(Espiritu demonioHost, PortalDemonios portal, Ubicacion ubicacion) {
+        iniciarPortal(demonioHost, portal, ubicacion);
         while(portal.sigueAbierto()) {
             try {
-                Demonio minion = (Demonio) this.crear(portal.obtenerSiguienteMinion());
+                Demonio minion = this.crearMinion(portal.obtenerSiguienteMinion());
                 portal.nombrarMinion(minion);
-                espirituRepository.guardar(minion);
+                espirituRepository.guardar(minion); // actualizo el nombre
             } catch (InterruptedException e) {throw new RuntimeException(e);}
-                // crea al minion
         }
+        ubicacionRepository.modificarTemperatura(ubicacion.getId(), +5); // devuelve la temp al estado original
     }
 
-    private void verificarTemperaturaBaja(Point punto) {
-        if(!ubicacionRepository.esTemperaturaMenorOIgualA(punto.getX(), punto.getY(), -5) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
+    private Demonio crearMinion(Demonio minion) {
+        this.ubicacionRepository.modificarTemperatura(minion.getUbicacion().getId(), -0.2); // para solucionar problemas de concurrencia, se hace directo a la db
+        Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(minion.getCoordenada()).get();
+        minion.setUbicacion(ubicacion); // seteo sin afectar la temp
+        return (Demonio) this.espirituRepository.guardar(minion);
+    }
+
+    private void verificarTemperaturaBaja(Long ubicacionId) {
+        if(!ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionId, -2) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
     }
 
 }

@@ -33,7 +33,6 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .addField("tempAmbiente", temperaturaAmbiente)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-
         influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
     }
 
@@ -170,7 +169,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
 
     @Override
-    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
 
 //        String query = """
 //                        from(bucket: "lecturas")
@@ -181,13 +180,17 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 //                        |> keep(columns: ["esDelTempMenorOIgual"])
 //                """.formatted(id, tempAmbiente, deltaTemp);
 
+        int dtmp = (int) deltaTemp; // TODO CAMBIAR (hay que tirar el bucket)
+
         String query = """
                         from(bucket: "lecturas")
-                        |> range(start: -10s)
+                        |> range(start: -30d)
                         |> filter(fn: (r) => r._measurement == "temperaturas" and (r._field == "temp" or r._field == "tempAmbiente") and r.ubicacion == "%s")
+                        |> last()
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                        |> map(fn: (r) => ({temp: r.temp, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
-                """.formatted(id, deltaTemp); // TODO no puedo sacar ese temp del map o revienta
+                        |> map(fn: (r) => ({temp: r.temp - r.tempAmbiente, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
+                """.formatted(id, dtmp); // TODO no puedo sacar ese temp del map o revienta
+        // usar -10s para tests
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 

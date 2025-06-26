@@ -195,5 +195,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     }
 
     public abstract void establecerUbicacionConTemp(Ubicacion ubicacion);
+    // TODO hacer el set igual, creo
+    // maneja la temp, usar setUbicacion si no quieren tocar la temperatura
 
 }

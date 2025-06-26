@@ -100,11 +100,10 @@ public abstract class EspirituJPADTO {
 
     public Espiritu aModelo(Medium medium, Ubicacion ubicacion) {
         Espiritu espiritu = instanciarEspiritu();
-        espiritu.setUbicacion(ubicacion); // TODO revisar si va, es para que tengan el mismo objeto ubicación
+        espiritu.setUbicacion(ubicacion);
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
         espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);
-        espiritu.setUbicacion(ubicacion.aModelo());
         return espiritu;
     };
 

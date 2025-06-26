@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,11 +29,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     }
 
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
-        super(nivelDeConexion,nombre, ubicacion);
-        }
-
-    public Demonio(Integer nivelDeConexion, String nombre, Point coordenada ) {
-        super(nivelDeConexion,nombre, coordenada);
+        super(nivelDeConexion, nombre, ubicacion);
     }
 
     public void defender(Angel angel,int ataque) {

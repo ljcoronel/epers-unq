@@ -37,6 +37,6 @@ public interface EspirituRepository {
     boolean referencia(Long idDelMedium);
 
     boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms);
-    void crearSnapshot(Snapshot snapshot);
 
+    void crearSnapshot(Snapshot snapshot);
 }
