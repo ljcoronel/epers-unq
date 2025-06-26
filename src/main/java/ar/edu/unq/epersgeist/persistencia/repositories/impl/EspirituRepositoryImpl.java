@@ -101,6 +101,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
             mappearEspirituDominante(espiritu.getEspirituDominante());
             UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
+
+            mappearConInflux(espiritu);
+
             return (Demonio) espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
         };
     }

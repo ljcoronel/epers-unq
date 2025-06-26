@@ -9,12 +9,12 @@ import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
@@ -80,7 +80,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
 
-        return mappearUbicacion(id);
+        return mappearUbicacionConDTO(id);
     }
 
     @Override
@@ -106,10 +106,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<Ubicacion> recuperarTodos() {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream()
-                .map(ubicacionJPA -> {
-                    UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionJPA.getId()).get();
-                    return ubicacionMongo.aModelo(ubicacionJPA.aModelo());
-                })
+                .map(this::mappearUbicacionConDTO)
                 .sorted(Comparator.comparing(Ubicacion::getId))
                 .toList());
     }
@@ -190,16 +187,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public Optional<Ubicacion> ubicacionMasFria(){
         Long ubicacionId = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasPeligrosa();
-        return mappearUbicacion(ubicacionId);
+        return mappearUbicacionConDTO(ubicacionId);
     }
 
     @Override
     public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(){
 
-        Optional<Ubicacion> optionalUbicacion = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
-                .map( opId -> mappearUbicacion(opId).get());
-
-        return optionalUbicacion;
+        return this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
+                .map( opId -> mappearUbicacionConDTO(opId).get());
     }
 
     @Override
@@ -207,7 +202,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         List<EventoPortalDTO> eventosDePortales = this.ubicacionDAOInflux.recuperarEventosDePortales();
 
         return eventosDePortales.stream()
-                .map(evento -> mappearUbicacion(evento.getUbicacionId())
+                .map(evento -> mappearUbicacionConDTO(evento.getUbicacionId())
                         .map(ubicacion -> new EventoPortalDTO(ubicacion, evento.getTiempo(), evento.getIntensidad())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -229,14 +224,18 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, -5);
     }
 
-    private Optional<Ubicacion> mappearUbicacion(Long id){
-        return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
-            UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
-            Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+    private Optional<Ubicacion> mappearUbicacionConDTO(Long id){
+        return ubicacionDaoJpa.findById(id).map(this::mappearUbicacionConDTO);
+    }
+
+    @NotNull
+    private Ubicacion mappearUbicacionConDTO(UbicacionJPADTO ubicacionJPADTO) {
+        long id = ubicacionJPADTO.getId();
+        UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
+        Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
 //            UbicacionINFLUXDTO ubicacionInflux = ubicacionDAOInflux.find(id).get().aModelo(ubicacionMappeada); TODO implementar?
-            mappearConInflux(id, ubicacionMappeada); // y esto no iría?
-            return ubicacionMappeada;
-        });
+        mappearConInflux(id, ubicacionMappeada); // y esto no iría?
+        return ubicacionMappeada;
     }
 
     private void mappearConInflux(Long id, Ubicacion ubicacionMappeada) {

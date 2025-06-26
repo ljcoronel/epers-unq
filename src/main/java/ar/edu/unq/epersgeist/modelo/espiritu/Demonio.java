@@ -60,7 +60,6 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
     @Override
     public void invocadoACementerioPorMedium(Cementerio cementerio, Medium medium) {
-        this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
         serInvocadoPorMedium(cementerio, medium);
     }
 
@@ -71,7 +70,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
     @Override
     public void establecerUbicacionConTemp(Ubicacion ubicacion)  {
-        if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d);
+        if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
         setUbicacion(ubicacion);
         ubicacion.bajarTemperaturaEn(0.2d);
     }

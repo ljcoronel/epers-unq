@@ -41,7 +41,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public double getTemperatura(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -30s)
+                          |> range(start: -30d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
@@ -61,7 +61,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     private Optional<Double> getTemperaturaAmbiente(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -30s)
+                          |> range(start: -30d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "tempAmbiente" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])

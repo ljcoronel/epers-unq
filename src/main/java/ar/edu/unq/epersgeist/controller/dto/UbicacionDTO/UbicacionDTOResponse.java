@@ -14,7 +14,7 @@ public record UbicacionDTOResponse(TipoUbicacion tipoUbicacion, Long id, String 
                 ubicacion.getNombre(),
                 ubicacion.getEnergia(),
                 ubicacion.getCoordenadas().stream().map(point -> List.of(point.getX(),point.getY())).toList(),
-                ubicacion.getTemperatura()
+                Math.round(ubicacion.getTemperatura() * 100.0) / 100.0
         );
     }
 

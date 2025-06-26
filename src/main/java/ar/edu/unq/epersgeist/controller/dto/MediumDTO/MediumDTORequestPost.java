@@ -8,7 +8,7 @@ import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 
 import java.util.List;
 
-public record MediumDTORequestPost(String nombre, int manaMax, int mana, Long ubicacionID, List<Double> coordenada) {
+public record MediumDTORequestPost(String nombre, int manaMax, int mana, List<Double> coordenada) {
 
     public Medium aModelo() {
         validarLosCampos();
