@@ -87,7 +87,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -10s)
+                          |> range(start: -30d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -162,7 +162,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .flatMap(table -> table.getRecords().stream())
                 .map(record -> new EventoPortalDTO(
                         Long.valueOf((String) record.getValueByKey("ubicacion")),
-                        ((Instant) record.getTime()),
+                        (record.getTime()),
                         (Double) record.getValueByKey("intensidad")
                 ))
                 .toList();
@@ -182,7 +182,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 //                        |> keep(columns: ["esDelTempMenorOIgual"])
 //                """.formatted(id, tempAmbiente, deltaTemp);
 
-        int dtmp = (int) deltaTemp; // TODO CAMBIAR (hay que tirar el bucket)
+        int dtmp = (int) deltaTemp;
 
         String query = """
                         from(bucket: "lecturas")
@@ -192,7 +192,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
                         |> map(fn: (r) => ({temp: r.temp - r.tempAmbiente, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
                 """.formatted(id, dtmp); // TODO no puedo sacar ese temp del map o revienta
-        // usar -10s para tests
+        // usar -10s o -30s para tests
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
