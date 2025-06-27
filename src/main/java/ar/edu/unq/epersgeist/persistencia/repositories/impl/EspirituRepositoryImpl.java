@@ -71,9 +71,19 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public void eliminar(Long id) {
+        Optional<Espiritu> optionalEspiritu = recuperar(id);
+        if (optionalEspiritu.isEmpty()) return;
+
+        Ubicacion ubEspiritu = optionalEspiritu.get().getUbicacion();
+        regresarTemperaturaALaNormalidadEnUbicacionActual(ubEspiritu);
+
         espirituDAOJPA.deleteById(id);
         this.espirituDAOMongo.deleteById(id);
-        // TODO devolver temperatura a la normalidad
+    }
+
+    private void regresarTemperaturaALaNormalidadEnUbicacionActual(Ubicacion ubEspiritu) {
+        double tempExistente = ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId());
+        ubicacionDAOINFLUX.cambiarTemperatura(ubEspiritu.getId(), tempExistente + 0.2);
     }
 
     @Override
@@ -174,7 +184,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     private void mappearConInflux(Espiritu espiritu) {
-        // TODO debería hacer esto con DTOs?
         Ubicacion ubEspiritu = espiritu.getUbicacion();
         ubEspiritu.establecerTemperatura(ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId()));// añado temp de influx
         if (espiritu.getEspirituDominante() == null) return;

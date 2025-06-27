@@ -32,6 +32,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
     private final UbicacionDAOINFLUX ubicacionDAOInflux;
+    private boolean cambiandoTemp;
 
     public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
@@ -72,7 +73,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         UbicacionMONGODTO ubicacionMongo = UbicacionMONGODTO.desdeModelo(ubicacion);
         this.ubicacionDaoMongo.save(ubicacionMongo);
 
-        this.cambiarTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
+        this.setTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
 
         return ubicacionConId;
     }
@@ -210,13 +211,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void cambiarTemperatura(Long id, double temperatura) {
+    public synchronized void setTemperatura(Long id, double temperatura) {
+        // synchronized para que el thread main deba esperar si alguien estaba modificando la temperatura
         ubicacionDAOInflux.cambiarTemperatura(id, temperatura);
-    }
-
-    @Override
-    public double getTemperatura(Long id) { // TODO borrar?
-        return this.ubicacionDAOInflux.getTemperatura(id);
     }
 
     @Override
@@ -240,12 +237,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         long id = ubicacionJPADTO.getId();
         UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
         Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-//            UbicacionINFLUXDTO ubicacionInflux = ubicacionDAOInflux.find(id).get().aModelo(ubicacionMappeada); TODO implementar?
-        mappearConInflux(id, ubicacionMappeada); // y esto no iría?
+        mappearConInflux(id, ubicacionMappeada);
         return ubicacionMappeada;
     }
 
     private void mappearConInflux(Long id, Ubicacion ubicacionMappeada) {
-        ubicacionMappeada.setTemperatura(this.getTemperatura(id)); // añado temp de influx
+        ubicacionMappeada.setTemperatura(this.ubicacionDAOInflux.getTemperatura(id)); // añado temp de influx
     }
 }

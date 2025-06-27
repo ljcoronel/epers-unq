@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 
 import java.util.List;
 import java.util.Optional;

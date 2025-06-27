@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.query.FluxRecord;
@@ -24,6 +23,9 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public void cambiarTemperatura(Long id, double temperatura) {
+
+        if (temperatura > 50) temperatura = 50;
+        if (temperatura < -20) temperatura = -20;
 
         double temperaturaAmbiente = this.getTemperaturaAmbiente(id).orElse(temperatura); // si no hay temp ambiente, la creo
 

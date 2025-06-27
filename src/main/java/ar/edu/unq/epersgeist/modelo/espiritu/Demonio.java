@@ -70,9 +70,12 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     }
 
     @Override
-    public void establecerUbicacionConTemp(Ubicacion ubicacion)  {
+    public void actualizarTempAntes() {
         if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
-        setUbicacion(ubicacion);
+    }
+
+    @Override
+    public void actualizarTempDespues(Ubicacion ubicacion) {
         ubicacion.bajarTemperaturaEn(0.2d);
     }
 }

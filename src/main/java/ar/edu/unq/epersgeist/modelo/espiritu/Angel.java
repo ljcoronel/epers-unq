@@ -63,14 +63,18 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
 
     @Override
     public void recibirEfectoDe(Cementerio ubicacion) {
-
         this.reducirNivelDeConexionEn(5);
+    }
 
+
+    @Override
+    public void actualizarTempAntes() {
+        // TODO bajar temperatura si es necesario
     }
 
     @Override
-    public void establecerUbicacionConTemp(Ubicacion ubicacion) {
-        setUbicacion(ubicacion);
+    public void actualizarTempDespues(Ubicacion ubicacion) {
+        // TODO subir temperatura si es necesario
     }
 
 }

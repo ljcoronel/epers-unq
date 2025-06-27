@@ -11,6 +11,7 @@ import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionEx
 import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionDistintaException;
 import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasException;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
+import ar.edu.unq.epersgeist.servicios.exception.TemperaturaMuyAltaException;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
@@ -122,5 +123,7 @@ public class GlobalExceptionHandler {
         return new DTOResponseError(f.getMessage());
     }
 
-    // TODO hacer el de temp
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TemperaturaMuyAltaException.class)
+    public DTOResponseError tempMuyAlta(TemperaturaMuyAltaException tmae) {return new DTOResponseError(tmae.getMessage());}
 }

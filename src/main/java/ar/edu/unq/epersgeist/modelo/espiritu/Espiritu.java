@@ -194,8 +194,16 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
     }
 
-    public abstract void establecerUbicacionConTemp(Ubicacion ubicacion);
-    // TODO hacer el set igual, creo
-    // maneja la temp, usar setUbicacion si no quieren tocar la temperatura
+    public void establecerUbicacionConTemp(Ubicacion ubicacion) {
+        // maneja la temp, usar setUbicacion si no quieren tocar la temperatura
+        actualizarTempAntes();
+        setUbicacion(ubicacion);
+        actualizarTempDespues(ubicacion);
+    }
+
+    public abstract void actualizarTempAntes();
+    public abstract void actualizarTempDespues(Ubicacion ubicacion);
+
+
 
 }
