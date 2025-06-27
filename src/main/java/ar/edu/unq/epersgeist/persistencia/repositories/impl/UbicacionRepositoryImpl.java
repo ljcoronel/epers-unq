@@ -186,8 +186,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
 
     @Override
     public Optional<Ubicacion> ubicacionMasFria(){
-        Long ubicacionId = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasPeligrosa();
-        return mappearUbicacionConDTO(ubicacionId);
+
+        return this.ubicacionDAOInflux.recuperarIdDeUbicacionMasPeligrosa()
+                .map( opId -> mappearUbicacionConDTO(opId).get());
     }
 
     @Override

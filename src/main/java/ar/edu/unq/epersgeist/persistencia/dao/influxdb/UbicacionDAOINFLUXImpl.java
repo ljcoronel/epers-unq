@@ -81,7 +81,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     @Override
-    public Long recuperarIdDeUbicacionMasPeligrosa() {
+    public Optional<Long> recuperarIdDeUbicacionMasPeligrosa() {
         // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
         String query =
                 """
@@ -98,13 +98,13 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
         if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
-            throw new EntidadInexistenteException("No se encontraron lecturas de temperatura.");
+            return Optional.empty();
         }
 
         FluxRecord record = tables.get(0).getRecords().get(0);
         String ubicacionStr = (String) record.getValueByKey("ubicacion");
 
-        return Long.valueOf(ubicacionStr);
+        return Optional.of(Long.valueOf(ubicacionStr));
     }
 
     @Override

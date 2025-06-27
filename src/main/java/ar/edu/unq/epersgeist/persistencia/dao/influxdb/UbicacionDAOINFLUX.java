@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface UbicacionDAOINFLUX {
     void cambiarTemperatura(Long id, double temperatura);
 
-    Long recuperarIdDeUbicacionMasPeligrosa();
+    Optional<Long> recuperarIdDeUbicacionMasPeligrosa();
 
     Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
 

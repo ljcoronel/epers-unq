@@ -1210,9 +1210,10 @@ public class UbicacionServiceTest {
 //    }
 
     @Test
-    void enLaUbicacionMasPeligrosaSinUbicacionesLanzaException(){
+    void enLaUbicacionMasPeligrosaSinUbicacionesRetornaOptionalVacio(){
 
-        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionMasPeligrosa());
+        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionMasPeligrosa();
+        assertTrue(ubicacionOptional.isEmpty());
     }
 
     @Test
@@ -1235,7 +1236,7 @@ public class UbicacionServiceTest {
 
         ubicacionRepository.cambiarTemperatura(id, 40);
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
 
         assertEquals(id,ubicacionRecuperada.getId());
     }
@@ -1281,17 +1282,17 @@ public class UbicacionServiceTest {
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
 
         assertEquals(id2,ubicacionRecuperada.getId());
     }
 
     @Test
-    public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoYLanzaException() throws InterruptedException {
+    public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoRetornaOptionalVacio() throws InterruptedException {
         Thread.sleep(11000);
 
-        assertThrows(EntidadInexistenteException.class, () -> ubicacionService.ubicacionConMasTransitoDeEspiritus());
-
+        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionConMasTransitoDeEspiritus();
+        assertTrue(ubicacionOptional.isEmpty());
     }
 
     @Test
@@ -1320,7 +1321,7 @@ public class UbicacionServiceTest {
         }
         ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 55.1);
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus().get();
 
         assertEquals(ubicacionUno.getId(), ubicacionRecuperada.getId());
     }
@@ -1399,7 +1400,7 @@ public class UbicacionServiceTest {
 //                .addField("temp", 32.1)
 //                .time(fechaFija(2, 11).toEpochMilli(), WritePrecision.MS));
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus().get();
 
         assertEquals(id2, ubicacionRecuperada.getId());
     }

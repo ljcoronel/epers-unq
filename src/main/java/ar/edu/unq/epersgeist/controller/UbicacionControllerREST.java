@@ -140,7 +140,7 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/ubicacionMasTransitada")
-    public ResponseEntity<UbicacionDTOResponse> ubicacionMasPeligrosa(){
+    public ResponseEntity<UbicacionDTOResponse> ubicacionMasTransitada(){
         Optional<Ubicacion> optionalUbicacion = ubicacionService.ubicacionConMasTransitoDeEspiritus();
 
         if (optionalUbicacion.isEmpty()) return ResponseEntity.status(404).body(null);
@@ -149,7 +149,7 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/actividadDePortales")
-    public ResponseEntity<UbicacionDTOResponse> ubicacionMasPeligrosa(){
+    public ResponseEntity<UbicacionDTOResponse> actividadDePortales(){
         List<EventoPortalDTO> eventosPortales = ubicacionService.eventosDePortalesOcurridos();
 
         return ResponseEntity.ok(eventosPortales.stream()
