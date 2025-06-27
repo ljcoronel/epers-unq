@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
+import ar.edu.unq.epersgeist.controller.dto.EventoPortalDTO.EventoPortalDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.CentralityResponseDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
@@ -149,11 +150,11 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/actividadDePortales")
-    public ResponseEntity<UbicacionDTOResponse> actividadDePortales(){
+    public ResponseEntity<List<EventoPortalDTOResponse>> actividadDePortales(){
         List<EventoPortalDTO> eventosPortales = ubicacionService.eventosDePortalesOcurridos();
 
         return ResponseEntity.ok(eventosPortales.stream()
                 .map(EventoPortalDTOResponse::desdeModelo)
-                .collect(Collectors.toSet()));//TODO agregar EventoPortalDTOResponse y su desdeModelo
+                .collect(Collectors.toList()));
     }
 }

@@ -149,7 +149,7 @@ public class UbicacionServiceImpl implements UbicacionService {
         return this.ubicacionRepository.ubicacionMasFria();
 
     }
-//TODO hacer que ambos metodos retornen Optional<Ubicacion>
+
     @Override
     public Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus(){
 
