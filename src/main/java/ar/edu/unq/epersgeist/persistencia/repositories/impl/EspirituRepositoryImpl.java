@@ -167,4 +167,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                 .map(dto -> (SnapshotMongo) DraftEspirituMONGODTO.guardar(dto))
                 .toList());
     }
+
+    @Override
+    public List<Demonio> demoniosLibresEn(Long ubicacionId) {
+        return this.espirituDAOJPA.demoniosLibresEn(ubicacionId);
+    }
 }

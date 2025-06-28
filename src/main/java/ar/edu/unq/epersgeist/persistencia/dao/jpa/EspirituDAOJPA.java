@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -57,4 +58,9 @@ public interface EspirituDAOJPA extends JpaRepository<EspirituJPADTO, Long> {
         LIMIT 1
     """, nativeQuery = true)
     Long santuarioCorrupto();
+
+    @Query("""
+        from espiritu e where type(e) = demonio and e.ubicacion.id = :unaUbicacion
+    """)
+    List<Demonio> demoniosLibresEn(@Param("unaUbicacion") Long ubicacionId);
 }

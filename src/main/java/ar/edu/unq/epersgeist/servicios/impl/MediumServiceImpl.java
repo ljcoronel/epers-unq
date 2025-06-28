@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ManaInsuficiente;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
@@ -212,4 +213,21 @@ public class MediumServiceImpl implements MediumService {
 
     }
 
+    @Override
+    public void meditar(Long ubicacionId, GeoJsonPoint punto, int minkm, int maxkm) {
+        List<Medium> mediums = this.mediumRepository.mediumsEnArea(punto, minkm, maxkm);
+        List<Demonio> demoniosLibre = this.espirituRepository.demoniosLibresEn(ubicacionId);
+        int nivelDeConexionTotal = demoniosLibre.stream()
+                .mapToInt(Espiritu::getNivelDeConexion)
+                .sum();
+        this.verificarMeditacion(mediums, nivelDeConexionTotal);
+        mediums.forEach(medium -> medium.perderMana(nivelDeConexionTotal));
+        demoniosLibre.forEach(demonio -> demonio.setNivelDeConexion(0));
+        mediums.forEach(this.mediumRepository::actualizar);
+        demoniosLibre.forEach(this.espirituRepository::actualizar);
+    }
+
+    private void verificarMeditacion(List<Medium> mediums, int nivelDeConexionTotal) {
+        if (mediums.stream().anyMatch(medium -> medium.getMana() < nivelDeConexionTotal)) throw new ManaInsuficiente("Los mediums no tienen suficiente mana para meditar");
+    }
 }

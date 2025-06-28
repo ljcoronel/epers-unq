@@ -152,4 +152,8 @@ public class Medium implements Serializable {
     public Long getIdDeUbicacion() {
         return this.ubicacion.getId();
     }
+
+    public void perderMana(int nivelDeConexionTotal) {
+        this.mana -= nivelDeConexionTotal;
+    }
 }
