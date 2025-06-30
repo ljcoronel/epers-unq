@@ -87,7 +87,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -30d)
+                          |> range(start: -7s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -142,7 +142,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
         from(bucket: "lecturas")
-          |> range(start: -30d)
+          |> range(start: -7d)
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])

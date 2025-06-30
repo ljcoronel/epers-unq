@@ -149,12 +149,4 @@ public final class UbicacionControllerREST {
         return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
     }
 
-    @GetMapping("/actividadDePortales")
-    public ResponseEntity<List<EventoPortalDTOResponse>> actividadDePortales(){
-        List<EventoPortalDTO> eventosPortales = ubicacionService.eventosDePortalesOcurridos();
-
-        return ResponseEntity.ok(eventosPortales.stream()
-                .map(EventoPortalDTOResponse::desdeModelo)
-                .collect(Collectors.toList()));
-    }
 }

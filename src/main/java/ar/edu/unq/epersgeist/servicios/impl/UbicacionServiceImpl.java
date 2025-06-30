@@ -156,10 +156,4 @@ public class UbicacionServiceImpl implements UbicacionService {
 
     }
 
-    @Override
-    public List<EventoPortalDTO> eventosDePortalesOcurridos(){
-
-        return this.ubicacionRepository.eventosDePortalesOcurridos();
-
-    }
 }

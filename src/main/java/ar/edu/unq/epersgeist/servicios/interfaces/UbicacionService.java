@@ -31,6 +31,5 @@ public interface UbicacionService  {
 
     Optional<Ubicacion> ubicacionMasPeligrosa();
     Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus();
-    List<EventoPortalDTO> eventosDePortalesOcurridos();
 
 }
