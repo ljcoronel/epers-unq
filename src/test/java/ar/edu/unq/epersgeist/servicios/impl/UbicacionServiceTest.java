@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -11,7 +11,6 @@ import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
 import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
@@ -166,6 +165,7 @@ public class UbicacionServiceTest {
         this.cementerioUno = new Cementerio("Noselandia", 30);
 
         ubicacionUno.setTerritorio(pointsUbicacionUno);
+        ubicacionUno.setTerritorio(pointsUbicacionUno);
         ubicacionDos.setTerritorio(pointsUbicacionDos);
         ubicacionTres.setTerritorio(pointsUbicacionTres);
         ubicacionCuatro.setTerritorio(pointsUbicacionCuatro);
@@ -277,9 +277,6 @@ public class UbicacionServiceTest {
 
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
-//        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId()); // TODO cambiar test para no depender del orden de guardado ya que aveces falla
-//        assertEquals(ubicaciones.get(1).getId(), this.ubicacionDos.getId());
-//        assertEquals(ubicaciones.getLast().getId(), this.ubicacionTres.getId());
         assertEquals(3, ubicaciones.size());
     }
 
@@ -1234,7 +1231,7 @@ public class UbicacionServiceTest {
 //
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
 
-        ubicacionRepository.cambiarTemperatura(id, 40);
+        ubicacionRepository.setTemperatura(id, 40);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
 
@@ -1272,10 +1269,10 @@ public class UbicacionServiceTest {
 //                .addField("temp", 10)
 //                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
 
-        ubicacionRepository.cambiarTemperatura(id, 50);
-        ubicacionRepository.cambiarTemperatura(id3, 40);
-        ubicacionRepository.cambiarTemperatura(id2, 0);
-        ubicacionRepository.cambiarTemperatura(id, 10);
+        ubicacionRepository.setTemperatura(id, 50);
+        ubicacionRepository.setTemperatura(id3, 40);
+        ubicacionRepository.setTemperatura(id2, 0);
+        ubicacionRepository.setTemperatura(id, 10);
 
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
 //        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
@@ -1313,13 +1310,13 @@ public class UbicacionServiceTest {
 //                .addField("temp", 55.1)
 //                .time(fechaFija(1, 5).toEpochMilli(), WritePrecision.MS));
 
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),50.1);
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),50.1);
         try {
             Thread.sleep(1000); // para que no se solapen las escrituras
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 55.1);
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 55.1);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus().get();
 
@@ -1353,19 +1350,19 @@ public class UbicacionServiceTest {
 //                .addField("temp", 25.1)
 //                .time(fechaFija(2, 10).toEpochMilli(), WritePrecision.MS));
 
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),20.1);
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(),20.1);
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 25.1);
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 25.1);
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
@@ -1373,19 +1370,19 @@ public class UbicacionServiceTest {
         }
 
 
-        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(),30.1);
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(),30.1);
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 35.1);
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 35.1);
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 32.1);
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
 
 //        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
 //                .addTag("ubicacion", idString2)
@@ -1668,6 +1665,22 @@ public class UbicacionServiceTest {
 //        assertEquals(2,ubicacionesRecuperadas.size());
 //        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id)));
 //        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id2)));
+    }
+
+    @Test
+    public void laTemperaturaNoPuedeSerMenorAMenosVeinte() {
+        ubicacionUno.setTemperatura(-21);
+        ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionUno.getId()).get();
+        assertEquals(-20, ubicacion.getTemperatura());
+    }
+
+    @Test
+    public void laTemperaturaNoPuedeSerMayorACincuenta() {
+        ubicacionUno.setTemperatura(51);
+        ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionUno.getId()).get();
+        assertEquals(50, ubicacion.getTemperatura());
     }
 
     @AfterEach

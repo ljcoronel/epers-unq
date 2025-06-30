@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -20,7 +20,7 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
         super(nivelDeConexion,nombre);
     }
 
-    public Angel(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {//TODO borrar ubicacion cuando se termine metodo mover
+    public Angel(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
         super(nivelDeConexion,nombre, coordenada);
     }
 
@@ -63,14 +63,18 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
 
     @Override
     public void recibirEfectoDe(Cementerio ubicacion) {
-
         this.reducirNivelDeConexionEn(5);
+    }
 
+
+    @Override
+    public void actualizarTempAntes() {
+        // TODO bajar temperatura si es necesario
     }
 
     @Override
-    public void establecerUbicacionConTemp(Ubicacion ubicacion) {
-        setUbicacion(ubicacion);
+    public void actualizarTempDespues(Ubicacion ubicacion) {
+        // TODO subir temperatura si es necesario
     }
 
 }

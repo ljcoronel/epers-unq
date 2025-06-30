@@ -1,10 +1,8 @@
 package ar.edu.unq.epersgeist.controller.dto.EspirituDTO;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
-import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 
 import java.util.List;
 

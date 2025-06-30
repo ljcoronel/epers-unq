@@ -59,7 +59,7 @@ public abstract class EspirituJPADTO {
     @LastModifiedDate
     private Date updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     EspirituJPADTO espirituDominante;
 
 
@@ -92,6 +92,7 @@ public abstract class EspirituJPADTO {
         espiritu.setId(this.getId());
         espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
         espiritu.setEspirituDominante(this.getEspirituDominante() != null ? getEspirituDominante().aModelo() : null);
+        espiritu.setUbicacion(ubicacion.aModelo());
         return espiritu;
     }
 
@@ -99,7 +100,7 @@ public abstract class EspirituJPADTO {
 
     public Espiritu aModelo(Medium medium, Ubicacion ubicacion) {
         Espiritu espiritu = instanciarEspiritu();
-        espiritu.setUbicacion(ubicacion); // TODO revisar si va, es para que tengan el mismo objeto ubicación
+        espiritu.setUbicacion(ubicacion);
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
         espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);

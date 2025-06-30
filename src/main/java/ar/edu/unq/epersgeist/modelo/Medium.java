@@ -7,6 +7,7 @@ import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituLibreException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.ExorcistaSinAngelesException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import lombok.*;

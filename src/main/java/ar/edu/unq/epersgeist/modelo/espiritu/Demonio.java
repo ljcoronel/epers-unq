@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
@@ -28,7 +29,7 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     }
 
     public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
-        super(nivelDeConexion,nombre, ubicacion);
+        super(nivelDeConexion, nombre, ubicacion);
     }
 
     public void defender(Angel angel,int ataque) {
@@ -69,9 +70,12 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
     }
 
     @Override
-    public void establecerUbicacionConTemp(Ubicacion ubicacion)  {
+    public void actualizarTempAntes() {
         if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
-        setUbicacion(ubicacion);
+    }
+
+    @Override
+    public void actualizarTempDespues(Ubicacion ubicacion) {
         ubicacion.bajarTemperaturaEn(0.2d);
     }
 }

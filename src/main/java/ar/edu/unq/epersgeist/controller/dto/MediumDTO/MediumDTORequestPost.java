@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.controller.dto.MediumDTO;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;

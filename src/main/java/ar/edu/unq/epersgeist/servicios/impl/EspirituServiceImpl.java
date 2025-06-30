@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -12,8 +13,10 @@ import ar.edu.unq.epersgeist.persistencia.repositories.impl.EspirituRepositoryIm
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import ar.edu.unq.epersgeist.servicios.exception.TemperaturaMuyAltaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,7 +105,6 @@ public class EspirituServiceImpl implements EspirituService {
 
             mediumRepository.guardar(medium);
 
-
             return medium;
 
     }
@@ -132,6 +134,56 @@ public class EspirituServiceImpl implements EspirituService {
 
         espirituRepository.guardar(espirituADominar);
 
+    }
+
+    @Override
+    public PortalDemonios crearPortal(PortalDemonios portal) {
+
+        Point punto = portal.getCoordenada();
+
+        Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
+                () -> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
+
+        verificarTemperaturaBaja(ubicacion.getId());
+
+        Demonio demonioHost = this.espirituRepository
+                        .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
+                        .orElseThrow(() -> new EntidadInexistenteException("No se encontró un host válido."));
+        // TODO tal vez tomar un radio en vez de una ubicación entera?
+        portal.setDemonioHost(demonioHost);
+
+        new Thread(() -> activarPortal(demonioHost, portal, ubicacion)).start();
+
+        return portal;
+    }
+
+    private void iniciarPortal(Espiritu demonioHost, PortalDemonios portal, Ubicacion ubicacion) {
+        portal.abrir();
+        espirituRepository.guardar(demonioHost); // su nivel de conex pasa a 0
+        ubicacionRepository.modificarTemperatura(ubicacion.getId(), -5); // baja su temp en 5°C (forzosamente y respeta orden de llegada)
+    }
+
+    private void activarPortal(Espiritu demonioHost, PortalDemonios portal, Ubicacion ubicacion) {
+        iniciarPortal(demonioHost, portal, ubicacion);
+        while(portal.sigueAbierto()) {
+            try {
+                Demonio minion = this.crearMinion(portal.obtenerSiguienteMinion());
+                portal.nombrarMinion(minion);
+                espirituRepository.guardar(minion); // actualizo el nombre
+            } catch (InterruptedException e) {throw new RuntimeException(e);}
+        }
+        ubicacionRepository.modificarTemperatura(ubicacion.getId(), +5); // devuelve la temp al estado original
+    }
+
+    private Demonio crearMinion(Demonio minion) {
+        this.ubicacionRepository.modificarTemperatura(minion.getUbicacion().getId(), -0.2); // para solucionar problemas de concurrencia, se hace directo a la db
+        Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(minion.getCoordenada()).get();
+        minion.setUbicacion(ubicacion); // seteo sin afectar la temp
+        return (Demonio) this.espirituRepository.guardar(minion);
+    }
+
+    private void verificarTemperaturaBaja(Long ubicacionId) {
+        if(!ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionId, -2) ) throw new TemperaturaMuyAltaException("La temperatura debe ser más baja para abrir el portal.");
     }
 
 }

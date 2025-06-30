@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.RandomGenerator.RandomGenerator;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituDominadoException;
@@ -194,6 +194,16 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         this.setCoordenada(new Coordenada(medium.getCoordenada().getX(), medium.getCoordenada().getY()));
     }
 
-    public abstract void establecerUbicacionConTemp(Ubicacion ubicacion);
+    public void establecerUbicacionConTemp(Ubicacion ubicacion) {
+        // maneja la temp, usar setUbicacion si no quieren tocar la temperatura
+        actualizarTempAntes();
+        setUbicacion(ubicacion);
+        actualizarTempDespues(ubicacion);
+    }
+
+    public abstract void actualizarTempAntes();
+    public abstract void actualizarTempDespues(Ubicacion ubicacion);
+
+
 
 }

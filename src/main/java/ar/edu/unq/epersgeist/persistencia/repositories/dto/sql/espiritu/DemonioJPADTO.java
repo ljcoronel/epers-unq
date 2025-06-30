@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
@@ -32,7 +31,7 @@ public class DemonioJPADTO extends EspirituJPADTO {
 
     @Override
     public Espiritu instanciarEspiritu() {
-        return new Demonio(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
+        return new Demonio(this.getNivelDeConexion(), this.getNombre());
     }
 
 

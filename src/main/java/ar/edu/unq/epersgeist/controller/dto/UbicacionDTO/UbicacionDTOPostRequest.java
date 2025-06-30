@@ -11,7 +11,6 @@ public record UbicacionDTOPostRequest(TipoUbicacion tipo, String nombre, int ene
         if (this.tipo == null) throw new ParametroIncorrectoException("La ubicacion debe tener un tipo");
         if (this.nombre == null) throw new ParametroIncorrectoException("La ubicación debe tener un nombre.");
         if (this.area == null) throw  new ParametroIncorrectoException("La ubicacion debe tener un area.");
-        // TODO probar null
 
         return this.tipo.getUbicacionInstance(this.nombre, this.energia, this.area, this.temperaturaInicial);
     }

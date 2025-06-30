@@ -32,6 +32,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
     private final UbicacionDAOINFLUX ubicacionDAOInflux;
+    private boolean cambiandoTemp;
 
     public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
@@ -72,7 +73,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         UbicacionMONGODTO ubicacionMongo = UbicacionMONGODTO.desdeModelo(ubicacion);
         this.ubicacionDaoMongo.save(ubicacionMongo);
 
-        this.cambiarTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
+        this.setTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
 
         return ubicacionConId;
     }
@@ -211,18 +212,21 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public void cambiarTemperatura(Long id, double temperatura) {
+    public synchronized void setTemperatura(Long id, double temperatura) {
+        // synchronized para que el thread main deba esperar si alguien estaba modificando la temperatura
         ubicacionDAOInflux.cambiarTemperatura(id, temperatura);
     }
 
     @Override
-    public double getTemperatura(Long id) { // TODO borrar?
-        return this.ubicacionDAOInflux.getTemperatura(id);
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, deltaTemp);
     }
 
     @Override
-    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
-        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, -5);
+    public synchronized void modificarTemperatura(Long id, double temperatura) {
+        // este method lee la temperatura y la modifica, de esta manera no hay problemas de concurrencia (ya que es synchronized)
+        double tempExistente = ubicacionDAOInflux.getTemperatura(id);
+        ubicacionDAOInflux.cambiarTemperatura(id, tempExistente + temperatura);
     }
 
     private Optional<Ubicacion> mappearUbicacionConDTO(Long id){
@@ -234,12 +238,11 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         long id = ubicacionJPADTO.getId();
         UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
         Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-//            UbicacionINFLUXDTO ubicacionInflux = ubicacionDAOInflux.find(id).get().aModelo(ubicacionMappeada); TODO implementar?
-        mappearConInflux(id, ubicacionMappeada); // y esto no iría?
+        mappearConInflux(id, ubicacionMappeada);
         return ubicacionMappeada;
     }
 
     private void mappearConInflux(Long id, Ubicacion ubicacionMappeada) {
-        ubicacionMappeada.setTemperatura(this.getTemperatura(id)); // añado temp de influx
+        ubicacionMappeada.setTemperatura(this.ubicacionDAOInflux.getTemperatura(id)); // añado temp de influx
     }
 }

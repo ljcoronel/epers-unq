@@ -15,6 +15,7 @@ import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
 import org.springframework.data.domain.Example;
@@ -70,9 +71,19 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public void eliminar(Long id) {
+        Optional<Espiritu> optionalEspiritu = recuperar(id);
+        if (optionalEspiritu.isEmpty()) return;
+
+        Ubicacion ubEspiritu = optionalEspiritu.get().getUbicacion();
+        regresarTemperaturaALaNormalidadEnUbicacionActual(ubEspiritu);
+
         espirituDAOJPA.deleteById(id);
         this.espirituDAOMongo.deleteById(id);
-        // TODO devolver temperatura a la normalidad
+    }
+
+    private void regresarTemperaturaALaNormalidadEnUbicacionActual(Ubicacion ubEspiritu) {
+        double tempExistente = ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId());
+        ubicacionDAOINFLUX.cambiarTemperatura(ubEspiritu.getId(), tempExistente + 0.2);
     }
 
     @Override
@@ -134,6 +145,17 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     @Override
+    public Optional<Demonio> demonioLibreNoDominadoMasFuerteEn(Double latitud, Double longitud) {
+        Long idUbicacion = this.ubicacionDAOMONGO.findByPuntoDentroDelTerritorio(new GeoJsonPoint(latitud, longitud)).get().getId();
+
+        List<DemonioJPADTO> dtoDemonios = espirituDAOJPA.demoniosLibresNoDominadosMasFuertesEn(idUbicacion, PageRequest.of(0, 1));
+
+        if (dtoDemonios.isEmpty()) return Optional.empty();
+
+        return Optional.of((Demonio) mappearEspiritu(dtoDemonios.getFirst())); // trae a uno solo
+    }
+
+    @Override
     public void desvincular(Long id) {
         this.espirituDAOJPA.desvincular(id);
     }
@@ -162,7 +184,6 @@ public class EspirituRepositoryImpl implements EspirituRepository {
     }
 
     private void mappearConInflux(Espiritu espiritu) {
-        // TODO debería hacer esto con DTOs?
         Ubicacion ubEspiritu = espiritu.getUbicacion();
         ubEspiritu.establecerTemperatura(ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId()));// añado temp de influx
         if (espiritu.getEspirituDominante() == null) return;
@@ -189,4 +210,5 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                 .map(dto -> (SnapshotMongo) DraftEspirituMONGODTO.guardar(dto))
                 .toList());
     }
+
 }

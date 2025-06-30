@@ -32,7 +32,7 @@ public class AngelJPADTO extends EspirituJPADTO {
 
     @Override
     public Espiritu instanciarEspiritu() {
-        return new Angel(this.getNivelDeConexion(), this.getNombre(), this.getUbicacion().aModelo());
+        return new Angel(this.getNivelDeConexion(), this.getNombre());
     }
 
 }

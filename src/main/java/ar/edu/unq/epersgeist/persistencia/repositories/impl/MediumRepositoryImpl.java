@@ -68,7 +68,6 @@ public class MediumRepositoryImpl implements MediumRepository {
     }
 
     private void mappearConInflux(Medium medium) {
-        // TODO debería hacer esto con DTOs?
         Ubicacion ubMedium = medium.getUbicacion();
         double temperatura = ubicacionDAOINFLUX.getTemperatura(ubMedium.getId());
 

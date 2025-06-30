@@ -2,7 +2,6 @@ package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.UbicacionINFLUXDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.query.FluxRecord;
@@ -25,6 +24,9 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     @Override
     public void cambiarTemperatura(Long id, double temperatura) {
 
+        if (temperatura > 50) temperatura = 50;
+        if (temperatura < -20) temperatura = -20;
+
         double temperaturaAmbiente = this.getTemperaturaAmbiente(id).orElse(temperatura); // si no hay temp ambiente, la creo
 
         com.influxdb.client.write.Point influxPoint = com.influxdb.client.write.Point.measurement("temperaturas")
@@ -32,7 +34,6 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .addField("temp", temperatura)
                 .addField("tempAmbiente", temperaturaAmbiente)
                 .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
 
         influxDBClient.getWriteApiBlocking().writePoint(influxPoint);
     }
@@ -86,7 +87,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -10s)
+                          |> range(start: -30d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -161,7 +162,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .flatMap(table -> table.getRecords().stream())
                 .map(record -> new EventoPortalDTO(
                         Long.valueOf((String) record.getValueByKey("ubicacion")),
-                        ((Instant) record.getTime()),
+                        (record.getTime()),
                         (Double) record.getValueByKey("intensidad")
                 ))
                 .toList();
@@ -183,11 +184,13 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
         String query = """
                         from(bucket: "lecturas")
-                        |> range(start: -10s)
+                        |> range(start: -30d)
                         |> filter(fn: (r) => r._measurement == "temperaturas" and (r._field == "temp" or r._field == "tempAmbiente") and r.ubicacion == "%s")
+                        |> last()
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                        |> map(fn: (r) => ({temp: r.temp, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
-                """.formatted(id, deltaTemp); // TODO no puedo sacar ese temp del map o revienta
+                        |> map(fn: (r) => ({temp: r.temp - r.tempAmbiente, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
+                """.formatted(id, deltaTemp);
+        // usar -10s o -30s para tests
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
