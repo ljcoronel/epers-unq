@@ -3,7 +3,7 @@
 #define TEMP_AMB_1 A8  // Cambia según el pin donde esté conectado
 #define TEMP_AMB_2 A10
 #define BUZZER_PIN 18 // Pin de parlante
-#define UMBRAL_DIFERENCIA 5
+#define UMBRAL_DIFERENCIA 10
 #define SERIES_RESISTOR 4700          // resistencia fija del divisor en ohmios
 #define NOMINAL_RESISTANCE 100000    // resistencia nominal del termistor a 25ºC
 #define NOMINAL_TEMPERATURE 25       // temperatura nominal (en ºC)
@@ -11,6 +11,11 @@
 #define ADC_MAX 1023   
 #define BAUDIOS 250000// valor máximo ADC para 10 bits
 #define BUTTON_PIN 19
+#define X_MIN_BUTTON  22
+unsigned long tiempoInicio = 0;
+long tiempoPresionado = 0;
+bool estadoAnterior = false;
+bool bajando = false;
 
 
 // Configura los pines del LCD: RS, E, D4, D5, D6, D7
@@ -111,6 +116,7 @@ void crearCaracteresEspeciales(){
   
 void setup() {
   Serial.begin(BAUDIOS);
+  pinMode(X_MIN_BUTTON, INPUT_PULLUP);
   crearCaracteresEspeciales();
   lcd.begin(20, 4);  // LCD 16 columnas, 4 filas
   pinMode(BUZZER_PIN, OUTPUT); // setup parlante
@@ -119,7 +125,7 @@ void setup() {
   
 }
 
-void leerBoton() {
+void leerDiplayBotonBoton() {
 
   bool estadoActual = digitalRead(BUTTON_PIN);
 
@@ -212,44 +218,61 @@ void showInfodisplay(float temp1, float temp2, bool estado_parlante) {
 void sonarParlante(float delta){
   if (sonidoActivo){
   if (delta >= UMBRAL_DIFERENCIA) {
-    tone(BUZZER_PIN, 2000);  // Sonido constante
+    tone(BUZZER_PIN, 2000, 500);  // Sonido constante
   } 
-  else if (delta >=2.0) {
-    // Oscilación proporcional: más cerca de 10 → más rápido
-  int intervalo = map(delta * 100, 100, UMBRAL_DIFERENCIA * 100, 1000, 100);  // ms
-  static unsigned long ultimaAlarma = 0;
-  static bool estadoBuzzer = false;
+  else if (delta >=2.0 && delta < UMBRAL_DIFERENCIA) {
+    tone(BUZZER_PIN, 1000 + ((int)delta) * ((int)delta),100  );
+ 
+  }
+//  else {
+//   noTone(BUZZER_PIN);
+//   }
+  }
+}
 
-  if (millis() - ultimaAlarma > intervalo) {
-    ultimaAlarma = millis();
-    estadoBuzzer = !estadoBuzzer;
-      if (estadoBuzzer) {
-        tone(BUZZER_PIN, 2000);
-      } else {
-        noTone(BUZZER_PIN);
-      }
-    }
-  }else {
-  noTone(BUZZER_PIN);
+float estadoBoton() {
+  bool presionado = digitalRead(X_MIN_BUTTON) == HIGH;  // NC: presionado = HIGH
+
+  if (presionado && !estadoAnterior) {
+    // Se acaba de presionar
+    tiempoInicio = millis() - tiempoPresionado;  // Continúa desde donde estaba si venía bajando
+    estadoAnterior = true;
+    bajando = false;
   }
+
+  if (presionado && estadoAnterior) {
+    tiempoPresionado = millis() - tiempoInicio;
+    return tiempoPresionado;
   }
+
+  if (!presionado && estadoAnterior) {
+    // Se acaba de soltar
+    estadoAnterior = false;
+    bajando = true;
+  }
+
+  if (bajando && tiempoPresionado > 0) {
+    tiempoPresionado -= 800;  // Bajada progresiva
+    if (tiempoPresionado < 0) tiempoPresionado = 0;
+    return tiempoPresionado;
+  }
+
+  return 0;
 }
  
 void loop() {
 
   float temp1 = leerTemperatura(TEMP_AMB_1);
   float temp2 = leerTemperatura(TEMP_AMB_2);
-  leerBoton();
+  temp1 = temp1 +(estadoBoton()/750); //Si se presiona el boton va subiendo la temperatura en 1,5° por segundo
+  leerDiplayBotonBoton();
+  float sumarATemp = 0;
+
   showInfodisplay(temp1, temp2, estadoParlante);
-
   float delta = abs(temp1 - temp2);
-
   sonarParlante(delta);
- 
   String salida = temperaturaAJson(temp1, temp2);
   Serial.println(salida);
-  
-
 
   delay(500);
 }
