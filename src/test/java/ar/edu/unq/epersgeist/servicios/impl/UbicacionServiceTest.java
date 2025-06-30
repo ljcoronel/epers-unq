@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
@@ -1411,260 +1412,138 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void seConsiguenLosEventosDePortalesOcurridos() {
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        ubicacionDAOINFLUX.cambiarTemperatura(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 27.0)
-//                .time(fechaFija(2, 0, 0).toEpochMilli(), WritePrecision.MS));
-//
-//        ubicacionDAOINFLUX.cambiarTemperatura(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 3.0)
-//                .time(fechaFija(2, 0, 1).toEpochMilli(), WritePrecision.MS));
-//
-//        ubicacionDAOINFLUX.cambiarTemperatura(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29.0)
-//                .time(fechaFija(2, 0, 2).toEpochMilli(), WritePrecision.MS));
-//
-//        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
-//
-//        assertEquals(1,eventosPortal.size());
-//
-//        EventoPortalDTO evento = eventosPortal.get(0);
-//
-//        assertEquals(id2, evento.getUbicacionId());
-//
-//        assertEquals(-120.0, evento.getIntensidad(), 0.001);
-//
-//       Instant esperado = fechaFija(2, 0,0).plusSeconds(1);
-//        assertEquals(esperado, evento.getTiempo());
+    public void seConsiguenLosEventosDePortalesOcurridosConUnSoloPortalYUnaUbicacion() {
+        ubicacionUno.setTemperatura(20);
+        this.ubicacionService.crear(ubicacionUno);
+        espirituService.crear(demonioUno);
+
+        Long id1 = this.ubicacionUno.getId();
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
+
+        assertEquals(1,eventosPortal.size());
+
+        EventoPortalDTO evento = eventosPortal.get(0);
+
+        assertEquals(id1, evento.getUbicacionId());
+
+        assertTrue(evento.getIntensidad() == -5);
 
     }
 
-//    @Test
-//    public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-//
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        Point lecturaPoint0 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 30)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 27)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 3)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-//
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.eventosDePortalesOcurridos();
-//
-//        assertEquals(1,ubicacionesRecuperadas.size());
-//        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
-//    }
-//
-//
-//    @Test
-//    public void recuperaLasUbicacionesQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-//
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 25)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 1)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 30)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        Point lecturaPoint4 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 27)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint5 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 3)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint6 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint4);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint5);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint6);
-//
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-//
-//        assertEquals(2,ubicacionesRecuperadas.size());
-//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id)));
-//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id2)));
-//    }
+    @Test
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnDistintasUbicacion() {
+        ubicacionUno.setTemperatura(20);
+        ubicacionDos.setTemperatura(20);
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+        demonioUno.setCoordenada(new Coordenada(3.5, 3.5));
+        espirituService.crear(demonioUno);
+        espirituService.crear(demonioDos);
 
+        Long id1 = this.ubicacionUno.getId();
+        Long id2 = this.ubicacionDos.getId();
 
-//    @Test
-//    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas(){
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        com.influxdb.client.write.Point lecturaPoint0 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", "10")
-//                .addField("temp", 50)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        com.influxdb.client.write.Point lecturaPoint1 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 40)
-//                .time(now().toEpochMilli(), WritePrecision.MS);
-//        com.influxdb.client.write.Point lecturaPoint2 = com.influxdb.client.write.Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-//
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-//
-//        assertEquals(1,ubicacionesRecuperadas.size());
-//        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
-//    }
-//
-//    @Test
-//    public void recuperaLasUbicacionQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-//
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        Point lecturaPoint0 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 30)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 27)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 3)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-//
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-//
-//        assertEquals(1,ubicacionesRecuperadas.size());
-//        assertEquals(id2,ubicacionesRecuperadas.get(0).getId());
-//    }
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(3.5, 3.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
+
+        assertEquals(2,eventosPortal.size());
+
+        EventoPortalDTO evento1 = eventosPortal.get(0);
+        EventoPortalDTO evento2 = eventosPortal.get(0);
+
+        assertEquals(id1, evento1.getUbicacionId());
+        assertEquals(id2, evento2.getUbicacionId());
+
+        assertTrue(evento1.getIntensidad() == -5);
+        assertTrue(evento2.getIntensidad() == -5);
+
+    }
 
     @Test
-    public void recuperaLasUbicacionesQueTuvieronUnPicoDeNegativoDeTemperaturaYAhoraEstanNormal(){
-//
-//        this.ubicacionService.crear(ubicacionUno);
-//        this.ubicacionService.crear(ubicacionDos);
-//
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-//
-//        Long id2 = this.ubicacionDos.getId();
-//        String idString2 = id2.toString();
-//
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 25)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 1)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 30)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        Point lecturaPoint4 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 27)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint5 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 3)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint6 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 29)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint4);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint5);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint6);
-//
-//        List<Ubicacion> ubicacionesRecuperadas = ubicacionService.ubicacionesRecuperadas();
-//
-//        assertEquals(2,ubicacionesRecuperadas.size());
-//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id)));
-//        assertTrue(ubicacionesRecuperadas.stream().anyMatch(ub -> Objects.equals(ub.getId(), id2)));
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnLaMismaUbicacion() {
+        ubicacionUno.setTemperatura(20);
+        this.ubicacionService.crear(ubicacionUno);
+        espirituService.crear(demonioUno);
+
+        Long id1 = this.ubicacionUno.getId();
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = ubicacionService.eventosDePortalesOcurridos();
+
+        assertEquals(2,eventosPortal.size());
+
+        EventoPortalDTO evento1 = eventosPortal.get(0);
+        EventoPortalDTO evento2 = eventosPortal.get(1);
+
+        assertEquals(id1, evento1.getUbicacionId());
+        assertEquals(id1, evento2.getUbicacionId());
+
+        assertTrue(evento1.getIntensidad() == -5);
+        assertTrue(evento2.getIntensidad() == -5);
+
     }
 
     @Test

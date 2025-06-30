@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
-import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
@@ -8,9 +7,10 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
@@ -146,10 +146,9 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])
-          |> derivative(unit: 5s, nonNegative: false)
-          |> filter(fn: (r) => r._value < -1.6)
-          |> map(fn: (r) => ({ r with intensidad: r._value }))
-          |> keep(columns: ["ubicacion", "_time", "intensidad"])
+          |> difference()
+          |> filter(fn: (r) => r._value <= -5.0)
+          |> keep(columns: ["ubicacion", "_time", "_value"])
     """;
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
@@ -162,10 +161,11 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .flatMap(table -> table.getRecords().stream())
                 .map(record -> new EventoPortalDTO(
                         Long.valueOf((String) record.getValueByKey("ubicacion")),
-                        (record.getTime()),
-                        (Double) record.getValueByKey("intensidad")
+                        record.getTime(),
+                        (Double) record.getValueByKey("_value")
                 ))
                 .toList();
+
     }
 
 
