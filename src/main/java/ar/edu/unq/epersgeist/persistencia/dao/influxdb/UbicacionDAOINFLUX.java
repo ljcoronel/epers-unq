@@ -17,6 +17,6 @@ public interface UbicacionDAOINFLUX {
 
     double getTemperatura(Long id);
 
-    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp);
+    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
 
 }

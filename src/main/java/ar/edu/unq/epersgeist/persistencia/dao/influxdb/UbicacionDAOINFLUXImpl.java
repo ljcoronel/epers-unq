@@ -171,7 +171,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
 
     @Override
-    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
 
 //        String query = """
 //                        from(bucket: "lecturas")
@@ -182,8 +182,6 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 //                        |> keep(columns: ["esDelTempMenorOIgual"])
 //                """.formatted(id, tempAmbiente, deltaTemp);
 
-        int dtmp = (int) deltaTemp;
-
         String query = """
                         from(bucket: "lecturas")
                         |> range(start: -30d)
@@ -191,7 +189,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                         |> last()
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
                         |> map(fn: (r) => ({temp: r.temp - r.tempAmbiente, esDelTempMenorOIgual: if r.temp - r.tempAmbiente <= %d then true else false }))
-                """.formatted(id, dtmp); // TODO no puedo sacar ese temp del map o revienta
+                """.formatted(id, deltaTemp);
         // usar -10s o -30s para tests
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);

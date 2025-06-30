@@ -42,7 +42,7 @@ public interface UbicacionRepository {
     List<EventoPortalDTO> eventosDePortalesOcurridos();
 
     void setTemperatura(Long id, double temperatura);
-    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp);
+    boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp);
 
     void modificarTemperatura(Long id, double temperatura);
 }

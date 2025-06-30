@@ -217,7 +217,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, double deltaTemp) {
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
         return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, deltaTemp);
     }
 
