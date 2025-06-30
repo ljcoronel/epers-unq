@@ -144,31 +144,16 @@ public class UbicacionServiceImpl implements UbicacionService {
     }
 
     @Override
-    public Ubicacion ubicacionMasPeligrosa(){
-        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionMasFria();
-
-        if (optionalUbicacion.isEmpty()){
-            throw new EntidadInexistenteException("La ubicación destino no existe.");
-        }
-        return optionalUbicacion.get();
-    }
-
-    @Override
-    public Ubicacion ubicacionConMasTransitoDeEspiritus(){
-
-        Optional<Ubicacion> optionalUbicacion = this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas();
-
-        if (optionalUbicacion.isEmpty()){
-            throw new EntidadInexistenteException("No existe ubicación con más tránsito.");
-        }
-        return optionalUbicacion.get();
+    public Optional<Ubicacion> ubicacionMasPeligrosa(){
+        return this.ubicacionRepository.ubicacionMasFria();
 
     }
 
     @Override
-    public List<EventoPortalDTO> EventosDePortalesOcurridos(){
+    public Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus(){
 
-        return this.ubicacionRepository.eventosDePortalesOcurridos();
+        return this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas();
 
     }
+
 }

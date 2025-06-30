@@ -1,6 +1,5 @@
 package ar.edu.unq.epersgeist.persistencia.dao.influxdb;
 
-import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
@@ -8,9 +7,10 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
@@ -82,12 +82,12 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     @Override
-    public Long recuperarIdDeUbicacionMasPeligrosa() {
+    public Optional<Long> recuperarIdDeUbicacionMasPeligrosa() {
         // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -30d)
+                          |> range(start: -7s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -99,13 +99,13 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
         if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
-            throw new EntidadInexistenteException("No se encontraron lecturas de temperatura.");
+            return Optional.empty();
         }
 
         FluxRecord record = tables.get(0).getRecords().get(0);
         String ubicacionStr = (String) record.getValueByKey("ubicacion");
 
-        return Long.valueOf(ubicacionStr);
+        return Optional.of(Long.valueOf(ubicacionStr));
     }
 
     @Override
@@ -142,14 +142,13 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
         from(bucket: "lecturas")
-          |> range(start: -30d)
+          |> range(start: -7d)
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])
-          |> derivative(unit: 5s, nonNegative: false)
-          |> filter(fn: (r) => r._value < -1.6)
-          |> map(fn: (r) => ({ r with intensidad: r._value }))
-          |> keep(columns: ["ubicacion", "_time", "intensidad"])
+          |> difference()
+          |> filter(fn: (r) => r._value <= -5.0)
+          |> keep(columns: ["ubicacion", "_time", "_value"])
     """;
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
@@ -162,10 +161,11 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                 .flatMap(table -> table.getRecords().stream())
                 .map(record -> new EventoPortalDTO(
                         Long.valueOf((String) record.getValueByKey("ubicacion")),
-                        (record.getTime()),
-                        (Double) record.getValueByKey("intensidad")
+                        record.getTime(),
+                        (Double) record.getValueByKey("_value")
                 ))
                 .toList();
+
     }
 
 

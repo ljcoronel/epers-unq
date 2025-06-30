@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
@@ -9,7 +10,9 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -40,6 +43,9 @@ public class EstadisticaServiceImplTest {
 
     @Autowired
     private MediumService mediumService;
+
+    @Autowired
+    private UbicacionRepository ubicacionRepository;
 
     private Espiritu demonio1;
     private Espiritu demonio2;
@@ -222,6 +228,167 @@ public class EstadisticaServiceImplTest {
     @Test
     public void seObtieneUnValorNuloSiNoHaySnapshotsCreados() {
         assertNull(this.estadisticaService.obtenerSnapshot(LocalDate.now()));
+    }
+
+    @Test
+    public void cuandoNoHayEventosDePortalesOcurridosDaListaVacia(){
+
+        List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
+        assertTrue(eventosPortal.isEmpty());
+    }
+
+    @Test
+    public void seConsiguenLosEventosDePortalesOcurridosConUnSoloPortalYUnaUbicacion() {
+        try {
+            Thread.sleep(11000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ubicacion.setTemperatura(20);
+        this.ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio2);
+
+        Long id1 = this.ubicacion.getId();
+
+        ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
+
+        assertEquals(1,eventosPortal.size());
+
+        EventoPortalDTO evento = eventosPortal.get(0);
+
+        assertEquals(id1, evento.getUbicacionId());
+
+        assertTrue(evento.getIntensidad() == -5);
+
+    }
+
+    @Test
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnDistintasUbicacion() {
+        try {
+            Thread.sleep(11000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ubicacion.setTemperatura(20);
+        ubicacion2.setTemperatura(20);
+        this.ubicacionService.crear(ubicacion);
+        this.ubicacionService.crear(ubicacion2);
+        demonio3.setCoordenada(new Coordenada(3.5, 0.5));
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        Long id1 = this.ubicacion.getId();
+        Long id2 = this.ubicacion2.getId();
+
+        ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.setTemperatura(ubicacion2.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(3.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
+
+        assertEquals(2,eventosPortal.size());
+
+        EventoPortalDTO evento1 = eventosPortal.get(0);
+        EventoPortalDTO evento2 = eventosPortal.get(1);
+
+        assertEquals(id1, evento1.getUbicacionId());
+        assertEquals(id2, evento2.getUbicacionId());
+
+        assertTrue(evento1.getIntensidad() == -5);
+        assertTrue(evento2.getIntensidad() == -5);
+
+    }
+
+    @Test
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnLaMismaUbicacion() {
+        try {
+            Thread.sleep(11000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ubicacion.setTemperatura(20);
+        this.ubicacionService.crear(ubicacion);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio3);
+
+        Long id1 = this.ubicacion.getId();
+
+        ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
+
+        assertEquals(2,eventosPortal.size());
+
+        EventoPortalDTO evento1 = eventosPortal.get(0);
+        EventoPortalDTO evento2 = eventosPortal.get(1);
+
+        assertEquals(id1, evento1.getUbicacionId());
+        assertEquals(id1, evento2.getUbicacionId());
+
+        assertTrue(evento1.getIntensidad() == -5);
+        assertTrue(evento2.getIntensidad() == -5);
+
     }
 
     @AfterEach
