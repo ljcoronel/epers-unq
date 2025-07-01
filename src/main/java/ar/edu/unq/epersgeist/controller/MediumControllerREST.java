@@ -125,4 +125,12 @@ public class MediumControllerREST {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/meditar/{ubicacionAMeditar}/{latitudDeDemonios}/{longitudDeDemonios}")
+    public ResponseEntity<DTOResponseError> meditar(@PathVariable Long ubicacionAMeditar,@PathVariable Double latitudDeDemonios, @PathVariable Double longitudDeDemonios){
+
+        mediumService.meditar(ubicacionAMeditar, latitudDeDemonios, longitudDeDemonios);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

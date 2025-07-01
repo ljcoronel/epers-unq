@@ -238,13 +238,8 @@ public class EstadisticaServiceImplTest {
     }
 
     @Test
-    public void seConsiguenLosEventosDePortalesOcurridosConUnSoloPortalYUnaUbicacion() {
-        try {
-            Thread.sleep(11000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void seConsiguenLosEventosDePortalesOcurridosConUnSoloPortalYUnaUbicacion() throws InterruptedException {
+        Thread.sleep(60000);
         ubicacion.setTemperatura(20);
         this.ubicacionService.crear(ubicacion);
         espirituService.crear(demonio2);
@@ -252,39 +247,26 @@ public class EstadisticaServiceImplTest {
         Long id1 = this.ubicacion.getId();
 
         ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(750);
         espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(10000);
 
         List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
 
         assertEquals(1,eventosPortal.size());
 
-        EventoPortalDTO evento = eventosPortal.get(0);
+        EventoPortalDTO evento = eventosPortal.getFirst();
 
         assertEquals(id1, evento.getUbicacionId());
 
-        assertTrue(evento.getIntensidad() == -5);
+        assertEquals(-5, (double) evento.getIntensidad());
 
     }
 
     @Test
-    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnDistintasUbicacion() {
-        try {
-            Thread.sleep(11000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnDistintasUbicacion() throws InterruptedException {
+        Thread.sleep(60000);
         ubicacion.setTemperatura(20);
         ubicacion2.setTemperatura(20);
         this.ubicacionService.crear(ubicacion);
@@ -297,32 +279,17 @@ public class EstadisticaServiceImplTest {
         Long id2 = this.ubicacion2.getId();
 
         ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(750);
         ubicacionRepository.setTemperatura(ubicacion2.getId(),17.8);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(750);
         espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(2000);
 
         espirituService.crearPortal(new PortalDemonios(new Coordenada(3.5, 0.5)));
 
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(10000);
+
 
         List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
 
@@ -334,18 +301,14 @@ public class EstadisticaServiceImplTest {
         assertEquals(id1, evento1.getUbicacionId());
         assertEquals(id2, evento2.getUbicacionId());
 
-        assertTrue(evento1.getIntensidad() == -5);
-        assertTrue(evento2.getIntensidad() == -5);
+        assertEquals(-5, (double) evento1.getIntensidad());
+        assertEquals(-5, (double) evento2.getIntensidad());
 
     }
 
     @Test
-    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnLaMismaUbicacion() {
-        try {
-            Thread.sleep(11000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void seConsiguenLosEventosDePortalesOcurridosCon2PortalesOcurridosEnLaMismaUbicacion() throws InterruptedException {
+        Thread.sleep(60000);
 
         ubicacion.setTemperatura(20);
         this.ubicacionService.crear(ubicacion);
@@ -355,26 +318,14 @@ public class EstadisticaServiceImplTest {
         Long id1 = this.ubicacion.getId();
 
         ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(750);
         espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(2000);
 
         espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Thread.sleep(10000);
 
         List<EventoPortalDTO> eventosPortal = estadisticaService.eventosDePortalesOcurridos();
 
@@ -386,8 +337,8 @@ public class EstadisticaServiceImplTest {
         assertEquals(id1, evento1.getUbicacionId());
         assertEquals(id1, evento2.getUbicacionId());
 
-        assertTrue(evento1.getIntensidad() == -5);
-        assertTrue(evento2.getIntensidad() == -5);
+        assertEquals(-5, (double) evento1.getIntensidad());
+        assertEquals(-5, (double) evento2.getIntensidad());
 
     }
 

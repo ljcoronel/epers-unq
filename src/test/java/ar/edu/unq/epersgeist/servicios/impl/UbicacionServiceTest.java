@@ -57,10 +57,7 @@ public class UbicacionServiceTest {
     private MediumService mediumService;
 
     @Autowired
-    private UbicacionDAOINFLUX ubicacionDAOINFLUX; // TODO sacar, se debería poder hacer con el service
-
-    @Autowired
-    private UbicacionRepository ubicacionRepository; // TODO sacar
+    private UbicacionRepository ubicacionRepository;
 
     private List<Coordenada> pointsUbicacionUno;
     private List<Coordenada> pointsUbicacionDos;
@@ -1036,8 +1033,6 @@ public class UbicacionServiceTest {
         assertEquals(tempInicial - 0.4, ubicacionRecuperada.getTemperatura());
     }
 
-    // TODO ángeles impl y tests
-
     @Test
     void seMueveUnDemonioMedianteUnaInvocacionYRevierteLaTemperaturaDeSuUbicacionAnterior() throws InterruptedException {
         Thread.sleep(35000);
@@ -1130,108 +1125,20 @@ public class UbicacionServiceTest {
         assertEquals(tempInicial, santuarioRecuperado.getTemperatura());
     }
 
-//    @Test
-//    void seGuardaUnaLecturaDeTemperaturaYApareceEnLaBaseDeDatos() {
-//        ubicacionService.crear(ubicacionUno);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 15d);
-//
-//        double temperaturaUbicacion = ubicacionRepository.getTemperatura(ubicacionUno.getId());
-//
-//        assertEquals(15d, temperaturaUbicacion);
-//    }
-//
-//    @Test
-//    void seGuardaUnaLecturaDeTemperaturaYSeLaConsideraFria() {
-//        ubicacionService.crear(ubicacionUno);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
-//
-//        boolean esFria = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
-//
-//        assertTrue(esFria);
-//    }
-//
-//    @Test
-//    void seGuardanLecturasDeTemperaturaYSeLasConsideraFrias() {
-//        ubicacionService.crear(ubicacionUno);
-//        ubicacionService.crear(ubicacionDos);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
-//        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 5);
-//
-//        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
-//        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
-//
-//        assertTrue(esFria1);
-//        assertTrue(esFria2);
-//    }
-//
-//    @Test
-//    void seGuardaUnaLecturaDeTemperaturaYSeLaConsideraNormal() {
-//        ubicacionService.crear(ubicacionUno);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 20);
-//
-//        boolean esFria = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
-//
-//        assertFalse(esFria);
-//    }
-//
-//    @Test
-//    void seGuardanLecturasDeTemperaturaYSeLasConsideraNormales() {
-//        ubicacionService.crear(ubicacionUno);
-//        ubicacionService.crear(ubicacionDos);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 20);
-//        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 23);
-//
-//        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
-//        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
-//
-//        assertFalse(esFria1);
-//        assertFalse(esFria2);
-//    }
-//
-//    @Test
-//    void seGuardanLecturasDeTemperaturaMixtaYSeLasConsideraComoCorresponda() {
-//        ubicacionService.crear(ubicacionUno);
-//        ubicacionService.crear(ubicacionDos);
-//
-//        ubicacionRepository.cambiarTemperatura(ubicacionUno.getId(), 5);
-//        ubicacionRepository.cambiarTemperatura(ubicacionDos.getId(), 23);
-//
-//        boolean esFria1 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionUno.getId(), -5);
-//        boolean esFria2 = ubicacionRepository.tieneDeltaDeTemperaturaMenorOIgual(ubicacionDos.getId(), -5);
-//
-//        assertTrue(esFria1);
-//        assertFalse(esFria2);
-//    }
-
     @Test
-    void enLaUbicacionMasPeligrosaSinUbicacionesRetornaOptionalVacio(){
-
+    void enLaUbicacionMasPeligrosaSinUbicacionesRetornaOptionalVacio() throws InterruptedException {
+        Thread.sleep(10000);
         Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionMasPeligrosa();
         assertTrue(ubicacionOptional.isEmpty());
     }
 
     @Test
-    void seRecuperaLaUbicacionMasPeligrosaCuandoHaySoloUnaYDevuelveEsa(){
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    void seRecuperaLaUbicacionMasPeligrosaCuandoHaySoloUnaYDevuelveEsa() throws InterruptedException {
+        Thread.sleep(10000);
+
         this.ubicacionService.crear(ubicacionUno);
 
         Long id = this.ubicacionUno.getId();
-
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 40)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
 
         ubicacionRepository.setTemperatura(id, 40);
 
@@ -1244,7 +1151,7 @@ public class UbicacionServiceTest {
     @Test
     void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas() throws InterruptedException {
         Thread.sleep(11000);
-        this.ubicacionService.crear(ubicacionUno); // TODO cambiar para que reciba temp ambiente
+        this.ubicacionService.crear(ubicacionUno);
         this.ubicacionService.crear(ubicacionDos);
         this.ubicacionService.crear(ubicacionTres);
 
@@ -1254,32 +1161,10 @@ public class UbicacionServiceTest {
 
         Long id3 = this.ubicacionTres.getId();
 
-//        Point lecturaPoint0 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", "10")
-//                .addField("temp", 50)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint1 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 40)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint2 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 0)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-//        Point lecturaPoint3 = Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 10)
-//                .time(Instant.now().toEpochMilli(), WritePrecision.MS);
-
         ubicacionRepository.setTemperatura(id, 50);
         ubicacionRepository.setTemperatura(id3, 40);
         ubicacionRepository.setTemperatura(id2, 0);
         ubicacionRepository.setTemperatura(id, 10);
-
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint0);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint1);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint2);
-//        ubicacionDAOINFLUX.guardarDatos(lecturaPoint3);
 
         Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
 
@@ -1298,19 +1183,6 @@ public class UbicacionServiceTest {
     public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus() throws InterruptedException {
         Thread.sleep(11000);
         this.ubicacionService.crear(ubicacionUno);
-
-//        Long id = this.ubicacionUno.getId();
-//        String idString = id.toString();
-
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 50.1)
-//                .time(fechaFija(1, 0).toEpochMilli(), WritePrecision.MS));
-//
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString)
-//                .addField("temp", 55.1)
-//                .time(fechaFija(1, 5).toEpochMilli(), WritePrecision.MS));
 
         ubicacionRepository.setTemperatura(ubicacionUno.getId(),50.1);
         try {

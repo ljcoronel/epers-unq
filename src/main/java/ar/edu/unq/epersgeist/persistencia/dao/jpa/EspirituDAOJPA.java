@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.dao.jpa;
 
+import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import org.springframework.data.domain.Pageable;
@@ -69,4 +70,9 @@ public interface EspirituDAOJPA extends JpaRepository<EspirituJPADTO, Long> {
                     order by e.nivelDeConexion desc"""
     )
     List<DemonioJPADTO> demoniosLibresNoDominadosMasFuertesEn(@Param("ubicacionID") Long ubicacionId, Pageable pageable);
+
+    @Query("""
+        from espiritu e where type(e) = demonio and e.medium is null and e.ubicacion.id = :unaUbicacion
+    """)
+    List<DemonioJPADTO> demoniosLibresEn(@Param("unaUbicacion") Long ubicacionId);
 }

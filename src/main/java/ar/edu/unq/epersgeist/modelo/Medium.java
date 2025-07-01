@@ -55,6 +55,11 @@ public class Medium implements Serializable {
 
     }
 
+
+    public void perderMana(int mana) {
+        setMana(getMana() - mana);
+    }
+
     public void descansar(){
         getUbicacion().recuperarManaParaMedium(this);
         getUbicacion().recuperarConexionParaAngeles(getAngeles());
@@ -162,5 +167,9 @@ public class Medium implements Serializable {
 
     public Long getIdDeUbicacion() {
         return this.ubicacion.getId();
+    }
+
+    public void meditar(int energiaAConsumir) {
+        perderMana((int) Math.round(energiaAConsumir*0.75));
     }
 }

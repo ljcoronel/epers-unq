@@ -46,7 +46,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
-                        """.formatted(id); // para testear usar -30s en range
+                        """.formatted(id); // para testear usar -60s en range
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -83,11 +83,11 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public Optional<Long> recuperarIdDeUbicacionMasPeligrosa() {
-        // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
+        // PARA TESTEAR usar -10s como range ( |> range(start: -10s) ) justo abajo del from y arriba del filter
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -7s)
+                          |> range(start: -10s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -98,11 +98,11 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
-        if (tables.isEmpty() || tables.get(0).getRecords().isEmpty()) {
+        if (tables.isEmpty() || tables.getFirst().getRecords().isEmpty()) {
             return Optional.empty();
         }
 
-        FluxRecord record = tables.get(0).getRecords().get(0);
+        FluxRecord record = tables.getFirst().getRecords().getFirst();
         String ubicacionStr = (String) record.getValueByKey("ubicacion");
 
         return Optional.of(Long.valueOf(ubicacionStr));
@@ -110,7 +110,6 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(long segundos){
-        // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
 
         String rangeTime = segundos == 0 ? "-0s" : Math.abs(segundos) * -1 + "s";
 
@@ -144,7 +143,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
         from(bucket: "lecturas")
-          |> range(start: -7s)
+          |> range(start: -60s)
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])
@@ -174,7 +173,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
-
+    // PARA TESTEAR usar -30s como range ( |> range(start: -30s) ) justo abajo del from y arriba del filter
         String query = """
                         from(bucket: "lecturas")
                         |> range(start: -30s)

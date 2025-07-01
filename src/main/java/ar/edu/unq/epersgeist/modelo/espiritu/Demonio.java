@@ -84,4 +84,8 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         // regresa la temperatura a como estaba, ya que debía estar parado en la ubicación y bajarle la temp primero, ahora la subo
         this.getUbicacion().subirTemperaturaEn(0.2d);
     }
+
+    public void recibirMeditacion() {
+        reducirNivelDeConexionEn(100); // hace 100% de daño
+    }
 }

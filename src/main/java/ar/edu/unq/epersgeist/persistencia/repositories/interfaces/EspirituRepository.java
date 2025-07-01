@@ -39,4 +39,6 @@ public interface EspirituRepository {
     boolean estaEntreDistancia(Long espirituId, Point coordenadaReferencia, int minKms, int maxKms);
 
     void crearSnapshot(Snapshot snapshot);
+
+    List<Demonio> demoniosLibresEn(Long ubicacionId);
 }

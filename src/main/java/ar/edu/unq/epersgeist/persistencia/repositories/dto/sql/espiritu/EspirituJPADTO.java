@@ -96,6 +96,15 @@ public abstract class EspirituJPADTO {
         return espiritu;
     }
 
+    public Espiritu aModelo(Ubicacion ubicacionParaTodos) {
+        Espiritu espiritu = instanciarEspiritu();
+        espiritu.setId(this.getId());
+        espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
+        espiritu.setEspirituDominante(this.getEspirituDominante() != null ? getEspirituDominante().aModelo() : null);
+        espiritu.setUbicacion(ubicacionParaTodos);
+        return espiritu;
+    }
+
     public abstract Espiritu instanciarEspiritu();
 
     public Espiritu aModelo(Medium medium, Ubicacion ubicacion) {

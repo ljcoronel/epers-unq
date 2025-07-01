@@ -1,4 +1,5 @@
 package ar.edu.unq.epersgeist.servicios.impl;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ManaInsuficiente;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 
 import java.util.List;
@@ -1095,8 +1097,91 @@ public class MediumServiceImplTest {
 
     }
 
+    @Test
+    public void seActualizaElNivelDeConexionDeUnDemonioLuegoDeMeditar() throws InterruptedException {
+        Medium mediumFuerte = new Medium("primo",100,60, new Coordenada(0.0, 0.0));
+        this.mediumService.crear(mediumFuerte);
+
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+        this.mediumService.meditar(this.santuario.getId(), 0d, 0d);
+        Espiritu demonioDebilActualizado = this.espirituService.recuperar(this.demonioDebil.getId()).get();
+        Espiritu demonioFuerteActualizado = this.espirituService.recuperar(this.demonioFuerte.getId()).get();
+
+        assertEquals(0, demonioDebilActualizado.getNivelDeConexion());
+        assertEquals(0, demonioFuerteActualizado.getNivelDeConexion());
+    }
+
+    @Test
+    public void seVerificaQueUnMediumAlIntentarMeditarNoTieneManaSuficienteEntoncesSeLanzaUnaExcepcion() throws InterruptedException {
+        Medium mediumDebil = new Medium("primo",100,2, new Coordenada(0.0, 0.0));
+
+        this.mediumService.crear(mediumDebil);
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+
+        assertThrows(ManaInsuficiente.class, () -> this.mediumService.meditar(this.santuario.getId(), 0d, 0d));
+    }
+
+    @Test
+    public void seRecuperaLaTemperaturaDeLaUbicacionDespejadaPorLaMeditacionDeMediums() throws InterruptedException {
+
+        Medium mediumFuerte = new Medium("primo",100,60, new Coordenada(0.0, 0.0));
+
+        this.mediumService.crear(mediumFuerte);
+
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+
+        this.mediumService.meditar(this.santuario.getId(), 0d, 0d);
+
+        Ubicacion ubicacion = ubicacionService.recuperar(santuario.getId()).get();
+
+        // era 5 antes
+        assertEquals(5, ubicacion.getTemperatura());
+    }
+
+    @Test
+    public void esExitosoElMeditarConVariosMediums() throws InterruptedException {
+
+        Medium mediumFuerte = new Medium("primo1",100,50, new Coordenada(0.0, 0.0));
+        Medium mediumDebil = new Medium("primo2",100,2, new Coordenada(0.0, 0.0));
+        Medium mediumMaso = new Medium("primo3",100,25, new Coordenada(0.0, 0.0));
+
+        this.mediumService.crear(mediumFuerte);
+        this.mediumService.crear(mediumDebil);
+        this.mediumService.crear(mediumMaso);
+
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+
+        this.mediumService.meditar(this.santuario.getId(), 0d, 0d);
+
+        Espiritu demonioDebilActualizado = this.espirituService.recuperar(this.demonioDebil.getId()).get();
+        Espiritu demonioFuerteActualizado = this.espirituService.recuperar(this.demonioFuerte.getId()).get();
+
+        assertEquals(0, demonioDebilActualizado.getNivelDeConexion());
+        assertEquals(0, demonioFuerteActualizado.getNivelDeConexion());
+    }
+
+    @Test
+    public void noHayDemoniosEnRangoEntoncesNoHaceNada() {
+        Medium mediumFuerte = new Medium("primo1",100,50, new Coordenada(0.0, 0.0));
+
+        this.mediumService.crear(mediumFuerte);
+
+        this.mediumService.meditar(this.santuario.getId(), 0d, 0d);
+
+    }
+
+    @Test
+    public void noHayDemoniosNiMediumsEnRangoEntoncesLanzaUnaException() {
+        assertThrows(EntidadInexistenteException.class, () -> this.mediumService.meditar(this.santuario.getId(), 0d, 0d));
+
+    }
+
     @AfterEach
-    void eliminarModelo() {
+    void eliminarModelo() throws InterruptedException {
         testService.eliminarEspiritus();
         testService.eliminarMediums();
         testService.eliminarUbicaciones();

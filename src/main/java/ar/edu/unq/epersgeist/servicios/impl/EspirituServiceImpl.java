@@ -157,7 +157,6 @@ public class EspirituServiceImpl implements EspirituService {
         Demonio demonioHost = this.espirituRepository
                         .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
                         .orElseThrow(() -> new EntidadInexistenteException("No se encontró un host válido."));
-        // TODO tal vez tomar un radio en vez de una ubicación entera?
         portalDemonios.setDemonioHost(demonioHost);
 
         new Thread(() -> activarPortal(demonioHost, portalDemonios, ubicacion)).start();

@@ -1,5 +1,6 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
+import ar.edu.unq.epersgeist.modelo.exception.medium.ManaInsuficiente;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -14,10 +15,12 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumReposito
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -221,6 +224,41 @@ public class MediumServiceImpl implements MediumService {
         demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
         // -------------------------------------
 
+    }
+
+    @Override
+    public void meditar(Long ubicacionADespejar, Double latitud, Double longitud) {
+        List<Medium> mediums = this.mediumRepository.mediumsEnArea(new Coordenada(latitud, longitud));
+
+        if (mediums.isEmpty()) throw new EntidadInexistenteException("No hay mediums para atacar en esta zona");
+
+        List<Demonio> demoniosLibres = this.espirituRepository.demoniosLibresEn(ubicacionADespejar);
+        if (demoniosLibres.isEmpty()) return;
+
+        int nivelDeConexionTotal = demoniosLibres.stream()
+                .mapToInt(Espiritu::getNivelDeConexion)
+                .sum();
+
+        int manaTotal = mediums.stream()
+                .mapToInt(Medium::getMana)
+                .sum();
+
+        this.verificarMeditacion(manaTotal, nivelDeConexionTotal);
+
+        mediums.forEach(medium -> medium.meditar(nivelDeConexionTotal));
+        demoniosLibres.forEach(Demonio::recibirMeditacion);
+
+        mediums.forEach(this.mediumRepository::actualizar);
+        demoniosLibres.forEach(this.espirituRepository::actualizar);
+
+        if (!demoniosLibres.isEmpty()) {
+            Ubicacion ubicacionConTempActualizada = demoniosLibres.getFirst().getUbicacion();
+            ubicacionRepository.guardar(ubicacionConTempActualizada);
+        }
+    }
+
+    private void verificarMeditacion(int manaTotal, int nivelDeConexionTotal) {
+        if (manaTotal < nivelDeConexionTotal) throw new ManaInsuficiente("Los mediums no tienen suficiente mana para meditar");
     }
 
 }

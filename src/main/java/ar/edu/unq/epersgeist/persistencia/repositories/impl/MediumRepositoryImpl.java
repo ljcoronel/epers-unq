@@ -5,6 +5,7 @@ import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftMediumMONGODT
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
@@ -64,6 +65,8 @@ public class MediumRepositoryImpl implements MediumRepository {
         return mediumMONGODTO.aModelo(medium, ubicacionMONGODTO);
     }
 
+
+
     private void mappearConInflux(Medium medium) {
         Ubicacion ubMedium = medium.getUbicacion();
         double temperatura = ubicacionDAOINFLUX.getTemperatura(ubMedium.getId());
@@ -116,5 +119,13 @@ public class MediumRepositoryImpl implements MediumRepository {
         snapshot.guardarEstadoMongo(this.mediumDAOMONGO.findAll().stream()
                 .map(dto -> (SnapshotMongo) DraftMediumMONGODTO.guardar(dto))
                 .toList());
+    }
+
+    @Override
+    public List<Medium> mediumsEnArea(Coordenada coordenada) {
+        List<MediumMONGODTO> mediumsMongo = this.mediumDAOMONGO.mediumsEnArea(new GeoJsonPoint(coordenada.getX(), coordenada.getY()));
+        return mediumsMongo.stream()
+                .map(mediumdto -> this.recuperar(Long.parseLong(mediumdto.getId())).get())
+                .toList();
     }
 }

@@ -17,6 +17,7 @@ import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONG
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.EspirituRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -162,9 +164,9 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espiritu.getId()).get();
 
         mappearEspirituDominante(espiritu.getEspirituDominante());
-        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
-
         mappearConInflux(espiritu);
+
+        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espiritu.getUbicacion().getId()).get();
 
         return espirituMongo.aModelo(espiritu, ubicacionMONGODTO);
     }
@@ -182,8 +184,11 @@ public class EspirituRepositoryImpl implements EspirituRepository {
         if (espirituDominante == null) return;
         EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(espirituDominante.getId()).get();
 
-        mappearEspirituDominante(espirituDominante.getEspirituDominante()); // recursivo, dá coords a todos los espíritus de la cadena de dominancia
         UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(espirituDominante.getUbicacion().getId()).get();
+
+        mappearEspirituDominante(espirituDominante.getEspirituDominante()); // recursivo, dá coords a todos los espíritus de la cadena de dominancia
+        mappearConInflux(espirituDominante);
+
         espirituMongo.aModelo(espirituDominante, ubicacionMONGODTO);
     }
     
@@ -196,5 +201,26 @@ public class EspirituRepositoryImpl implements EspirituRepository {
                 .map(dto -> (SnapshotMongo) DraftEspirituMONGODTO.guardar(dto))
                 .toList());
     }
+
+    @Override
+    public List<Demonio> demoniosLibresEn(Long ubicacionId) {
+        List<DemonioJPADTO> demonioJPADTOS = this.espirituDAOJPA.demoniosLibresEn(ubicacionId);
+        if (demonioJPADTOS.isEmpty()) return new ArrayList<>();
+        Ubicacion ubicacionParaTodos = demonioJPADTOS.getFirst().getUbicacion().aModelo();
+        return demonioJPADTOS.stream()
+                .map(jpaDTO -> mappearDemoniosConUbicacion(ubicacionParaTodos, jpaDTO)).toList();
+    }
+
+    private Demonio mappearDemoniosConUbicacion(Ubicacion ubicacionParaTodos, DemonioJPADTO jpaDTO) {
+        Demonio demonio = (Demonio) jpaDTO.aModelo(ubicacionParaTodos);
+        EspirituMONGODTO espirituMongo = this.espirituDAOMongo.findById(demonio.getId()).get();
+
+        UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(ubicacionParaTodos.getId()).get();
+        mappearEspirituDominante(demonio.getEspirituDominante());
+        mappearConInflux(demonio);
+
+        return (Demonio) espirituMongo.aModelo(demonio, ubicacionMONGODTO);
+    }
+
 
 }
