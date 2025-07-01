@@ -1,8 +1,8 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotNeo;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotNeo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

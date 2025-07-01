@@ -1,18 +1,21 @@
 package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.EspirituDTOResponse;
+import ar.edu.unq.epersgeist.controller.dto.EventoPortalDTO.EventoPortalDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.MediumDTO.MediumDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.CentralityResponseDTO;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPostRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOPutRequest;
 import ar.edu.unq.epersgeist.controller.dto.UbicacionDTO.UbicacionDTOResponse;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.UbicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -128,5 +131,22 @@ public final class UbicacionControllerREST {
                 .collect(Collectors.toList()));
     }
 
+    @GetMapping("/ubicacionMasPeligrosa")
+    public ResponseEntity<UbicacionDTOResponse> ubicacionMasPeligrosa(){
+        Optional<Ubicacion> optionalUbicacion = ubicacionService.ubicacionMasPeligrosa();
+
+        if (optionalUbicacion.isEmpty()) return ResponseEntity.status(404).body(null);
+        Ubicacion ubicacion = optionalUbicacion.get();
+        return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
+    }
+
+    @GetMapping("/ubicacionMasTransitada")
+    public ResponseEntity<UbicacionDTOResponse> ubicacionMasTransitada(@RequestParam long segundos){
+        Optional<Ubicacion> optionalUbicacion = ubicacionService.ubicacionConMasTransitoDeEspiritus(segundos);
+
+        if (optionalUbicacion.isEmpty()) return ResponseEntity.status(404).body(null);
+        Ubicacion ubicacion = optionalUbicacion.get();
+        return ResponseEntity.ok(UbicacionDTOResponse.desdeModelo(ubicacion));
+    }
 
 }

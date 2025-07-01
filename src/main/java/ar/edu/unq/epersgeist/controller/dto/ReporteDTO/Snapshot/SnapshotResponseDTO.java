@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.controller.dto.ReporteDTO;
+package ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot;
 
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 

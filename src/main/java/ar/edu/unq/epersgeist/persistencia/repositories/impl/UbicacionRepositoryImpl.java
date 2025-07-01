@@ -1,17 +1,25 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.*;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionNEODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotNeo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.UbicacionDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.neo4j.UbicacionDAONEO;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.neo4j.UbicacionNEODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
@@ -28,11 +36,14 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     private final UbicacionDAOJPA ubicacionDaoJpa;
     private final UbicacionDAONEO ubicacionDaoNeo;
     private final UbicacionDAOMONGO ubicacionDaoMongo;
+    private final UbicacionDAOINFLUX ubicacionDAOInflux;
+    private boolean cambiandoTemp;
 
-    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo) {
+    public UbicacionRepositoryImpl(UbicacionDAOJPA ubicacionDaoJpa, UbicacionDAONEO ubicacionDaoNeo, UbicacionDAOMONGO ubicacionDaoMongo, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.ubicacionDaoJpa = ubicacionDaoJpa;
         this.ubicacionDaoNeo = ubicacionDaoNeo;
         this.ubicacionDaoMongo = ubicacionDaoMongo;
+        this.ubicacionDAOInflux = ubicacionDAOINFLUX;
     }
 
     @Override
@@ -67,16 +78,15 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         UbicacionMONGODTO ubicacionMongo = UbicacionMONGODTO.desdeModelo(ubicacion);
         this.ubicacionDaoMongo.save(ubicacionMongo);
 
+        this.setTemperatura(ubicacion.getId(), ubicacion.getTemperatura()); // actualizo la temp
+
         return ubicacionConId;
     }
 
     @Override
     public Optional<Ubicacion> recuperar(Long id) {
 
-        return ubicacionDaoJpa.findById(id).map(ubicacionJPADTO -> {
-                UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
-                return ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
-        });
+        return mappearUbicacionConDTO(id);
     }
 
     @Override
@@ -102,10 +112,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     @Override
     public List<Ubicacion> recuperarTodos() {
         return List.copyOf(this.ubicacionDaoJpa.findAll().stream()
-                .map(ubicacionJPA -> {
-                    UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(ubicacionJPA.getId()).get();
-                    return ubicacionMongo.aModelo(ubicacionJPA.aModelo());
-                })
+                .map(this::mappearUbicacionConDTO)
                 .sorted(Comparator.comparing(Ubicacion::getId))
                 .toList());
     }
@@ -158,6 +165,7 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
                 .map(mongoDTO -> {
                     UbicacionJPADTO jpaDTO = ubicacionDaoJpa.findById(mongoDTO.getId()).get();
                     Ubicacion ubicacion = jpaDTO.aModelo();
+                    mappearConInflux(mongoDTO.getId(), ubicacion);
                     return mongoDTO.aModelo(ubicacion);
                 });
     }
@@ -180,5 +188,66 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
         snapshot.guardarEstadoNeo(this.ubicacionDaoNeo.findAll().stream()
                 .map(dto -> (SnapshotNeo) DraftUbicacionNEODTO.guardar(dto, this.ubicacionDaoNeo.ubicacionesConectadas(dto.getId())))
                 .toList());
+    }
+
+    @Override
+    public Optional<Ubicacion> ubicacionMasFria(){
+
+        Optional<Long> optionalL = this.ubicacionDAOInflux.recuperarIdDeUbicacionMasPeligrosa();
+        return optionalL.map( opId -> mappearUbicacionConDTO(opId).get());
+    }
+
+    @Override
+    public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(long segundos){
+
+        return this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(segundos)
+                .map( opId -> mappearUbicacionConDTO(opId).get());
+    }
+
+    @Override
+    public List<EventoPortalDTO> eventosDePortalesOcurridos() {
+        List<EventoPortalDTO> eventosDePortales = this.ubicacionDAOInflux.recuperarEventosDePortales();
+
+        return eventosDePortales.stream()
+                .map(evento -> mappearUbicacionConDTO(evento.getUbicacionId())
+                        .map(ubicacion -> new EventoPortalDTO(ubicacion, evento.getTiempo(), evento.getIntensidad())))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+    }
+
+    @Override
+    public synchronized void setTemperatura(Long id, double temperatura) {
+        // synchronized para que el thread main deba esperar si alguien estaba modificando la temperatura
+        ubicacionDAOInflux.cambiarTemperatura(id, temperatura);
+    }
+
+    @Override
+    public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
+        return this.ubicacionDAOInflux.tieneDeltaDeTemperaturaMenorOIgual(id, deltaTemp);
+    }
+
+    @Override
+    public synchronized void modificarTemperatura(Long id, double temperatura) {
+        // este method lee la temperatura y la modifica, de esta manera no hay problemas de concurrencia (ya que es synchronized)
+        double tempExistente = ubicacionDAOInflux.getTemperatura(id);
+        ubicacionDAOInflux.cambiarTemperatura(id, tempExistente + temperatura);
+    }
+
+    private Optional<Ubicacion> mappearUbicacionConDTO(Long id){
+        return ubicacionDaoJpa.findById(id).map(this::mappearUbicacionConDTO);
+    }
+
+    @NotNull
+    private Ubicacion mappearUbicacionConDTO(UbicacionJPADTO ubicacionJPADTO) {
+        long id = ubicacionJPADTO.getId();
+        UbicacionMONGODTO ubicacionMongo = ubicacionDaoMongo.findById(id).get();
+        Ubicacion ubicacionMappeada = ubicacionMongo.aModelo((ubicacionJPADTO.aModelo()));
+        mappearConInflux(id, ubicacionMappeada);
+        return ubicacionMappeada;
+    }
+
+    private void mappearConInflux(Long id, Ubicacion ubicacionMappeada) {
+        ubicacionMappeada.setTemperatura(this.ubicacionDAOInflux.getTemperatura(id)); // añado temp de influx
     }
 }

@@ -1,14 +1,19 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
-import ar.edu.unq.epersgeist.modelo.Poligono;
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.exception.ubicacion.UbicacionesNoConectadasException;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
+import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.AreaOcupadaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.EspirituService;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
@@ -26,13 +31,16 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.geo.Point;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.LongStream;
 
+import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,11 +56,15 @@ public class UbicacionServiceTest {
     @Autowired
     private MediumService mediumService;
 
+    @Autowired
+    private UbicacionRepository ubicacionRepository;
+
     private List<Coordenada> pointsUbicacionUno;
     private List<Coordenada> pointsUbicacionDos;
     private List<Coordenada> pointsUbicacionTres;
     private List<Coordenada> pointsUbicacionCuatro;
     private List<Coordenada> pointsUbicacionCinco;
+    private List<Coordenada> pointsCementerioUno;
 
     private Ubicacion ubicacionUno;
     private Ubicacion ubicacionDos;
@@ -61,9 +73,26 @@ public class UbicacionServiceTest {
     private Santuario ubicacionCuatro;
     private Santuario ubicacionCinco;
 
+    private Cementerio cementerioUno;
+    private Cementerio cementerioDos = new Cementerio("Chocolandia", 50,List.of(
+            new Coordenada(30.1, 30.1),
+                new Coordenada(40, 30.1),
+                new Coordenada(40, 40),
+                new Coordenada(30.1, 40),
+                new Coordenada(30.1, 30.1)), 20);
+
+    private Santuario santuarioUno = new Santuario("Tailandia", 50,List.of(
+            new Coordenada(20, 20),
+            new Coordenada(20, 30),
+            new Coordenada(30, 30),
+            new Coordenada(30, 20),
+            new Coordenada(20, 20)), 50);
+
+
     private Angel angelUno;
 
     private Demonio demonioUno;
+    private Demonio demonioDos;
 
     private Medium mediumUno;
     private Medium mediumDos;
@@ -74,6 +103,8 @@ public class UbicacionServiceTest {
 
     @Autowired
     private Neo4jClient neo4jClient;
+
+
 
     @BeforeEach
     void prepare() {
@@ -116,6 +147,13 @@ public class UbicacionServiceTest {
                 new Coordenada(5, 5)
         );
 
+        pointsCementerioUno = List.of(
+                new Coordenada(20, 20),
+                new Coordenada(20, 30),
+                new Coordenada(30, 30),
+                new Coordenada(30, 20),
+                new Coordenada(20, 20));
+
 
         this.ubicacionUno = new Santuario("Bernal", 50);
         this.ubicacionDos = new Santuario("Quilmes", 50);
@@ -123,21 +161,43 @@ public class UbicacionServiceTest {
         this.ubicacionCuatro = new Santuario("Chocolandia", 75);
         this.ubicacionCinco = new Santuario("MiCasa", 30);
 
-        ubicacionUno.setTerritorio(pointsUbicacionUno);//TODO ver si tendran que tener todas ubicaciones distintas o pueden compartirlos en estos test
+        this.cementerioUno = new Cementerio("Noselandia", 30);
+
+        ubicacionUno.setTerritorio(pointsUbicacionUno);
+        ubicacionUno.setTerritorio(pointsUbicacionUno);
         ubicacionDos.setTerritorio(pointsUbicacionDos);
         ubicacionTres.setTerritorio(pointsUbicacionTres);
         ubicacionCuatro.setTerritorio(pointsUbicacionCuatro);
         ubicacionCinco.setTerritorio(pointsUbicacionCinco);
 
-        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5), this.ubicacionUno);
+        cementerioUno.setTerritorio(pointsCementerioUno);
 
-        this.demonioUno = new Demonio(10, "demonio",new Coordenada(0.5, 0.5), this.ubicacionUno);
+        ubicacionUno.establecerTemperatura(5);
+        ubicacionDos.establecerTemperatura(10);
+        ubicacionTres.establecerTemperatura(20);
+        ubicacionCuatro.establecerTemperatura(25);
+        ubicacionCinco.establecerTemperatura(50);
 
-        this.mediumUno = new Medium("Fabian", 100, 10, this.ubicacionUno, new Coordenada(0.5, 0.5));
-        this.mediumDos = new Medium("Franco", 200, 50, this.ubicacionUno, new Coordenada(0.5, 0.5));
-        this.mediumTres = new Medium("Tobias", 300, 60, this.ubicacionUno, new Coordenada(0.5, 0.5));
+        this.angelUno = new Angel(10, "angelical",new Coordenada(0.5, 0.5));
+
+        this.demonioUno = new Demonio(10, "el yose",new Coordenada(0.5, 0.5));
+        this.demonioDos = new Demonio(10, "repepe",new Coordenada(0.5, 0.5));
+
+        this.mediumUno = new Medium("Fabian", 100, 10, new Coordenada(0.5, 0.5));
+        this.mediumDos = new Medium("Franco", 200, 50, new Coordenada(0.5, 0.5));
+        this.mediumTres = new Medium("Tobias", 300, 60, new Coordenada(0.5, 0.5));
 
 
+    }
+
+    private Instant fechaFija(int diasAtras, int minutosDespues, int segundosDespues) {
+        LocalDateTime base = LocalDateTime.of(2025, 6, 21, 12, 0);
+        return base
+                .minusDays(diasAtras)
+                .plusMinutes(minutosDespues)
+                .plusSeconds(segundosDespues)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
 
     @Test
@@ -145,7 +205,6 @@ public class UbicacionServiceTest {
         Ubicacion ubicacionPersistida = this.ubicacionService.crear(ubicacionUno);
         assertEquals(this.ubicacionUno.getId(), ubicacionPersistida.getId());
         assertEquals(this.ubicacionUno.getNombre(), ubicacionPersistida.getNombre());
-
     }
 
     @Test
@@ -217,9 +276,6 @@ public class UbicacionServiceTest {
 
         List<Ubicacion> ubicaciones = this.ubicacionService.recuperarTodos();
 
-//        assertEquals(ubicaciones.getFirst().getId(), this.ubicacionUno.getId()); // TODO cambiar test para no depender del orden de guardado ya que aveces falla
-//        assertEquals(ubicaciones.get(1).getId(), this.ubicacionDos.getId());
-//        assertEquals(ubicaciones.getLast().getId(), this.ubicacionTres.getId());
         assertEquals(3, ubicaciones.size());
     }
 
@@ -256,16 +312,13 @@ public class UbicacionServiceTest {
 
     @Test
     public void seVerificaQueUnAngelNoPuedeCambiarDeUbicacionSiEstaConectadoAUnMedium() {
-        Ubicacion ubicacion1 = new Santuario("ElClerigo",50);
-        Ubicacion ubicacion2 = new Santuario("Masedonia",50);
-
-        ubicacion1.setTerritorio(pointsUbicacionUno);
-        ubicacion2.setTerritorio(pointsUbicacionDos);
+        Ubicacion ubicacion1 = new Santuario("ElClerigo",50, pointsUbicacionUno, 15);
+        Ubicacion ubicacion2 = new Santuario("Masedonia",50, pointsUbicacionDos, 15);
 
         ubicacionService.crear(ubicacion1);
         ubicacionService.crear(ubicacion2);
-        Medium medium = new Medium("Franco", 200, 50, ubicacion1, new Coordenada(0.5, 0.5));
-        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5), ubicacion1);
+        Medium medium = new Medium("Franco", 200, 50, new Coordenada(0.5, 0.5));
+        Espiritu espiritu = new Angel(10, "angelical",new Coordenada(0.5, 0.5));
         espirituService.crear(espiritu);
         mediumService.crear(medium);
 
@@ -898,7 +951,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPolygono() {
+    void alCrearUnPoligonoAbiertoSeAgregaElUltimoPuntoIgualAlPrimeroParaCerrarElPoligono() {
 
         List<Coordenada> coordenadasPoligonoAbierto =
                 List.of(new Coordenada(-70,0),new Coordenada(-70,1)
@@ -915,6 +968,337 @@ public class UbicacionServiceTest {
         assertEquals(ubicacionRecuperada.getCoordenadas().get(1), coordenadasPoligonoAbierto.get(1));
         assertEquals(ubicacionRecuperada.getCoordenadas().get(2), coordenadasPoligonoAbierto.get(2));
         assertEquals(ubicacionRecuperada.getCoordenadas().get(3), coordenadasPoligonoAbierto.get(0));//aca el primero es igual al ultimo
+    }
+
+    @Test
+    void seCreaUnaUbicacionYSuTemperaturaEsIgualALaTemperaturaInicialRecibida() throws InterruptedException {
+        Thread.sleep(35000);
+        ubicacionService.crear(ubicacionUno);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertEquals(5d, ubicacionRecuperada.getTemperatura());
+    }
+
+    @Test
+    void seCreaUnaUbicacionYSuTemperaturaDebeSerMayorOIgualAMenos20() throws InterruptedException {
+        Thread.sleep(35000);
+        ubicacionUno.establecerTemperatura(-30);
+        ubicacionService.crear(ubicacionUno);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertEquals(-20, ubicacionRecuperada.getTemperatura());
+    }
+
+    @Test
+    void seCreaUnaUbicacionYSuTemperaturaDebeSerMenorOIgualA50() throws InterruptedException {
+        Thread.sleep(35000);
+        ubicacionUno.establecerTemperatura(51);
+        ubicacionService.crear(ubicacionUno);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertEquals(50, ubicacionRecuperada.getTemperatura());
+    }
+
+    @Test
+    void seCreaUnDemonioYBajaLaTemperaturaDeSuUbicacionEnCeroComa2Grados() throws InterruptedException {
+        Thread.sleep(35000);
+        ubicacionService.crear(ubicacionUno);
+
+        double tempInicial = ubicacionUno.getTemperatura();
+
+        espirituService.crear(demonioUno); // se crea en "Bernal"
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertTrue(tempInicial > ubicacionRecuperada.getTemperatura());
+        assertEquals(tempInicial - 0.2, ubicacionRecuperada.getTemperatura());
+    }
+
+    @Test
+    void seCreanDemoniosYBajaLaTemperaturaDeSuUbicacionEnCeroComa2GradosPorCada() throws InterruptedException {
+        Thread.sleep(35000);
+        ubicacionService.crear(ubicacionUno);
+
+        double tempInicial = ubicacionUno.getTemperatura();
+
+        espirituService.crear(demonioUno); // se crea en "Bernal"
+        espirituService.crear(demonioDos); // se crea en "Bernal"
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(ubicacionUno.getId()).get();
+
+        assertTrue(tempInicial > ubicacionRecuperada.getTemperatura());
+        assertEquals(tempInicial - 0.4, ubicacionRecuperada.getTemperatura());
+    }
+
+    @Test
+    void seMueveUnDemonioMedianteUnaInvocacionYRevierteLaTemperaturaDeSuUbicacionAnterior() throws InterruptedException {
+        Thread.sleep(35000);
+
+        mediumUno.setCoordenada(new Coordenada(30.11, 30.11));
+        demonioUno.setCoordenada(new Coordenada(29.99, 29.99));
+
+        double tempInicial = santuarioUno.getTemperatura();
+
+        ubicacionService.crear(cementerioDos);
+        ubicacionService.crear(santuarioUno);
+        mediumService.crear(mediumUno); // está en un cementerio
+        espirituService.crear(demonioUno); // está en un santuario
+
+        mediumService.invocar(mediumUno.getId(), demonioUno.getId()); // se mueve hacia el cementerio
+
+        Santuario santuarioRecuperado = (Santuario) ubicacionService.recuperar(santuarioUno.getId()).get();
+
+        assertEquals(tempInicial, santuarioRecuperado.getTemperatura());
+    }
+
+    @Test
+    void seMueveUnDemonioMedianteUnaInvocacionYBajaLaTemperaturaDeSuUbicacionActual() throws InterruptedException {
+        Thread.sleep(35000);
+
+        mediumUno.setCoordenada(new Coordenada(30.11, 30.11));
+        demonioUno.setCoordenada(new Coordenada(29.99, 29.99));
+
+        double tempInicial = cementerioDos.getTemperatura();
+
+        ubicacionService.crear(cementerioDos);
+        ubicacionService.crear(santuarioUno);
+        mediumService.crear(mediumUno); // está en un cementerio
+        espirituService.crear(demonioUno); // está en un santuario
+
+        mediumService.invocar(mediumUno.getId(), demonioUno.getId()); // se mueve hacia el cementerio
+
+        Cementerio cementerioRecuperado = (Cementerio) ubicacionService.recuperar(cementerioDos.getId()).get();
+
+        assertTrue(tempInicial > cementerioRecuperado.getTemperatura());
+        assertEquals(tempInicial - 0.2, cementerioRecuperado.getTemperatura());
+    }
+
+    @Test
+    void seMueveUnDemonioMedianteElMovimientoDeUnMediumConectadoYBajaLaTemperaturaDeSuUbicacionActual() throws InterruptedException {
+        Thread.sleep(35000);
+
+        mediumUno.setCoordenada(new Coordenada(29.99, 29.99));
+        demonioUno.setCoordenada(new Coordenada(29.99, 29.99));
+
+        double tempInicial = cementerioDos.getTemperatura();
+
+        ubicacionService.crear(cementerioDos);
+        ubicacionService.crear(santuarioUno);
+        mediumService.crear(mediumUno); // está en un cementerio
+        espirituService.crear(demonioUno); // está en un santuario
+
+        ubicacionService.conectar(santuarioUno.getId(), cementerioDos.getId());
+
+        espirituService.conectar(demonioUno.getId(), mediumUno.getId());
+        mediumService.mover(mediumUno.getId(), 30.11, 30.11); // hacia el cementerio
+
+        Cementerio cementerioRecuperado = (Cementerio) ubicacionService.recuperar(cementerioDos.getId()).get();
+
+        assertTrue(tempInicial > cementerioRecuperado.getTemperatura());
+        assertEquals(tempInicial - 0.2, cementerioRecuperado.getTemperatura());
+    }
+
+    @Test
+    void seMueveUnDemonioMedianteElMovimientoDeUnMediumConectadoYSeReestableceLaTemperaturaDeSuUbicacionAnterior() throws InterruptedException {
+        Thread.sleep(35000);
+
+        mediumUno.setCoordenada(new Coordenada(29.99, 29.99));
+        demonioUno.setCoordenada(new Coordenada(29.99, 29.99));
+
+        double tempInicial = santuarioUno.getTemperatura();
+
+        ubicacionService.crear(cementerioDos);
+        ubicacionService.crear(santuarioUno);
+        mediumService.crear(mediumUno); // está en un cementerio
+        espirituService.crear(demonioUno); // está en un santuario
+
+        ubicacionService.conectar(santuarioUno.getId(), cementerioDos.getId());
+
+        espirituService.conectar(demonioUno.getId(), mediumUno.getId());
+        mediumService.mover(mediumUno.getId(), 30.11, 30.11); // hacia el cementerio
+
+        Santuario santuarioRecuperado = (Santuario) ubicacionService.recuperar(santuarioUno.getId()).get();
+
+        assertEquals(tempInicial, santuarioRecuperado.getTemperatura());
+    }
+
+    @Test
+    void enLaUbicacionMasPeligrosaSinUbicacionesRetornaOptionalVacio() throws InterruptedException {
+        Thread.sleep(10000);
+        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionMasPeligrosa();
+        assertTrue(ubicacionOptional.isEmpty());
+    }
+
+    @Test
+    void seRecuperaLaUbicacionMasPeligrosaCuandoHaySoloUnaYDevuelveEsa() throws InterruptedException {
+        Thread.sleep(10000);
+
+        this.ubicacionService.crear(ubicacionUno);
+
+        Long id = this.ubicacionUno.getId();
+
+        ubicacionRepository.setTemperatura(id, 40);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
+
+        assertEquals(id,ubicacionRecuperada.getId());
+    }
+
+
+    @Test
+    void seRecuperaLaUbicacionMasPeligrosaEnBaseAVariasLecturas() throws InterruptedException {
+        Thread.sleep(11000);
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+        this.ubicacionService.crear(ubicacionTres);
+
+        Long id = this.ubicacionUno.getId();
+
+        Long id2 = this.ubicacionDos.getId();
+
+        Long id3 = this.ubicacionTres.getId();
+
+        ubicacionRepository.setTemperatura(id, 50);
+        ubicacionRepository.setTemperatura(id3, 40);
+        ubicacionRepository.setTemperatura(id2, 0);
+        ubicacionRepository.setTemperatura(id, 10);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionMasPeligrosa().get();
+
+        assertEquals(id2,ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoRetornaOptionalVacio() throws InterruptedException {
+        Thread.sleep(11000);
+
+        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7);
+        assertTrue(ubicacionOptional.isEmpty());
+    }
+
+    @Test
+    public void seRecuperaLaUnicaUbicacionQueHayParaMayorTransitoDeEspiritus() throws InterruptedException {
+        Thread.sleep(11000);
+        this.ubicacionService.crear(ubicacionUno);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),50.1);
+        try {
+            Thread.sleep(1000); // para que no se solapen las escrituras
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 55.1);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7).get();
+
+        assertEquals(ubicacionUno.getId(), ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void seRecuperaLaUbicacionQueTuvoLaMayorCantidadDeVariacionesDeTemperaturaConsecutivas() throws InterruptedException {
+        Thread.sleep(11000);
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        Long id2 = this.ubicacionDos.getId();
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+            Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+            Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 25.1);
+
+            Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(),30.1);
+
+            Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 35.1);
+
+            Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7).get();
+
+        assertEquals(id2, ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void siSePasa0ComoTiempoHaciaAtrasParaLaUbicacionMasTransitadaArrojaException() throws InterruptedException {
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 25.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(),30.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 35.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
+
+        assertThrows(ParametroIncorrectoException.class, () -> ubicacionService.ubicacionConMasTransitoDeEspiritus(0));
+    }
+
+    @Test
+    public void siSePasaPocoTiempoHaciaAtrasParaLaUbicacionMasTransitadaDevuelveVacio() throws InterruptedException {
+        Thread.sleep(3000);
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
+
+        Thread.sleep(3000);
+
+        assertTrue(ubicacionService.ubicacionConMasTransitoDeEspiritus(-1).isEmpty());
+    }
+
+    @Test
+    public void laTemperaturaNoPuedeSerMenorAMenosVeinte() {
+        ubicacionUno.setTemperatura(-21);
+        ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionUno.getId()).get();
+        assertEquals(-20, ubicacion.getTemperatura());
+    }
+
+    @Test
+    public void laTemperaturaNoPuedeSerMayorACincuenta() {
+        ubicacionUno.setTemperatura(51);
+        ubicacionService.crear(ubicacionUno);
+        Ubicacion ubicacion = ubicacionService.recuperar(ubicacionUno.getId()).get();
+        assertEquals(50, ubicacion.getTemperatura());
     }
 
     @AfterEach

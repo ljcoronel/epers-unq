@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.espiritu;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.ubicacion.EfectosDeUbicacion;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
@@ -10,21 +10,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.geo.Point;
 
 @Getter @Setter @NoArgsConstructor
 @ToString
 public class Demonio extends Espiritu implements EfectosDeUbicacion  {
 
-    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {//se usa en el aModelo del JPA
-        super(nivelDeConexion, nombre, ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre ) {
+        super(nivelDeConexion, nombre);
     }
 
     public Demonio(String nombre, Coordenada coordenada) {
         super(nombre, coordenada);
     }
 
-    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada,Ubicacion ubicacion) {
-        super(nivelDeConexion,nombre, coordenada,ubicacion);
+    public Demonio(Integer nivelDeConexion, String nombre, Coordenada coordenada ) {
+        super(nivelDeConexion,nombre, coordenada);
+    }
+
+    public Demonio(Integer nivelDeConexion, String nombre, Ubicacion ubicacion) {
+        super(nivelDeConexion, nombre, ubicacion);
     }
 
     public void defender(Angel angel,int ataque) {
@@ -59,9 +64,28 @@ public class Demonio extends Espiritu implements EfectosDeUbicacion  {
         serInvocadoPorMedium(cementerio, medium);
     }
 
-
     @Override
     public void recibirEfectoDe(Santuario ubicacion) {
         this.reducirNivelDeConexionEn(10);
+    }
+
+    @Override
+    public void actualizarTempAntes() {
+        if (this.getUbicacion() != null) this.getUbicacion().subirTemperaturaEn(0.2d); // si se va de la ubicación anterior, revierte su efecto en la temp
+    }
+
+    @Override
+    public void actualizarTempDespues(Ubicacion ubicacion) {
+        ubicacion.bajarTemperaturaEn(0.2d);
+    }
+
+    @Override
+    public void regresarTemperaturaANormalidad() {
+        // regresa la temperatura a como estaba, ya que debía estar parado en la ubicación y bajarle la temp primero, ahora la subo
+        this.getUbicacion().subirTemperaturaEn(0.2d);
+    }
+
+    public void recibirMeditacion() {
+        reducirNivelDeConexionEn(100); // hace 100% de daño
     }
 }

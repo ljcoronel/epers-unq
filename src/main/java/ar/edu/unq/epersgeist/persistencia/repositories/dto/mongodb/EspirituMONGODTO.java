@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,8 +11,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Optional;
 
 @Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document("Espiritu")
@@ -42,5 +40,6 @@ public class EspirituMONGODTO {
 
         return espiritu;
     }
+
 
 }

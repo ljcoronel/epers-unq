@@ -1,20 +1,20 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumJPADTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumMONGODTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftMediumJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftMediumMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -29,11 +29,13 @@ public class MediumRepositoryImpl implements MediumRepository {
     private final MediumDAOJPA mediumDAOJPA;
     private final MediumDAOMONGO mediumDAOMONGO;
     private final UbicacionDAOMONGO ubicacionDAOMONGO;
+    private final UbicacionDAOINFLUX ubicacionDAOINFLUX;
 
-    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO, UbicacionDAOMONGO ubicacionDAOMONGO) {
+    public MediumRepositoryImpl(MediumDAOJPA mediumDAOJPA, MediumDAOMONGO mediumDAOMONGO, UbicacionDAOMONGO ubicacionDAOMONGO, UbicacionDAOINFLUX ubicacionDAOINFLUX) {
         this.mediumDAOJPA = mediumDAOJPA;
         this.mediumDAOMONGO = mediumDAOMONGO;
         this.ubicacionDAOMONGO = ubicacionDAOMONGO;
+        this.ubicacionDAOINFLUX = ubicacionDAOINFLUX;
     }
 
     @Override
@@ -57,7 +59,21 @@ public class MediumRepositoryImpl implements MediumRepository {
         MediumMONGODTO mediumMONGODTO = this.mediumDAOMONGO.findById(String.valueOf(medium.getId())).get();
 
         UbicacionMONGODTO ubicacionMONGODTO = ubicacionDAOMONGO.findById(medium.getUbicacion().getId()).get();
+
+        mappearConInflux(medium);
+
         return mediumMONGODTO.aModelo(medium, ubicacionMONGODTO);
+    }
+
+
+
+    private void mappearConInflux(Medium medium) {
+        Ubicacion ubMedium = medium.getUbicacion();
+        double temperatura = ubicacionDAOINFLUX.getTemperatura(ubMedium.getId());
+
+        ubMedium.establecerTemperatura(temperatura); // añado temp de influx
+        medium.getDemonios().forEach(dem -> dem.getUbicacion().establecerTemperatura(temperatura));
+        medium.getAngeles().forEach(ang -> ang.getUbicacion().establecerTemperatura(temperatura));
     }
 
     @Override
@@ -103,5 +119,13 @@ public class MediumRepositoryImpl implements MediumRepository {
         snapshot.guardarEstadoMongo(this.mediumDAOMONGO.findAll().stream()
                 .map(dto -> (SnapshotMongo) DraftMediumMONGODTO.guardar(dto))
                 .toList());
+    }
+
+    @Override
+    public List<Medium> mediumsEnArea(Coordenada coordenada) {
+        List<MediumMONGODTO> mediumsMongo = this.mediumDAOMONGO.mediumsEnArea(new GeoJsonPoint(coordenada.getX(), coordenada.getY()));
+        return mediumsMongo.stream()
+                .map(mediumdto -> this.recuperar(Long.parseLong(mediumdto.getId())).get())
+                .toList();
     }
 }

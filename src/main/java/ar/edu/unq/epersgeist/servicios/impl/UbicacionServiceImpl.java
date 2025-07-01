@@ -36,7 +36,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     public Ubicacion crear(Ubicacion ubicacion) {
         if (this.ubicacionRepository.existeNombre(ubicacion.getNombre(), ubicacion.getId())) throw new NombreRepetidoException("No se puede crear una ubicación con nombre repetido.");
         if (this.ubicacionRepository.existeUbicacionEnArea(ubicacion.getCoordenadas())) throw new AreaOcupadaException("Ya existe una ubicacion en el area ingresada");
-        return this.ubicacionRepository.guardar(ubicacion);
+
+        Ubicacion ubicacionConId = this.ubicacionRepository.guardar(ubicacion);
+//        this.ubicacionRepository.crearTemperatura(ubicacionConId.getId(), ubicacion.getTemperatura());
+
+        return ubicacionConId;
     }
 
     @Override
@@ -137,5 +141,19 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<DegreeResult> outgoingDegreeOf(List<Long> ids) {
         return this.ubicacionRepository.outgoingDegreeOf(ids);
     }
+
+    @Override
+    public Optional<Ubicacion> ubicacionMasPeligrosa(){
+        return this.ubicacionRepository.ubicacionMasFria();
+
+    }
+
+    @Override
+    public Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus(long segundos){
+        if (segundos == 0) throw new ParametroIncorrectoException("Los segundos deben ser diferentes de 0");
+        return this.ubicacionRepository.ubicacionConMayorVariacionDeTemperaturas(segundos);
+
+    }
+
 
 }

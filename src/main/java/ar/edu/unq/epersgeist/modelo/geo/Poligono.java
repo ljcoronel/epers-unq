@@ -1,4 +1,4 @@
-package ar.edu.unq.epersgeist.modelo;
+package ar.edu.unq.epersgeist.modelo.geo;
 
 import ar.edu.unq.epersgeist.modelo.exception.PoligonoNoValidoException;
 import lombok.Getter;

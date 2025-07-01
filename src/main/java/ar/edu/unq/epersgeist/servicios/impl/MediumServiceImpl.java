@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ManaInsuficiente;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
@@ -14,10 +15,12 @@ import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumReposito
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.servicios.exception.UbicacionLejanaException;
 import ar.edu.unq.epersgeist.servicios.interfaces.MediumService;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +117,7 @@ public class MediumServiceImpl implements MediumService {
 
         mediumRepository.guardar(exorcista);
         mediumRepository.guardar(exorcizado);
+        ubicacionRepository.guardar(exorcizado.getUbicacion()); // actualizo temp si el demonio quedó fuera de combate
 
 
         // -------------------------------------
@@ -144,32 +148,38 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public Espiritu invocar(Long mediumId, Long espirituId) {
 
-        Optional<Medium> optionalMedium =  mediumRepository.recuperar(mediumId);
+        Optional<Medium> optionalMedium = mediumRepository.recuperar(mediumId);
         Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
 
         if (optionalMedium.isEmpty()) return optionalEspiritu.orElse(null);
 
-        if(optionalEspiritu.isEmpty()) throw new EntidadInexistenteException("El espíritu a invocar no existe"); // TODO lo muevo acá porque sino tira el error de la distancia primero, en caso que no exista el espíritu
+        if (optionalEspiritu.isEmpty())
+            throw new EntidadInexistenteException("El espíritu a invocar no existe");
 
         Medium medium = optionalMedium.get();
 
-        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50)) throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
+        if (!espirituRepository.estaEntreDistancia(espirituId, medium.getCoordenada(), 0, 50))
+            throw new EspirituMuyLejanoException("El espíritu debe estar a igual o menos de 50km de distancia.");
 
         Espiritu espiritu = optionalEspiritu.get();
+        Ubicacion ubicacionAntesDeInvocar = espiritu.getUbicacion();
         Espiritu espirituInvocado = medium.invocar(espiritu);
 
         mediumRepository.guardar(medium);
         espirituRepository.guardar(espirituInvocado);
+
+        ubicacionRepository.guardar(medium.getUbicacion()); // guardo ubicación que podría estar más fría si lo que invoca es un demonio
+        ubicacionRepository.guardar(ubicacionAntesDeInvocar); // guardo ubicación antes de invocar para revertir su temperatura si fuera un demonio
+
         return espirituInvocado;
     }
 
 
 
-    private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino,  Coordenada coordenada) {
+    private void validarSiSePuedeMoverMediumDesdeA(Medium medium,Optional<Ubicacion> opUbicacionDestino, Coordenada coordenada) {
 
         boolean estanConectadas = opUbicacionDestino.isPresent() &&
-                ubicacionRepository.
-                estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
+                ubicacionRepository.estanConectadas(medium.getIdDeUbicacion(),opUbicacionDestino.get().getId());
 
         boolean estaLejos = mediumRepository.
                 estaEntreDistancia(medium.getId(),
@@ -178,7 +188,7 @@ public class MediumServiceImpl implements MediumService {
                         30 * 1000);
 
         if (estaLejos || !estanConectadas) {
-            throw new UbicacionLejanaException("La ubicacion a moverser esta lejos o no esta conectada");
+            throw new UbicacionLejanaException("La ubicación a moverse está lejos o no está conectada.");
         };
     }
 
@@ -201,15 +211,54 @@ public class MediumServiceImpl implements MediumService {
         ArrayList<Demonio> demonios = new ArrayList<>(medium.getDemonios());
         // -------------------------------------
 
+        Ubicacion ubicacionAnterior = medium.getUbicacion();
+
         medium.mover(opUbicacionDestino);
 
         mediumRepository.guardar(medium);
+        ubicacionRepository.guardar(opUbicacionDestino.get());
+        ubicacionRepository.guardar(ubicacionAnterior);
 
         // -------------------------------------
         angeles.forEach(angel -> {if (angel.getNivelDeConexion() == 0) espirituRepository.desvincular(angel.getId());});
         demonios.forEach(demonio -> {if (demonio.getNivelDeConexion() == 0) espirituRepository.desvincular(demonio.getId());});
         // -------------------------------------
 
+    }
+
+    @Override
+    public void meditar(Long ubicacionADespejar, Double latitud, Double longitud) {
+        List<Medium> mediums = this.mediumRepository.mediumsEnArea(new Coordenada(latitud, longitud));
+
+        if (mediums.isEmpty()) throw new EntidadInexistenteException("No hay mediums para atacar en esta zona");
+
+        List<Demonio> demoniosLibres = this.espirituRepository.demoniosLibresEn(ubicacionADespejar);
+        if (demoniosLibres.isEmpty()) return;
+
+        int nivelDeConexionTotal = demoniosLibres.stream()
+                .mapToInt(Espiritu::getNivelDeConexion)
+                .sum();
+
+        int manaTotal = mediums.stream()
+                .mapToInt(Medium::getMana)
+                .sum();
+
+        this.verificarMeditacion(manaTotal, nivelDeConexionTotal);
+
+        mediums.forEach(medium -> medium.meditar(nivelDeConexionTotal));
+        demoniosLibres.forEach(Demonio::recibirMeditacion);
+
+        mediums.forEach(this.mediumRepository::actualizar);
+        demoniosLibres.forEach(this.espirituRepository::actualizar);
+
+        if (!demoniosLibres.isEmpty()) {
+            Ubicacion ubicacionConTempActualizada = demoniosLibres.getFirst().getUbicacion();
+            ubicacionRepository.guardar(ubicacionConTempActualizada);
+        }
+    }
+
+    private void verificarMeditacion(int manaTotal, int nivelDeConexionTotal) {
+        if (manaTotal < nivelDeConexionTotal) throw new ManaInsuficiente("Los mediums no tienen suficiente mana para meditar");
     }
 
 }

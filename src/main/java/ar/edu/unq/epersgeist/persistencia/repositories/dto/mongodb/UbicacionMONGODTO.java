@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import lombok.Getter;
 import lombok.Setter;

@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.servicios.interfaces;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.modelo.PortalDemonios;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -18,4 +19,5 @@ public interface EspirituService {
     Medium conectar(Long espirituId, Long mediumId);
     boolean existeConNombre(Espiritu espiritu);
     void dominar(Long espirituDominanteId, Long espirituADominarId);
+    PortalDemonios crearPortal(PortalDemonios portalDemonios);
 }

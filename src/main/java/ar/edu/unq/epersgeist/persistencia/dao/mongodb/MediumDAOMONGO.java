@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MediumDAOMONGO extends MongoRepository<MediumMONGODTO, String> {
@@ -21,4 +22,16 @@ public interface MediumDAOMONGO extends MongoRepository<MediumMONGODTO, String> 
     """
     )
     Optional<MediumMONGODTO> estanEntreDistancia(Long id, GeoJsonPoint coordenada, int minKms, int maxKms);
+
+    @Query("""
+        {coordenada: {
+            $nearSphere: {
+                $geometry: ?0,
+                $minDistance: 0,
+                $maxDistance: 3000
+            }
+        }
+        }
+    """)
+    List<MediumMONGODTO> mediumsEnArea(GeoJsonPoint coordenada);
 }

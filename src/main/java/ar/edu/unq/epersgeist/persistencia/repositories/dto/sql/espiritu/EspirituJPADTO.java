@@ -3,6 +3,7 @@ package ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu;
 import ar.edu.unq.epersgeist.controller.dto.EspirituDTO.TipoEspiritu;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
+import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.ubicacion.UbicacionJPADTO;
 import jakarta.persistence.*;
@@ -58,7 +59,7 @@ public abstract class EspirituJPADTO {
     @LastModifiedDate
     private Date updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     EspirituJPADTO espirituDominante;
 
 
@@ -91,13 +92,24 @@ public abstract class EspirituJPADTO {
         espiritu.setId(this.getId());
         espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
         espiritu.setEspirituDominante(this.getEspirituDominante() != null ? getEspirituDominante().aModelo() : null);
+        espiritu.setUbicacion(ubicacion.aModelo());
+        return espiritu;
+    }
+
+    public Espiritu aModelo(Ubicacion ubicacionParaTodos) {
+        Espiritu espiritu = instanciarEspiritu();
+        espiritu.setId(this.getId());
+        espiritu.setMedium(this.getMedium() != null ? this.getMedium().aModelo(): null);
+        espiritu.setEspirituDominante(this.getEspirituDominante() != null ? getEspirituDominante().aModelo() : null);
+        espiritu.setUbicacion(ubicacionParaTodos);
         return espiritu;
     }
 
     public abstract Espiritu instanciarEspiritu();
 
-    public Espiritu aModelo(Medium medium) {
+    public Espiritu aModelo(Medium medium, Ubicacion ubicacion) {
         Espiritu espiritu = instanciarEspiritu();
+        espiritu.setUbicacion(ubicacion);
         espiritu.setId(this.getId());
         espiritu.setMedium(medium);
         espiritu.setEspirituDominante(espirituDominante != null ? espirituDominante.aModelo() : null);

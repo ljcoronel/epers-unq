@@ -1,6 +1,6 @@
 package ar.edu.unq.epersgeist.modelo.ubicacion;
 
-import ar.edu.unq.epersgeist.modelo.Coordenada;
+import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.Medium;
 import ar.edu.unq.epersgeist.modelo.espiritu.Angel;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
@@ -15,9 +15,9 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @ToString
 public class Cementerio extends Ubicacion {
 
-    public Cementerio(String nombre, int energia,List<Coordenada> territorio) { super(nombre, energia,territorio); }
+    public Cementerio(String nombre, int energia,List<Coordenada> territorio, double temperatura) { super(nombre, energia, territorio, temperatura); }
 
-    public Cementerio(String nombre, int energia) {//se quitaria?
+    public Cementerio(String nombre, int energia) {
         super(nombre, energia);
     }
 

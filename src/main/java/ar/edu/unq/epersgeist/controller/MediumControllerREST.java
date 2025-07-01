@@ -108,18 +108,27 @@ public class MediumControllerREST {
 
         return ResponseEntity.ok().body(EspirituDTOResponse.desdeModelo(espiritu));
     }
-//    @PatchMapping("/{mediumId}/mover-a/{ubicacionId}")
-//    public ResponseEntity<DTOResponseError> moverMediumConEspiritu(@PathVariable Long mediumId,@PathVariable Long ubicacionId){
-//
-//        mediumService.mover(mediumId, ubicacionId);
-//
-//        return ResponseEntity.ok().build();
-//    }
+
+    @PatchMapping("/{mediumId}/mover-a/{ubicacionId}")
+    public ResponseEntity<DTOResponseError> moverMediumConEspiritu(@PathVariable Long mediumId,@PathVariable Double latitud,@PathVariable Double longitud){
+
+        mediumService.mover(mediumId, latitud, longitud);
+
+        return ResponseEntity.ok().build();
+    }
 
     @PatchMapping("/{mediumId}/mover-a/{latitud}/{longitud}")
     public ResponseEntity<DTOResponseError> moverMediumConcoordenada(@PathVariable Long mediumId,@PathVariable Double latitud, @PathVariable Double longitud){
 
         mediumService.mover(mediumId, latitud, longitud);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/meditar/{ubicacionAMeditar}/{latitudDeDemonios}/{longitudDeDemonios}")
+    public ResponseEntity<DTOResponseError> meditar(@PathVariable Long ubicacionAMeditar,@PathVariable Double latitudDeDemonios, @PathVariable Double longitudDeDemonios){
+
+        mediumService.meditar(ubicacionAMeditar, latitudDeDemonios, longitudDeDemonios);
 
         return ResponseEntity.ok().build();
     }
