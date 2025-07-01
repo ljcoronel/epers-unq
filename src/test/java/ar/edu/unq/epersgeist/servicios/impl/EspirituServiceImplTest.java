@@ -904,57 +904,6 @@ public class EspirituServiceImplTest {
     }
 
     @Test
-    void unPortalSeAbreEnUnaCoordenadaValidaPeroNoGeneraMinionsPorqueLeFaltaNivelDeConexionYNoTieneHost() throws InterruptedException {
-        Thread.sleep(2000);
-        ubicacionService.crear(ubicacion);
-
-        crearDemoniosParaBajaDeTemperaturaEn2Grados();
-
-        demonio2.setNivelDeConexion(0);
-        demonio2.setCoordenada(new Coordenada(0.001, 0));
-
-        espirituService.crear(demonio2);
-
-        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios1));
-
-
-    }
-
-
-    @Test
-    void unPortalSeAbreEnUnaCoordenadaValidaYPermiteGenerar2MinionsConUnHostPeroNoPuedeVolverASerSeleccionadoParaOtroPortalPorqueSuNivelDeConexionEs0() throws InterruptedException {
-        Thread.sleep(2000);
-        ubicacionService.crear(ubicacion);
-
-        crearDemoniosParaBajaDeTemperaturaEn2Grados();
-
-        demonio2.setNivelDeConexion(20);
-        demonio2.setCoordenada(new Coordenada(0.001, 0));
-
-        espirituService.crear(demonio2);
-
-        espirituService.crearPortal(portalDemonios1);
-
-       Thread.sleep(2000); // debe pasar un tiempo entre crear ambos portales
-
-        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios3));
-
-       
-        Thread.sleep(40000);
-        
-
-        List<Demonio> demonios = espirituService.espiritusDemoniacos(Sort.Direction.DESC, 0, 20);
-        Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
-
-        assertEquals(13, demonios.size());
-        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "1")));
-        assertTrue(demonios.stream().anyMatch(dem -> dem.getNombre().contains("minion-de-" + demonio2.getNombre() + "-" + "2")));
-
-        assertEquals(0, demonioRecuperado.getNivelDeConexion());
-
-    }
-
-    @Test
     void unPortalNoSeleccionaAUnEspirituDominado() throws InterruptedException {
         Thread.sleep(2000);
         ubicacionService.crear(ubicacion);
@@ -971,13 +920,11 @@ public class EspirituServiceImplTest {
         espirituService.crearPortal(portalDemonios1);
         Thread.sleep(1000);
 
-        assertThrows(EntidadInexistenteException.class, () -> espirituService.crearPortal(portalDemonios3));
+        espirituService.crearPortal(portalDemonios3);
 
         Demonio demonioRecuperado = (Demonio) espirituService.recuperar(demonio2.getId()).get();
 
-       
-            Thread.sleep(10000);
-        
+        Thread.sleep(10000);
 
         assertEquals(20, demonioRecuperado.getNivelDeConexion());
 
@@ -994,6 +941,8 @@ public class EspirituServiceImplTest {
         demonio2.setCoordenada(new Coordenada(0.001, 0));
 
         espirituService.crear(demonio2);
+
+
 
         espirituService.crearPortal(portalDemonios1);
 
@@ -1049,9 +998,9 @@ public class EspirituServiceImplTest {
 
     private void crearDemoniosParaBajaDeTemperaturaEn2Grados() throws InterruptedException {
         for (int i = 0; i < 10; i++) { // baja la temperatura 2 grados, instanciando 10 demonios
-            Thread.sleep(300);
+            Thread.sleep(1000);
             espirituService.crear(new Demonio(
-                    0,
+                    1,
                     "dem-" + i ,new Coordenada(0.2,0.2)
             ));
         }

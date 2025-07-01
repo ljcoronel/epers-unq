@@ -11,7 +11,7 @@ public interface UbicacionDAOINFLUX {
 
     Optional<Long> recuperarIdDeUbicacionMasPeligrosa();
 
-    Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus();
+    Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(long segundos);
 
     List<EventoPortalDTO> recuperarEventosDePortales();
 

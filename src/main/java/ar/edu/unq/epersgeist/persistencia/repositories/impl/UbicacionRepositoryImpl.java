@@ -198,9 +198,9 @@ public class UbicacionRepositoryImpl implements UbicacionRepository {
     }
 
     @Override
-    public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(){
+    public Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(long segundos){
 
-        return this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus()
+        return this.ubicacionDAOInflux.recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(segundos)
                 .map( opId -> mappearUbicacionConDTO(opId).get());
     }
 

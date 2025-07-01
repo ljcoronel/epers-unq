@@ -36,6 +36,8 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
         super(nivelDeConexion,nombre, ubicacion);
     }
 
+
+
     public void atacar(Demonio demonio) {
 
         int porcentajeDeAtaque = this.porcentajeAtaqueRandom();
@@ -69,12 +71,14 @@ public class Angel extends Espiritu implements EfectosDeUbicacion {
 
     @Override
     public void actualizarTempAntes() {
-        // TODO bajar temperatura si es necesario
     }
 
     @Override
     public void actualizarTempDespues(Ubicacion ubicacion) {
-        // TODO subir temperatura si es necesario
+    }
+
+    @Override
+    public void regresarTemperaturaANormalidad() {
     }
 
 }

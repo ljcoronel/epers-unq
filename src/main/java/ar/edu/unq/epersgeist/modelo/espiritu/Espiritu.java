@@ -71,7 +71,7 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
     public void reducirNivelDeConexionEn(int i) {
         int nivel = getNivelDeConexion();
         setNivelDeConexion(nivel - i);
-        if (this.getNivelDeConexion() == 0) this.desvincularseDeMedium();
+        if (this.getNivelDeConexion() == 0) this.salirseDeEsteMundo();
     }
 
     public void setNivelDeConexion(int i) {
@@ -94,8 +94,14 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     }
 
-    private void desvincularseDeMedium(){
+    private void salirseDeEsteMundo(){
+        desvincularseDeMedium();
+        regresarTemperaturaANormalidad();
+    }
 
+    public abstract void regresarTemperaturaANormalidad();
+
+    private void desvincularseDeMedium() {
         if (medium == null) return;
 
         medium.desvincularseDeEspiritu(this);
@@ -111,10 +117,9 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
         return RandomGenerator.getInstance().getRandom(1, 100);
     }
 
-
     public void moverConMediumHacia(Ubicacion ubicacion) {
-            ubicacion.recibir(this);
             establecerUbicacionConTemp(ubicacion);
+            ubicacion.recibir(this);
     }
 
     public void conectarConMedium(Optional<Medium> optionalMedium) {
@@ -196,9 +201,15 @@ public abstract class Espiritu implements Serializable, EfectosDeUbicacion {
 
     public void establecerUbicacionConTemp(Ubicacion ubicacion) {
         // maneja la temp, usar setUbicacion si no quieren tocar la temperatura
-        actualizarTempAntes();
+
+        boolean estaDentroDeEsteMundo = estaDentroDeEsteMundo();
+        if (estaDentroDeEsteMundo) actualizarTempAntes();
         setUbicacion(ubicacion);
-        actualizarTempDespues(ubicacion);
+        if (estaDentroDeEsteMundo) actualizarTempDespues(ubicacion);
+    }
+
+    private boolean estaDentroDeEsteMundo() {
+        return getNivelDeConexion() != 0;
     }
 
     public abstract void actualizarTempAntes();

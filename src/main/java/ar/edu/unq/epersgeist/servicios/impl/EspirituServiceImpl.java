@@ -79,6 +79,14 @@ public class EspirituServiceImpl implements EspirituService {
 
     @Override
     public void eliminar(Long espirituId) {
+        Optional<Espiritu> optionalEspiritu = espirituRepository.recuperar(espirituId);
+
+        if (optionalEspiritu.isEmpty()) return;
+        Espiritu espiritu = optionalEspiritu.get();
+        Ubicacion ubEspiritu = espiritu.getUbicacion();
+
+        espiritu.regresarTemperaturaANormalidad();
+        ubicacionRepository.guardar(ubEspiritu);
         this.espirituRepository.eliminar(espirituId);
     }
 

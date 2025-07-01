@@ -141,8 +141,8 @@ public final class UbicacionControllerREST {
     }
 
     @GetMapping("/ubicacionMasTransitada")
-    public ResponseEntity<UbicacionDTOResponse> ubicacionMasTransitada(){
-        Optional<Ubicacion> optionalUbicacion = ubicacionService.ubicacionConMasTransitoDeEspiritus();
+    public ResponseEntity<UbicacionDTOResponse> ubicacionMasTransitada(@RequestParam long segundos){
+        Optional<Ubicacion> optionalUbicacion = ubicacionService.ubicacionConMasTransitoDeEspiritus(segundos);
 
         if (optionalUbicacion.isEmpty()) return ResponseEntity.status(404).body(null);
         Ubicacion ubicacion = optionalUbicacion.get();

@@ -114,6 +114,7 @@ public class MediumServiceImpl implements MediumService {
 
         mediumRepository.guardar(exorcista);
         mediumRepository.guardar(exorcizado);
+        ubicacionRepository.guardar(exorcizado.getUbicacion()); // actualizo temp si el demonio quedó fuera de combate
 
 
         // -------------------------------------

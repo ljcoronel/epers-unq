@@ -38,7 +38,8 @@ public interface UbicacionRepository {
     void crearSnapshot(Snapshot snapshot);
 
     Optional<Ubicacion> ubicacionMasFria();
-    Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas();
+    Optional<Ubicacion> ubicacionConMayorVariacionDeTemperaturas(long segundos);
+
     List<EventoPortalDTO> eventosDePortalesOcurridos();
 
     void setTemperatura(Long id, double temperatura);

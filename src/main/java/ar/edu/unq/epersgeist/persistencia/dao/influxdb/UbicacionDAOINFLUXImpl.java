@@ -42,7 +42,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public double getTemperatura(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -30d)
+                          |> range(start: -60s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
@@ -62,7 +62,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     private Optional<Double> getTemperaturaAmbiente(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -30d)
+                          |> range(start: -30s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "tempAmbiente" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
@@ -109,12 +109,14 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     @Override
-    public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(){
+    public Optional<Long> recuperarIdDeUbicacionMasConMasTransitoDeEspiritus(long segundos){
         // PARA TESTEAR usar -7s como range ( |> range(start: -7s) ) justo abajo del from y arriba del filter
+
+        String rangeTime = segundos == 0 ? "-0s" : Math.abs(segundos) * -1 + "s";
 
         String query = """
     from(bucket: "lecturas")
-      |> range(start: -7s)
+      |> range(start: %s)
       |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
       |> group(columns: ["ubicacion"])
       |> sort(columns: ["_time"])
@@ -124,7 +126,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
       |> group()
       |> sort(columns: ["_value"], desc: true)
       |> limit(n:1)
-""";
+""".formatted(rangeTime);
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -142,7 +144,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
         from(bucket: "lecturas")
-          |> range(start: -7d)
+          |> range(start: -7s)
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])
@@ -175,7 +177,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
         String query = """
                         from(bucket: "lecturas")
-                        |> range(start: -30d)
+                        |> range(start: -30s)
                         |> filter(fn: (r) => r._measurement == "temperaturas" and (r._field == "temp" or r._field == "tempAmbiente") and r.ubicacion == "%s")
                         |> last()
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")

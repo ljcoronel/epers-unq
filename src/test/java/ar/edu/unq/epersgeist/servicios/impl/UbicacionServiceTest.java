@@ -1,6 +1,7 @@
 package ar.edu.unq.epersgeist.servicios.impl;
 
 import ar.edu.unq.epersgeist.modelo.PortalDemonios;
+import ar.edu.unq.epersgeist.modelo.exception.ParametroIncorrectoException;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.NombreRepetidoException;
@@ -1289,7 +1290,7 @@ public class UbicacionServiceTest {
     public void cuandoNoHayUbicacionesNoHayUbicacionConMasTransitoRetornaOptionalVacio() throws InterruptedException {
         Thread.sleep(11000);
 
-        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionConMasTransitoDeEspiritus();
+        Optional<Ubicacion> ubicacionOptional = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7);
         assertTrue(ubicacionOptional.isEmpty());
     }
 
@@ -1319,7 +1320,7 @@ public class UbicacionServiceTest {
         }
         ubicacionRepository.setTemperatura(ubicacionUno.getId(), 55.1);
 
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus().get();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7).get();
 
         assertEquals(ubicacionUno.getId(), ubicacionRecuperada.getId());
     }
@@ -1332,75 +1333,84 @@ public class UbicacionServiceTest {
         this.ubicacionService.crear(ubicacionUno);
         this.ubicacionService.crear(ubicacionDos);
 
-        Long id1 = this.ubicacionUno.getId();
-        String idString1 = id1.toString();
-
         Long id2 = this.ubicacionDos.getId();
-        String idString2 = id2.toString();
-
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString1)
-//                .addField("temp", 20.1)
-//                .time(fechaFija(2, 0).toEpochMilli(), WritePrecision.MS));
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString1)
-//                .addField("temp", 20.1)
-//                .time(fechaFija(2, 5).toEpochMilli(), WritePrecision.MS));
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString1)
-//                .addField("temp", 25.1)
-//                .time(fechaFija(2, 10).toEpochMilli(), WritePrecision.MS));
 
         ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
-        try {
+
             Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
-        try {
+
             Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         ubicacionRepository.setTemperatura(ubicacionUno.getId(), 25.1);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
+            Thread.sleep(750);
 
         ubicacionRepository.setTemperatura(ubicacionDos.getId(),30.1);
-        try {
+
             Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         ubicacionRepository.setTemperatura(ubicacionDos.getId(), 35.1);
-        try {
+
             Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
 
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 30.1)
-//                .time(fechaFija(2, 1).toEpochMilli(), WritePrecision.MS));
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 35.1)
-//                .time(fechaFija(2, 6).toEpochMilli(), WritePrecision.MS));
-//        ubicacionDAOINFLUX.guardarDatos(Point.measurement("temperaturas")
-//                .addTag("ubicacion", idString2)
-//                .addField("temp", 32.1)
-//                .time(fechaFija(2, 11).toEpochMilli(), WritePrecision.MS));
-
-        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus().get();
+        Ubicacion ubicacionRecuperada = ubicacionService.ubicacionConMasTransitoDeEspiritus(-7).get();
 
         assertEquals(id2, ubicacionRecuperada.getId());
+    }
+
+    @Test
+    public void siSePasa0ComoTiempoHaciaAtrasParaLaUbicacionMasTransitadaArrojaException() throws InterruptedException {
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(), 25.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(),30.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 35.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
+
+        assertThrows(ParametroIncorrectoException.class, () -> ubicacionService.ubicacionConMasTransitoDeEspiritus(0));
+    }
+
+    @Test
+    public void siSePasaPocoTiempoHaciaAtrasParaLaUbicacionMasTransitadaDevuelveVacio() throws InterruptedException {
+        Thread.sleep(3000);
+        // los thread sleep son para darle tiempo a la db de salir de los tests anteriores y para que no se pisen
+
+        this.ubicacionService.crear(ubicacionUno);
+        this.ubicacionService.crear(ubicacionDos);
+
+        ubicacionRepository.setTemperatura(ubicacionUno.getId(),20.1);
+
+        Thread.sleep(750);
+
+        ubicacionRepository.setTemperatura(ubicacionDos.getId(), 32.1);
+
+        Thread.sleep(3000);
+
+        assertTrue(ubicacionService.ubicacionConMasTransitoDeEspiritus(-1).isEmpty());
     }
 
     @Test

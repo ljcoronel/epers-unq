@@ -30,6 +30,5 @@ public interface UbicacionService  {
     List<DegreeResult>outgoingDegreeOf(List<Long> ids);
 
     Optional<Ubicacion> ubicacionMasPeligrosa();
-    Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus();
-
+    Optional<Ubicacion> ubicacionConMasTransitoDeEspiritus(long segundos);
 }

@@ -63,26 +63,13 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public Optional<Espiritu> recuperar(Long id) {
-        Optional<EspirituJPADTO> optionalEspirituJPADTO = this.espirituDAOJPA.findById(id);
-
         return espirituDAOJPA.findById(id).map(this::mappearEspiritu);
     }
 
     @Override
     public void eliminar(Long id) {
-        Optional<Espiritu> optionalEspiritu = recuperar(id);
-        if (optionalEspiritu.isEmpty()) return;
-
-        Ubicacion ubEspiritu = optionalEspiritu.get().getUbicacion();
-        regresarTemperaturaALaNormalidadEnUbicacionActual(ubEspiritu);
-
         espirituDAOJPA.deleteById(id);
         this.espirituDAOMongo.deleteById(id);
-    }
-
-    private void regresarTemperaturaALaNormalidadEnUbicacionActual(Ubicacion ubEspiritu) {
-        double tempExistente = ubicacionDAOINFLUX.getTemperatura(ubEspiritu.getId());
-        ubicacionDAOINFLUX.cambiarTemperatura(ubEspiritu.getId(), tempExistente + 0.2);
     }
 
     @Override

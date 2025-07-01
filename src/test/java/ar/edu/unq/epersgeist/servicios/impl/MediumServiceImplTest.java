@@ -977,6 +977,123 @@ public class MediumServiceImplTest {
 
     }
 
+    @Test
+    void unMediumSeMueveYSuDemonioSeQuedaSinConexionEntoncesSeLoConsideraFueraDeEsteMundoYLaTemperaturaDeEstaUbicacionRegresaALaNormalidad(){
+
+        Ubicacion iglesia = new Santuario("Iglesia de Santa Teresita",50,List.of(
+                new Coordenada(40, 40),
+                new Coordenada(41, 40),
+                new Coordenada(41, 41),
+                new Coordenada(40, 41),
+                new Coordenada(40, 40)
+        ), 10);
+        ubicacionService.crear(iglesia);
+
+        Ubicacion vaticano = new Santuario("vaticano",50,List.of(
+                new Coordenada(0, 5),
+                new Coordenada(1, 5),
+                new Coordenada(1, 6),
+                new Coordenada(0, 6),
+                new Coordenada(0, 5)
+        ), 40);
+        ubicacionService.crear(vaticano);
+
+        ubicacionService.conectar(santuario.getId(),iglesia.getId());
+        ubicacionService.conectar(iglesia.getId(),vaticano.getId());
+        ubicacionService.conectar(vaticano.getId(),iglesia.getId());
+
+        Demonio amon = new Demonio(10,"Amon",new Coordenada(0.5, 0.5));
+        espirituService.crear(amon);
+
+        Medium osvaldo = new Medium("Osvaldo",100,50, new Coordenada(0.5, 0.5));
+
+        mediumService.crear(osvaldo);
+        espirituService.conectar(amon.getId(),osvaldo.getId());
+        mediumService.mover(osvaldo.getId(), 40.5,40.5);
+
+        mediumService.mover(osvaldo.getId(), 0.5,5.5); // dentro de vaticano;
+        mediumService.mover(osvaldo.getId(), 40.5,40.5);
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(iglesia.getId()).get();
+
+        assertEquals(10d, ubicacionRecuperada.getTemperatura());
+
+    }
+
+    @Test
+    void alExorcizarAUnMediumElAngelGanaYSacaDeEsteMundoAUnDemonioReestableciendoLaTemperatura() {
+
+        fakeRandomStrategy.addValorFijo(10);
+        fakeRandomStrategy.addValorFijo(1);
+
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        espirituService.crear(angelFuerte);
+        espirituService.crear(demonioDebil);
+
+        espirituService.conectar(angelFuerte.getId(),medium.getId());
+
+        espirituService.conectar(demonioDebil.getId(),medium2.getId());
+
+        mediumService.exorcisar(medium.getId(),medium2.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(santuario.getId()).get();
+
+        // la temperatura de santuario era de 5 antes
+        assertEquals(5d, ubicacionRecuperada.getTemperatura());
+
+    }
+
+    @Test
+    void alExorcizarAUnMediumElAngelGanaYNoConsigueExpulsarAlDemonioPorLoQueLaTemperaturaSeMantieneBajada() {
+
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(10);
+
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        espirituService.crear(angelDebil);
+        espirituService.crear(demonioFuerte);
+
+        espirituService.conectar(angelDebil.getId(),medium.getId());
+
+        espirituService.conectar(demonioFuerte.getId(),medium2.getId());
+
+        mediumService.exorcisar(medium.getId(),medium2.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(santuario.getId()).get();
+
+        // la temperatura de santuario era de 5 antes
+        assertEquals(4.8d, ubicacionRecuperada.getTemperatura());
+
+    }
+
+    @Test
+    void alEliminarAUnDemonioReestableceLaTemperaturaDeSuUbicacion() {
+
+        fakeRandomStrategy.addValorFijo(1);
+        fakeRandomStrategy.addValorFijo(10);
+
+        mediumService.crear(medium);
+        mediumService.crear(medium2);
+
+        espirituService.crear(angelDebil);
+        espirituService.crear(demonioFuerte);
+
+        espirituService.conectar(angelDebil.getId(),medium.getId());
+
+        espirituService.conectar(demonioFuerte.getId(),medium2.getId());
+
+        mediumService.exorcisar(medium.getId(),medium2.getId());
+
+        Ubicacion ubicacionRecuperada = ubicacionService.recuperar(santuario.getId()).get();
+
+        // la temperatura de santuario era de 5 antes
+        assertEquals(4.8d, ubicacionRecuperada.getTemperatura());
+
+    }
 
     @AfterEach
     void eliminarModelo() {
@@ -985,6 +1102,4 @@ public class MediumServiceImplTest {
         testService.eliminarUbicaciones();
         fakeRandomStrategy.cleanUp();
     }
-
-
 }
