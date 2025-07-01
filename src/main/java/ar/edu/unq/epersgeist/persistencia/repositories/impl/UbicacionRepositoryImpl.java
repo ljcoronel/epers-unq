@@ -1,6 +1,11 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.*;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftUbicacionNEODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotNeo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.ClosenessResult;
 import ar.edu.unq.epersgeist.persistencia.DegreeResult;

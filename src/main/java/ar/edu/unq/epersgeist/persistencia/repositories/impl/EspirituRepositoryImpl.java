@@ -1,10 +1,9 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituJPADTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftEspirituMONGODTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
-import ar.edu.unq.epersgeist.modelo.Medium;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftEspirituJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftEspirituMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;

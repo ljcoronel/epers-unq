@@ -1,5 +1,6 @@
-package ar.edu.unq.epersgeist.controller.dto.ReporteDTO;
+package ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts;
 
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.AngelJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.DemonioJPADTO;

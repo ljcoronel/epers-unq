@@ -1,5 +1,6 @@
-package ar.edu.unq.epersgeist.controller.dto.ReporteDTO;
+package ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts;
 
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 
 import java.util.List;

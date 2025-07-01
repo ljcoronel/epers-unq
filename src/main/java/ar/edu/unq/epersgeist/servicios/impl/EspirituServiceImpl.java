@@ -137,9 +137,9 @@ public class EspirituServiceImpl implements EspirituService {
     }
 
     @Override
-    public PortalDemonios crearPortal(PortalDemonios portal) {
+    public PortalDemonios crearPortal(PortalDemonios portalDemonios) {
 
-        Point punto = portal.getCoordenada();
+        Point punto = portalDemonios.getCoordenada();
 
         Ubicacion ubicacion = ubicacionRepository.encontrarUbicacionQueContiene(punto).orElseThrow(
                 () -> new EntidadInexistenteException("No se encontró ubicación en el punto dado."));
@@ -150,11 +150,11 @@ public class EspirituServiceImpl implements EspirituService {
                         .demonioLibreNoDominadoMasFuerteEn(punto.getX(), punto.getY())
                         .orElseThrow(() -> new EntidadInexistenteException("No se encontró un host válido."));
         // TODO tal vez tomar un radio en vez de una ubicación entera?
-        portal.setDemonioHost(demonioHost);
+        portalDemonios.setDemonioHost(demonioHost);
 
-        new Thread(() -> activarPortal(demonioHost, portal, ubicacion)).start();
+        new Thread(() -> activarPortal(demonioHost, portalDemonios, ubicacion)).start();
 
-        return portal;
+        return portalDemonios;
     }
 
     private void iniciarPortal(Espiritu demonioHost, PortalDemonios portal, Ubicacion ubicacion) {

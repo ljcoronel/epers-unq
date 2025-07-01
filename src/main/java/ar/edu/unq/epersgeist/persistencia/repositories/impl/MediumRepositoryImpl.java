@@ -1,22 +1,19 @@
 package ar.edu.unq.epersgeist.persistencia.repositories.impl;
 
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumJPADTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.DraftMediumMONGODTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotMongo;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotSql;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftMediumJPADTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Drafts.DraftMediumMONGODTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotMongo;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotSql;
 import ar.edu.unq.epersgeist.modelo.Medium;
-import ar.edu.unq.epersgeist.modelo.espiritu.Espiritu;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
 import ar.edu.unq.epersgeist.persistencia.dao.influxdb.UbicacionDAOINFLUX;
 import ar.edu.unq.epersgeist.persistencia.dao.jpa.MediumDAOJPA;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.MediumDAOMONGO;
 import ar.edu.unq.epersgeist.persistencia.dao.mongodb.UbicacionDAOMONGO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.EspirituMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.MediumMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.Snapshot;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.mongodb.UbicacionMONGODTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.MediumJPADTO;
-import ar.edu.unq.epersgeist.persistencia.repositories.dto.sql.espiritu.EspirituJPADTO;
 import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.MediumRepository;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;

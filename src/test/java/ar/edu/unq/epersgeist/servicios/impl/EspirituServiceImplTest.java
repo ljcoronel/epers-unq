@@ -1142,6 +1142,34 @@ public class EspirituServiceImplTest {
 
     }
 
+//    @Test
+//    void grafanaTest() throws InterruptedException {
+//        Thread.sleep(2000);
+//        ubicacion.setTemperatura(5);
+//        ubicacionService.crear(ubicacion);
+//
+//        crearDemoniosParaBajaDeTemperaturaEn2Grados(); // temp baja a 8°C
+//
+//        demonio2.setNivelDeConexion(20);
+//        demonio2.setCoordenada(new Coordenada(0.001, 0)); // temp baja a 7.8
+//
+//        demonio1.setNivelDeConexion(30);
+//        demonio1.setCoordenada(new Coordenada(0.001, 0)); // temp baja a 7.6
+//
+//        espirituService.crear(demonio2);
+//        espirituService.crear(demonio1);
+//
+//        espirituService.crearPortal(portalDemonios1); // temp baja a 7.0
+//
+//        espirituService.crearPortal(portalDemonios3); // temp baja a 6.6
+//
+//        Thread.sleep(70000);
+//
+//
+//
+//    }
+
+
     @AfterEach
     void eliminarModelo() {
         testService.eliminarEspiritus();

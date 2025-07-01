@@ -19,5 +19,5 @@ public interface EspirituService {
     Medium conectar(Long espirituId, Long mediumId);
     boolean existeConNombre(Espiritu espiritu);
     void dominar(Long espirituDominanteId, Long espirituADominarId);
-    PortalDemonios crearPortal(PortalDemonios portalEspiritus);
+    PortalDemonios crearPortal(PortalDemonios portalDemonios);
 }

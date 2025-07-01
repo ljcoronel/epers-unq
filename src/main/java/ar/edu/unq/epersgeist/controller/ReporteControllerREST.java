@@ -2,7 +2,7 @@ package ar.edu.unq.epersgeist.controller;
 
 import ar.edu.unq.epersgeist.controller.dto.EventoPortalDTO.EventoPortalDTOResponse;
 import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.ReporteResponseDTO;
-import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.SnapshotResponseDTO;
+import ar.edu.unq.epersgeist.controller.dto.ReporteDTO.Snapshot.SnapshotResponseDTO;
 import ar.edu.unq.epersgeist.modelo.Reporte.ReporteSantuarioMasCorrupto;
 import ar.edu.unq.epersgeist.persistencia.repositories.dto.influx.EventoPortalDTO;
 import ar.edu.unq.epersgeist.servicios.interfaces.EstadisticaService;
