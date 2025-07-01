@@ -223,8 +223,8 @@ public class MediumServiceImpl implements MediumService {
         this.verificarMeditacion(mediums, nivelDeConexionTotal);
         mediums.forEach(medium -> medium.perderMana(nivelDeConexionTotal));
         demoniosLibre.forEach(demonio -> demonio.setNivelDeConexion(0));
-        mediums.forEach(this.mediumRepository::actualizar);
-        demoniosLibre.forEach(this.espirituRepository::actualizar);
+        mediums.forEach(medium -> this.mediumRepository.actualizar(medium));
+        demoniosLibre.forEach(demonio -> this.espirituRepository.actualizar(demonio));
     }
 
     private void verificarMeditacion(List<Medium> mediums, int nivelDeConexionTotal) {

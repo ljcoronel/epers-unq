@@ -170,6 +170,8 @@ public class EspirituRepositoryImpl implements EspirituRepository {
 
     @Override
     public List<Demonio> demoniosLibresEn(Long ubicacionId) {
-        return this.espirituDAOJPA.demoniosLibresEn(ubicacionId);
+        return this.espirituDAOJPA.demoniosLibresEn(ubicacionId).stream()
+                .map(demoniodto -> (Demonio) demoniodto.aModelo())
+                .toList();
     }
 }

@@ -27,8 +27,8 @@ public interface MediumDAOMONGO extends MongoRepository<MediumMONGODTO, String> 
         {coordenada: {
             $nearSphere: {
                 $geometry: ?0,
-                $minDistance: ?2,
-                $maxDistance: ?3
+                $minDistance: ?1,
+                $maxDistance: ?2
             }
         }
         }

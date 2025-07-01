@@ -3,6 +3,7 @@ import ar.edu.unq.epersgeist.modelo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadInexistenteException;
 import ar.edu.unq.epersgeist.modelo.exception.EntidadTodaviaReferenciadaException;
 import ar.edu.unq.epersgeist.modelo.exception.espiritu.EspirituMuyLejanoException;
+import ar.edu.unq.epersgeist.modelo.exception.medium.ManaInsuficiente;
 import ar.edu.unq.epersgeist.modelo.exception.medium.MediumEnDistintaUbicacionException;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Cementerio;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 
 import java.util.Arrays;
@@ -978,6 +980,27 @@ public class MediumServiceImplTest {
 
     }
 
+    @Test
+    public void seActualizaElNivelDeConexionDeUnDemonioLuegoDeMeditar() {
+        this.mediumService.crear(this.medium3);
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+        this.mediumService.meditar(this.santuario.getId(), new GeoJsonPoint(0,0), 0, 10000000);
+        Espiritu demonioDebilActualizado = this.espirituService.recuperar(this.demonioDebil.getId()).get();
+        Espiritu demonioFuerteActualizado = this.espirituService.recuperar(this.demonioFuerte.getId()).get();
+
+        assertEquals(0, demonioDebilActualizado.getNivelDeConexion());
+        assertEquals(0, demonioFuerteActualizado.getNivelDeConexion());
+    }
+
+    @Test
+    public void seVerificaQueUnMediumAlIntentarMeditarNoTieneManaSuficienteEntoncesSeLanzaUnaExcepcion() {
+        this.mediumService.crear(this.medium2);
+        this.espirituService.crear(this.demonioDebil);
+        this.espirituService.crear(this.demonioFuerte);
+
+        assertThrows(ManaInsuficiente.class, () -> this.mediumService.meditar(this.santuario.getId(), new GeoJsonPoint(0,0), 0, 10000000));
+    }
 
     @AfterEach
     void eliminarModelo() {
@@ -986,6 +1009,4 @@ public class MediumServiceImplTest {
         testService.eliminarUbicaciones();
         fakeRandomStrategy.cleanUp();
     }
-
-
 }
