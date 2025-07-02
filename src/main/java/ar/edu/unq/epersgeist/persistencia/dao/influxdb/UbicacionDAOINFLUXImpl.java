@@ -42,7 +42,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public double getTemperatura(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -60s)
+                          |> range(start: -60d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
@@ -62,7 +62,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     private Optional<Double> getTemperaturaAmbiente(Long id) {
         String query = """
                         from(bucket: "lecturas")
-                          |> range(start: -30s)
+                          |> range(start: -60d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "tempAmbiente" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
@@ -87,7 +87,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
         String query =
                 """
                         from(bucket: "lecturas")
-                          |> range(start: -10s)
+                          |> range(start: -7d)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
                           |> group(columns: ["ubicacion"])
                           |> sort(columns: ["_time"], desc: true)
@@ -143,7 +143,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     public List<EventoPortalDTO> recuperarEventosDePortales() {
         String query = """
         from(bucket: "lecturas")
-          |> range(start: -60s)
+          |> range(start: -1d)
           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp")
           |> group(columns: ["ubicacion"])
           |> sort(columns: ["_time"])
@@ -176,7 +176,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     // PARA TESTEAR usar -30s como range ( |> range(start: -30s) ) justo abajo del from y arriba del filter
         String query = """
                         from(bucket: "lecturas")
-                        |> range(start: -30s)
+                        |> range(start: -60d)
                         |> filter(fn: (r) => r._measurement == "temperaturas" and (r._field == "temp" or r._field == "tempAmbiente") and r.ubicacion == "%s")
                         |> last()
                         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
