@@ -6,6 +6,7 @@ import ar.edu.unq.epersgeist.modelo.espiritu.Demonio;
 import ar.edu.unq.epersgeist.modelo.geo.Coordenada;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Santuario;
 import ar.edu.unq.epersgeist.modelo.ubicacion.Ubicacion;
+import ar.edu.unq.epersgeist.persistencia.repositories.interfaces.UbicacionRepository;
 import ar.edu.unq.epersgeist.testUtils.TestService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +29,8 @@ public class PresentacionTest {
     private EspirituServiceImpl espirituService;
     @Autowired
     private UbicacionServiceImpl ubicacionService;
+    @Autowired
+    private UbicacionRepository ubicacionRepository;
 
     private Ubicacion ubicacion;
 
@@ -39,6 +41,7 @@ public class PresentacionTest {
     private Medium medium1;
     private Medium medium2;
     private Medium medium3;
+    private Medium medium4;
 
     @BeforeEach
     void crearInstancias(){
@@ -54,6 +57,7 @@ public class PresentacionTest {
         medium1 = new Medium("Elen", 100,50,new Coordenada(0.5,0.5));
         medium2 = new Medium("Marti", 100,50,new Coordenada(0.5,0.5));
         medium3 = new Medium("Esteban", 100,50,new Coordenada(0.5,0.5));
+        medium4 = new Medium("Ana", 100,50,new Coordenada(0.5,0.5));
 
         portalDemonio = new PortalDemonios(new Coordenada(0.1,0.1));
     }
@@ -75,14 +79,17 @@ public class PresentacionTest {
         mediumService.crear(medium1);
         mediumService.crear(medium2);
         mediumService.crear(medium3);
+        mediumService.crear(medium4);
 
         crearDemoniosParaBajar2GradosDeTemperatura();
+
+        demonio.setNivelDeConexion(50);
 
         espirituService.crear(demonio);
 
         espirituService.crearPortal(portalDemonio);
 
-        Thread.sleep(100000);
+        Thread.sleep(70000);
 
         mediumService.meditar(ubicacion.getId(),0.5,0.5);
 
