@@ -33,8 +33,13 @@ public class PresentacionTest {
     private UbicacionRepository ubicacionRepository;
 
     private Ubicacion ubicacion;
+    private Ubicacion ubicacion2;
+    private Ubicacion ubicacion3;
 
     private Demonio demonio;
+    private Demonio demonio2;
+    private Demonio demonio3;
+    private Demonio demonio4;
 
     private PortalDemonios portalDemonio;
 
@@ -52,7 +57,24 @@ public class PresentacionTest {
                 new Coordenada(0,1),
                 new Coordenada(0,0)),5);
 
-        demonio = new Demonio(100,"Malote",new Coordenada(0.5,0.5));
+        this.ubicacion2 = new Santuario("Quilmes",50, List.of(
+                new Coordenada(2,0),
+                new Coordenada(3,0),
+                new Coordenada(3,1),
+                new Coordenada(2,1),
+                new Coordenada(2,0)),5);
+
+        this.ubicacion3 = new Santuario("Unq",50, List.of(
+                new Coordenada(0,2),
+                new Coordenada(1,2),
+                new Coordenada(1,3),
+                new Coordenada(0,3),
+                new Coordenada(0,2)),5);
+
+        demonio = new Demonio(50,"malito",new Coordenada(0.5,0.5));
+        demonio2 = new Demonio(30,"Malote",new Coordenada(2.5,0.5));
+        demonio3 = new Demonio(40,"Demo",new Coordenada(0.5,2.5));
+        demonio4 = new Demonio(30,"Coco",new Coordenada(0.5,2.5));
 
         medium1 = new Medium("Elen", 100,50,new Coordenada(0.5,0.5));
         medium2 = new Medium("Marti", 100,50,new Coordenada(0.5,0.5));
@@ -71,8 +93,9 @@ public class PresentacionTest {
             ));
         }
     }
+
     @Test
-    public void probarTP()throws InterruptedException{
+    public void probarMeditacion()throws InterruptedException{
         ubicacion.setTemperatura(10);
         ubicacionService.crear(ubicacion);
 
@@ -95,6 +118,43 @@ public class PresentacionTest {
 
         assertTrue(true);
 
+    }
+
+    @Test
+    public void probarCreacionDePortales() throws InterruptedException {
+        //Thread.sleep(60000);
+        ubicacion.setTemperatura(20);
+        ubicacion2.setTemperatura(17);
+        ubicacion3.setTemperatura(23);
+
+        this.ubicacionService.crear(ubicacion);
+        this.ubicacionService.crear(ubicacion2);
+        this.ubicacionService.crear(ubicacion3);
+        espirituService.crear(demonio2);
+        espirituService.crear(demonio);
+        espirituService.crear(demonio3);
+        espirituService.crear(demonio4);
+
+
+        ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
+        Thread.sleep(750);
+        ubicacionRepository.setTemperatura(ubicacion2.getId(),14.8);
+        Thread.sleep(750);
+        ubicacionRepository.setTemperatura(ubicacion3.getId(),20.8);
+        Thread.sleep(750);
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
+        Thread.sleep(1000);
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 2.5)));
+        Thread.sleep(500);
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(2.5, 0.5)));
+        Thread.sleep(50000);
+
+        //espirituService.crearPortal(new PortalDemonios(new Coordenada(2.3, 0.5)));
+
+        Thread.sleep(100000);
     }
 
     @AfterEach
