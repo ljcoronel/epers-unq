@@ -40,13 +40,14 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public double getTemperatura(Long id) {
+        // PARA USAR NORMALMENTE usar -60d como range ( |> range(start: -60d) ) justo abajo del from y arriba del filter
         String query = """
                         from(bucket: "lecturas")
                           |> range(start: -60s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "temp" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
-                        """.formatted(id); // para testear usar -60s en range
+                        """.formatted(id);
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -60,13 +61,14 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     private Optional<Double> getTemperaturaAmbiente(Long id) {
+        // PARA USAR NORMALMENTE usar -60d como range ( |> range(start: -60d) ) justo abajo del from y arriba del filter
         String query = """
                         from(bucket: "lecturas")
                           |> range(start: -30s)
                           |> filter(fn: (r) => r._measurement == "temperaturas" and r._field == "tempAmbiente" and r.ubicacion == "%s")
                           |> last()
                           |> keep(columns: ["_value"])
-                        """.formatted(id); // para testear usar -30s en range
+                        """.formatted(id);
 
         List<FluxTable> tables = influxDBClient.getQueryApi().query(query);
 
@@ -83,7 +85,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public Optional<Long> recuperarIdDeUbicacionMasPeligrosa() {
-        // PARA TESTEAR usar -10s como range ( |> range(start: -10s) ) justo abajo del from y arriba del filter
+        // PARA USAR NORMALMENTE usar -7d como range ( |> range(start: -7d) ) justo abajo del from y arriba del filter
         String query =
                 """
                         from(bucket: "lecturas")
@@ -141,6 +143,8 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
     }
 
     public List<EventoPortalDTO> recuperarEventosDePortales() {
+        // PARA USAR NORMALMENTE usar -1d como range ( |> range(start: -1d) ) justo abajo del from y arriba del filter
+
         String query = """
         from(bucket: "lecturas")
           |> range(start: -60s)
@@ -173,7 +177,7 @@ public class UbicacionDAOINFLUXImpl implements UbicacionDAOINFLUX {
 
     @Override
     public boolean tieneDeltaDeTemperaturaMenorOIgual(Long id, int deltaTemp) {
-    // PARA TESTEAR usar -30s como range ( |> range(start: -30s) ) justo abajo del from y arriba del filter
+        // PARA USAR NORMALMENTE usar -60d como range ( |> range(start: -60d) ) justo abajo del from y arriba del filter
         String query = """
                         from(bucket: "lecturas")
                         |> range(start: -30s)
