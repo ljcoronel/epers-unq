@@ -1,7 +1,7 @@
 # TP 6 - InfluxDB
 
 Luego de que RDJ se metiera por el portal, nos quedamos intentando descifrar los susurros del demonio aquel, en el aula 60.
-Él nos guió, caminando lentamente y sin decir ni una palabra más, hacia la zona más alejada del Auditorio. Allí, encontramos a una computadora abandonada,
+Él nos guió, caminando lentamente y sin decir ni una palabra más, hacia la zona más alejada del Auditorio. Allí, en una mesa de madera muy antigüa, encontramos a una computadora abandonada,
 dejada en un voice chat de Discord abierto.
 
 Sabíamos que el demonio nos intentaba decir algo, pero no lográbamos comprender, así que decidimos husmear por el Discord.
