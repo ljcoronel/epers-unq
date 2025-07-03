@@ -74,7 +74,7 @@ public class PresentacionTest {
         demonio = new Demonio(50,"malito",new Coordenada(0.5,0.5));
         demonio2 = new Demonio(30,"Malote",new Coordenada(2.5,0.5));
         demonio3 = new Demonio(40,"Demo",new Coordenada(0.5,2.5));
-        demonio4 = new Demonio(30,"Coco",new Coordenada(0.5,2.5));
+        demonio4 = new Demonio(30,"Coco",new Coordenada(0.5,0.58));
 
         medium1 = new Medium("Elen", 100,50,new Coordenada(0.5,0.5));
         medium2 = new Medium("Marti", 100,50,new Coordenada(0.5,0.5));
@@ -130,11 +130,16 @@ public class PresentacionTest {
         this.ubicacionService.crear(ubicacion);
         this.ubicacionService.crear(ubicacion2);
         this.ubicacionService.crear(ubicacion3);
+
+        mediumService.crear(medium1);
+        mediumService.crear(medium2);
+        mediumService.crear(medium3);
+        mediumService.crear(medium4);
+
         espirituService.crear(demonio2);
         espirituService.crear(demonio);
         espirituService.crear(demonio3);
         espirituService.crear(demonio4);
-
 
         ubicacionRepository.setTemperatura(ubicacion.getId(),17.8);
         Thread.sleep(750);
@@ -143,18 +148,70 @@ public class PresentacionTest {
         ubicacionRepository.setTemperatura(ubicacion3.getId(),20.8);
         Thread.sleep(750);
 
+        new Thread(() -> {try {bajarTempUb3();} catch (InterruptedException e) {throw new RuntimeException(e);}}).start();
+
         espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
 
         Thread.sleep(1000);
-        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 2.5)));
+
+        espirituService.crearPortal(new PortalDemonios(new Coordenada(0.5, 0.5)));
+
         Thread.sleep(500);
+        new Thread(() -> {try {bajarTempUb2();} catch (InterruptedException e) {throw new RuntimeException(e);}}).start();
 
         espirituService.crearPortal(new PortalDemonios(new Coordenada(2.5, 0.5)));
         Thread.sleep(50000);
 
-        //espirituService.crearPortal(new PortalDemonios(new Coordenada(2.3, 0.5)));
+        mediumService.meditar(ubicacion.getId(),0.5,0.5);
 
-        Thread.sleep(100000);
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(7000);
+            ubicacionRepository.setTemperatura(ubicacion3.getId(), getTempUb3());
+            ubicacionRepository.setTemperatura(ubicacion2.getId(), getTempUb2());
+            ubicacionRepository.setTemperatura(ubicacion.getId(), getTempUb1());
+        }
+
+        Thread.sleep(20000);
+    }
+
+    private double getTempUb1() {
+        return ubicacionRepository.recuperar(ubicacion.getId()).get().getTemperatura();
+    }
+
+    private double getTempUb2() {
+        return ubicacionRepository.recuperar(ubicacion2.getId()).get().getTemperatura();
+    }
+
+    private double getTempUb3() {
+        return ubicacionRepository.recuperar(ubicacion3.getId()).get().getTemperatura();
+    }
+
+    private void bajarTempUb3() throws InterruptedException {
+        double tempActual = 20.8;
+        for (int i = 0; i < 7; i++) {
+            tempActual -= 0.5 * Math.random();
+            ubicacionRepository.setTemperatura(ubicacion3.getId(),tempActual);
+            Thread.sleep((long) (7000 * Math.random()));
+        }
+        for (int i = 0; i < 7; i++) {
+            tempActual += (0.6 * Math.random()) * Math.random();
+            ubicacionRepository.setTemperatura(ubicacion3.getId(),tempActual);
+            Thread.sleep(6000);
+        }
+    }
+
+    private void bajarTempUb2() throws InterruptedException {
+        double tempActual;
+        for (int i = 0; i < 4; i++) {
+            tempActual = getTempUb2() * (0.3 * Math.random());
+            ubicacionRepository.setTemperatura(ubicacion2.getId(),tempActual);
+            Thread.sleep((long) (7000 * Math.random()));
+        }
+        for (int i = 0; i < 4; i++) {
+            tempActual = getTempUb2() + (0.6 * Math.random()) * Math.random();
+            ubicacionRepository.setTemperatura(ubicacion2.getId(),tempActual);
+            Thread.sleep(9000);
+        }
     }
 
     @AfterEach
