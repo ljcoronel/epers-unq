@@ -12,10 +12,19 @@
 #define BAUDIOS 250000// valor máximo ADC para 10 bits
 #define BUTTON_PIN 19
 #define X_MIN_BUTTON  22
+
+//Const
+bool ultimoEstado = HIGH;
 unsigned long tiempoInicio = 0;
 long tiempoPresionado = 0;
 bool estadoAnterior = false;
 bool bajando = false;
+unsigned long tiempoDisplay = 0;
+unsigned long tiempoSerial = 0;
+bool estadoParlante = false;
+bool sonidoActivo = false;
+const unsigned long intervaloDisplay = 500;
+const unsigned long intervaloSerial = 100;
 
 
 // Configura los pines del LCD: RS, E, D4, D5, D6, D7
@@ -53,25 +62,25 @@ byte CAMPANA1[8] = {
   B00000,
   B00100,
 };
-byte L[8] = {
-B10000,
-B10000,
-B10000,
-B10000,
-B10000,
-B10000,
-B11111,
-B00000,
+byte DEMONIO[8] = {
+  B10101,
+  B01110,
+  B11111,
+  B10101,
+  B11111,
+  B01110,
+  B10101,
+  B01010
 };
-byte M[8] = {
-B11111,
-B10101,
-B10101,
-B10101,
-B10101,
-B10101,
-B10101,
-B00000,
+byte ANGEL[8] = {
+  B01010, 
+  B11111, 
+  B01110, 
+  B10101, 
+  B01110, 
+  B01110, 
+  B00100, 
+  B01010
 };
 byte P[8] = {
 B11111,
@@ -103,14 +112,15 @@ B10001,
 B00000,
 };
 
-bool estadoParlante = false;
-bool sonidoActivo = true;
 
-bool ultimoEstado = HIGH;
+
+
 
 void crearCaracteresEspeciales(){
   lcd.createChar (0,PARLANTEon);
   lcd.createChar (1,PARLANTEOff);
+  lcd.createChar (2,DEMONIO);
+  lcd.createChar (3,ANGEL);
  }
 
   
@@ -209,9 +219,22 @@ void showInfodisplay(float temp1, float temp2, bool estado_parlante) {
   lcd.print(buf_temp1);
   lcd.print(" Ta:");
   lcd.print(buf_temp2);
- 
-  lcd.setCursor(0, 3);
-  lcd.print("Buscando Espiritus");  
+
+  if ( abs(delta) < 5 ) {
+    lcd.setCursor(0, 3);
+    lcd.print("Buscando Espiritus!!");  
+  }
+  if (delta < -5 ) {
+    lcd.setCursor(0, 3);
+    lcd.print("Demonio Encontrado ");  
+    lcd.write(byte(2));  
+   }
+
+   if (delta > 5 ) {
+    lcd.setCursor(0, 3);
+    lcd.print("Angel Encontrado ");
+    lcd.write(byte(3));  
+   }
 
 }
 
@@ -252,27 +275,37 @@ float estadoBoton() {
   }
 
   if (bajando && tiempoPresionado > 0) {
-    tiempoPresionado -= 800;  // Bajada progresiva
-    if (tiempoPresionado < 0) tiempoPresionado = 0;
-    return tiempoPresionado;
+      static unsigned long ultimoTiempo = millis();
+  unsigned long ahora = millis();
+  unsigned long delta = ahora - ultimoTiempo;
+  ultimoTiempo = ahora;
+
+  tiempoPresionado -= delta/1.5;  // Resta según el tiempo real transcurrido
+  if (tiempoPresionado < 0) tiempoPresionado = 0;
+  return tiempoPresionado;
   }
 
   return 0;
 }
  
 void loop() {
-
+  unsigned long ahora = millis();
+  
   float temp1 = leerTemperatura(TEMP_AMB_1);
   float temp2 = leerTemperatura(TEMP_AMB_2);
-  temp1 = temp1 +(estadoBoton()/750); //Si se presiona el boton va subiendo la temperatura en 1,5° por segundo
-  leerDiplayBotonBoton();
+  temp1 = temp1 -(estadoBoton()/750); //Si se presiona el boton va disminuyendo la temperatura en 1,5° por segundo
   float sumarATemp = 0;
-
-  showInfodisplay(temp1, temp2, estadoParlante);
   float delta = abs(temp1 - temp2);
-  sonarParlante(delta);
-  String salida = temperaturaAJson(temp1, temp2);
-  Serial.println(salida);
 
-  delay(500);
+  if (ahora - tiempoDisplay >= intervaloDisplay) {
+    tiempoDisplay = ahora;
+    leerDiplayBotonBoton();
+    showInfodisplay(temp1, temp2, estadoParlante);
+    sonarParlante(delta);
+  }
+   if (ahora - tiempoSerial >= intervaloSerial) {
+    tiempoSerial = ahora;
+    String salida = temperaturaAJson(temp1, temp2);
+    Serial.println(salida);
+   }
 }
