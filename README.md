@@ -63,7 +63,7 @@ Las ubicaciones ahora deberán registrar su temperatura, la cual cambiará si ha
 Por otra parte, se podrán crear portales que seguirán las siguientes normas:
 
 - Bajarán la temperatura en 5°C **mientras** estén **abiertos**.
-- Eligirán a un demonio como host, que debe no estar dominado ni tener un médium conectado y tener más de 0 de nivel de conexión.
+- Elegirán a un demonio como host, que debe no estar dominado ni tener un médium conectado y tener más de 0 de nivel de conexión.
 - Tomará el nivel de conexión del host como energía.
 - Creará demonios "Minions" en el lugar donde se abra el portal, utilizando 10 de energía por cada uno.
 - Cada creación de minions dura exactamente 10 segundos.
