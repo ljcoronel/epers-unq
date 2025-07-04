@@ -5,13 +5,12 @@ mente con RDJ y su demonio, nos mostró en lo que se convertiría nuestro mundo 
 y sufrimiento, demonios invadiendo ciudades enteras, controlando a gran parte de la población. Grandes puertas donde estos espíritus malignos entraban y
 salían constantemente.
 
-
+Dolor y mucha sangre derramada. Gritos de desesperación nos dejaron sordos. Y luego de un gran flash, volvimos al aula 60.
 
 <p align="center">
   <img src="sangre.png" />
 </p>
 
-Dolor y mucha sangre derramada. Gritos de desesperación nos dejaron sordos. Y luego de un gran flash, volvimos al aula 60.
 
 Al volver, nos dimos cuenta que algo más había ocurrido. El tiempo parecía haberse adelantado. Pero aquel demonio seguía ahí, esperando a nuestro regreso.
 
@@ -73,7 +72,7 @@ Por otra parte, se podrán crear portales que seguirán las siguientes normas:
 También ahora los médiums se podrán reunir para meditar conjuntamente, exorcizando zonas enteras a la lejanía:
 
 - Deberán buscarse mediante su energía espiritual en un rango de 3000kms de radio.
-- Eligirán una ubicación a la cual exorcizar a pleno.
+- Elegirán una ubicación a la cual exorcizar a pleno.
 - Para ganar el combate, el maná de los médium en conjunto debe superar o ser igual que el nivel de conexión total de los demonios presentes en la zona.
 - Los médium, si ganan el combate, deberán perder el 75% del maná total que utilizaron para atacar conjuntamente.
 - Si estos fallan, deberá arrojarse una excepción: `throw new ManaInsuficiente()`.
@@ -175,7 +174,7 @@ Se deberá utilizar un dashboard de Grafana para poder ilustrar los cambios en l
 
 El equipo de desarrolladores ha considerado la idea de instalar un sensor en la UNQ para vigilar la presencia de demonios en ella.
 
-Se deberá utilizar un sensor (o bien, un programa que emule serlo) para poder actualizar la temperatura de alguna ubicación donde el sensor apunte, junto a una screenshot mostrando su funcionamiento ante un medio frío
+Se deberá utilizar un sensor (o bien, un programa que emule serlo) para poder actualizar la temperatura de la ubicación donde el sensor se encuentre, junto a una screenshot mostrando su funcionamiento ante un medio frío
 (En caso que sea virtual, bajando la temperatura por debajo de los 5°C).
 
  
