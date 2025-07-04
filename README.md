@@ -64,7 +64,7 @@ Las ubicaciones ahora deberán registrar su temperatura, la cual cambiará si ha
 Por otra parte, se podrán crear portales que seguirán las siguientes normas:
 
 - Bajarán la temperatura en 5°C **mientras** estén **abiertos**.
-- Eligirán a un demonio como host, que debe no estar dominado ni tener un médium conectado y tener más de 0 de nivel de conexión.
+- Elegirán a un demonio como host, que debe no estar dominado ni tener un médium conectado y tener más de 0 de nivel de conexión.
 - Tomará el nivel de conexión del host como energía.
 - Creará demonios "Minions" en el lugar donde se abra el portal, utilizando 10 de energía por cada uno.
 - Cada creación de minions dura exactamente 10 segundos.
@@ -73,7 +73,7 @@ Por otra parte, se podrán crear portales que seguirán las siguientes normas:
 También ahora los médiums se podrán reunir para meditar conjuntamente, exorcizando zonas enteras a la lejanía:
 
 - Deberán buscarse mediante su energía espiritual en un rango de 3000kms de radio.
-- Eligirán una ubicación a la cual exorcizar a pleno.
+- Elegirán una ubicación a la cual exorcizar a pleno.
 - Para ganar el combate, el maná de los médium en conjunto debe superar o ser igual que el nivel de conexión total de los demonios presentes en la zona.
 - Los médium, si ganan el combate, deberán perder el 75% del maná total que utilizaron para atacar conjuntamente.
 - Si estos fallan, deberá arrojarse una excepción: `throw new ManaInsuficiente()`.
