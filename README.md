@@ -175,7 +175,7 @@ Se deberá utilizar un dashboard de Grafana para poder ilustrar los cambios en l
 
 El equipo de desarrolladores ha considerado la idea de instalar un sensor en la UNQ para vigilar la presencia de demonios en ella.
 
-Se deberá utilizar un sensor (o bien, un programa que emule serlo) para poder actualizar la temperatura de la ubicación donde el sensor se encuentre, junto a una screenshot mostrando su funcionamiento ante un medio frío
+Se deberá utilizar un sensor (o bien, un programa que emule serlo) para poder actualizar la temperatura de alguna ubicación donde el sensor apunte, junto a una screenshot mostrando su funcionamiento ante un medio frío
 (En caso que sea virtual, bajando la temperatura por debajo de los 5°C).
 
  
