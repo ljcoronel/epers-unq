@@ -5,12 +5,13 @@ mente con RDJ y su demonio, nos mostró en lo que se convertiría nuestro mundo 
 y sufrimiento, demonios invadiendo ciudades enteras, controlando a gran parte de la población. Grandes puertas donde estos espíritus malignos entraban y
 salían constantemente.
 
-Dolor y mucha sangre derramada. Gritos de desesperación nos dejaron sordos. Y luego de un gran flash, volvimos al aula 60.
+
 
 <p align="center">
   <img src="sangre.png" />
 </p>
 
+Dolor y mucha sangre derramada. Gritos de desesperación nos dejaron sordos. Y luego de un gran flash, volvimos al aula 60.
 
 Al volver, nos dimos cuenta que algo más había ocurrido. El tiempo parecía haberse adelantado. Pero aquel demonio seguía ahí, esperando a nuestro regreso.
 
