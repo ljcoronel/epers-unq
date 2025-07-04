@@ -1,30 +1,49 @@
 # TP 6 - InfluxDB
 
-Luego de que RDJ se metiera por el portal, nos quedamos intentando descifrar los susurros del demonio aquel, en el aula 60.
-Él nos guió, caminando lentamente y sin decir ni una palabra más, hacia la zona más alejada del Auditorio. Allí, encontramos a una computadora abandonada,
-dejada en un voice chat de Discord abierto.
+Luego de que RDJ se metiera por el portal, nosotros lo seguimos, ignorando sus advertencias. Lo que siguió fue difícil de describir, como si fuéramos una única
+mente con RDJ y su demonio, nos mostró en lo que se convertiría nuestro mundo en cuestión de poco tiempo: desastres por todos lados, incontables muertes
+y sufrimiento, demonios invadiendo ciudades enteras, controlando a gran parte de la población. Grandes puertas donde estos espíritus malignos entraban y
+salían constantemente.
 
-Sabíamos que el demonio nos intentaba decir algo, pero no lográbamos comprender, así que decidimos husmear por el Discord.
+Dolor y mucha sangre derramada. Gritos de desesperación nos dejaron sordos. Y luego de un gran flash, volvimos al aula 60.
+
+<p align="center">
+  <img src="sangre.png" />
+</p>
+
+
+Al volver, nos dimos cuenta que algo más había ocurrido. El tiempo parecía haberse adelantado. Pero aquel demonio seguía ahí, esperando a nuestro regreso.
+
+Con sus resplandecientes ojos amarillos nos guió, caminando lentamente y sin decir ni una palabra más, hacia la zona más alejada del Auditorio. 
+Allí, encontramos a una computadora abandonada encima de una vieja mesa de madera, dejada en un voice chat de Discord abierto.
+
+`#Investigación-de-portales`
+`#Antenas`
+`#Métricas-y-zonas-peligrosas`
+
+Sus canales de texto. Repletos de información sobre demonios y formas de detectarlos. Ahora, sabíamos que podíamos formar parte de algo mucho más grande.
+
+Decidimos entrar al voice chat.
+
+`"Al fin se conectaron, la alianza RDJ se podrá formar."`
+
+Luego, esos susurros incomprensibles del demonio de RDJ, empezaron a cobrar sentido. Al lado de nuestros oídos, escuchamos:
+
+`Su destino será finalmente cumplido.`
 
 `AlianzaRDJ`
 
-Su nombre.
-
-`Investigación-de-portales`
-`Antenas`
-`Métricas-y-zonas-peligrosas`
-
-Los canales de texto. Repletos de información sobre demonios y formas de detectarlos. Ahora, sabíamos que podíamos formar parte de algo mucho más grande.
+Nuestro destino.
 
 <p align="center">
   <img src="antena.jpg" />
 </p>
 
-Encontramos que hay más espíritus de los que creíamos; el mundo está lleno de demonios por todos lados. Descubrimos también que han aprendido que al
-juntarse varios demonios, estos pueden abrir portales que atraen a más de ellos desde el inframundo.
+Gracias al Discord, comprendimos que hay más espíritus de los que creíamos; el mundo está lleno de demonios por todos lados. Descubrimos también que han aprendido pueden 
+juntarse varios de ellos, estos pueden abrir portales que atraen a más de ellos desde el inframundo.
 
-Hemos podido reclutar la Alianza RDJ con otros médiums de alrededor del mundo. Esto nos ha permitido avanzar enormemente en aprovechar nuevas tecnologías,
-y gracias a ellos pudimos desarrollar un detector usando las antenas a lo largo del planeta:
+Hemos podido crear la Alianza RDJ con otros médiums de alrededor del mundo. Esto nos ha permitido desarrollar potentes tecnologías de detección,
+y gracias a ellos pudimos desarrollar sensores de temperatura utilizando las antenas a lo largo del planeta.
 
 Es bien sabido que los demonios bajan las temperaturas de las zonas en las que están circulando.
 Los detectores nos proveen de métricas en tiempo real sobre la temperatura de cada ubicación, y con todo el equipo planteamos desarrollar un sistema para analizar estos datos y determinar posiciones de concentración de demonios.
@@ -149,8 +168,7 @@ Se deberá utilizar un dashboard de Grafana para poder ilustrar los cambios en l
 
 ### En particular:
 - Se pedirá una screenshot (o un video) de la temperatura de una ubicación cayendo fuertemente debido al uso de portales con un gráfico.
-- Un gráfico de tipo heatmap para ver cuáles son las ubicaciones más frías en el momento.
-- Algún gráfico de alguna query de una complejidad más avanzada que deberán discutir con el equipo Frontend.
+- Se pedirá una screenshot (o un video) de un gráfico de tipo heatmap para ver cuáles son las ubicaciones más frías en el momento.
 
 ## *~~Bonus 2~~* Sensor
 
